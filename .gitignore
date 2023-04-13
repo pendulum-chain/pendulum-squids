@@ -21,3 +21,5 @@ coverage/
 .package-lock.json
 # Ignore lib/ directory
 lib/*
+src/model/generated/*
+.gitignore

@@ -1,1 +1,23 @@
-node_modules
+# Ignore output directories
+dist/
+build/
+out/
+tmp/
+*.log
+
+# Ignore TypeScript and Node.js files
+node_modules/
+*.js
+*.d.ts
+*.map
+
+# Ignore coverage reports
+coverage/
+
+# Ignore specific files or directories
+.vscode/
+.env
+.DS_Store
+
+# Ignore lib/ directory
+lib/*

@@ -7,6 +7,9 @@ import {Account, Transfer} from "./model"
 import {BalancesTransferEvent} from "./types/events"
 
 
+const DataSelection = { data: { event: true } } as const
+
+
 const processor = new SubstrateBatchProcessor()
     .setDataSource({
         // Lookup archive by the network name in the Subsquid registry
@@ -15,6 +18,9 @@ const processor = new SubstrateBatchProcessor()
         // Use archive created by archive/docker-compose.yml
         archive: lookupArchive('kusama', {release: 'FireSquid'} )
     })
+    .addEvent('ZenlinkProtocol.LiquidityAdded', DataSelection)
+    .addEvent('ZenlinkProtocol.LiquidityRemoved', DataSelection)
+    .addEvent('ZenlinkProtocol.AssetSwap', DataSelection)
     .addEvent('Balances.Transfer', {
         data: {
             event: {
@@ -31,6 +37,8 @@ const processor = new SubstrateBatchProcessor()
 type Item = BatchProcessorItem<typeof processor>
 type Ctx = BatchContext<Store, Item>
 
+
+// TODO implement handleXXX as Bifrost
 
 processor.run(new TypeormDatabase(), async ctx => {
     let transfersData = getTransfers(ctx)

@@ -1,5 +1,6 @@
 import assert from 'assert'
 import {Chain, ChainContext, EventContext, Event, Result, Option} from './support'
+import * as v906 from './v906'
 
 export class BalancesTransferEvent {
     private readonly _chain: Chain
@@ -56,6 +57,146 @@ export class BalancesTransferEvent {
      */
     get asV9130(): {from: Uint8Array, to: Uint8Array, amount: bigint} {
         assert(this.isV9130)
+        return this._chain.decodeEvent(this.event)
+    }
+}
+
+export class ZenlinkProtocolAssetSwapEvent {
+    private readonly _chain: Chain
+    private readonly event: Event
+
+    constructor(ctx: EventContext)
+    constructor(ctx: ChainContext, event: Event)
+    constructor(ctx: EventContext, event?: Event) {
+        event = event || ctx.event
+        assert(event.name === 'ZenlinkProtocol.AssetSwap')
+        this._chain = ctx._chain
+        this.event = event
+    }
+
+    /**
+     *  Transact in trading \[owner, recipient, swap_path, balances\]
+     */
+    get isV902(): boolean {
+        return this._chain.getEventHash('ZenlinkProtocol.AssetSwap') === '159d6d9238d17b02ab3a687e4f6089399a062c5efe1bfaa809934fce8349d0c5'
+    }
+
+    /**
+     *  Transact in trading \[owner, recipient, swap_path, balances\]
+     */
+    get asV902(): [Uint8Array, Uint8Array, number[], bigint[]] {
+        assert(this.isV902)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * Transact in trading \[owner, recipient, swap_path, balances\]
+     */
+    get isV906(): boolean {
+        return this._chain.getEventHash('ZenlinkProtocol.AssetSwap') === 'e9cbb9bf25ce7ca78f66cb163c5de7b5b796a1f9f5cf2f1d1955496bd76f264e'
+    }
+
+    /**
+     * Transact in trading \[owner, recipient, swap_path, balances\]
+     */
+    get asV906(): [Uint8Array, Uint8Array, v906.AssetId[], bigint[]] {
+        assert(this.isV906)
+        return this._chain.decodeEvent(this.event)
+    }
+}
+
+export class ZenlinkProtocolLiquidityAddedEvent {
+    private readonly _chain: Chain
+    private readonly event: Event
+
+    constructor(ctx: EventContext)
+    constructor(ctx: ChainContext, event: Event)
+    constructor(ctx: EventContext, event?: Event) {
+        event = event || ctx.event
+        assert(event.name === 'ZenlinkProtocol.LiquidityAdded')
+        this._chain = ctx._chain
+        this.event = event
+    }
+
+    /**
+     *  Add liquidity. \[owner, asset_0, asset_1, add_balance_0, add_balance_1,
+     *  mint_balance_lp\]
+     */
+    get isV902(): boolean {
+        return this._chain.getEventHash('ZenlinkProtocol.LiquidityAdded') === '5fa357ce7da650f5b735003f8e97db8c734e1f20971d8bbd1aa763d2234bd502'
+    }
+
+    /**
+     *  Add liquidity. \[owner, asset_0, asset_1, add_balance_0, add_balance_1,
+     *  mint_balance_lp\]
+     */
+    get asV902(): [Uint8Array, number, number, bigint, bigint, bigint] {
+        assert(this.isV902)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * Add liquidity. \[owner, asset_0, asset_1, add_balance_0, add_balance_1,
+     * mint_balance_lp\]
+     */
+    get isV906(): boolean {
+        return this._chain.getEventHash('ZenlinkProtocol.LiquidityAdded') === '1bfafadda80f84623e855502fa86cbd5fb805fa26a6254ee45104d1d976c2219'
+    }
+
+    /**
+     * Add liquidity. \[owner, asset_0, asset_1, add_balance_0, add_balance_1,
+     * mint_balance_lp\]
+     */
+    get asV906(): [Uint8Array, v906.AssetId, v906.AssetId, bigint, bigint, bigint] {
+        assert(this.isV906)
+        return this._chain.decodeEvent(this.event)
+    }
+}
+
+export class ZenlinkProtocolLiquidityRemovedEvent {
+    private readonly _chain: Chain
+    private readonly event: Event
+
+    constructor(ctx: EventContext)
+    constructor(ctx: ChainContext, event: Event)
+    constructor(ctx: EventContext, event?: Event) {
+        event = event || ctx.event
+        assert(event.name === 'ZenlinkProtocol.LiquidityRemoved')
+        this._chain = ctx._chain
+        this.event = event
+    }
+
+    /**
+     *  Remove liquidity. \[owner, recipient, asset_0, asset_1, rm_balance_0, rm_balance_1,
+     *  burn_balance_lp\]
+     */
+    get isV902(): boolean {
+        return this._chain.getEventHash('ZenlinkProtocol.LiquidityRemoved') === 'ed57df84841c01932655b4a0801d9728dd07d3b3f51c350a1a20d3731f980afb'
+    }
+
+    /**
+     *  Remove liquidity. \[owner, recipient, asset_0, asset_1, rm_balance_0, rm_balance_1,
+     *  burn_balance_lp\]
+     */
+    get asV902(): [Uint8Array, Uint8Array, number, number, bigint, bigint, bigint] {
+        assert(this.isV902)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * Remove liquidity. \[owner, recipient, asset_0, asset_1, rm_balance_0, rm_balance_1,
+     * burn_balance_lp\]
+     */
+    get isV906(): boolean {
+        return this._chain.getEventHash('ZenlinkProtocol.LiquidityRemoved') === '9decbbc0fd030ae8322c18bf256e4f3ace487600f6cf3b11b8961ab923a40bf1'
+    }
+
+    /**
+     * Remove liquidity. \[owner, recipient, asset_0, asset_1, rm_balance_0, rm_balance_1,
+     * burn_balance_lp\]
+     */
+    get asV906(): [Uint8Array, Uint8Array, v906.AssetId, v906.AssetId, bigint, bigint, bigint] {
+        assert(this.isV906)
         return this._chain.decodeEvent(this.event)
     }
 }

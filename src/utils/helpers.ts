@@ -40,7 +40,7 @@ const BLOCK_RECORD = {
 
 export async function getTimePerBlock(ctx: EventHandlerContext) {
 
-  if(BLOCK_RECORD.pre.blockHeight === 0 ){
+  if (BLOCK_RECORD.pre.blockHeight === 0) {
     BLOCK_RECORD.pre.blockHeight = ctx.block.height
     BLOCK_RECORD.pre.timestamp = ctx.block.timestamp
 
@@ -58,7 +58,7 @@ export async function getTimePerBlock(ctx: EventHandlerContext) {
   const blockMidDiff = BLOCK_RECORD.cur.blockHeight - BLOCK_RECORD.middle.blockHeight;
 
 
-  if(blockDiff > 10000 && blockMidDiff > 5000){
+  if (blockDiff > 10000 && blockMidDiff > 5000) {
     BLOCK_RECORD.pre.blockHeight = BLOCK_RECORD.middle.blockHeight
     BLOCK_RECORD.pre.timestamp = BLOCK_RECORD.middle.timestamp
 
@@ -74,8 +74,8 @@ export async function getTimePerBlock(ctx: EventHandlerContext) {
 
   const averageBlock = (currentTimestamp - anchorTimestamp) / blocks
 
-  if(blocks <= 0) return 12000
+  if (blocks <= 0) return 12000
 
   return averageBlock
- 
+
 }

@@ -1,11 +1,12 @@
-import {lookupArchive} from "@subsquid/archive-registry"
+import { lookupArchive } from "@subsquid/archive-registry"
 import * as ss58 from "@subsquid/ss58"
-import {BatchContext, BatchProcessorItem, SubstrateBatchProcessor} from "@subsquid/substrate-processor"
-import {Store, TypeormDatabase} from "@subsquid/typeorm-store"
-import {In} from "typeorm"
-import {Account, Transfer} from "./model"
-import {BalancesTransferEvent} from "./types/events"
+import { BatchContext, BatchProcessorItem, SubstrateBatchProcessor } from "@subsquid/substrate-processor"
+import { Store, TypeormDatabase } from "@subsquid/typeorm-store"
+import { In } from "typeorm"
+import { Account, Transfer } from "./model"
+import { BalancesTransferEvent } from "./types/events"
 import { config } from "./config"
+import { handleAssetSwap, handleLiquidityAdded, handleLiquidityRemoved, handleBalanceTransfer } from './mappings/protocol'
 
 
 const DataSelection = { data: { event: true } } as const
@@ -33,10 +34,8 @@ type Item = BatchProcessorItem<typeof processor>
 type Ctx = BatchContext<Store, Item>
 
 
-// TODO implement handleXXX as Bifrost
-
 processor.run(new TypeormDatabase(), async ctx => {
-    let transfersData = getTransfers(ctx)
+    let transfersData = await getTransfers(ctx)
 
     let accountIds = new Set<string>()
     for (let t of transfersData) {
@@ -44,14 +43,14 @@ processor.run(new TypeormDatabase(), async ctx => {
         accountIds.add(t.to)
     }
 
-    let accounts = await ctx.store.findBy(Account, {id: In([...accountIds])}).then(accounts => {
+    let accounts = await ctx.store.findBy(Account, { id: In([...accountIds]) }).then(accounts => {
         return new Map(accounts.map(a => [a.id, a]))
     })
 
     let transfers: Transfer[] = []
 
     for (let t of transfersData) {
-        let {id, blockNumber, timestamp, extrinsicHash, amount, fee} = t
+        let { id, blockNumber, timestamp, extrinsicHash, amount, fee } = t
 
         let from = getAccount(accounts, t.from)
         let to = getAccount(accounts, t.to)
@@ -85,35 +84,35 @@ interface TransferEvent {
 }
 
 
-function getTransfers(ctx: Ctx): TransferEvent[] {
+async function getTransfers(ctx: Ctx): Promise<TransferEvent[]> {
     let transfers: TransferEvent[] = []
     for (let block of ctx.blocks) {
         for (let item of block.items) {
-            if (item.name == "Balances.Transfer") {
-                let e = new BalancesTransferEvent(ctx, item.event)
-                let rec: {from: Uint8Array, to: Uint8Array, amount: bigint}
-                if (e.isV1020) {
-                    let [from, to, amount] = e.asV1020
-                    rec = { from, to, amount}
-                } else if (e.isV1050) {
-                    let [from, to, amount] = e.asV1050
-                    rec = { from, to, amount}
-                } else if (e.isV9130) {
-                    rec = e.asV9130
-                } else {
-                    throw new Error('Unsupported spec')
-                }
-                
-                transfers.push({
-                    id: item.event.id,
-                    blockNumber: block.header.height,
-                    timestamp: new Date(block.header.timestamp),
-                    extrinsicHash: item.event.extrinsic?.hash,
-                    from: ss58.codec('kusama').encode(rec.from),
-                    to: ss58.codec('kusama').encode(rec.to),
-                    amount: rec.amount,
-                    fee: item.event.extrinsic?.fee || 0n
-                })
+            switch (item.name) {
+                case 'ZenlinkProtocol.LiquidityAdded':
+                    await handleLiquidityAdded({ ...ctx, block: block.header, event: item.event })
+                    break
+                case 'ZenlinkProtocol.LiquidityRemoved':
+                    await handleLiquidityRemoved({ ...ctx, block: block.header, event: item.event })
+                    break
+                case 'ZenlinkProtocol.AssetSwap':
+                    await handleAssetSwap({ ...ctx, block: block.header, event: item.event })
+                    break
+                case 'Balances.Transfer':
+                    let rec = await handleBalanceTransfer({ ...ctx, block: block.header, event: item.event })
+                    transfers.push({
+                        id: item.event.id,
+                        blockNumber: block.header.height,
+                        timestamp: new Date(block.header.timestamp),
+                        extrinsicHash: item.event.extrinsic?.hash,
+                        from: ss58.codec('kusama').encode(rec.from),
+                        to: ss58.codec('kusama').encode(rec.to),
+                        amount: rec.amount,
+                        fee: item.event.extrinsic?.fee || 0n
+                    })
+                    break
+                default:
+                    break;
             }
         }
     }

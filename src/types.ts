@@ -21,8 +21,8 @@ export enum TOEKN_EVENT_TYPE {
   Tokens
 }
 export interface ProcessorConfig {
-    chainName: string
-    prefix: number | string
-    dataSource: Parameters<SubstrateProcessor<Store>['setDataSource']>[0]
-    blockRange?: Parameters<SubstrateProcessor<Store>['setBlockRange']>[0]
-  }
+  chainName: string
+  prefix: number | string
+  dataSource: Parameters<SubstrateProcessor<Store>['setDataSource']>[0]
+  blockRange?: Parameters<SubstrateProcessor<Store>['setBlockRange']>[0]
+}

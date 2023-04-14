@@ -44,7 +44,7 @@ export enum CurrencyTypeEnum {
   Token2 = 8,
   VToken2 = 9,
   VSToken2 = 10,
-  VSBond2 = 11, 
+  VSBond2 = 11,
   StableLpToken = 12,
 };
 
@@ -105,7 +105,7 @@ export function parseTokenType(assetIndex: number): string {
   return currencyKeyMap[assetU8]
 }
 
-export function zenlinkAssetIdToCurrencyId(asset: AssetId): any  {
+export function zenlinkAssetIdToCurrencyId(asset: AssetId): any {
   const assetIndex = Number(asset.assetIndex.toString())
   const assetU8 = ((assetIndex & 0x0000_0000_0000_ff00) >> 8)
   const tokenType = parseTokenType(assetIndex)
@@ -128,11 +128,11 @@ export function zenlinkAssetIdToCurrencyId(asset: AssetId): any  {
   }
 }
 
-export function currencyIdToAssetIndex(currency: CurrencyId): number  {
+export function currencyIdToAssetIndex(currency: CurrencyId): number {
   const tokenType = CurrencyTypeEnum[currency.__kind]
   let tokenIndex;
 
-  if(TokenIndexMap[tokenType]) {
+  if (TokenIndexMap[tokenType]) {
     tokenIndex = currency.value as number
     return tokenIndex
   }
@@ -234,7 +234,7 @@ export async function getTokenBalance(
     if (tokenAccountsStorage.isV906) {
     } else if (tokenAccountsStorage.isV906) {
       result = await tokenAccountsStorage.asV906.get(account, assetId as v906.CurrencyId)
-     } else if (tokenAccountsStorage.isV956) {
+    } else if (tokenAccountsStorage.isV956) {
       result = await tokenAccountsStorage.asV956.get(account, assetId as v956.CurrencyId)
     } else if (tokenAccountsStorage.isV962) (
       result = await tokenAccountsStorage.asV962.get(account, assetId as v962.CurrencyId)
@@ -251,9 +251,9 @@ export async function getTotalIssuance(ctx: EventHandlerContext, assetId: v962.C
     result = await balanceIssuanceStorage.asV1.get()
   } else {
     const tokenIssuanceStorage = new TokensTotalIssuanceStorage(ctx, ctx.block)
-if (tokenIssuanceStorage.isV906) {
+    if (tokenIssuanceStorage.isV906) {
       result = await tokenIssuanceStorage.asV906.get(assetId as v906.CurrencyId)
-    }  else if (tokenIssuanceStorage.isV956) {
+    } else if (tokenIssuanceStorage.isV956) {
       result = await tokenIssuanceStorage.asV956.get(assetId as v956.CurrencyId)
     } else if (tokenIssuanceStorage.isV962) (
       result = await tokenIssuanceStorage.asV962.get(assetId as v962.CurrencyId)
@@ -278,9 +278,9 @@ export async function getTokenBurned(
     result = (await systemAccountStorate.asV1.get(account)).data
   } else {
     const tokenAccountsStorage = new TokensAccountsStorage(ctx, block)
-   if (tokenAccountsStorage.isV906) {
+    if (tokenAccountsStorage.isV906) {
       result = await tokenAccountsStorage.asV906.get(account, assetId as v906.CurrencyId)
-    }else if (tokenAccountsStorage.isV956) {
+    } else if (tokenAccountsStorage.isV956) {
       result = await tokenAccountsStorage.asV956.get(account, assetId as v956.CurrencyId)
     } else if (tokenAccountsStorage.isV962) (
       result = await tokenAccountsStorage.asV962.get(account, assetId as v962.CurrencyId)

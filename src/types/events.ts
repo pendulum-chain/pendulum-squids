@@ -1,5 +1,5 @@
 import assert from 'assert'
-import {Chain, ChainContext, EventContext, Event, Result, Option} from './support'
+import { Chain, ChainContext, EventContext, Event, Result, Option } from './support'
 import * as v906 from './v906'
 
 export class BalancesTransferEvent {
@@ -55,7 +55,7 @@ export class BalancesTransferEvent {
     /**
      * Transfer succeeded.
      */
-    get asV9130(): {from: Uint8Array, to: Uint8Array, amount: bigint} {
+    get asV9130(): { from: Uint8Array, to: Uint8Array, amount: bigint } {
         assert(this.isV9130)
         return this._chain.decodeEvent(this.event)
     }

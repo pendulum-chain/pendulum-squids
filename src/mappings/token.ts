@@ -18,7 +18,7 @@ async function isCompleteMint(ctx: EventHandlerContext, mintId: string): Promise
   return !!(await ctx.store.get(Mint, mintId))?.sender // sufficient checks
 }
 
- 
+
 export async function updateLiquidityPosition(
   ctx: EventHandlerContext,
   pair: Pair,

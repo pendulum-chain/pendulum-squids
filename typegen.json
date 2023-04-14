@@ -7,11 +7,6 @@
     "ZenlinkProtocol.LiquidityAdded",
     "ZenlinkProtocol.LiquidityRemoved"
   ],
-  "calls": [ 
-  ],
-  "storage": [
-    "ZenlinkProtocol.PairStatuses",
-    "ZenlinkProtocol.LiquidityPairs"
-  ]
+  "calls": [],
+  "storage": ["ZenlinkProtocol.PairStatuses", "ZenlinkProtocol.LiquidityPairs"]
 }
-x

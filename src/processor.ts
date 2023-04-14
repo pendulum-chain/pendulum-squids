@@ -5,19 +5,14 @@ import {Store, TypeormDatabase} from "@subsquid/typeorm-store"
 import {In} from "typeorm"
 import {Account, Transfer} from "./model"
 import {BalancesTransferEvent} from "./types/events"
+import { config } from "./config"
 
 
 const DataSelection = { data: { event: true } } as const
 
 
 const processor = new SubstrateBatchProcessor()
-    .setDataSource({
-        // Lookup archive by the network name in the Subsquid registry
-        //archive: lookupArchive("kusama", {release: "FireSquid"})
-
-        // Use archive created by archive/docker-compose.yml
-        archive: lookupArchive('kusama', {release: 'FireSquid'} )
-    })
+    .setDataSource(config.dataSource)
     .addEvent('ZenlinkProtocol.LiquidityAdded', DataSelection)
     .addEvent('ZenlinkProtocol.LiquidityRemoved', DataSelection)
     .addEvent('ZenlinkProtocol.AssetSwap', DataSelection)

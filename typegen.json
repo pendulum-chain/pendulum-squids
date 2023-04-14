@@ -1,11 +1,17 @@
 {
   "outDir": "src/types",
-  "specVersions": "https://kusama.archive.subsquid.io/graphql",
+  "specVersions": "https://amplitude.archive.subsquid.io/graphql",
   "events": [
-    "Balances.Transfer"
+    "Balances.Transfer",
+    "ZenlinkProtocol.AssetSwap",
+    "ZenlinkProtocol.LiquidityAdded",
+    "ZenlinkProtocol.LiquidityRemoved"
   ],
   "calls": [ 
   ],
   "storage": [
+    "ZenlinkProtocol.PairStatuses",
+    "ZenlinkProtocol.LiquidityPairs"
   ]
 }
+x

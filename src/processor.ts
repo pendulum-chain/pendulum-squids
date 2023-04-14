@@ -6,7 +6,7 @@ import { In } from "typeorm"
 import { Account, Transfer } from "./model"
 import { BalancesTransferEvent } from "./types/events"
 import { config } from "./config"
-import { handleAssetSwap, handleLiquidityAdded, handleLiquidityRemoved, handleBalanceTransfer } from './mappings/protocol'
+import { handleAssetSwap, handleLiquidityAdded, handleLiquidityRemoved } from './mappings/protocol'
 
 
 const DataSelection = { data: { event: true } } as const
@@ -31,7 +31,9 @@ const processor = new SubstrateBatchProcessor()
 
 
 type Item = BatchProcessorItem<typeof processor>
-type Ctx = BatchContext<Store, Item>
+export type Ctx = BatchContext<Store, Item>
+
+
 
 
 processor.run(new TypeormDatabase(), async ctx => {
@@ -99,7 +101,19 @@ async function getTransfers(ctx: Ctx): Promise<TransferEvent[]> {
                     await handleAssetSwap({ ...ctx, block: block.header, event: item.event })
                     break
                 case 'Balances.Transfer':
-                    let rec = await handleBalanceTransfer({ ...ctx, block: block.header, event: item.event })
+                    let e = new BalancesTransferEvent(ctx, item.event)
+                    let rec: { from: Uint8Array, to: Uint8Array, amount: bigint }
+                    if (e.isV1020) {
+                        let [from, to, amount] = e.asV1020
+                        rec = { from, to, amount }
+                    } else if (e.isV1050) {
+                        let [from, to, amount] = e.asV1050
+                        rec = { from, to, amount }
+                    } else if (e.isV9130) {
+                        rec = { ...e.asV9130 }
+                    } else {
+                        throw new Error('Unsupported spec')
+                    }
                     transfers.push({
                         id: item.event.id,
                         blockNumber: block.header.height,
@@ -129,3 +143,4 @@ function getAccount(m: Map<string, Account>, id: string): Account {
     }
     return acc
 }
+

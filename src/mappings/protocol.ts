@@ -7,6 +7,7 @@ import {
   ZenlinkProtocolAssetSwapEvent,
   ZenlinkProtocolLiquidityAddedEvent,
   ZenlinkProtocolLiquidityRemovedEvent,
+  BalancesTransferEvent
 } from "../types/events";
 import { convertTokenToDecimal } from "../utils/helpers";
 import { sortAssets } from "../utils/sort";
@@ -29,7 +30,6 @@ import {
   updateTokenDayData,
   updateZenlinkInfo
 } from "../utils/updates";
-import { BalancesTransferEvent } from "./types/events"
 
 
 export async function handleLiquiditySync(ctx: EventHandlerContext, pair: Pair) {
@@ -470,21 +470,5 @@ export async function handleAssetSwap(ctx: EventHandlerContext) {
   }
 }
 
-export async function handleBalanceTransfer(ctx: EventHandlerContext) {
-  let e = new BalancesTransferEvent(ctx, ctx.event)
-  let rec: { from: Uint8Array, to: Uint8Array, amount: bigint }
-  if (e.isV1020) {
-    let [from, to, amount] = e.asV1020
-    rec = { from, to, amount }
-  } else if (e.isV1050) {
-    let [from, to, amount] = e.asV1050
-    rec = { from, to, amount }
-  } else if (e.isV9130) {
-    rec = e.asV9130
-  } else {
-    throw new Error('Unsupported spec')
-  }
-  return rec;
-}
 
 

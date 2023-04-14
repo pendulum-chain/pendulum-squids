@@ -26,3 +26,5 @@ export interface ProcessorConfig {
   dataSource: Parameters<SubstrateProcessor<Store>['setDataSource']>[0]
   blockRange?: Parameters<SubstrateProcessor<Store>['setBlockRange']>[0]
 }
+
+

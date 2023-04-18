@@ -18,9 +18,9 @@ coverage/
 .vscode/
 .env
 .DS_Store
-.package-lock.json
 # Ignore lib/ directory
 lib/*
-src/model/generated/*
-.gitignore
 .env
+
+# IDE files
+/.idea

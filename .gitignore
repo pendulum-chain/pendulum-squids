@@ -16,11 +16,9 @@ coverage/
 
 # Ignore specific files or directories
 .vscode/
-.env
 .DS_Store
 # Ignore lib/ directory
 lib/*
-.env
 
 # IDE files
 /.idea

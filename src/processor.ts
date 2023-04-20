@@ -1,42 +1,69 @@
-import { lookupArchive } from "@subsquid/archive-registry"
+import {lookupArchive} from "@subsquid/archive-registry"
 import * as ss58 from "@subsquid/ss58"
-import { BatchContext, BatchProcessorItem, SubstrateBatchProcessor } from "@subsquid/substrate-processor"
-import { Store, TypeormDatabase } from "@subsquid/typeorm-store"
-import { In } from "typeorm"
-import { Account, Transfer } from "./model"
-import { BalancesTransferEvent } from "./types/events"
-import { config } from "./config"
-import { handleAssetSwap, handleLiquidityAdded, handleLiquidityRemoved } from './mappings/protocol'
+import {BatchContext, BatchProcessorItem, SubstrateBatchProcessor} from "@subsquid/substrate-processor"
+import {Store, TypeormDatabase} from "@subsquid/typeorm-store"
+import {In} from "typeorm"
+import {Account, Transfer} from "./model"
+import {BalancesTransferEvent} from "./types/events"
+import {config} from "./config"
+import {
+    handleFarmingCharged,
+    handleFarmingClaimed,
+    handleFarmingDeposited,
+    handleFarmingGaugeWithdrawn,
+    handleFarmingPoolClosed,
+    handleFarmingPoolCreated,
+    handleFarmingPoolEdited,
+    handleFarmingPoolKilled,
+    handleFarmingPoolReset,
+    handleFarmingWithdrawClaimed,
+    handleFarmingWithdrawn
+} from "./mappings/farming/handle"
+import {handleAssetSwap, handleLiquidityAdded, handleLiquidityRemoved} from './mappings/protocol'
+import {handleTokenDeposited, handleTokenTransfer, handleTokenWithdrawn} from "./mappings/token"
+import { TOKEN_EVENT_TYPE } from "./types"
 
-
-const DataSelection = { data: { event: true } } as const
-
+const DataSelection = {data: {event: true}} as const
 
 const processor = new SubstrateBatchProcessor()
     .setDataSource(config.dataSource)
+    // Zenlink
     .addEvent('ZenlinkProtocol.LiquidityAdded', DataSelection)
     .addEvent('ZenlinkProtocol.LiquidityRemoved', DataSelection)
     .addEvent('ZenlinkProtocol.AssetSwap', DataSelection)
-    .addEvent('Balances.Transfer', {
-        data: {
-            event: {
-                args: true,
-                extrinsic: {
-                    hash: true,
-                    fee: true
-                }
-            }
-        }
-    } as const)
+    // farming
+    .addEvent('Farming.FarmingPoolCreated', DataSelection)
+    .addEvent('Farming.FarmingPoolReset', DataSelection)
+    .addEvent('Farming.FarmingPoolClosed', DataSelection)
+    .addEvent('Farming.FarmingPoolKilled', DataSelection)
+    .addEvent('Farming.FarmingPoolEdited', DataSelection)
+    .addEvent('Farming.Charged', DataSelection)
+    .addEvent('Farming.Deposited', DataSelection)
+    .addEvent('Farming.Withdrawn', DataSelection)
+    .addEvent('Farming.Claimed', DataSelection)
+    .addEvent('Farming.WithdrawClaimed', DataSelection)
+    .addEvent('Farming.GaugeWithdrawn', DataSelection)
+    .addEvent('Farming.AllForceGaugeClaimed', DataSelection)
+    .addEvent('Farming.PartiallyForceGaugeClaimed', DataSelection)
+    .addEvent('Farming.AllRetired', DataSelection)
+    .addEvent('Farming.PartiallyRetired', DataSelection)
+    .addEvent('Farming.RetireLimitSet', DataSelection)
 
+    .addEvent('Balances.Transfer', DataSelection)
+
+    .addEvent('Tokens.Transfer', DataSelection)
+    .addEvent('Tokens.Deposited', DataSelection)
+    .addEvent('Tokens.Withdrawn', DataSelection)
+    .addEvent('Tokens.BalanceSet', DataSelection)
+    .addEvent('Currencies.Transferred', DataSelection)
+    .addEvent('Currencies.Deposited', DataSelection)
+    .addEvent('Currencies.Withdrawn', DataSelection)
 
 type Item = BatchProcessorItem<typeof processor>
 export type Ctx = BatchContext<Store, Item>
 
-
-
-
 processor.run(new TypeormDatabase(), async ctx => {
+    // TODO clean this up and move elsewhere
     let transfersData = await getTransfers(ctx)
 
     let accountIds = new Set<string>()
@@ -45,14 +72,14 @@ processor.run(new TypeormDatabase(), async ctx => {
         accountIds.add(t.to)
     }
 
-    let accounts = await ctx.store.findBy(Account, { id: In([...accountIds]) }).then(accounts => {
+    let accounts = await ctx.store.findBy(Account, {id: In([...accountIds])}).then(accounts => {
         return new Map(accounts.map(a => [a.id, a]))
     })
 
     let transfers: Transfer[] = []
 
     for (let t of transfersData) {
-        let { id, blockNumber, timestamp, extrinsicHash, amount, fee } = t
+        let {id, blockNumber, timestamp, extrinsicHash, amount, fee} = t
 
         let from = getAccount(accounts, t.from)
         let to = getAccount(accounts, t.to)
@@ -73,7 +100,6 @@ processor.run(new TypeormDatabase(), async ctx => {
     await ctx.store.insert(transfers)
 })
 
-
 interface TransferEvent {
     id: string
     blockNumber: number
@@ -85,32 +111,104 @@ interface TransferEvent {
     fee?: bigint
 }
 
-
 async function getTransfers(ctx: Ctx): Promise<TransferEvent[]> {
     let transfers: TransferEvent[] = []
     for (let block of ctx.blocks) {
         for (let item of block.items) {
             switch (item.name) {
+                case 'Currencies.Deposited':
+                    await handleTokenDeposited({
+                        ...ctx,
+                        block: block.header,
+                        event: item.event
+                    }, TOKEN_EVENT_TYPE.Currencies)
+                    break
+                case 'Currencies.Withdrawn':
+                    await handleTokenWithdrawn({
+                        ...ctx,
+                        block: block.header,
+                        event: item.event
+                    }, TOKEN_EVENT_TYPE.Currencies)
+                    break
+                case 'Currencies.Transferred':
+                    await handleTokenTransfer({
+                        ...ctx,
+                        block: block.header,
+                        event: item.event
+                    }, TOKEN_EVENT_TYPE.Currencies)
+                    break
+                case 'Tokens.Deposited':
+                    await handleTokenDeposited({
+                        ...ctx,
+                        block: block.header,
+                        event: item.event
+                    }, TOKEN_EVENT_TYPE.Tokens)
+                    break
+                case 'Tokens.Withdrawn':
+                    await handleTokenWithdrawn({
+                        ...ctx,
+                        block: block.header,
+                        event: item.event
+                    }, TOKEN_EVENT_TYPE.Tokens)
+                    break
+                case 'Tokens.Transfer':
+                    await handleTokenTransfer({...ctx, block: block.header, event: item.event}, TOKEN_EVENT_TYPE.Tokens)
+                    break
                 case 'ZenlinkProtocol.LiquidityAdded':
-                    await handleLiquidityAdded({ ...ctx, block: block.header, event: item.event })
+                    await handleLiquidityAdded({...ctx, block: block.header, event: item.event})
                     break
                 case 'ZenlinkProtocol.LiquidityRemoved':
-                    await handleLiquidityRemoved({ ...ctx, block: block.header, event: item.event })
+                    await handleLiquidityRemoved({...ctx, block: block.header, event: item.event})
                     break
                 case 'ZenlinkProtocol.AssetSwap':
-                    await handleAssetSwap({ ...ctx, block: block.header, event: item.event })
+                    await handleAssetSwap({...ctx, block: block.header, event: item.event})
+                    break
+                // farming
+                case 'Farming.FarmingPoolCreated':
+                    await handleFarmingPoolCreated({...ctx, block: block.header, event: item.event})
+                    break
+                case 'Farming.FarmingPoolReset':
+                    await handleFarmingPoolReset({...ctx, block: block.header, event: item.event})
+                    break
+                case 'Farming.FarmingPoolClosed':
+                    await handleFarmingPoolClosed({...ctx, block: block.header, event: item.event})
+                    break
+                case 'Farming.FarmingPoolKilled':
+                    await handleFarmingPoolKilled({...ctx, block: block.header, event: item.event})
+                    break
+                case 'Farming.FarmingPoolEdited':
+                    await handleFarmingPoolEdited({...ctx, block: block.header, event: item.event})
+                    break
+                case 'Farming.Charged':
+                    await handleFarmingCharged({...ctx, block: block.header, event: item.event})
+                    break
+                case 'Farming.Deposited':
+                    await handleFarmingDeposited({...ctx, block: block.header, event: item.event})
+                    break
+                case 'Farming.Withdrawn':
+                    await handleFarmingWithdrawn({...ctx, block: block.header, event: item.event})
+                    break
+                case 'Farming.Claimed':
+                    await handleFarmingClaimed({...ctx, block: block.header, event: item.event})
+                    break
+                case 'Farming.WithdrawClaimed':
+                    await handleFarmingWithdrawClaimed({...ctx, block: block.header, event: item.event})
+                    break
+                case 'Farming.GaugeWithdrawn':
+                    await handleFarmingGaugeWithdrawn({...ctx, block: block.header, event: item.event})
                     break
                 case 'Balances.Transfer':
+                    // TODO maybe extract this to another function
                     let e = new BalancesTransferEvent(ctx, item.event)
                     let rec: { from: Uint8Array, to: Uint8Array, amount: bigint }
                     if (e.isV1020) {
                         let [from, to, amount] = e.asV1020
-                        rec = { from, to, amount }
+                        rec = {from, to, amount}
                     } else if (e.isV1050) {
                         let [from, to, amount] = e.asV1050
-                        rec = { from, to, amount }
+                        rec = {from, to, amount}
                     } else if (e.isV9130) {
-                        rec = { ...e.asV9130 }
+                        rec = {...e.asV9130}
                     } else {
                         throw new Error('Unsupported spec')
                     }
@@ -132,7 +230,6 @@ async function getTransfers(ctx: Ctx): Promise<TransferEvent[]> {
     }
     return transfers
 }
-
 
 function getAccount(m: Map<string, Account>, id: string): Account {
     let acc = m.get(id)

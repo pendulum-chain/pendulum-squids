@@ -16,7 +16,7 @@ export interface TokenBase {
   decimals: number
 }
 
-export enum TOEKN_EVENT_TYPE {
+export enum TOKEN_EVENT_TYPE {
   Currencies,
   Tokens
 }
@@ -26,5 +26,3 @@ export interface ProcessorConfig {
   dataSource: Parameters<SubstrateProcessor<Store>['setDataSource']>[0]
   blockRange?: Parameters<SubstrateProcessor<Store>['setBlockRange']>[0]
 }
-
-

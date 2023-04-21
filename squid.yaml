@@ -1,7 +1,7 @@
 manifestVersion: subsquid.io/v0.1
 name: squid-amplitude
 version: 1
-description: 'The very first squid from manifest  '
+description: 'Amplitude Kusama Squid'
 build: 
 deploy:
   addons:

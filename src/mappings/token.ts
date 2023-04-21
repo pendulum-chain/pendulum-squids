@@ -43,7 +43,7 @@ export async function handleTokenDeposited(ctx: EventHandlerContext, type: TOKEN
     let event
     if (type === TOKEN_EVENT_TYPE.Currencies) {
         const _event = new CurrenciesDepositedEvent(ctx, ctx.event)
-        if (_event.isV802) {
+        if (_event.is) {
             event = {currencyId: _event.asV802[0], who: _event.asV802[1], amount: _event.asV802[2]}
         } else if (_event.isV906) {
             event = {currencyId: _event.asV906[0], who: _event.asV906[1], amount: _event.asV906[2]}
@@ -58,12 +58,10 @@ export async function handleTokenDeposited(ctx: EventHandlerContext, type: TOKEN
         }
     } else {
         const _event = new TokensDepositedEvent(ctx, ctx.event)
-        if (_event.isV944) {
-            event = _event.asV944
-        } else if (_event.isV956) {
-            event = _event.asV956
-        } else if (_event.isV962) {
-            event = _event.asV962
+        if (_event.isV3) {
+            event = _event.asV3
+        } else if (_event.isV8) {
+            event = _event.asV8
         }
     }
 
@@ -150,12 +148,10 @@ export async function handleTokenWithdrawn(ctx: EventHandlerContext, type: TOKEN
         }
     } else {
         const _event = new TokensWithdrawnEvent(ctx, ctx.event)
-        if (_event.isV944) {
-            event = _event.asV944
-        } else if (_event.isV956) {
-            event = _event.asV956
-        } else if (_event.isV962) {
-            event = _event.asV962
+        if (_event.isV3) {
+            event = _event.asV3
+        } else if (_event.isV8) {
+            event = _event.asV8
         }
     }
 
@@ -295,42 +291,10 @@ export async function handleTokenTransfer(ctx: EventHandlerContext, type: TOKEN_
         }
     } else {
         const _event = new TokensTransferEvent(ctx, ctx.event)
-        if (_event.isV802) {
-            event = {
-                currencyId: _event.asV802[0],
-                from: _event.asV802[1],
-                to: _event.asV802[2],
-                amount: _event.asV802[3]
-            }
-        } else if (_event.isV906) {
-            event = {
-                currencyId: _event.asV906[0],
-                from: _event.asV906[1],
-                to: _event.asV906[2],
-                amount: _event.asV906[3]
-            }
-        } else if (_event.isV916) {
-            event = {
-                currencyId: _event.asV916[0],
-                from: _event.asV916[1],
-                to: _event.asV916[2],
-                amount: _event.asV916[3]
-            }
-        } else if (_event.isV920) {
-            event = {
-                currencyId: _event.asV920[0],
-                from: _event.asV920[1],
-                to: _event.asV920[2],
-                amount: _event.asV920[3]
-            }
-        } else if (_event.isV925) {
-            event = _event.asV925
-        } else if (_event.isV932) {
-            event = _event.asV932
-        } else if (_event.isV956) {
-            event = _event.asV956
-        } else if (_event.isV962) {
-            event = _event.asV962
+        if (_event.isV3) {
+            event = _event.asV3
+        } else if (_event.isV8) {
+            event = _event.asV8
         }
     }
 

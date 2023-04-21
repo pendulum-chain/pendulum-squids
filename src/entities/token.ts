@@ -1,17 +1,15 @@
 import { TOKEN_METADATA_MAP, ZERO_BD } from "../constants";
 import { Token } from "../model";
 import { EventHandlerContext } from "../types";
-import { AssetRegistryCurrencyMetadatasStorage } from "../types/storage";
-import { AssetId } from "../types/v906";
 import { addressFromAsset, getTotalIssuance, u8a2s, zenlinkAssetIdToCurrencyId } from "../utils/token";
-import * as v956 from '../types/v956'
-import * as v962 from '../types/v962'
+import {AssetId} from "../types/v7";
 
 export async function getOrCreateToken(ctx: EventHandlerContext, asset: AssetId): Promise<Token | undefined> {
   const address = addressFromAsset(asset)
   let token = await ctx.store.get(Token, address)
 
   if (!token) {
+    // TODO figure out if we should add this metadatas storage pallet to our runtime as well
     const metadataStorage = new AssetRegistryCurrencyMetadatasStorage(ctx, ctx.block)
     let metaddata
 

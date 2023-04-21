@@ -1,5 +1,5 @@
 import { getPair } from "../entities/pair";
-import { getFactory, getTransaction, getZLKInfo } from "../entities/utils";
+import { getFactory, getTransaction } from "../entities/utils";
 import { Big as BigDecimal } from 'big.js'
 import { Bundle, Burn, Mint, Pair, Swap, Transaction, User } from "../model";
 import { EventHandlerContext } from "../types";
@@ -141,8 +141,7 @@ export async function handleLiquidityAdded(ctx: EventHandlerContext) {
   const mint = await ctx.store.get(Mint, mints[mints.length - 1])
   if (!mint) return
   const _event = new ZenlinkProtocolLiquidityAddedEvent(ctx, ctx.event)
-  if (_event.isV902) return
-  const event = _event.asV906
+  const event = _event.asV7
 
   const [asset0, asset1] = sortAssets([event[1], event[2]])
 
@@ -205,8 +204,7 @@ export async function handleLiquidityRemoved(ctx: EventHandlerContext) {
   const burn = await ctx.store.get(Burn, burns[burns.length - 1])
   if (!burn) return
   const _event = new ZenlinkProtocolLiquidityRemovedEvent(ctx, ctx.event)
-  if (_event.isV902) return
-  const event = _event.asV906
+  const event = _event.asV7
 
   const [asset0, asset1] = sortAssets([event[2], event[3]])
 
@@ -279,8 +277,7 @@ export async function handleAssetSwap(ctx: EventHandlerContext) {
   const txHash = ctx.event.extrinsic?.hash
   if (!txHash) return
   const _event = new ZenlinkProtocolAssetSwapEvent(ctx, ctx.event)
-  if (_event.isV902) return
-  const event = _event.asV906
+  const event = _event.asV7
   const path = event[2]
   const amounts = event[3]
   const sender = codec(config.prefix).encode(event[0])

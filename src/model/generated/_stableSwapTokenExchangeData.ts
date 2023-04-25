@@ -1,5 +1,5 @@
-import assert from "assert"
-import * as marshal from "./marshal"
+import assert from 'assert'
+import * as marshal from './marshal'
 
 export class StableSwapTokenExchangeData {
     public readonly isTypeOf = 'StableSwapTokenExchangeData'
@@ -9,7 +9,10 @@ export class StableSwapTokenExchangeData {
     private _soldId!: bigint
     private _tokensSold!: bigint
 
-    constructor(props?: Partial<Omit<StableSwapTokenExchangeData, 'toJSON'>>, json?: any) {
+    constructor(
+        props?: Partial<Omit<StableSwapTokenExchangeData, 'toJSON'>>,
+        json?: any
+    ) {
         Object.assign(this, props)
         if (json != null) {
             this._buyer = marshal.bytes.fromJSON(json.buyer)

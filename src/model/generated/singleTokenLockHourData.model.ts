@@ -1,6 +1,12 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
-import * as marshal from "./marshal"
-import {SingleTokenLock} from "./singleTokenLock.model"
+import {
+    Entity as Entity_,
+    Column as Column_,
+    PrimaryColumn as PrimaryColumn_,
+    ManyToOne as ManyToOne_,
+    Index as Index_,
+} from 'typeorm'
+import * as marshal from './marshal'
+import { SingleTokenLock } from './singleTokenLock.model'
 
 @Entity_()
 export class SingleTokenLockHourData {
@@ -11,19 +17,22 @@ export class SingleTokenLockHourData {
     @PrimaryColumn_()
     id!: string
 
-    @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+    @Column_('numeric', {
+        transformer: marshal.bigintTransformer,
+        nullable: false,
+    })
     hourStartUnix!: bigint
 
     @Index_()
-    @ManyToOne_(() => SingleTokenLock, {nullable: true})
+    @ManyToOne_(() => SingleTokenLock, { nullable: true })
     singleTokenLock!: SingleTokenLock
 
-    @Column_("text", {nullable: false})
+    @Column_('text', { nullable: false })
     totalLiquidity!: string
 
-    @Column_("text", {nullable: false})
+    @Column_('text', { nullable: false })
     totalLiquidityUSD!: string
 
-    @Column_("text", {nullable: false})
+    @Column_('text', { nullable: false })
     totalLiquidityETH!: string
 }

@@ -2,9 +2,9 @@
 
 ## Prerequisites
 
-* node 16.x
-* docker
-* npm -- note that `yarn` package manager is not supported
+-   node 16.x
+-   docker
+-   npm -- note that `yarn` package manager is not supported
 
 ## Quickly running the sample
 
@@ -26,7 +26,7 @@ sqd up
 sqd process
 
 # 5. The command above will block the terminal
-#    being busy with fetching the chain data, 
+#    being busy with fetching the chain data,
 #    transforming and storing it in the target database.
 #
 #    To start the graphql server open the separate terminal

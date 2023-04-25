@@ -1,4 +1,4 @@
-import { ZERO_BD } from "../constants";
+import { ZERO_BD } from '../constants'
 import {
     Bundle,
     Factory,
@@ -10,13 +10,15 @@ import {
     TokenDayData,
     ZenlinkDayInfo,
     ZenlinkInfo,
-} from "../model";
-import { EventHandlerContext } from "../types";
+} from '../model'
+import { EventHandlerContext } from '../types'
 import { Big as BigDecimal } from 'big.js'
-import { getZenlinkInfo } from "../entities/utils";
+import { getZenlinkInfo } from '../entities/utils'
 
-export async function updateFactoryDayData(ctx: EventHandlerContext): Promise<FactoryDayData> {
-    const factory = (await ctx.store.get(Factory, '1'))
+export async function updateFactoryDayData(
+    ctx: EventHandlerContext
+): Promise<FactoryDayData> {
+    const factory = await ctx.store.get(Factory, '1')
     const { timestamp } = ctx.block
     const dayID = parseInt((timestamp / 86400000).toString(), 10)
     const dayStartTimestamp = Number(dayID) * 86400000
@@ -29,18 +31,23 @@ export async function updateFactoryDayData(ctx: EventHandlerContext): Promise<Fa
             dailyVolumeETH: ZERO_BD.toString(),
             totalVolumeUSD: ZERO_BD.toString(),
             totalVolumeETH: ZERO_BD.toString(),
-            dailyVolumeUntracked: ZERO_BD.toString()
+            dailyVolumeUntracked: ZERO_BD.toString(),
         })
     }
-    factoryDayData.totalLiquidityUSD = factory?.totalLiquidityUSD || ZERO_BD.toString()
-    factoryDayData.totalLiquidityETH = factory?.totalLiquidityETH || ZERO_BD.toString()
+    factoryDayData.totalLiquidityUSD =
+        factory?.totalLiquidityUSD || ZERO_BD.toString()
+    factoryDayData.totalLiquidityETH =
+        factory?.totalLiquidityETH || ZERO_BD.toString()
     factoryDayData.txCount = factory?.txCount || 0
     await ctx.store.save(factoryDayData)
     await updateZenlinkDayInfo(ctx)
     return factoryDayData
 }
 
-export async function updatePairDayData(ctx: EventHandlerContext, pair: Pair): Promise<PairDayData> {
+export async function updatePairDayData(
+    ctx: EventHandlerContext,
+    pair: Pair
+): Promise<PairDayData> {
     const { timestamp } = ctx.block
     const dayID = parseInt((timestamp / 86400000).toString(), 10)
     const dayStartTimestamp = Number(dayID) * 86400000
@@ -57,7 +64,7 @@ export async function updatePairDayData(ctx: EventHandlerContext, pair: Pair): P
             dailyVolumeToken0: ZERO_BD.toString(),
             dailyVolumeToken1: ZERO_BD.toString(),
             dailyVolumeUSD: ZERO_BD.toString(),
-            dailyTxns: 0
+            dailyTxns: 0,
         })
     }
     pairDayData.totalSupply = pair.totalSupply
@@ -69,7 +76,10 @@ export async function updatePairDayData(ctx: EventHandlerContext, pair: Pair): P
     return pairDayData
 }
 
-export async function updatePairHourData(ctx: EventHandlerContext, pair: Pair): Promise<PairHourData> {
+export async function updatePairHourData(
+    ctx: EventHandlerContext,
+    pair: Pair
+): Promise<PairHourData> {
     const { timestamp } = ctx.block
     const hourIndex = parseInt((timestamp / 3600000).toString(), 10)
     const hourStartUnix = Number(hourIndex) * 3600000
@@ -83,7 +93,7 @@ export async function updatePairHourData(ctx: EventHandlerContext, pair: Pair): 
             hourlyVolumeToken0: ZERO_BD.toString(),
             hourlyVolumeToken1: ZERO_BD.toString(),
             hourlyVolumeUSD: ZERO_BD.toString(),
-            hourlyTxns: 0
+            hourlyTxns: 0,
         })
     }
     pairHourData.totalSupply = pair.totalSupply
@@ -110,24 +120,34 @@ export async function updateTokenDayData(
             id: tokenDayID,
             date: new Date(dayStartTimestamp),
             token,
-            priceUSD: BigDecimal(token.derivedETH).times(bundle.ethPrice).toString(),
+            priceUSD: BigDecimal(token.derivedETH)
+                .times(bundle.ethPrice)
+                .toString(),
             dailyVolumeToken: ZERO_BD.toString(),
             dailyVolumeETH: ZERO_BD.toString(),
             dailyVolumeUSD: ZERO_BD.toString(),
             dailyTxns: 0,
-            totalLiquidityUSD: ZERO_BD.toString()
+            totalLiquidityUSD: ZERO_BD.toString(),
         })
     }
-    tokenDayData.priceUSD = BigDecimal(token.derivedETH).times(bundle.ethPrice).toFixed(6)
+    tokenDayData.priceUSD = BigDecimal(token.derivedETH)
+        .times(bundle.ethPrice)
+        .toFixed(6)
     tokenDayData.totalLiquidityToken = token.totalLiquidity
-    tokenDayData.totalLiquidityETH = BigDecimal(token.totalLiquidity).times(token.derivedETH).toString()
-    tokenDayData.totalLiquidityUSD = BigDecimal(tokenDayData.totalLiquidityETH).times(bundle.ethPrice).toFixed(6)
+    tokenDayData.totalLiquidityETH = BigDecimal(token.totalLiquidity)
+        .times(token.derivedETH)
+        .toString()
+    tokenDayData.totalLiquidityUSD = BigDecimal(tokenDayData.totalLiquidityETH)
+        .times(bundle.ethPrice)
+        .toFixed(6)
     tokenDayData.dailyTxns += 1
     await ctx.store.save(tokenDayData)
     return tokenDayData
 }
 
-export async function updateZenlinkDayInfo(ctx: EventHandlerContext): Promise<ZenlinkDayInfo> {
+export async function updateZenlinkDayInfo(
+    ctx: EventHandlerContext
+): Promise<ZenlinkDayInfo> {
     const { timestamp } = ctx.block
     const dayID = parseInt((timestamp / 86400000).toString(), 10)
     const dayStartTimestamp = Number(dayID) * 86400000
@@ -158,8 +178,9 @@ export async function updateZenlinkDayInfo(ctx: EventHandlerContext): Promise<Ze
     return zenlinkDayInfo
 }
 
-
-export async function updateZenlinkInfo(ctx: EventHandlerContext): Promise<ZenlinkInfo> {
+export async function updateZenlinkInfo(
+    ctx: EventHandlerContext
+): Promise<ZenlinkInfo> {
     const zenlinkInfo = await getZenlinkInfo(ctx)
     const { factory } = zenlinkInfo
     zenlinkInfo.totalTvlUSD = BigDecimal(factory?.totalLiquidityUSD || '0')
@@ -168,7 +189,7 @@ export async function updateZenlinkInfo(ctx: EventHandlerContext): Promise<Zenli
     zenlinkInfo.totalVolumeUSD = BigDecimal(factory?.totalVolumeUSD || '0')
         // .add(stableSwapInfo.totalVolumeUSD)
         .toFixed(6)
-    zenlinkInfo.txCount = (factory?.txCount || 0)
+    zenlinkInfo.txCount = factory?.txCount || 0
     zenlinkInfo.updatedDate = new Date(ctx.block.timestamp)
     await ctx.store.save(zenlinkInfo)
     return zenlinkInfo

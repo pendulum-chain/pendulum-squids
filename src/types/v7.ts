@@ -1,4 +1,4 @@
-import type {Result, Option} from './support'
+import type { Result, Option } from './support'
 
 export interface AssetId {
     chainId: number
@@ -6,7 +6,10 @@ export interface AssetId {
     assetIndex: bigint
 }
 
-export type PairStatus = PairStatus_Trading | PairStatus_Bootstrap | PairStatus_Disable
+export type PairStatus =
+    | PairStatus_Trading
+    | PairStatus_Bootstrap
+    | PairStatus_Disable
 
 export interface PairStatus_Trading {
     __kind: 'Trading'

@@ -1,4 +1,4 @@
-import type {Result, Option} from './support'
+import type { Result, Option } from './support'
 
 export interface AccountInfo {
     nonce: number

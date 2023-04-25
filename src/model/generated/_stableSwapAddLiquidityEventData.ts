@@ -1,21 +1,31 @@
-import assert from "assert"
-import * as marshal from "./marshal"
+import assert from 'assert'
+import * as marshal from './marshal'
 
 export class StableSwapAddLiquidityEventData {
     public readonly isTypeOf = 'StableSwapAddLiquidityEventData'
     private _provider!: Uint8Array
-    private _tokenAmounts!: (bigint)[]
-    private _fees!: (bigint)[]
+    private _tokenAmounts!: bigint[]
+    private _fees!: bigint[]
     private _invariant!: bigint | undefined | null
     private _lpTokenSupply!: bigint
 
-    constructor(props?: Partial<Omit<StableSwapAddLiquidityEventData, 'toJSON'>>, json?: any) {
+    constructor(
+        props?: Partial<Omit<StableSwapAddLiquidityEventData, 'toJSON'>>,
+        json?: any
+    ) {
         Object.assign(this, props)
         if (json != null) {
             this._provider = marshal.bytes.fromJSON(json.provider)
-            this._tokenAmounts = marshal.fromList(json.tokenAmounts, val => marshal.bigint.fromJSON(val))
-            this._fees = marshal.fromList(json.fees, val => marshal.bigint.fromJSON(val))
-            this._invariant = json.invariant == null ? undefined : marshal.bigint.fromJSON(json.invariant)
+            this._tokenAmounts = marshal.fromList(json.tokenAmounts, (val) =>
+                marshal.bigint.fromJSON(val)
+            )
+            this._fees = marshal.fromList(json.fees, (val) =>
+                marshal.bigint.fromJSON(val)
+            )
+            this._invariant =
+                json.invariant == null
+                    ? undefined
+                    : marshal.bigint.fromJSON(json.invariant)
             this._lpTokenSupply = marshal.bigint.fromJSON(json.lpTokenSupply)
         }
     }
@@ -29,21 +39,21 @@ export class StableSwapAddLiquidityEventData {
         this._provider = value
     }
 
-    get tokenAmounts(): (bigint)[] {
+    get tokenAmounts(): bigint[] {
         assert(this._tokenAmounts != null, 'uninitialized access')
         return this._tokenAmounts
     }
 
-    set tokenAmounts(value: (bigint)[]) {
+    set tokenAmounts(value: bigint[]) {
         this._tokenAmounts = value
     }
 
-    get fees(): (bigint)[] {
+    get fees(): bigint[] {
         assert(this._fees != null, 'uninitialized access')
         return this._fees
     }
 
-    set fees(value: (bigint)[]) {
+    set fees(value: bigint[]) {
         this._fees = value
     }
 
@@ -68,9 +78,14 @@ export class StableSwapAddLiquidityEventData {
         return {
             isTypeOf: this.isTypeOf,
             provider: marshal.bytes.toJSON(this.provider),
-            tokenAmounts: this.tokenAmounts.map((val: any) => marshal.bigint.toJSON(val)),
+            tokenAmounts: this.tokenAmounts.map((val: any) =>
+                marshal.bigint.toJSON(val)
+            ),
             fees: this.fees.map((val: any) => marshal.bigint.toJSON(val)),
-            invariant: this.invariant == null ? undefined : marshal.bigint.toJSON(this.invariant),
+            invariant:
+                this.invariant == null
+                    ? undefined
+                    : marshal.bigint.toJSON(this.invariant),
             lpTokenSupply: marshal.bigint.toJSON(this.lpTokenSupply),
         }
     }

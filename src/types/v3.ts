@@ -1,4 +1,4 @@
-import type {Result, Option} from './support'
+import type { Result, Option } from './support'
 
 export type CurrencyId = CurrencyId_Native | CurrencyId_XCM
 
@@ -17,7 +17,24 @@ export interface Type_360 {
     frozen: bigint
 }
 
-export type ForeignCurrencyId = ForeignCurrencyId_KSM | ForeignCurrencyId_KAR | ForeignCurrencyId_AUSD | ForeignCurrencyId_BNC | ForeignCurrencyId_VsKSM | ForeignCurrencyId_HKO | ForeignCurrencyId_MOVR | ForeignCurrencyId_SDN | ForeignCurrencyId_KINT | ForeignCurrencyId_KBTC | ForeignCurrencyId_GENS | ForeignCurrencyId_XOR | ForeignCurrencyId_TEER | ForeignCurrencyId_KILT | ForeignCurrencyId_PHA | ForeignCurrencyId_ZTG | ForeignCurrencyId_USD
+export type ForeignCurrencyId =
+    | ForeignCurrencyId_KSM
+    | ForeignCurrencyId_KAR
+    | ForeignCurrencyId_AUSD
+    | ForeignCurrencyId_BNC
+    | ForeignCurrencyId_VsKSM
+    | ForeignCurrencyId_HKO
+    | ForeignCurrencyId_MOVR
+    | ForeignCurrencyId_SDN
+    | ForeignCurrencyId_KINT
+    | ForeignCurrencyId_KBTC
+    | ForeignCurrencyId_GENS
+    | ForeignCurrencyId_XOR
+    | ForeignCurrencyId_TEER
+    | ForeignCurrencyId_KILT
+    | ForeignCurrencyId_PHA
+    | ForeignCurrencyId_ZTG
+    | ForeignCurrencyId_USD
 
 export interface ForeignCurrencyId_KSM {
     __kind: 'KSM'

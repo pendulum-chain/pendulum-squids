@@ -1,12 +1,15 @@
-import assert from "assert"
-import * as marshal from "./marshal"
+import assert from 'assert'
+import * as marshal from './marshal'
 
 export class StableSwapNewFeeEventData {
     public readonly isTypeOf = 'StableSwapNewFeeEventData'
     private _swapFee!: bigint
     private _adminFee!: bigint
 
-    constructor(props?: Partial<Omit<StableSwapNewFeeEventData, 'toJSON'>>, json?: any) {
+    constructor(
+        props?: Partial<Omit<StableSwapNewFeeEventData, 'toJSON'>>,
+        json?: any
+    ) {
         Object.assign(this, props)
         if (json != null) {
             this._swapFee = marshal.bigint.fromJSON(json.swapFee)

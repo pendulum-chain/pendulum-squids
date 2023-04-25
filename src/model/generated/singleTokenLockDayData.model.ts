@@ -1,5 +1,11 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
-import {SingleTokenLock} from "./singleTokenLock.model"
+import {
+    Entity as Entity_,
+    Column as Column_,
+    PrimaryColumn as PrimaryColumn_,
+    ManyToOne as ManyToOne_,
+    Index as Index_,
+} from 'typeorm'
+import { SingleTokenLock } from './singleTokenLock.model'
 
 @Entity_()
 export class SingleTokenLockDayData {
@@ -11,18 +17,18 @@ export class SingleTokenLockDayData {
     id!: string
 
     @Index_()
-    @ManyToOne_(() => SingleTokenLock, {nullable: true})
+    @ManyToOne_(() => SingleTokenLock, { nullable: true })
     singleTokenLock!: SingleTokenLock
 
-    @Column_("timestamp with time zone", {nullable: false})
+    @Column_('timestamp with time zone', { nullable: false })
     date!: Date
 
-    @Column_("text", {nullable: false})
+    @Column_('text', { nullable: false })
     totalLiquidity!: string
 
-    @Column_("text", {nullable: false})
+    @Column_('text', { nullable: false })
     totalLiquidityUSD!: string
 
-    @Column_("text", {nullable: false})
+    @Column_('text', { nullable: false })
     totalLiquidityETH!: string
 }

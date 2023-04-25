@@ -1,4 +1,8 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_} from "typeorm"
+import {
+    Entity as Entity_,
+    Column as Column_,
+    PrimaryColumn as PrimaryColumn_,
+} from 'typeorm'
 
 @Entity_()
 export class Bundle {
@@ -12,6 +16,6 @@ export class Bundle {
     /**
      * BigDecimal
      */
-    @Column_("text", {nullable: false})
+    @Column_('text', { nullable: false })
     ethPrice!: string
 }

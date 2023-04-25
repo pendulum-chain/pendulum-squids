@@ -1,7 +1,12 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, OneToMany as OneToMany_} from "typeorm"
-import {LiquidityPosition} from "./liquidityPosition.model"
-import {StableSwapLiquidityPosition} from "./stableSwapLiquidityPosition.model"
-import {StakePosition} from "./stakePosition.model"
+import {
+    Entity as Entity_,
+    Column as Column_,
+    PrimaryColumn as PrimaryColumn_,
+    OneToMany as OneToMany_,
+} from 'typeorm'
+import { LiquidityPosition } from './liquidityPosition.model'
+import { StableSwapLiquidityPosition } from './stableSwapLiquidityPosition.model'
+import { StakePosition } from './stakePosition.model'
 
 @Entity_()
 export class User {
@@ -12,18 +17,18 @@ export class User {
     @PrimaryColumn_()
     id!: string
 
-    @OneToMany_(() => LiquidityPosition, e => e.user)
+    @OneToMany_(() => LiquidityPosition, (e) => e.user)
     liquidityPositions!: LiquidityPosition[]
 
-    @OneToMany_(() => StableSwapLiquidityPosition, e => e.user)
+    @OneToMany_(() => StableSwapLiquidityPosition, (e) => e.user)
     stableSwapLiquidityPositions!: StableSwapLiquidityPosition[]
 
-    @OneToMany_(() => StakePosition, e => e.user)
+    @OneToMany_(() => StakePosition, (e) => e.user)
     stakePositions!: StakePosition[]
 
     /**
      * BigDecimal
      */
-    @Column_("text", {nullable: false})
+    @Column_('text', { nullable: false })
     usdSwapped!: string
 }

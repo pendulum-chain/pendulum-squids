@@ -1,4 +1,4 @@
-import type {Result, Option} from './support'
+import type { Result, Option } from './support'
 
 export type CurrencyId = CurrencyId_Native | CurrencyId_XCM | CurrencyId_Stellar
 

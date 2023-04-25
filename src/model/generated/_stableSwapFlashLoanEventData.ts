@@ -1,18 +1,23 @@
-import assert from "assert"
-import * as marshal from "./marshal"
+import assert from 'assert'
+import * as marshal from './marshal'
 
 export class StableSwapFlashLoanEventData {
     public readonly isTypeOf = 'StableSwapFlashLoanEventData'
     private _caller!: Uint8Array
     private _receiver!: Uint8Array
-    private _amountsOut!: (bigint)[]
+    private _amountsOut!: bigint[]
 
-    constructor(props?: Partial<Omit<StableSwapFlashLoanEventData, 'toJSON'>>, json?: any) {
+    constructor(
+        props?: Partial<Omit<StableSwapFlashLoanEventData, 'toJSON'>>,
+        json?: any
+    ) {
         Object.assign(this, props)
         if (json != null) {
             this._caller = marshal.bytes.fromJSON(json.caller)
             this._receiver = marshal.bytes.fromJSON(json.receiver)
-            this._amountsOut = marshal.fromList(json.amountsOut, val => marshal.bigint.fromJSON(val))
+            this._amountsOut = marshal.fromList(json.amountsOut, (val) =>
+                marshal.bigint.fromJSON(val)
+            )
         }
     }
 
@@ -34,12 +39,12 @@ export class StableSwapFlashLoanEventData {
         this._receiver = value
     }
 
-    get amountsOut(): (bigint)[] {
+    get amountsOut(): bigint[] {
         assert(this._amountsOut != null, 'uninitialized access')
         return this._amountsOut
     }
 
-    set amountsOut(value: (bigint)[]) {
+    set amountsOut(value: bigint[]) {
         this._amountsOut = value
     }
 
@@ -48,7 +53,9 @@ export class StableSwapFlashLoanEventData {
             isTypeOf: this.isTypeOf,
             caller: marshal.bytes.toJSON(this.caller),
             receiver: marshal.bytes.toJSON(this.receiver),
-            amountsOut: this.amountsOut.map((val: any) => marshal.bigint.toJSON(val)),
+            amountsOut: this.amountsOut.map((val: any) =>
+                marshal.bigint.toJSON(val)
+            ),
         }
     }
 }

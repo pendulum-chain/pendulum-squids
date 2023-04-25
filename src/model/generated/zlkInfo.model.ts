@@ -1,5 +1,9 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_} from "typeorm"
-import * as marshal from "./marshal"
+import {
+    Entity as Entity_,
+    Column as Column_,
+    PrimaryColumn as PrimaryColumn_,
+} from 'typeorm'
+import * as marshal from './marshal'
 
 @Entity_()
 export class ZLKInfo {
@@ -10,9 +14,12 @@ export class ZLKInfo {
     @PrimaryColumn_()
     id!: string
 
-    @Column_("timestamp with time zone", {nullable: false})
+    @Column_('timestamp with time zone', { nullable: false })
     updatedDate!: Date
 
-    @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+    @Column_('numeric', {
+        transformer: marshal.bigintTransformer,
+        nullable: false,
+    })
     burn!: bigint
 }

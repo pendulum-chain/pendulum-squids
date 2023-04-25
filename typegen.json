@@ -1,25 +1,26 @@
 {
-  "outDir": "src/types",
-  "specVersions": "https://amplitude.archive.subsquid.io/graphql",
-  "events": [
-    "Balances.Transfer",
-    "Tokens.Transfer",
-    "Tokens.Deposited",
-    "Tokens.Withdrawn",
-    "Tokens.BalanceSet",
-    "ZenlinkProtocol.AssetSwap",
-    "ZenlinkProtocol.LiquidityAdded",
-    "ZenlinkProtocol.LiquidityRemoved"
-  ],
-  "calls": [],
-  "storage": [
-    "System.Account",
-    "Balances.TotalIssuance",
-    "System.BlockHash",
-    "Timestamp.Now",
-    "Tokens.Accounts",
-    "Tokens.TotalIssuance",
-    "ZenlinkProtocol.PairStatuses",
-    "ZenlinkProtocol.LiquidityPairs"
-  ]
+    "outDir": "src/types",
+    "specVersions": "https://amplitude.archive.subsquid.io/graphql",
+    "events": [
+        "Balances.Transfer",
+
+        "Tokens.Transfer",
+        "Tokens.Deposited",
+        "Tokens.Withdrawn",
+        "Tokens.BalanceSet",
+        "ZenlinkProtocol.AssetSwap",
+        "ZenlinkProtocol.LiquidityAdded",
+        "ZenlinkProtocol.LiquidityRemoved"
+    ],
+    "calls": [],
+    "storage": [
+        "System.Account",
+        "Balances.TotalIssuance",
+        "System.BlockHash",
+        "Timestamp.Now",
+        "Tokens.Accounts",
+        "Tokens.TotalIssuance",
+        "ZenlinkProtocol.PairStatuses",
+        "ZenlinkProtocol.LiquidityPairs"
+    ]
 }

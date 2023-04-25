@@ -1,6 +1,12 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
-import {Transaction} from "./transaction.model"
-import {Pair} from "./pair.model"
+import {
+    Entity as Entity_,
+    Column as Column_,
+    PrimaryColumn as PrimaryColumn_,
+    ManyToOne as ManyToOne_,
+    Index as Index_,
+} from 'typeorm'
+import { Transaction } from './transaction.model'
+import { Pair } from './pair.model'
 
 @Entity_()
 export class Swap {
@@ -12,40 +18,40 @@ export class Swap {
     id!: string
 
     @Index_()
-    @ManyToOne_(() => Transaction, {nullable: true})
+    @ManyToOne_(() => Transaction, { nullable: true })
     transaction!: Transaction
 
-    @Column_("timestamp with time zone", {nullable: false})
+    @Column_('timestamp with time zone', { nullable: false })
     timestamp!: Date
 
     @Index_()
-    @ManyToOne_(() => Pair, {nullable: true})
+    @ManyToOne_(() => Pair, { nullable: true })
     pair!: Pair
 
-    @Column_("text", {nullable: false})
+    @Column_('text', { nullable: false })
     sender!: string
 
-    @Column_("text", {nullable: false})
+    @Column_('text', { nullable: false })
     from!: string
 
-    @Column_("text", {nullable: false})
+    @Column_('text', { nullable: false })
     amount0In!: string
 
-    @Column_("text", {nullable: false})
+    @Column_('text', { nullable: false })
     amount1In!: string
 
-    @Column_("text", {nullable: false})
+    @Column_('text', { nullable: false })
     amount0Out!: string
 
-    @Column_("text", {nullable: false})
+    @Column_('text', { nullable: false })
     amount1Out!: string
 
-    @Column_("text", {nullable: false})
+    @Column_('text', { nullable: false })
     to!: string
 
-    @Column_("int4", {nullable: true})
+    @Column_('int4', { nullable: true })
     logIndex!: number | undefined | null
 
-    @Column_("text", {nullable: false})
+    @Column_('text', { nullable: false })
     amountUSD!: string
 }

@@ -19,34 +19,43 @@ export type Option<T> =
 
 export interface Chain {
     getEventHash(eventName: string): string
+
     decodeEvent(event: Event): any
+
     getCallHash(name: string): string
+
     decodeCall(call: Call): any
+
     getStorageItemTypeHash(prefix: string, name: string): string | undefined
+
     getStorage(
         blockHash: string,
         prefix: string,
         name: string,
         ...args: any[]
     ): Promise<any>
+
     queryStorage2(
         blockHash: string,
         prefix: string,
         name: string,
         keyList?: any[]
     ): Promise<any[]>
+
     getKeys(
         blockHash: string,
         prefix: string,
         name: string,
         ...args: any[]
     ): Promise<any[]>
+
     getPairs(
         blockHash: string,
         prefix: string,
         name: string,
         ...args: any[]
     ): Promise<any[]>
+
     getKeysPaged(
         pageSize: number,
         blockHash: string,
@@ -54,6 +63,7 @@ export interface Chain {
         name: string,
         ...args: any[]
     ): AsyncIterable<any[]>
+
     getPairsPaged(
         pageSize: number,
         blockHash: string,
@@ -61,7 +71,9 @@ export interface Chain {
         name: string,
         ...args: any[]
     ): AsyncIterable<[key: any, value: any][]>
+
     getConstantTypeHash(pallet: string, name: string): string | undefined
+
     getConstant(pallet: string, name: string): any
 }
 

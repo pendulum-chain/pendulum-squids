@@ -1,6 +1,6 @@
 import { codec } from '@subsquid/ss58'
 import { EventHandlerContext } from '../types'
-import { Account, Mint, Transfer } from '../model'
+import { Transfer } from '../model'
 import { BalancesTransferEvent } from '../types/events'
 import { config } from '../config'
 

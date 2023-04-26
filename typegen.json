@@ -14,8 +14,8 @@
     ],
     "calls": [],
     "storage": [
-        "System.Account",
         "Balances.TotalIssuance",
+        "System.Account",
         "System.BlockHash",
         "Timestamp.Now",
         "Tokens.Accounts",

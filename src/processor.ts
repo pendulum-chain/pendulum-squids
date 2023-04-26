@@ -15,7 +15,6 @@ import {
     handleTokenTransfer,
     handleTokenWithdrawn,
 } from './mappings/token'
-import { TOKEN_EVENT_TYPE } from './types'
 import { handleBalanceTransfer } from './mappings/balances'
 
 const DataSelection = { data: { event: true } } as const
@@ -34,9 +33,6 @@ const processor = new SubstrateBatchProcessor()
     .addEvent('Tokens.Deposited', DataSelection)
     .addEvent('Tokens.Withdrawn', DataSelection)
     .addEvent('Tokens.BalanceSet', DataSelection)
-    .addEvent('Currencies.Transferred', DataSelection)
-    .addEvent('Currencies.Deposited', DataSelection)
-    .addEvent('Currencies.Withdrawn', DataSelection)
 
 type Item = BatchProcessorItem<typeof processor>
 export type Ctx = BatchContext<Store, Item>
@@ -45,61 +41,26 @@ processor.run(new TypeormDatabase(), async (ctx) => {
     for (let block of ctx.blocks) {
         for (let item of block.items) {
             switch (item.name) {
-                case 'Currencies.Deposited':
-                    await handleTokenDeposited(
-                        {
-                            ...ctx,
-                            block: block.header,
-                            event: item.event,
-                        },
-                        TOKEN_EVENT_TYPE.Currencies
-                    )
-                    break
-                case 'Currencies.Withdrawn':
-                    await handleTokenWithdrawn(
-                        {
-                            ...ctx,
-                            block: block.header,
-                            event: item.event,
-                        },
-                        TOKEN_EVENT_TYPE.Currencies
-                    )
-                    break
-                case 'Currencies.Transferred':
-                    await handleTokenTransfer(
-                        {
-                            ...ctx,
-                            block: block.header,
-                            event: item.event,
-                        },
-                        TOKEN_EVENT_TYPE.Currencies
-                    )
-                    break
                 case 'Tokens.Deposited':
-                    await handleTokenDeposited(
-                        {
-                            ...ctx,
-                            block: block.header,
-                            event: item.event,
-                        },
-                        TOKEN_EVENT_TYPE.Tokens
-                    )
+                    await handleTokenDeposited({
+                        ...ctx,
+                        block: block.header,
+                        event: item.event,
+                    })
                     break
                 case 'Tokens.Withdrawn':
-                    await handleTokenWithdrawn(
-                        {
-                            ...ctx,
-                            block: block.header,
-                            event: item.event,
-                        },
-                        TOKEN_EVENT_TYPE.Tokens
-                    )
+                    await handleTokenWithdrawn({
+                        ...ctx,
+                        block: block.header,
+                        event: item.event,
+                    })
                     break
                 case 'Tokens.Transfer':
-                    await handleTokenTransfer(
-                        { ...ctx, block: block.header, event: item.event },
-                        TOKEN_EVENT_TYPE.Tokens
-                    )
+                    await handleTokenTransfer({
+                        ...ctx,
+                        block: block.header,
+                        event: item.event,
+                    })
                     break
                 case 'ZenlinkProtocol.LiquidityAdded':
                     await handleLiquidityAdded({

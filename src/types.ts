@@ -15,10 +15,6 @@ export interface TokenBase {
     decimals: number
 }
 
-export enum TOKEN_EVENT_TYPE {
-    Currencies,
-    Tokens,
-}
 export interface ProcessorConfig {
     chainName: string
     prefix: number | string

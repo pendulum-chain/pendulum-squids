@@ -31,11 +31,16 @@ export enum CurrencyTypeEnum {
 export enum CurrencyIndexEnum {
     KSM = 0,
     USDT = 1,
+    XLM = 256,
 }
 
 export const currencyTokenSymbolMap: { [index: number]: string } = {
+    // XCM assets
     0: 'KSM',
     1: 'USDT',
+
+    // Stellar assets
+    256: 'XLM',
 }
 
 export const invertedTokenSymbolMap = invert(currencyTokenSymbolMap)
@@ -59,35 +64,44 @@ export function parseTokenType(assetIndex: number): string {
     return currencyKeyMap[assetU8]
 }
 
-export function zenlinkAssetIdToCurrencyId(asset: AssetId): any {
+export function zenlinkAssetIdToCurrencyId(asset: AssetId): CurrencyId {
     const assetIndex = Number(asset.assetIndex.toString())
-    const assetU8 = (assetIndex & 0x0000_0000_0000_ff00) >> 8
-    const tokenType = parseTokenType(assetIndex)
+    const tokenType = parseTokenType(assetIndex) as 'Stellar' | 'XCM' | 'Native'
     const assetSymbolIndex = assetIndex & 0x0000_0000_0000_000ff
 
-    if (TokenIndexMap[assetU8]) {
+    // For assets below u8::max(), we use the assetIndex as the XCM index
+    if (assetSymbolIndex < 256) {
         return {
-            __kind: tokenType,
+            __kind: 'XCM',
             value: assetSymbolIndex,
         }
     }
 
     const tokenSymbol = currencyTokenSymbolMap[assetSymbolIndex]
 
-    return {
-        __kind: tokenType,
-        value: {
-            __kind: tokenSymbol === 'ASG' ? 'BNC' : tokenSymbol,
-        },
+    if (tokenSymbol == 'XLM') {
+        return {
+            __kind: 'Stellar',
+            value: {
+                __kind: 'StellarNative',
+            },
+        }
+    } else {
+        const code = s2u8a(tokenSymbol)
+        // TODO fix me
+        const issuer = s2u8a('')
+        const stellarCurrencyKind =
+            code.length <= 4 ? 'AlphaNum4' : 'AlphaNum12'
+
+        return {
+            __kind: 'Stellar',
+            value: {
+                __kind: stellarCurrencyKind,
+                code,
+                issuer,
+            },
+        }
     }
-}
-
-export function currencyIdToAssetIndex(currency: CurrencyId): number {
-    const tokenType = CurrencyTypeEnum[currency.__kind]
-    const tokenIndex = CurrencyIndexEnum[(currency.value as TokenSymbol).__kind]
-
-    const assetIdIndex = parseToTokenIndex(tokenType, tokenIndex)
-    return assetIdIndex
 }
 
 export function u8a2s(u8a: Uint8Array) {
@@ -187,7 +201,7 @@ export async function getTokenBalance(
         if (tokenAccountsStorage.isV3) {
             result = await tokenAccountsStorage.asV3.get(
                 account,
-                assetId as v3.CurrencyId
+                assetId as unknown as v3.CurrencyId
             )
         } else if (tokenAccountsStorage.isV8) {
             result = await tokenAccountsStorage.asV8.get(
@@ -218,7 +232,7 @@ export async function getTotalIssuance(
         )
         if (tokenIssuanceStorage.isV3) {
             result = await tokenIssuanceStorage.asV3.get(
-                assetId as v3.CurrencyId
+                assetId as unknown as v3.CurrencyId
             )
         } else if (tokenIssuanceStorage.isV8) {
             result = await tokenIssuanceStorage.asV8.get(
@@ -247,7 +261,7 @@ export async function getTokenBurned(
         if (tokenAccountsStorage.isV3) {
             result = await tokenAccountsStorage.asV3.get(
                 account,
-                assetId as v3.CurrencyId
+                assetId as unknown as v3.CurrencyId
             )
         } else if (tokenAccountsStorage.isV8) {
             result = await tokenAccountsStorage.asV8.get(

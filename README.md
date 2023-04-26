@@ -40,6 +40,10 @@ The files in `src/types/*` and `src/model/*` are auto-generated and should not b
 You can generate the models with the following command:
 
 ```shell
+# Generate the models based on the schema.graphql file
+npx squid-typeorm-codegen
+
+# Generate the typescript types
 sqd build
 ```
 

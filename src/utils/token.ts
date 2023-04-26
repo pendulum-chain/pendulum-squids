@@ -11,77 +11,31 @@ import { AssetId } from '../types/v7'
 import { codec } from '@subsquid/ss58'
 import { config } from '../config'
 import { invert } from 'lodash'
-import * as v906 from '../types/v3'
-import * as v956 from '../types/v7'
-import * as v962 from '../types/v8'
+import * as v3 from '../types/v3'
+import * as v7 from '../types/v7'
+import * as v8 from '../types/v8'
 import { CurrencyId } from '../types/v8'
 
 export const currencyKeyMap: { [index: number]: string } = {
     0: 'Native',
-    1: 'VToken',
-    2: 'Token',
-    3: 'Stable',
-    4: 'VSToken',
-    5: 'VSBond',
-    6: 'LPToken',
-    7: 'ForeignAsset',
-    8: 'Token2',
-    9: 'VToken2',
-    10: 'VSToken2',
-    11: 'VSBond2',
-    12: 'StableLpToken',
+    1: 'XCM',
+    2: 'Stellar',
 }
 
 export enum CurrencyTypeEnum {
     Native = 0,
-    VToken = 1,
-    Token = 2,
-    Stable = 3,
-    VSToken = 4,
-    VSBond = 5,
-    LPToken = 6,
-    ForeignAsset = 7,
-    Token2 = 8,
-    VToken2 = 9,
-    VSToken2 = 10,
-    VSBond2 = 11,
-    StableLpToken = 12,
+    XCM = 1,
+    Stellar = 2,
 }
 
 export enum CurrencyIndexEnum {
-    ASG = 0,
-    BNC = 1,
-    KUSD = 2,
-    DOT = 3,
-    KSM = 4,
-    ETH = 5,
-    KAR = 6,
-    ZLK = 7,
-    PHA = 8,
-    RMRK = 9,
-    MOVR = 10,
-}
-
-export const TokenIndexMap: { [index: number]: string } = {
-    7: 'ForeignAsset',
-    8: 'Token2',
-    9: 'VToken2',
-    10: 'VSToken2',
-    12: 'StableLpToken',
+    KSM = 0,
+    USDT = 1,
 }
 
 export const currencyTokenSymbolMap: { [index: number]: string } = {
-    0: 'ASG',
-    1: 'BNC',
-    2: 'KUSD',
-    3: 'DOT',
-    4: 'KSM',
-    5: 'ETH',
-    6: 'KAR',
-    7: 'ZLK',
-    8: 'PHA',
-    9: 'RMRK',
-    10: 'MOVR',
+    0: 'KSM',
+    1: 'USDT',
 }
 
 export const invertedTokenSymbolMap = invert(currencyTokenSymbolMap)
@@ -130,14 +84,7 @@ export function zenlinkAssetIdToCurrencyId(asset: AssetId): any {
 
 export function currencyIdToAssetIndex(currency: CurrencyId): number {
     const tokenType = CurrencyTypeEnum[currency.__kind]
-    let tokenIndex
-
-    if (TokenIndexMap[tokenType]) {
-        tokenIndex = currency.value as number
-        return tokenIndex
-    }
-
-    tokenIndex = CurrencyIndexEnum[(currency.value as TokenSymbol).__kind]
+    const tokenIndex = CurrencyIndexEnum[(currency.value as TokenSymbol).__kind]
 
     const assetIdIndex = parseToTokenIndex(tokenType, tokenIndex)
     return assetIdIndex
@@ -186,7 +133,7 @@ export async function getPairAssetIdFromAssets(
             ctx.block
         )
         if (!pairsStorage.isExists) return undefined
-        pairAssetId = await pairsStorage.asV906.get(assets)
+        pairAssetId = await pairsStorage.asV7.get(assets)
         if (pairAssetId) {
             pairAssetIds.set(assetsId, pairAssetId)
         }
@@ -215,7 +162,7 @@ export async function getPairStatusFromAssets(
             ctx.block
         )
         if (!statusStorage.isExists) return [undefined, BigInt(0)]
-        const result = await statusStorage.asV906.get(assets)
+        const result = await statusStorage.asV7.get(assets)
         if (result.__kind === 'Trading') {
             pairAccount = codec(config.prefix).encode(result.value.pairAccount)
             pairAccounts.set(assetsId, pairAccount)
@@ -228,31 +175,26 @@ export async function getPairStatusFromAssets(
 
 export async function getTokenBalance(
     ctx: EventHandlerContext,
-    assetId: v962.CurrencyId,
+    assetId: CurrencyId,
     account: Uint8Array
 ) {
     let result
     if (assetId.__kind === 'Native') {
-        const systemAccountStorate = new SystemAccountStorage(ctx, ctx.block)
-        result = (await systemAccountStorate.asV1.get(account)).data
+        const systemAccountStorage = new SystemAccountStorage(ctx, ctx.block)
+        result = (await systemAccountStorage.asV1.get(account)).data
     } else {
         const tokenAccountsStorage = new TokensAccountsStorage(ctx, ctx.block)
-        if (tokenAccountsStorage.isV906) {
-        } else if (tokenAccountsStorage.isV906) {
-            result = await tokenAccountsStorage.asV906.get(
+        if (tokenAccountsStorage.isV3) {
+            result = await tokenAccountsStorage.asV3.get(
                 account,
-                assetId as v906.CurrencyId
+                assetId as v3.CurrencyId
             )
-        } else if (tokenAccountsStorage.isV956) {
-            result = await tokenAccountsStorage.asV956.get(
+        } else if (tokenAccountsStorage.isV8) {
+            result = await tokenAccountsStorage.asV8.get(
                 account,
-                assetId as v956.CurrencyId
+                assetId as v8.CurrencyId
             )
-        } else if (tokenAccountsStorage.isV962)
-            result = await tokenAccountsStorage.asV962.get(
-                account,
-                assetId as v962.CurrencyId
-            )
+        }
     }
 
     return result?.free
@@ -260,7 +202,7 @@ export async function getTokenBalance(
 
 export async function getTotalIssuance(
     ctx: EventHandlerContext,
-    assetId: v962.CurrencyId
+    assetId: v8.CurrencyId
 ) {
     let result
     if (assetId.__kind === 'Native') {
@@ -274,18 +216,15 @@ export async function getTotalIssuance(
             ctx,
             ctx.block
         )
-        if (tokenIssuanceStorage.isV906) {
-            result = await tokenIssuanceStorage.asV906.get(
-                assetId as v906.CurrencyId
+        if (tokenIssuanceStorage.isV3) {
+            result = await tokenIssuanceStorage.asV3.get(
+                assetId as v3.CurrencyId
             )
-        } else if (tokenIssuanceStorage.isV956) {
-            result = await tokenIssuanceStorage.asV956.get(
-                assetId as v956.CurrencyId
+        } else if (tokenIssuanceStorage.isV8) {
+            result = await tokenIssuanceStorage.asV8.get(
+                assetId as v8.CurrencyId
             )
-        } else if (tokenIssuanceStorage.isV962)
-            result = await tokenIssuanceStorage.asV962.get(
-                assetId as v962.CurrencyId
-            )
+        }
     }
 
     return result
@@ -293,7 +232,7 @@ export async function getTotalIssuance(
 
 export async function getTokenBurned(
     ctx: EventHandlerContext,
-    assetId: v962.CurrencyId,
+    assetId: v8.CurrencyId,
     account: Uint8Array
 ) {
     let block = {
@@ -301,8 +240,8 @@ export async function getTokenBurned(
     }
     let result
     if (assetId.__kind === 'Native') {
-        const systemAccountStorate = new SystemAccountStorage(ctx, block)
-        result = (await systemAccountStorate.asV1.get(account)).data
+        const systemAccountStorage = new SystemAccountStorage(ctx, block)
+        result = (await systemAccountStorage.asV1.get(account)).data
     } else {
         const tokenAccountsStorage = new TokensAccountsStorage(ctx, block)
         if (tokenAccountsStorage.isV3) {

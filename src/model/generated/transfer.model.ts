@@ -3,10 +3,8 @@ import {
     Column as Column_,
     PrimaryColumn as PrimaryColumn_,
     Index as Index_,
-    ManyToOne as ManyToOne_,
 } from 'typeorm'
 import * as marshal from './marshal'
-import { Account } from './account.model'
 
 @Entity_()
 export class Transfer {
@@ -29,13 +27,11 @@ export class Transfer {
     @Column_('text', { nullable: true })
     extrinsicHash!: string | undefined | null
 
-    @Index_()
-    @ManyToOne_(() => Account, { nullable: true })
-    from!: Account
+    @Column_('text', { nullable: false })
+    from!: string
 
-    @Index_()
-    @ManyToOne_(() => Account, { nullable: true })
-    to!: Account
+    @Column_('text', { nullable: false })
+    to!: string
 
     @Index_()
     @Column_('numeric', {

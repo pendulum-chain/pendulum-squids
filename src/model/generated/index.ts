@@ -1,4 +1,3 @@
-export * from './account.model'
 export * from './transfer.model'
 export * from './zenlinkInfo.model'
 export * from './factory.model'

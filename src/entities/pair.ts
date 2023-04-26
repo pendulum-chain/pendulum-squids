@@ -1,7 +1,7 @@
 import { ZERO_BD } from '../constants'
 import { Bundle, Factory, Pair } from '../model'
 import { EventHandlerContext } from '../types'
-import { AssetId } from '../types/v906'
+import { AssetId } from '../types/v7'
 import { addressFromAsset, getPairAssetIdFromAssets } from '../utils/token'
 import { getOrCreateToken } from './token'
 

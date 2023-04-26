@@ -17,38 +17,10 @@ export async function getOrCreateToken(
     let token = await ctx.store.get(Token, address)
 
     if (!token) {
-        // TODO figure out if we should add this metadatas storage pallet to our runtime as well
-        const metadataStorage = new AssetRegistryCurrencyMetadatasStorage(
-            ctx,
-            ctx.block
-        )
-        let metaddata
+        const metadata = TOKEN_METADATA_MAP[address]
 
-        if (!metadataStorage.isExists) {
-            metaddata = TOKEN_METADATA_MAP[address]
-        } else {
-            const currencyId = zenlinkAssetIdToCurrencyId(asset)
-            const result = metadataStorage.isV956
-                ? await metadataStorage.asV956.get(
-                      currencyId as v956.CurrencyId
-                  )
-                : metadataStorage.isV962
-                ? await metadataStorage.asV962.get(
-                      currencyId as v962.CurrencyId
-                  )
-                : undefined
-
-            if (result) {
-                metaddata = {
-                    symbol: u8a2s(result.symbol),
-                    name: u8a2s(result.name),
-                    decimals: result.decimals,
-                }
-            }
-        }
-
-        if (!metaddata) return undefined
-        const { name, symbol, decimals } = metaddata
+        if (!metadata) return undefined
+        const { name, symbol, decimals } = metadata
         const totalSupply = await getTotalIssuance(
             ctx,
             zenlinkAssetIdToCurrencyId(asset)

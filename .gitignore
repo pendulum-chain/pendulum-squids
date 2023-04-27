@@ -9,6 +9,7 @@ tmp/
 node_modules/
 *.js
 *.d.ts
+!db/migrations/*.js
 *.map
 
 # Ignore coverage reports

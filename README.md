@@ -54,3 +54,32 @@ run
 ```shell
 npx squid-substrate-typegen typegen.json
 ```
+
+### Database migrations
+
+When the schema changes, the underlying database needs to be updated as well.
+Before following the next steps, make sure that the database is clean and no other migration has been applied.
+So before generating the migrations, close the existing database (if any) and re-start it, by running:
+
+```shell
+# This will shut down the database
+sqd down
+# This will re-build the project
+sqd build
+# This will create a new database
+sqd up
+```
+
+Now, to generate the migrations, run:
+
+```shell
+# Build the project, remove any old migrations, then run `npx squid-typeorm-migration generate`
+sqd migration:generate
+
+# Run npx squid-typeorm-migration apply
+sqd migration:apply
+```
+
+This will generate a new migration file in `db/migrations`.
+You can replace the existing migrations with that new file.
+In fact, you probably have to delete all other migration files and only keep the latest one.

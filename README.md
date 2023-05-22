@@ -83,3 +83,25 @@ sqd migration:apply
 This will generate a new migration file in `db/migrations`.
 You can replace the existing migrations with that new file.
 In fact, you probably have to delete all other migration files and only keep the latest one.
+
+## Deployment
+
+To set up your machine for the squid deployment you should follow the steps
+in [this](https://docs.subsquid.io/deploy-squid/quickstart/) document.
+Deploying the squid is done by running the following command:
+
+```shell
+# Deploying the amplitude squid
+sqd deploy . -m squid-amplitude.yaml
+# Deploying the foucoco squid
+sqd deploy . -m squid-foucoco.yaml
+```
+
+The previous command will deploy the squid to a URL based on its name and version number.
+To switch between squid versions without downtime and updates of the downstream clients, there are production aliases.
+To deploy the squid to the production environment you should run the following command:
+
+```shell
+# Replace {version} with the version you define in the `squid.yaml` file
+sqd prod amplitude-squid@{version}
+```

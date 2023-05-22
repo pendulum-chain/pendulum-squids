@@ -7,6 +7,8 @@ deploy:
     addons:
         postgres:
     processor:
+        env:
+            NETWORK: 'amplitude'
         cmd:
             - node
             - lib/processor

@@ -1,6 +1,6 @@
 {
-    "outDir": "src/types",
-    "specVersions": "https://amplitude.archive.subsquid.io/graphql",
+    "outDir": "src/types/foucoco",
+    "specVersions": "https://foucoco.archive.subsquid.io/graphql",
     "events": [
         "Balances.Transfer",
 

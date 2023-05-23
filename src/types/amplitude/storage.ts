@@ -81,27 +81,17 @@ export class SystemAccountStorage extends StorageBase {
  */
 export interface SystemAccountStorageV1 {
     get(key: Uint8Array): Promise<v1.AccountInfo>
-
     getAll(): Promise<v1.AccountInfo[]>
-
     getMany(keys: Uint8Array[]): Promise<v1.AccountInfo[]>
-
     getKeys(): Promise<Uint8Array[]>
-
     getKeys(key: Uint8Array): Promise<Uint8Array[]>
-
     getKeysPaged(pageSize: number): AsyncIterable<Uint8Array[]>
-
     getKeysPaged(pageSize: number, key: Uint8Array): AsyncIterable<Uint8Array[]>
-
     getPairs(): Promise<[k: Uint8Array, v: v1.AccountInfo][]>
-
     getPairs(key: Uint8Array): Promise<[k: Uint8Array, v: v1.AccountInfo][]>
-
     getPairsPaged(
         pageSize: number
     ): AsyncIterable<[k: Uint8Array, v: v1.AccountInfo][]>
-
     getPairsPaged(
         pageSize: number,
         key: Uint8Array
@@ -141,25 +131,15 @@ export class SystemBlockHashStorage extends StorageBase {
  */
 export interface SystemBlockHashStorageV1 {
     get(key: number): Promise<Uint8Array>
-
     getAll(): Promise<Uint8Array[]>
-
     getMany(keys: number[]): Promise<Uint8Array[]>
-
     getKeys(): Promise<number[]>
-
     getKeys(key: number): Promise<number[]>
-
     getKeysPaged(pageSize: number): AsyncIterable<number[]>
-
     getKeysPaged(pageSize: number, key: number): AsyncIterable<number[]>
-
     getPairs(): Promise<[k: number, v: Uint8Array][]>
-
     getPairs(key: number): Promise<[k: number, v: Uint8Array][]>
-
     getPairsPaged(pageSize: number): AsyncIterable<[k: number, v: Uint8Array][]>
-
     getPairsPaged(
         pageSize: number,
         key: number
@@ -277,53 +257,39 @@ export class TokensAccountsStorage extends StorageBase {
  */
 export interface TokensAccountsStorageV3 {
     get(key1: Uint8Array, key2: v3.CurrencyId): Promise<v3.Type_360>
-
     getAll(): Promise<v3.Type_360[]>
-
     getMany(keys: [Uint8Array, v3.CurrencyId][]): Promise<v3.Type_360[]>
-
     getKeys(): Promise<[Uint8Array, v3.CurrencyId][]>
-
     getKeys(key1: Uint8Array): Promise<[Uint8Array, v3.CurrencyId][]>
-
     getKeys(
         key1: Uint8Array,
         key2: v3.CurrencyId
     ): Promise<[Uint8Array, v3.CurrencyId][]>
-
     getKeysPaged(pageSize: number): AsyncIterable<[Uint8Array, v3.CurrencyId][]>
-
     getKeysPaged(
         pageSize: number,
         key1: Uint8Array
     ): AsyncIterable<[Uint8Array, v3.CurrencyId][]>
-
     getKeysPaged(
         pageSize: number,
         key1: Uint8Array,
         key2: v3.CurrencyId
     ): AsyncIterable<[Uint8Array, v3.CurrencyId][]>
-
     getPairs(): Promise<[k: [Uint8Array, v3.CurrencyId], v: v3.Type_360][]>
-
     getPairs(
         key1: Uint8Array
     ): Promise<[k: [Uint8Array, v3.CurrencyId], v: v3.Type_360][]>
-
     getPairs(
         key1: Uint8Array,
         key2: v3.CurrencyId
     ): Promise<[k: [Uint8Array, v3.CurrencyId], v: v3.Type_360][]>
-
     getPairsPaged(
         pageSize: number
     ): AsyncIterable<[k: [Uint8Array, v3.CurrencyId], v: v3.Type_360][]>
-
     getPairsPaged(
         pageSize: number,
         key1: Uint8Array
     ): AsyncIterable<[k: [Uint8Array, v3.CurrencyId], v: v3.Type_360][]>
-
     getPairsPaged(
         pageSize: number,
         key1: Uint8Array,
@@ -341,53 +307,39 @@ export interface TokensAccountsStorageV3 {
  */
 export interface TokensAccountsStorageV8 {
     get(key1: Uint8Array, key2: v8.CurrencyId): Promise<v8.Type_452>
-
     getAll(): Promise<v8.Type_452[]>
-
     getMany(keys: [Uint8Array, v8.CurrencyId][]): Promise<v8.Type_452[]>
-
     getKeys(): Promise<[Uint8Array, v8.CurrencyId][]>
-
     getKeys(key1: Uint8Array): Promise<[Uint8Array, v8.CurrencyId][]>
-
     getKeys(
         key1: Uint8Array,
         key2: v8.CurrencyId
     ): Promise<[Uint8Array, v8.CurrencyId][]>
-
     getKeysPaged(pageSize: number): AsyncIterable<[Uint8Array, v8.CurrencyId][]>
-
     getKeysPaged(
         pageSize: number,
         key1: Uint8Array
     ): AsyncIterable<[Uint8Array, v8.CurrencyId][]>
-
     getKeysPaged(
         pageSize: number,
         key1: Uint8Array,
         key2: v8.CurrencyId
     ): AsyncIterable<[Uint8Array, v8.CurrencyId][]>
-
     getPairs(): Promise<[k: [Uint8Array, v8.CurrencyId], v: v8.Type_452][]>
-
     getPairs(
         key1: Uint8Array
     ): Promise<[k: [Uint8Array, v8.CurrencyId], v: v8.Type_452][]>
-
     getPairs(
         key1: Uint8Array,
         key2: v8.CurrencyId
     ): Promise<[k: [Uint8Array, v8.CurrencyId], v: v8.Type_452][]>
-
     getPairsPaged(
         pageSize: number
     ): AsyncIterable<[k: [Uint8Array, v8.CurrencyId], v: v8.Type_452][]>
-
     getPairsPaged(
         pageSize: number,
         key1: Uint8Array
     ): AsyncIterable<[k: [Uint8Array, v8.CurrencyId], v: v8.Type_452][]>
-
     getPairsPaged(
         pageSize: number,
         key1: Uint8Array,
@@ -446,30 +398,20 @@ export class TokensTotalIssuanceStorage extends StorageBase {
  */
 export interface TokensTotalIssuanceStorageV3 {
     get(key: v3.CurrencyId): Promise<bigint>
-
     getAll(): Promise<bigint[]>
-
     getMany(keys: v3.CurrencyId[]): Promise<bigint[]>
-
     getKeys(): Promise<v3.CurrencyId[]>
-
     getKeys(key: v3.CurrencyId): Promise<v3.CurrencyId[]>
-
     getKeysPaged(pageSize: number): AsyncIterable<v3.CurrencyId[]>
-
     getKeysPaged(
         pageSize: number,
         key: v3.CurrencyId
     ): AsyncIterable<v3.CurrencyId[]>
-
     getPairs(): Promise<[k: v3.CurrencyId, v: bigint][]>
-
     getPairs(key: v3.CurrencyId): Promise<[k: v3.CurrencyId, v: bigint][]>
-
     getPairsPaged(
         pageSize: number
     ): AsyncIterable<[k: v3.CurrencyId, v: bigint][]>
-
     getPairsPaged(
         pageSize: number,
         key: v3.CurrencyId
@@ -481,30 +423,20 @@ export interface TokensTotalIssuanceStorageV3 {
  */
 export interface TokensTotalIssuanceStorageV8 {
     get(key: v8.CurrencyId): Promise<bigint>
-
     getAll(): Promise<bigint[]>
-
     getMany(keys: v8.CurrencyId[]): Promise<bigint[]>
-
     getKeys(): Promise<v8.CurrencyId[]>
-
     getKeys(key: v8.CurrencyId): Promise<v8.CurrencyId[]>
-
     getKeysPaged(pageSize: number): AsyncIterable<v8.CurrencyId[]>
-
     getKeysPaged(
         pageSize: number,
         key: v8.CurrencyId
     ): AsyncIterable<v8.CurrencyId[]>
-
     getPairs(): Promise<[k: v8.CurrencyId, v: bigint][]>
-
     getPairs(key: v8.CurrencyId): Promise<[k: v8.CurrencyId, v: bigint][]>
-
     getPairsPaged(
         pageSize: number
     ): AsyncIterable<[k: v8.CurrencyId, v: bigint][]>
-
     getPairsPaged(
         pageSize: number,
         key: v8.CurrencyId
@@ -535,36 +467,26 @@ export class ZenlinkProtocolLiquidityPairsStorage extends StorageBase {
 
 export interface ZenlinkProtocolLiquidityPairsStorageV7 {
     get(key: [v7.AssetId, v7.AssetId]): Promise<v7.AssetId | undefined>
-
     getAll(): Promise<(v7.AssetId | undefined)[]>
-
     getMany(
         keys: [v7.AssetId, v7.AssetId][]
     ): Promise<(v7.AssetId | undefined)[]>
-
     getKeys(): Promise<[v7.AssetId, v7.AssetId][]>
-
     getKeys(key: [v7.AssetId, v7.AssetId]): Promise<[v7.AssetId, v7.AssetId][]>
-
     getKeysPaged(pageSize: number): AsyncIterable<[v7.AssetId, v7.AssetId][]>
-
     getKeysPaged(
         pageSize: number,
         key: [v7.AssetId, v7.AssetId]
     ): AsyncIterable<[v7.AssetId, v7.AssetId][]>
-
     getPairs(): Promise<
         [k: [v7.AssetId, v7.AssetId], v: v7.AssetId | undefined][]
     >
-
     getPairs(
         key: [v7.AssetId, v7.AssetId]
     ): Promise<[k: [v7.AssetId, v7.AssetId], v: v7.AssetId | undefined][]>
-
     getPairsPaged(
         pageSize: number
     ): AsyncIterable<[k: [v7.AssetId, v7.AssetId], v: v7.AssetId | undefined][]>
-
     getPairsPaged(
         pageSize: number,
         key: [v7.AssetId, v7.AssetId]
@@ -604,32 +526,22 @@ export class ZenlinkProtocolPairStatusesStorage extends StorageBase {
  */
 export interface ZenlinkProtocolPairStatusesStorageV7 {
     get(key: [v7.AssetId, v7.AssetId]): Promise<v7.PairStatus>
-
     getAll(): Promise<v7.PairStatus[]>
-
     getMany(keys: [v7.AssetId, v7.AssetId][]): Promise<v7.PairStatus[]>
-
     getKeys(): Promise<[v7.AssetId, v7.AssetId][]>
-
     getKeys(key: [v7.AssetId, v7.AssetId]): Promise<[v7.AssetId, v7.AssetId][]>
-
     getKeysPaged(pageSize: number): AsyncIterable<[v7.AssetId, v7.AssetId][]>
-
     getKeysPaged(
         pageSize: number,
         key: [v7.AssetId, v7.AssetId]
     ): AsyncIterable<[v7.AssetId, v7.AssetId][]>
-
     getPairs(): Promise<[k: [v7.AssetId, v7.AssetId], v: v7.PairStatus][]>
-
     getPairs(
         key: [v7.AssetId, v7.AssetId]
     ): Promise<[k: [v7.AssetId, v7.AssetId], v: v7.PairStatus][]>
-
     getPairsPaged(
         pageSize: number
     ): AsyncIterable<[k: [v7.AssetId, v7.AssetId], v: v7.PairStatus][]>
-
     getPairsPaged(
         pageSize: number,
         key: [v7.AssetId, v7.AssetId]

@@ -17,17 +17,13 @@ import {
     Transaction,
     User,
 } from '../model'
-import {
-    TokensDepositedEvent,
-    TokensTransferEvent,
-    TokensWithdrawnEvent,
-} from '../types/events'
+import events from '../types/events'
 
 export async function handleTokenDeposited(ctx: EventHandlerContext) {
     const transactionHash = ctx.event.extrinsic?.hash
     if (!transactionHash) return
     let event
-    const _event = new TokensDepositedEvent(ctx, ctx.event)
+    const _event = new events.TokensDepositedEvent(ctx, ctx.event)
     if (_event.isV3) {
         event = _event.asV3
     } else if (_event.isV8) {
@@ -41,7 +37,7 @@ export async function handleTokenWithdrawn(ctx: EventHandlerContext) {
     const transactionHash = ctx.event.extrinsic?.hash
     if (!transactionHash) return
 
-    const _event = new TokensWithdrawnEvent(ctx, ctx.event)
+    const _event = new events.TokensWithdrawnEvent(ctx, ctx.event)
     let event
     if (_event.isV3) {
         event = _event.asV3
@@ -54,7 +50,7 @@ export async function handleTokenWithdrawn(ctx: EventHandlerContext) {
 
 export async function handleTokenTransfer(ctx: EventHandlerContext) {
     let event
-    const _event = new TokensTransferEvent(ctx, ctx.event)
+    const _event = new events.TokensTransferEvent(ctx, ctx.event)
     if (_event.isV3) {
         event = _event.asV3
     } else if (_event.isV8) {

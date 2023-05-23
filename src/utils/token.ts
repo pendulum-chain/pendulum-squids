@@ -1,20 +1,9 @@
 import { EventHandlerContext } from '../types'
-import {
-    BalancesTotalIssuanceStorage,
-    SystemAccountStorage,
-    TokensAccountsStorage,
-    TokensTotalIssuanceStorage,
-    ZenlinkProtocolLiquidityPairsStorage,
-    ZenlinkProtocolPairStatusesStorage,
-} from '../types/storage'
-import { AssetId } from '../types/v7'
+import storage from '../types/storage'
+import { AssetId, CurrencyId } from '../types/common'
 import { codec } from '@subsquid/ss58'
 import { config } from '../config'
 import { invert } from 'lodash'
-import * as v3 from '../types/v3'
-import * as v7 from '../types/v7'
-import * as v8 from '../types/v8'
-import { CurrencyId } from '../types/v8'
 
 export const currencyKeyMap: { [index: number]: string } = {
     0: 'Native',
@@ -142,7 +131,7 @@ export async function getPairAssetIdFromAssets(
     if (pairAssetIds.has(assetsId)) {
         pairAssetId = pairAssetIds.get(assetsId)
     } else {
-        const pairsStorage = new ZenlinkProtocolLiquidityPairsStorage(
+        const pairsStorage = new storage.ZenlinkProtocolLiquidityPairsStorage(
             ctx,
             ctx.block
         )
@@ -171,7 +160,7 @@ export async function getPairStatusFromAssets(
         pairAccount = pairAccounts.get(assetsId)
         return [pairAccount!, BigInt(0)]
     } else {
-        const statusStorage = new ZenlinkProtocolPairStatusesStorage(
+        const statusStorage = new storage.ZenlinkProtocolPairStatusesStorage(
             ctx,
             ctx.block
         )
@@ -194,19 +183,25 @@ export async function getTokenBalance(
 ) {
     let result
     if (assetId.__kind === 'Native') {
-        const systemAccountStorage = new SystemAccountStorage(ctx, ctx.block)
+        const systemAccountStorage = new storage.SystemAccountStorage(
+            ctx,
+            ctx.block
+        )
         result = (await systemAccountStorage.asV1.get(account)).data
     } else {
-        const tokenAccountsStorage = new TokensAccountsStorage(ctx, ctx.block)
+        const tokenAccountsStorage = new storage.TokensAccountsStorage(
+            ctx,
+            ctx.block
+        )
         if (tokenAccountsStorage.isV3) {
             result = await tokenAccountsStorage.asV3.get(
                 account,
-                assetId as unknown as v3.CurrencyId
+                assetId as any
             )
         } else if (tokenAccountsStorage.isV8) {
             result = await tokenAccountsStorage.asV8.get(
                 account,
-                assetId as v8.CurrencyId
+                assetId as any
             )
         }
     }
@@ -216,28 +211,24 @@ export async function getTokenBalance(
 
 export async function getTotalIssuance(
     ctx: EventHandlerContext,
-    assetId: v8.CurrencyId
+    assetId: CurrencyId
 ) {
     let result
     if (assetId.__kind === 'Native') {
-        const balanceIssuanceStorage = new BalancesTotalIssuanceStorage(
+        const balanceIssuanceStorage = new storage.BalancesTotalIssuanceStorage(
             ctx,
             ctx.block
         )
         result = await balanceIssuanceStorage.asV1.get()
     } else {
-        const tokenIssuanceStorage = new TokensTotalIssuanceStorage(
+        const tokenIssuanceStorage = new storage.TokensTotalIssuanceStorage(
             ctx,
             ctx.block
         )
         if (tokenIssuanceStorage.isV3) {
-            result = await tokenIssuanceStorage.asV3.get(
-                assetId as unknown as v3.CurrencyId
-            )
+            result = await tokenIssuanceStorage.asV3.get(assetId as any)
         } else if (tokenIssuanceStorage.isV8) {
-            result = await tokenIssuanceStorage.asV8.get(
-                assetId as v8.CurrencyId
-            )
+            result = await tokenIssuanceStorage.asV8.get(assetId as any)
         }
     }
 
@@ -246,7 +237,7 @@ export async function getTotalIssuance(
 
 export async function getTokenBurned(
     ctx: EventHandlerContext,
-    assetId: v8.CurrencyId,
+    assetId: CurrencyId,
     account: Uint8Array
 ) {
     let block = {
@@ -254,19 +245,25 @@ export async function getTokenBurned(
     }
     let result
     if (assetId.__kind === 'Native') {
-        const systemAccountStorage = new SystemAccountStorage(ctx, block)
+        const systemAccountStorage = new storage.SystemAccountStorage(
+            ctx,
+            block
+        )
         result = (await systemAccountStorage.asV1.get(account)).data
     } else {
-        const tokenAccountsStorage = new TokensAccountsStorage(ctx, block)
+        const tokenAccountsStorage = new storage.TokensAccountsStorage(
+            ctx,
+            block
+        )
         if (tokenAccountsStorage.isV3) {
             result = await tokenAccountsStorage.asV3.get(
                 account,
-                assetId as unknown as v3.CurrencyId
+                assetId as any
             )
         } else if (tokenAccountsStorage.isV8) {
             result = await tokenAccountsStorage.asV8.get(
                 account,
-                assetId as v8.CurrencyId
+                assetId as any
             )
         }
     }

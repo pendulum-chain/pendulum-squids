@@ -1,0 +1,26 @@
+{
+    "outDir": "src/types/foucoco",
+    "specVersions": "https://foucoco.archive.subsquid.io/graphql",
+    "events": [
+        "Balances.Transfer",
+
+        "Tokens.Transfer",
+        "Tokens.Deposited",
+        "Tokens.Withdrawn",
+        "Tokens.BalanceSet",
+        "ZenlinkProtocol.AssetSwap",
+        "ZenlinkProtocol.LiquidityAdded",
+        "ZenlinkProtocol.LiquidityRemoved"
+    ],
+    "calls": [],
+    "storage": [
+        "Balances.TotalIssuance",
+        "System.Account",
+        "System.BlockHash",
+        "Timestamp.Now",
+        "Tokens.Accounts",
+        "Tokens.TotalIssuance",
+        "ZenlinkProtocol.PairStatuses",
+        "ZenlinkProtocol.LiquidityPairs"
+    ]
+}

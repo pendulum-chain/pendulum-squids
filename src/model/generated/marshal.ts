@@ -1,11 +1,9 @@
 import assert from 'assert'
 
-
 export interface Marshal<T, S> {
     fromJSON(value: unknown): T
     toJSON(value: T): S
 }
-
 
 export const string: Marshal<string, string> = {
     fromJSON(value: unknown): string {
@@ -17,9 +15,7 @@ export const string: Marshal<string, string> = {
     },
 }
 
-
 export const id = string
-
 
 export const int: Marshal<number, number> = {
     fromJSON(value: unknown): number {
@@ -31,7 +27,6 @@ export const int: Marshal<number, number> = {
     },
 }
 
-
 export const float: Marshal<number, number> = {
     fromJSON(value: unknown): number {
         assert(typeof value === 'number', 'invalid Float')
@@ -41,7 +36,6 @@ export const float: Marshal<number, number> = {
         return value
     },
 }
-
 
 export const boolean: Marshal<boolean, boolean> = {
     fromJSON(value: unknown): boolean {
@@ -53,7 +47,6 @@ export const boolean: Marshal<boolean, boolean> = {
     },
 }
 
-
 export const bigint: Marshal<bigint, string> = {
     fromJSON(value: unknown): bigint {
         assert(typeof value === 'string', 'invalid BigInt')
@@ -64,16 +57,23 @@ export const bigint: Marshal<bigint, string> = {
     },
 }
 
+export const bigdecimal: Marshal<any, string> = {
+    fromJSON(value: unknown): bigint {
+        assert(typeof value === 'string', 'invalid BigDecimal')
+        return decimal.BigDecimal(value)
+    },
+    toJSON(value: any): string {
+        return value.toString()
+    },
+}
 
 // credit - https://github.com/Urigo/graphql-scalars/blob/91b4ea8df891be8af7904cf84751930cc0c6613d/src/scalars/iso-date/validator.ts#L122
 const RFC_3339_REGEX =
     /^(\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]|60))(\.\d{1,})?([Z])$/
 
-
 function isIsoDateTimeString(s: string): boolean {
     return RFC_3339_REGEX.test(s)
 }
-
 
 export const datetime: Marshal<Date, string> = {
     fromJSON(value: unknown): Date {
@@ -86,7 +86,6 @@ export const datetime: Marshal<Date, string> = {
     },
 }
 
-
 export const bytes: Marshal<Uint8Array, string> = {
     fromJSON(value: unknown): Buffer {
         assert(typeof value === 'string', 'invalid Bytes')
@@ -98,23 +97,27 @@ export const bytes: Marshal<Uint8Array, string> = {
         if (Buffer.isBuffer(value)) {
             return '0x' + value.toString('hex')
         } else {
-            return '0x' + Buffer.from(value.buffer, value.byteOffset, value.byteLength).toString('hex')
+            return (
+                '0x' +
+                Buffer.from(
+                    value.buffer,
+                    value.byteOffset,
+                    value.byteLength
+                ).toString('hex')
+            )
         }
     },
 }
-
 
 export function fromList<T>(list: unknown, f: (val: unknown) => T): T[] {
     assert(Array.isArray(list))
     return list.map((val) => f(val))
 }
 
-
 export function nonNull<T>(val: T | undefined | null): T {
     assert(val != null, 'non-nullable value is null')
     return val
 }
-
 
 export const bigintTransformer = {
     to(x?: bigint) {
@@ -122,13 +125,45 @@ export const bigintTransformer = {
     },
     from(s?: string): bigint | undefined {
         return s == null ? undefined : BigInt(s)
-    }
+    },
 }
 
+export const floatTransformer = {
+    to(x?: number) {
+        return x?.toString()
+    },
+    from(s?: string): number | undefined {
+        return s == null ? undefined : Number(s)
+    },
+}
 
-export function enumFromJson<E extends object>(json: unknown, enumObject: E): E[keyof E] {
+export const bigdecimalTransformer = {
+    to(x?: any) {
+        return x?.toString()
+    },
+    from(s?: any): any | undefined {
+        return s == null ? undefined : decimal.BigDecimal(s)
+    },
+}
+
+export function enumFromJson<E extends object>(
+    json: unknown,
+    enumObject: E
+): E[keyof E] {
     assert(typeof json == 'string', 'invalid enum value')
     let val = (enumObject as any)[json]
     assert(typeof val == 'string', `invalid enum value`)
     return val as any
 }
+
+const decimal = {
+    get BigDecimal(): any {
+        throw new Error('Package `@subsquid/big-decimal` is not installed')
+    },
+}
+
+try {
+    Object.defineProperty(decimal, 'BigDecimal', {
+        value: require('@subsquid/big-decimal').BigDecimal,
+    })
+} catch (e) {}

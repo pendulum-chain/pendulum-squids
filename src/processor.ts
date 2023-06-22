@@ -40,58 +40,62 @@ export type Ctx = BatchContext<Store, Item>
 processor.run(new TypeormDatabase(), async (ctx) => {
     for (let block of ctx.blocks) {
         for (let item of block.items) {
-            switch (item.name) {
-                case 'Tokens.Deposited':
-                    await handleTokenDeposited({
-                        ...ctx,
-                        block: block.header,
-                        event: item.event,
-                    })
-                    break
-                case 'Tokens.Withdrawn':
-                    await handleTokenWithdrawn({
-                        ...ctx,
-                        block: block.header,
-                        event: item.event,
-                    })
-                    break
-                case 'Tokens.Transfer':
-                    await handleTokenTransfer({
-                        ...ctx,
-                        block: block.header,
-                        event: item.event,
-                    })
-                    break
-                case 'ZenlinkProtocol.LiquidityAdded':
-                    await handleLiquidityAdded({
-                        ...ctx,
-                        block: block.header,
-                        event: item.event,
-                    })
-                    break
-                case 'ZenlinkProtocol.LiquidityRemoved':
-                    await handleLiquidityRemoved({
-                        ...ctx,
-                        block: block.header,
-                        event: item.event,
-                    })
-                    break
-                case 'ZenlinkProtocol.AssetSwap':
-                    await handleAssetSwap({
-                        ...ctx,
-                        block: block.header,
-                        event: item.event,
-                    })
-                    break
-                case 'Balances.Transfer':
-                    await handleBalanceTransfer({
-                        ...ctx,
-                        block: block.header,
-                        event: item.event,
-                    })
-                    break
-                default:
-                    break
+            try {
+                switch (item.name) {
+                    case 'Tokens.Deposited':
+                        await handleTokenDeposited({
+                            ...ctx,
+                            block: block.header,
+                            event: item.event,
+                        })
+                        break
+                    case 'Tokens.Withdrawn':
+                        await handleTokenWithdrawn({
+                            ...ctx,
+                            block: block.header,
+                            event: item.event,
+                        })
+                        break
+                    case 'Tokens.Transfer':
+                        await handleTokenTransfer({
+                            ...ctx,
+                            block: block.header,
+                            event: item.event,
+                        })
+                        break
+                    case 'ZenlinkProtocol.LiquidityAdded':
+                        await handleLiquidityAdded({
+                            ...ctx,
+                            block: block.header,
+                            event: item.event,
+                        })
+                        break
+                    case 'ZenlinkProtocol.LiquidityRemoved':
+                        await handleLiquidityRemoved({
+                            ...ctx,
+                            block: block.header,
+                            event: item.event,
+                        })
+                        break
+                    case 'ZenlinkProtocol.AssetSwap':
+                        await handleAssetSwap({
+                            ...ctx,
+                            block: block.header,
+                            event: item.event,
+                        })
+                        break
+                    case 'Balances.Transfer':
+                        await handleBalanceTransfer({
+                            ...ctx,
+                            block: block.header,
+                            event: item.event,
+                        })
+                        break
+                    default:
+                        break
+                }
+            } catch (e) {
+                console.log('Error processing event... Skipping', e)
             }
         }
     }

@@ -1,6 +1,6 @@
 import { TokenBase } from './types'
 import { Big as BigDecimal } from 'big.js'
-import { AssetId } from './types/foucoco/v7'
+import { AssetId } from './types/common'
 import { zenlinkAssetIdToCurrencyId } from './utils/token'
 
 // Probably need our own tokens

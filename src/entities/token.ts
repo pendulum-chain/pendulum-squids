@@ -7,7 +7,7 @@ import {
     u8a2s,
     zenlinkAssetIdToCurrencyId,
 } from '../utils/token'
-import { AssetId } from '../types/foucoco/v7'
+import { AssetId } from '../types/common'
 
 export async function getOrCreateToken(
     ctx: EventHandlerContext,

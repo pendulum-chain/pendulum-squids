@@ -1,4 +1,4 @@
-# Amplitude Squid
+# Pendulum Squids
 
 ## Prerequisites
 

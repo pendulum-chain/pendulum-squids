@@ -41,10 +41,10 @@ You can generate the models with the following command:
 
 ```shell
 # Generate the models based on the schema.graphql file
-npx squid-typeorm-codegen
+sqd codegen
 
 # Generate the typescript types
-sqd build
+sqd typegen
 ```
 
 The types are generated automatically based on the contents of the `typegen.json` file.
@@ -52,7 +52,7 @@ If you want to change the events, storage or calls that are indexed, you need to
 run
 
 ```shell
-npx squid-substrate-typegen typegen.json
+sqd typegen
 ```
 
 ### Database migrations
@@ -104,4 +104,20 @@ To deploy the squid to the production environment you should run the following c
 ```shell
 # Replace {version} with the version you define in the `squid.yaml` file
 sqd prod amplitude-squid@{version}
+```
+
+## Organizations
+
+Squids within each Aquarium account are grouped into organizations. The first step to deploy a squid into an organization is to authenticate with the deployment key.
+
+To authenticate yourself in the terminal, run the following command:
+
+```shell
+sqd auth -r <your_deployment_key>
+```
+
+Here is an example of a command to deploy a squid into our organization using the foucoco squid manifest:
+
+```shell
+sqd deploy --org pendulum . -m squid-foucoco.yaml
 ```

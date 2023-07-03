@@ -101,6 +101,14 @@ Here is an example of a command to deploy a squid into our organization using th
 sqd deploy --org pendulum . -m squid-foucoco.yaml
 ```
 
+## List all the substrate Archives
+
+In order to list all the archives information, run the next command:
+
+```shell
+npx squid-archive-registry -t substrate
+```
+
 ## Development flow
 
 The first thing to do is to make changes in the schema of the squid and define entities that we would like to track. This changes are done in the `schema.graphql` file.

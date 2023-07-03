@@ -130,6 +130,18 @@ run
 sqd typegen
 ```
 
+In our case, we have two typegen files: `typegen-amplitude.json` and `typegen-foucoco.json`. The previous command should be replaced by
+
+```shell
+sqd typegen:amplitude
+```
+
+Or
+
+```shell
+sqd typegen:foucoco
+```
+
 Now it is time to start with the database migration. First, we need to make sure that the database is at blank state:
 
 ```shell

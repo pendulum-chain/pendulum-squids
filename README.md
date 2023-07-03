@@ -34,27 +34,6 @@ sqd process
 sqd serve
 ```
 
-## Development flow
-
-The files in `src/types/*` and `src/model/*` are auto-generated and should not be touched manually.
-You can generate the models with the following command:
-
-```shell
-# Generate the models based on the schema.graphql file
-sqd codegen
-
-# Generate the typescript types
-sqd typegen
-```
-
-The types are generated automatically based on the contents of the `typegen.json` file.
-If you want to change the events, storage or calls that are indexed, you need to update the `typegen.json` file and
-run
-
-```shell
-sqd typegen
-```
-
 ### Database migrations
 
 When the schema changes, the underlying database needs to be updated as well.
@@ -117,6 +96,52 @@ sqd auth -r <your_deployment_key>
 ```
 
 Here is an example of a command to deploy a squid into our organization using the foucoco squid manifest:
+
+```shell
+sqd deploy --org pendulum . -m squid-foucoco.yaml
+```
+
+## Development flow
+
+The first thing to do is to make changes in the schema of the squid and define entities that we would like to track. This changes are done in the `schema.graphql` file.
+
+The files in `src/types/*` and `src/model/*` are auto-generated and should not be touched manually.
+You can generate the models with the following command:
+
+```shell
+# Generate the models based on the schema.graphql file
+sqd codegen
+```
+
+The types are generated automatically based on the contents of the `typegen.json` file.
+If you want to change the events, storage or calls that are indexed, you need to update the `typegen.json` file and
+run
+
+```shell
+# Generate the typescript types
+sqd typegen
+```
+
+Now it is time to start with the database migration. First, we need to make sure that the database is at blank state:
+
+```shell
+sqd down
+sqd up
+```
+
+Then, we replace the old migrations with the new one. It is recommended to delete the old migration files before running this command.
+
+```shell
+sqd migration:generate
+```
+
+Finally we apply the migration.
+
+```shell
+sqd migration:apply
+```
+
+Now, to deploy the squid into an Aquarium organization, run the following command. This command is and example using the foucoco manifest.
 
 ```shell
 sqd deploy --org pendulum . -m squid-foucoco.yaml

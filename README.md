@@ -1,12 +1,14 @@
 # Pendulum Squids
 
+This repository contains the code for the subsquid indexers that we deploy for our three networks Pendulum, Amplitude, and Foucoco. 
+
 ## Prerequisites
 
 -   node 16.x
 -   docker
 -   npm -- note that `yarn` package manager is not supported
 
-## Quickly running the sample
+### Quickly running the sample
 
 Example commands below use [make(1)](https://www.gnu.org/software/make/).
 Please, have a look at commands in [Makefile](Makefile) if your platform doesn't support it.
@@ -32,6 +34,36 @@ sqd process
 #    To start the graphql server open the separate terminal
 #    and run
 sqd serve
+```
+
+## Context 
+
+### Organizations
+
+Squids within each Aquarium account are grouped into organizations. The first step to deploying a squid into an organization is to authenticate with the deployment key.
+
+To do this, first register/login to [Aquarium](https://app.subsquid.io/) and follow the instructions to get your deployment key.
+
+Note that in order to properly deploy the squids, you need to be part of the `pendulum` organization in subsquid.
+
+To authenticate yourself in the terminal, run the following command:
+
+```shell
+sqd auth -r <your_deployment_key>
+```
+
+Here is an example of a command to deploy a squid into our organization using the Foucoco squid manifest:
+
+```shell
+sqd deploy --org pendulum . -m squid-foucoco.yaml
+```
+
+### List all the Substrate archives
+
+In order to list all the archives information, run the next command:
+
+```shell
+npx squid-archive-registry -t substrate
 ```
 
 ### Database migrations
@@ -63,17 +95,17 @@ This will generate a new migration file in `db/migrations`.
 You can replace the existing migrations with that new file.
 In fact, you probably have to delete all other migration files and only keep the latest one.
 
-## Deployment
+### Deployment
 
 To set up your machine for the squid deployment you should follow the steps
 in [this](https://docs.subsquid.io/deploy-squid/quickstart/) document.
-Deploying the squid is done by running the following command:
+Deploying the squid to the `pendulum` organization is done by running the following command:
 
 ```shell
 # Deploying the amplitude squid
-sqd deploy . -m squid-amplitude.yaml
+sqd deploy --org pendulum . -m squid-amplitude.yaml
 # Deploying the foucoco squid
-sqd deploy . -m squid-foucoco.yaml
+sqd deploy --org pendulum . -m squid-foucoco.yaml
 ```
 
 The previous command will deploy the squid to a URL based on its name and version number.
@@ -83,35 +115,12 @@ To deploy the squid to the production environment you should run the following c
 ```shell
 # Replace {version} with the version you define in the `squid.yaml` file
 sqd prod amplitude-squid@{version}
-```
-
-## Organizations
-
-Squids within each Aquarium account are grouped into organizations. The first step to deploy a squid into an organization is to authenticate with the deployment key.
-
-To authenticate yourself in the terminal, run the following command:
-
-```shell
-sqd auth -r <your_deployment_key>
-```
-
-Here is an example of a command to deploy a squid into our organization using the foucoco squid manifest:
-
-```shell
-sqd deploy --org pendulum . -m squid-foucoco.yaml
-```
-
-## List all the substrate Archives
-
-In order to list all the archives information, run the next command:
-
-```shell
-npx squid-archive-registry -t substrate
+sqd prod foucoco-squid@{version}
 ```
 
 ## Development flow
 
-The first thing to do is to make changes in the schema of the squid and define entities that we would like to track. This changes are done in the `schema.graphql` file.
+The first thing to do is to make changes in the schema of the squid and define entities that we would like to track. These changes are done in the `schema.graphql` file.
 
 The files in `src/types/*` and `src/model/*` are auto-generated and should not be touched manually.
 You can generate the models with the following command:
@@ -155,7 +164,7 @@ Then, we replace the old migrations with the new one. It is recommended to delet
 sqd migration:generate
 ```
 
-Finally we apply the migration.
+Finally, we apply the migration.
 
 ```shell
 sqd migration:apply

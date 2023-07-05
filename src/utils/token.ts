@@ -16,7 +16,7 @@ export enum CurrencyTypeEnum {
     Native = 0,
     XCM = 1,
     Stellar = 2,
-    ZenlinkLPToken = 3,
+    ZenlinkLPToken = 6,
 }
 
 export enum CurrencyIndexEnum {
@@ -55,20 +55,20 @@ export function parseTokenType(assetIndex: number): string {
     return currencyKeyMap[assetU8]
 }
 
-export const USDT_ISSUER = [
+export const USDT_ISSUER: Uint8Array = new Uint8Array([
     59, 153, 17, 56, 14, 254, 152, 139, 160, 168, 144, 14, 177, 207, 228, 79,
     54, 111, 125, 190, 148, 107, 237, 7, 114, 64, 247, 246, 36, 223, 21, 197,
-]
+])
 
-export const BRL_ISSUER = [
+export const BRL_ISSUER: Uint8Array = new Uint8Array([
     234, 172, 104, 212, 208, 227, 123, 76, 36, 194, 83, 105, 22, 232, 48, 115,
     95, 3, 45, 13, 107, 42, 28, 143, 202, 59, 197, 162, 94, 8, 62, 58,
-]
+])
 
-export const TZS_ISSUER = [
+export const TZS_ISSUER: Uint8Array = new Uint8Array([
     52, 201, 75, 42, 75, 169, 232, 181, 123, 34, 84, 125, 203, 179, 15, 68, 60,
     76, 176, 45, 163, 130, 154, 137, 170, 27, 212, 120, 14, 68, 102, 186,
-]
+])
 
 export function zenlinkAssetIdToCurrencyId(asset: AssetId): any {
     const assetIndex = Number(asset.assetIndex.toString())
@@ -86,11 +86,9 @@ export function zenlinkAssetIdToCurrencyId(asset: AssetId): any {
         }
     } else if (tokenType == 'ZenlinkLPToken') {
         let token0Id = assetIndex & (0x0000_0000_00ff_0000 >> 16)
-        let token0Type =
-            currencyKeyMap[assetIndex & (0x0000_0000_ff00_0000 >> 24)]
+        let token0Type = assetIndex & (0x0000_0000_ff00_0000 >> 24)
         let token1Id = assetIndex & (0x0000_00ff_0000_0000 >> 32)
-        let token1Type =
-            currencyKeyMap[assetIndex & (0x0000_ff00_0000_0000 >> 40)]
+        let token1Type = assetIndex & (0x0000_ff00_0000_0000 >> 40)
         return {
             __kind: tokenType,
             value: [token0Id, token0Type, token1Id, token1Type],

@@ -9,12 +9,14 @@ export const currencyKeyMap: { [index: number]: string } = {
     0: 'Native',
     1: 'XCM',
     2: 'Stellar',
+    6: 'ZenlinkLPToken',
 }
 
 export enum CurrencyTypeEnum {
     Native = 0,
     XCM = 1,
     Stellar = 2,
+    ZenlinkLPToken = 3,
 }
 
 export enum CurrencyIndexEnum {
@@ -53,42 +55,30 @@ export function parseTokenType(assetIndex: number): string {
     return currencyKeyMap[assetU8]
 }
 
-export function zenlinkAssetIdToCurrencyId(asset: AssetId): CurrencyId {
+export function zenlinkAssetIdToCurrencyId(asset: AssetId): any {
     const assetIndex = Number(asset.assetIndex.toString())
-    const tokenType = parseTokenType(assetIndex) as 'Stellar' | 'XCM' | 'Native'
-    const assetSymbolIndex = assetIndex & 0x0000_0000_0000_000ff
+    const tokenType = parseTokenType(assetIndex) as
+        | 'ZenlinkLPToken'
+        | 'Stellar'
+        | 'XCM'
+        | 'Native'
+    const assetSymbolIndex = assetIndex & 0x0000_0000_0000_00ff
 
-    // For assets below u8::max(), we use the assetIndex as the XCM index
-    if (assetSymbolIndex < 256) {
+    if (tokenType == 'XCM' || tokenType == 'Stellar' || tokenType == 'Native') {
         return {
-            __kind: 'XCM',
+            __kind: tokenType,
             value: assetSymbolIndex,
         }
-    }
-
-    const tokenSymbol = currencyTokenSymbolMap[assetSymbolIndex]
-
-    if (tokenSymbol == 'XLM') {
+    } else if (tokenType == 'ZenlinkLPToken') {
+        let token0Id = assetIndex & (0x0000_0000_00ff_0000 >> 16)
+        let token0Type =
+            currencyKeyMap[assetIndex & (0x0000_0000_ff00_0000 >> 24)]
+        let token1Id = assetIndex & (0x0000_00ff_0000_0000 >> 32)
+        let token1Type =
+            currencyKeyMap[assetIndex & (0x0000_ff00_0000_0000 >> 40)]
         return {
-            __kind: 'Stellar',
-            value: {
-                __kind: 'StellarNative',
-            },
-        }
-    } else {
-        const code = s2u8a(tokenSymbol)
-        // TODO fix me
-        const issuer = s2u8a('')
-        const stellarCurrencyKind =
-            code.length <= 4 ? 'AlphaNum4' : 'AlphaNum12'
-
-        return {
-            __kind: 'Stellar',
-            value: {
-                __kind: stellarCurrencyKind,
-                code,
-                issuer,
-            },
+            __kind: tokenType,
+            value: [token0Id, token0Type, token1Id, token1Type],
         }
     }
 }

@@ -1,7 +1,7 @@
 import { codec } from '@subsquid/ss58'
 import { getPair } from '../entities/pair'
 import { getPosition, getTransaction } from '../entities/utils'
-import { ZERO_BD } from '../constants'
+import { CHAIN_ID, ZERO_BD } from '../constants'
 import { EventHandlerContext } from '../types'
 import { config } from '../config'
 import { Big as BigDecimal } from 'big.js'
@@ -18,6 +18,14 @@ import {
     User,
 } from '../model'
 import events from '../types/events'
+import { getPairStatusFromAssets, getTokenBalance } from '../utils/token'
+
+async function isCompleteMint(
+    ctx: EventHandlerContext,
+    mintId: string
+): Promise<boolean> {
+    return !!(await ctx.store.get(Mint, mintId))?.sender // sufficient checks
+}
 
 export async function handleTokenDeposited(ctx: EventHandlerContext) {
     const transactionHash = ctx.event.extrinsic?.hash
@@ -30,8 +38,114 @@ export async function handleTokenDeposited(ctx: EventHandlerContext) {
         event = _event.asV8
     }
 
-    // FIXME - re-add logic once the LPToken is added
     if (!event || event?.currencyId.__kind !== 'ZenlinkLPToken') return
+    const [token0Id, token0Type, token1Id, token1Type] = event.currencyId.value
+    let token0Index = (token0Type << 8) + token0Id
+    let token1Index = (token1Type << 8) + token1Id
+    const asset0 = {
+        chainId: CHAIN_ID,
+        assetType: token0Index === 0 ? 0 : 2,
+        assetIndex: BigInt(token0Index),
+    }
+    const asset1 = {
+        chainId: CHAIN_ID,
+        assetType: token1Index === 0 ? 0 : 2,
+        assetIndex: BigInt(token1Index),
+    }
+
+    const pair = await getPair(ctx, [asset0, asset1])
+    if (!pair) return
+
+    const value = event.amount.toString()
+    const to = codec(config.prefix).encode(event.who)
+    let user = await ctx.store.get(User, to)
+    if (!user) {
+        user = new User({
+            id: to,
+            liquidityPositions: [],
+            stableSwapLiquidityPositions: [],
+            usdSwapped: ZERO_BD.toFixed(6),
+        })
+        await ctx.store.save(user)
+    }
+
+    let transaction = await getTransaction(ctx, transactionHash)
+    if (!transaction) {
+        transaction = new Transaction({
+            id: transactionHash,
+            blockNumber: BigInt(ctx.block.height),
+            timestamp: new Date(ctx.block.timestamp),
+            mints: [],
+            burns: [],
+            swaps: [],
+        })
+        await ctx.store.save(transaction)
+    }
+
+    pair.totalSupply = (
+        await getPairStatusFromAssets(ctx, [asset0, asset1], false)
+    )[1].toString()
+    const { burns, mints } = transaction
+    let burn: Burn
+    if (burns.length > 0) {
+        const currentBurn = await ctx.store.get(Burn, burns[burns.length - 1])
+        if (currentBurn?.needsComplete) {
+            burn = currentBurn
+        } else {
+            burn = new Burn({
+                id: `${transactionHash}-${burns.length}`,
+                transaction,
+                needsComplete: false,
+                pair,
+                liquidity: value,
+                timestamp: new Date(ctx.block.timestamp),
+            })
+        }
+    } else {
+        burn = new Burn({
+            id: `${transactionHash}-${burns.length}`,
+            transaction,
+            needsComplete: false,
+            pair,
+            liquidity: value,
+            timestamp: new Date(ctx.block.timestamp),
+        })
+    }
+
+    // if this logical burn included a fee mint, account for this
+    if (
+        mints.length !== 0 &&
+        !(await isCompleteMint(ctx, mints[mints.length - 1]))
+    ) {
+        const mint = await ctx.store.get(Mint, mints[mints.length - 1])
+        if (mint) {
+            burn.feeTo = mint.to
+            burn.feeLiquidity = mint.liquidity
+        }
+
+        await ctx.store.remove(Mint, mints[mints.length - 1])
+        mints.pop()
+        transaction.mints = mints
+    }
+    await ctx.store.save(burn)
+    if (burn.needsComplete) {
+        // TODO: Consider using .slice(0, -1).concat() to protect against
+        // unintended side effects for other code paths.
+        burns[burns.length - 1] = burn.id
+    } else {
+        burns.push(burn.id)
+    }
+    transaction.burns = burns
+
+    await ctx.store.save(transaction)
+    await ctx.store.save(pair)
+
+    const position = await updateLiquidityPosition(ctx, pair, user)
+    position.liquidityTokenBalance =
+        (await getTokenBalance(ctx, event.currencyId, event.who))?.toString() ??
+        '0'
+    await ctx.store.save(position)
+    await createLiquiditySnapShot(ctx, pair, position)
 }
 
 export async function handleTokenWithdrawn(ctx: EventHandlerContext) {

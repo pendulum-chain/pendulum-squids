@@ -10,10 +10,12 @@ export const TOKEN_METADATA_MAP: { [address: string]: TokenBase } = {
     // TODO - add more tokens
 }
 
+export const CHAIN_ID = 2124
+
 // Zenlink parachain id
 // TODO do we need this?
 export const ZLK_ASSET_ID: AssetId = {
-    chainId: 2001, // Need to change this to 2124
+    chainId: CHAIN_ID, // Need to change this to 2124
     assetType: 2,
     assetIndex: 519n,
 }

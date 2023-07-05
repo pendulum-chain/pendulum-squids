@@ -79,7 +79,9 @@ export function zenlinkAssetIdToCurrencyId(asset: AssetId): any {
         | 'Native'
     const assetSymbolIndex = assetIndex & 0x0000_0000_0000_00ff
 
-    if (tokenType == 'XCM' || tokenType == 'Native') {
+    if (tokenType == 'Native') {
+        return { __kind: 'Native' }
+    } else if (tokenType == 'XCM') {
         return {
             __kind: tokenType,
             value: assetSymbolIndex,

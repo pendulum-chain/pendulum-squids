@@ -6,7 +6,7 @@ import { zenlinkAssetIdToCurrencyId } from './utils/token'
 // Probably need our own tokens
 export const TOKEN_METADATA_MAP: { [address: string]: TokenBase } = {
     '2124-0-0': { name: 'AMPLITUDE', symbol: 'AMPE', decimals: 12 },
-    '2124-2-0': { name: 'Kusama', symbol: 'KSM', decimals: 12 },
+    '2124-2-256': { name: 'Kusama', symbol: 'KSM', decimals: 12 },
     // TODO - add more tokens
 }
 

@@ -55,6 +55,21 @@ export function parseTokenType(assetIndex: number): string {
     return currencyKeyMap[assetU8]
 }
 
+export const USDT_ISSUER = [
+    59, 153, 17, 56, 14, 254, 152, 139, 160, 168, 144, 14, 177, 207, 228, 79,
+    54, 111, 125, 190, 148, 107, 237, 7, 114, 64, 247, 246, 36, 223, 21, 197,
+]
+
+export const BRL_ISSUER = [
+    234, 172, 104, 212, 208, 227, 123, 76, 36, 194, 83, 105, 22, 232, 48, 115,
+    95, 3, 45, 13, 107, 42, 28, 143, 202, 59, 197, 162, 94, 8, 62, 58,
+]
+
+export const TZS_ISSUER = [
+    52, 201, 75, 42, 75, 169, 232, 181, 123, 34, 84, 125, 203, 179, 15, 68, 60,
+    76, 176, 45, 163, 130, 154, 137, 170, 27, 212, 120, 14, 68, 102, 186,
+]
+
 export function zenlinkAssetIdToCurrencyId(asset: AssetId): any {
     const assetIndex = Number(asset.assetIndex.toString())
     const tokenType = parseTokenType(assetIndex) as
@@ -64,7 +79,7 @@ export function zenlinkAssetIdToCurrencyId(asset: AssetId): any {
         | 'Native'
     const assetSymbolIndex = assetIndex & 0x0000_0000_0000_00ff
 
-    if (tokenType == 'XCM' || tokenType == 'Stellar' || tokenType == 'Native') {
+    if (tokenType == 'XCM' || tokenType == 'Native') {
         return {
             __kind: tokenType,
             value: assetSymbolIndex,
@@ -79,6 +94,43 @@ export function zenlinkAssetIdToCurrencyId(asset: AssetId): any {
         return {
             __kind: tokenType,
             value: [token0Id, token0Type, token1Id, token1Type],
+        }
+    } else if (tokenType == 'Stellar') {
+        switch (assetSymbolIndex) {
+            case 0:
+                return {
+                    __kind: tokenType,
+                    value: {
+                        __kind: 'StellarNative',
+                    },
+                }
+            case 1:
+                return {
+                    __kind: tokenType,
+                    value: {
+                        __kind: 'AlphaNum4',
+                        code: codec(config.prefix).decode('USDC'),
+                        issuer: USDT_ISSUER,
+                    },
+                }
+            case 2:
+                return {
+                    __kind: tokenType,
+                    value: {
+                        __kind: 'AlphaNum4',
+                        code: codec(config.prefix).decode('TZS\0'),
+                        issuer: TZS_ISSUER,
+                    },
+                }
+            case 3:
+                return {
+                    __kind: tokenType,
+                    value: {
+                        __kind: 'AlphaNum4',
+                        code: codec(config.prefix).decode('BRL\0'),
+                        issuer: BRL_ISSUER,
+                    },
+                }
         }
     }
 }

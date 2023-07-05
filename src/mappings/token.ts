@@ -31,6 +31,7 @@ export async function handleTokenDeposited(ctx: EventHandlerContext) {
     }
 
     // FIXME - re-add logic once the LPToken is added
+    if (!event || event?.currencyId.__kind !== 'ZenlinkLPToken') return
 }
 
 export async function handleTokenWithdrawn(ctx: EventHandlerContext) {

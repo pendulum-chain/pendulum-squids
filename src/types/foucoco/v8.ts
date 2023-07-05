@@ -1,3 +1,4 @@
+import { CurrencyId_ZenlinkLPToken } from '../amplitude/v8'
 import type { Result, Option } from './support'
 
 export type CurrencyId =
@@ -6,6 +7,7 @@ export type CurrencyId =
     | CurrencyId_StellarNative
     | CurrencyId_AlphaNum4
     | CurrencyId_AlphaNum12
+    | CurrencyId_ZenlinkLPToken
 
 export interface CurrencyId_XCM {
     __kind: 'XCM'

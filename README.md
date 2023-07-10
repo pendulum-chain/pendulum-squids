@@ -87,6 +87,9 @@ sqd up
 Now, to generate the migrations, run:
 
 ```shell
+# [Optional] Clean previous migrations
+sqd migration:clean
+
 # Build the project, remove any old migrations, then run `npx squid-typeorm-migration generate`
 sqd migration:generate
 

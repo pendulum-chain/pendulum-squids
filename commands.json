@@ -48,10 +48,25 @@
             "description": "Generate data access classes for an substrate metadata",
             "cmd": ["squid-substrate-typegen", "./typegen-foucoco.json"]
         },
-        "process": {
+        "process:foucoco": {
             "description": "Load .env and start the squid processor",
             "deps": ["build", "migration:apply"],
-            "cmd": ["node", "--require=dotenv/config", "lib/processor.js"]
+            "cmd": [
+                "node",
+                "--require=dotenv/config",
+                "lib/processor.js",
+                "dotenv_config_path=./.env.foucoco"
+            ]
+        },
+        "process:amplitude": {
+            "description": "Load .env and start the squid processor",
+            "deps": ["build", "migration:apply"],
+            "cmd": [
+                "node",
+                "--require=dotenv/config",
+                "lib/processor.js",
+                "dotenv_config_path=./.env.amplitude"
+            ]
         },
         "process:prod": {
             "description": "Start the squid processor",

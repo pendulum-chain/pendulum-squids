@@ -283,7 +283,61 @@ export async function handleTokenTransfer(ctx: EventHandlerContext) {
         event = _event.asV8
     }
 
-    // FIXME - re-add logic once the LPToken is added
+    if (!event || event?.currencyId.__kind !== 'ZenlinkLPToken') return
+    const [token0Id, token0Type, token1Id, token1Type] = event.currencyId.value
+    let token0Index = (token0Type << 8) + token0Id
+    let token1Index = (token1Type << 8) + token1Id
+    const asset0 = {
+        chainId: CHAIN_ID,
+        assetType: token0Index === 0 ? 0 : 2,
+        assetIndex: BigInt(token0Index),
+    }
+    const asset1 = {
+        chainId: CHAIN_ID,
+        assetType: token1Index === 0 ? 0 : 2,
+        assetIndex: BigInt(token1Index),
+    }
+
+    const pair = await getPair(ctx, [asset0, asset1])
+    if (!pair) return
+
+    const from = codec(config.prefix).encode(event.from)
+    const to = codec(config.prefix).encode(event.to)
+
+    let userFrom = await ctx.store.get(User, from)
+    if (!userFrom) {
+        userFrom = new User({
+            id: from,
+            liquidityPositions: [],
+            stableSwapLiquidityPositions: [],
+            usdSwapped: ZERO_BD.toString(),
+        })
+        await ctx.store.save(userFrom)
+    }
+    const positionFrom = await updateLiquidityPosition(ctx, pair, userFrom)
+    positionFrom.liquidityTokenBalance =
+        (
+            await getTokenBalance(ctx, event.currencyId, event.from)
+        )?.toString() ?? '0'
+    await ctx.store.save(positionFrom)
+    await createLiquiditySnapShot(ctx, pair, positionFrom)
+
+    let userTo = await ctx.store.get(User, to)
+    if (!userTo) {
+        userTo = new User({
+            id: to,
+            liquidityPositions: [],
+            stableSwapLiquidityPositions: [],
+            usdSwapped: ZERO_BD.toFixed(6),
+        })
+        await ctx.store.save(userTo)
+    }
+    const positionTo = await updateLiquidityPosition(ctx, pair, userTo)
+    positionTo.liquidityTokenBalance =
+        (await getTokenBalance(ctx, event.currencyId, event.to))?.toString() ??
+        '0'
+    await ctx.store.save(positionTo)
+    await createLiquiditySnapShot(ctx, pair, positionTo)
 }
 
 export async function updateLiquidityPosition(

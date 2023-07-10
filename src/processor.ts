@@ -95,7 +95,10 @@ processor.run(new TypeormDatabase(), async (ctx) => {
                         break
                 }
             } catch (e) {
-                console.log('Error processing event... Skipping', e)
+                console.log(
+                    `Error processing event '${item.name}'. Skipping due to error:`,
+                    e
+                )
             }
         }
     }

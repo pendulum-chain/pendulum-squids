@@ -3,7 +3,7 @@ import { getFactory, getTransaction } from '../entities/utils'
 import { Big as BigDecimal } from 'big.js'
 import { Bundle, Burn, Mint, Pair, Swap, Transaction, User } from '../model'
 import { EventHandlerContext } from '../types'
-import events from '../types/events'
+import * as events from '../types/amplitude/events'
 import { convertTokenToDecimal } from '../utils/helpers'
 import { sortAssets } from '../utils/sort'
 import {
@@ -12,7 +12,7 @@ import {
     getTokenBalance,
     getTokenBurned,
     zenlinkAssetIdToCurrencyId,
-} from '../utils/token'
+} from '../utils/foucoco_token'
 import { ZERO_BD } from '../constants'
 import { codec } from '@subsquid/ss58'
 import { config } from '../config'
@@ -22,7 +22,10 @@ import {
     MINIMUM_USD_THRESHOLD_NEW_PAIRS,
     WHITELIST,
 } from '../utils/pricing'
-import { createLiquiditySnapShot, updateLiquidityPosition } from './token'
+import {
+    createLiquiditySnapShot,
+    updateLiquidityPosition,
+} from './foucoco_token'
 import {
     updateFactoryDayData,
     updatePairDayData,

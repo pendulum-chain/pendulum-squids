@@ -1,5 +1,5 @@
 import { EventHandlerContext } from '../types'
-import storage from '../types/storage'
+import * as storage from '../types/foucoco/storage'
 import { AssetId, CurrencyId } from '../types/common'
 import { codec } from '@subsquid/ss58'
 import { config } from '../config'
@@ -9,14 +9,14 @@ export const currencyKeyMap: { [index: number]: string } = {
     0: 'Native',
     1: 'XCM',
     2: 'Stellar',
-    6: 'ZenlinkLPToken',
+    3: 'ZenlinkLPToken',
 }
 
 export enum CurrencyTypeEnum {
     Native = 0,
     XCM = 1,
     Stellar = 2,
-    ZenlinkLPToken = 6,
+    ZenlinkLPToken = 3,
 }
 
 export enum CurrencyIndexEnum {
@@ -178,7 +178,7 @@ export async function getPairAssetIdFromAssets(
             ctx.block
         )
         if (!pairsStorage.isExists) return undefined
-        pairAssetId = await pairsStorage.asV7.get(assets)
+        pairAssetId = await pairsStorage.asV1.get(assets)
         if (pairAssetId) {
             pairAssetIds.set(assetsId, pairAssetId)
         }
@@ -207,7 +207,7 @@ export async function getPairStatusFromAssets(
             ctx.block
         )
         if (!statusStorage.isExists) return [undefined, BigInt(0)]
-        const result = await statusStorage.asV7.get(assets)
+        const result = await statusStorage.asV1.get(assets)
         if (result.__kind === 'Trading') {
             pairAccount = codec(config.prefix).encode(result.value.pairAccount)
             pairAccounts.set(assetsId, pairAccount)
@@ -235,13 +235,8 @@ export async function getTokenBalance(
             ctx,
             ctx.block
         )
-        if (tokenAccountsStorage.isV3) {
-            result = await tokenAccountsStorage.asV3.get(
-                account,
-                assetId as any
-            )
-        } else if (tokenAccountsStorage.isV8) {
-            result = await tokenAccountsStorage.asV8.get(
+        if (tokenAccountsStorage.isV1) {
+            result = await tokenAccountsStorage.asV1.get(
                 account,
                 assetId as any
             )
@@ -267,10 +262,8 @@ export async function getTotalIssuance(
             ctx,
             ctx.block
         )
-        if (tokenIssuanceStorage.isV3) {
-            result = await tokenIssuanceStorage.asV3.get(assetId as any)
-        } else if (tokenIssuanceStorage.isV8) {
-            result = await tokenIssuanceStorage.asV8.get(assetId as any)
+        if (tokenIssuanceStorage.isV1) {
+            result = await tokenIssuanceStorage.asV1.get(assetId as any)
         }
     }
 
@@ -297,13 +290,8 @@ export async function getTokenBurned(
             ctx,
             block
         )
-        if (tokenAccountsStorage.isV3) {
-            result = await tokenAccountsStorage.asV3.get(
-                account,
-                assetId as any
-            )
-        } else if (tokenAccountsStorage.isV8) {
-            result = await tokenAccountsStorage.asV8.get(
+        if (tokenAccountsStorage.isV1) {
+            result = await tokenAccountsStorage.asV1.get(
                 account,
                 assetId as any
             )

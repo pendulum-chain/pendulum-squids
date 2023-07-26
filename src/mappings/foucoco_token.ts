@@ -17,12 +17,12 @@ import {
     Transaction,
     User,
 } from '../model'
-import events from '../types/events'
+import * as events from '../types/foucoco/events'
 import {
     getPairAssetIdFromAssets,
     getPairStatusFromAssets,
     getTokenBalance,
-} from '../utils/token'
+} from '../utils/foucoco_token'
 
 async function isCompleteMint(
     ctx: EventHandlerContext,
@@ -36,10 +36,8 @@ export async function handleTokenDeposited(ctx: EventHandlerContext) {
     if (!transactionHash) return
     let event
     const _event = new events.TokensDepositedEvent(ctx, ctx.event)
-    if (_event.isV3) {
-        event = _event.asV3
-    } else if (_event.isV8) {
-        event = _event.asV8
+    if (_event.isV1) {
+        event = _event.asV1
     }
 
     if (!event || event?.currencyId.__kind !== 'ZenlinkLPToken') return
@@ -158,10 +156,8 @@ export async function handleTokenWithdrawn(ctx: EventHandlerContext) {
 
     const _event = new events.TokensWithdrawnEvent(ctx, ctx.event)
     let event
-    if (_event.isV3) {
-        event = _event.asV3
-    } else if (_event.isV8) {
-        event = _event.asV8
+    if (_event.isV1) {
+        event = _event.asV1
     }
 
     if (!event || event?.currencyId.__kind !== 'ZenlinkLPToken') return
@@ -277,10 +273,8 @@ export async function handleTokenWithdrawn(ctx: EventHandlerContext) {
 export async function handleTokenTransfer(ctx: EventHandlerContext) {
     let event
     const _event = new events.TokensTransferEvent(ctx, ctx.event)
-    if (_event.isV3) {
-        event = _event.asV3
-    } else if (_event.isV8) {
-        event = _event.asV8
+    if (_event.isV1) {
+        event = _event.asV1
     }
 
     if (!event || event?.currencyId.__kind !== 'ZenlinkLPToken') return

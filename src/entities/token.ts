@@ -6,7 +6,7 @@ import {
     getTotalIssuance,
     u8a2s,
     zenlinkAssetIdToCurrencyId,
-} from '../utils/token'
+} from '../utils/foucoco_token'
 import { AssetId } from '../types/common'
 
 export async function getOrCreateToken(

@@ -1,7 +1,7 @@
 import { TokenBase } from './types'
 import { Big as BigDecimal } from 'big.js'
 import { AssetId } from './types/common'
-import { zenlinkAssetIdToCurrencyId } from './utils/token'
+import { zenlinkAssetIdToCurrencyId } from './utils/foucoco_token'
 
 // Probably need our own tokens
 export const TOKEN_METADATA_MAP: { [address: string]: TokenBase } = {

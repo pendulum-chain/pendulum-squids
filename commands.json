@@ -49,24 +49,20 @@
             "cmd": ["squid-substrate-typegen", "./typegen-foucoco.json"]
         },
         "process:foucoco": {
-            "description": "Load .env and start the squid processor",
+            "description": "Load .env and start the squid processor for Foucoco",
             "deps": ["build", "migration:apply"],
-            "cmd": [
-                "node",
-                "--require=dotenv/config",
-                "lib/processor.js",
-                "dotenv_config_path=./.env.foucoco"
-            ]
+            "cmd": ["node", "--require=dotenv/config", "lib/processor.js"],
+            "env": {
+                "NETWORK": "foucoco"
+            }
         },
         "process:amplitude": {
-            "description": "Load .env and start the squid processor",
+            "description": "Load .env and start the squid processor for Amplitude",
             "deps": ["build", "migration:apply"],
-            "cmd": [
-                "node",
-                "--require=dotenv/config",
-                "lib/processor.js",
-                "dotenv_config_path=./.env.amplitude"
-            ]
+            "cmd": ["node", "--require=dotenv/config", "lib/processor.js"],
+            "env": {
+                "NETWORK": "amplitude"
+            }
         },
         "process:prod": {
             "description": "Start the squid processor",

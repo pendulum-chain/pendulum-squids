@@ -9,14 +9,14 @@ export const currencyKeyMap: { [index: number]: string } = {
     0: 'Native',
     1: 'XCM',
     2: 'Stellar',
-    6: 'ZenlinkLPToken',
+    3: 'ZenlinkLPToken',
 }
 
 export enum CurrencyTypeEnum {
     Native = 0,
     XCM = 1,
     Stellar = 2,
-    ZenlinkLPToken = 6,
+    ZenlinkLPToken = 3,
 }
 
 export enum CurrencyIndexEnum {

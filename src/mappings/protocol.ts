@@ -3,7 +3,7 @@ import { getFactory, getTransaction } from '../entities/utils'
 import { Big as BigDecimal } from 'big.js'
 import { Bundle, Burn, Mint, Pair, Swap, Transaction, User } from '../model'
 import { EventHandlerContext } from '../types'
-import * as events from '../types/amplitude/events'
+import { amplitudeEvents, foucocoEvents } from '../types/events'
 import { convertTokenToDecimal } from '../utils/helpers'
 import { sortAssets } from '../utils/sort'
 import {
@@ -12,20 +12,17 @@ import {
     getTokenBalance,
     getTokenBurned,
     zenlinkAssetIdToCurrencyId,
-} from '../utils/foucoco_token'
+} from '../utils/token'
 import { ZERO_BD } from '../constants'
 import { codec } from '@subsquid/ss58'
-import { config } from '../config'
+import { config, network } from '../config'
 import {
     findEthPerToken,
     getEthPriceInUSD,
     MINIMUM_USD_THRESHOLD_NEW_PAIRS,
     WHITELIST,
 } from '../utils/pricing'
-import {
-    createLiquiditySnapShot,
-    updateLiquidityPosition,
-} from './foucoco_token'
+import { createLiquiditySnapShot, updateLiquidityPosition } from './token'
 import {
     updateFactoryDayData,
     updatePairDayData,
@@ -166,8 +163,21 @@ export async function handleLiquidityAdded(ctx: EventHandlerContext) {
     if (!mints.length) return
     const mint = await ctx.store.get(Mint, mints[mints.length - 1])
     if (!mint) return
-    const _event = new events.ZenlinkProtocolLiquidityAddedEvent(ctx, ctx.event)
-    const event = _event.asV7
+
+    let event
+    if (network === 'foucoco') {
+        const _event = new foucocoEvents.ZenlinkProtocolLiquidityAddedEvent(
+            ctx,
+            ctx.event
+        )
+        event = _event.asV1
+    } else {
+        const _event = new amplitudeEvents.ZenlinkProtocolLiquidityAddedEvent(
+            ctx,
+            ctx.event
+        )
+        event = _event.asV7
+    }
 
     const [asset0, asset1] = sortAssets([event[1], event[2]])
 
@@ -229,11 +239,21 @@ export async function handleLiquidityRemoved(ctx: EventHandlerContext) {
     if (!burns.length) return
     const burn = await ctx.store.get(Burn, burns[burns.length - 1])
     if (!burn) return
-    const _event = new events.ZenlinkProtocolLiquidityRemovedEvent(
-        ctx,
-        ctx.event
-    )
-    const event = _event.asV7
+
+    let event
+    if (network === 'foucoco') {
+        const _event = new foucocoEvents.ZenlinkProtocolLiquidityRemovedEvent(
+            ctx,
+            ctx.event
+        )
+        event = _event.asV1
+    } else {
+        const _event = new amplitudeEvents.ZenlinkProtocolLiquidityRemovedEvent(
+            ctx,
+            ctx.event
+        )
+        event = _event.asV7
+    }
 
     const [asset0, asset1] = sortAssets([event[2], event[3]])
 
@@ -311,8 +331,21 @@ export async function handleLiquidityRemoved(ctx: EventHandlerContext) {
 export async function handleAssetSwap(ctx: EventHandlerContext) {
     const txHash = ctx.event.extrinsic?.hash
     if (!txHash) return
-    const _event = new events.ZenlinkProtocolAssetSwapEvent(ctx, ctx.event)
-    const event = _event.asV7
+
+    let event
+    if (network === 'foucoco') {
+        const _event = new foucocoEvents.ZenlinkProtocolAssetSwapEvent(
+            ctx,
+            ctx.event
+        )
+        event = _event.asV1
+    } else {
+        const _event = new amplitudeEvents.ZenlinkProtocolAssetSwapEvent(
+            ctx,
+            ctx.event
+        )
+        event = _event.asV7
+    }
     const path = event[2]
     const amounts = event[3]
     const sender = codec(config.prefix).encode(event[0])

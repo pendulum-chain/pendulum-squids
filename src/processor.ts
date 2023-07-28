@@ -9,12 +9,12 @@ import {
     handleAssetSwap,
     handleLiquidityAdded,
     handleLiquidityRemoved,
-} from './mappings/foucoco_protocol'
+} from './mappings/protocol'
 import {
     handleTokenDeposited,
     handleTokenTransfer,
     handleTokenWithdrawn,
-} from './mappings/foucoco_token'
+} from './mappings/token'
 import { handleBalanceTransfer } from './mappings/balances'
 
 const DataSelection = { data: { event: true } } as const

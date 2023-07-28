@@ -4,7 +4,7 @@ import { getPair } from '../entities/pair'
 import { getOrCreateToken } from '../entities/token'
 import { Pair } from '../model'
 import { EventHandlerContext } from '../types'
-import { assetIdFromAddress } from './foucoco_token'
+import { assetIdFromAddress } from './token'
 
 export const WNATIVE = '2001-0-0'
 export const USDC = '2001-2-2048'

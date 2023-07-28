@@ -2,10 +2,7 @@ import { ZERO_BD } from '../constants'
 import { Bundle, Factory, Pair } from '../model'
 import { EventHandlerContext } from '../types'
 import { AssetId } from '../types/common'
-import {
-    addressFromAsset,
-    getPairAssetIdFromAssets,
-} from '../utils/foucoco_token'
+import { addressFromAsset, getPairAssetIdFromAssets } from '../utils/token'
 import { getOrCreateToken } from './token'
 
 export async function getPair(

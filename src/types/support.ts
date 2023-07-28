@@ -1,7 +1,7 @@
 import * as amplitudeSupport from './amplitude/support'
 import * as foucocoSupport from './foucoco/support'
 
-const network = process.env.NETWORK || 'amplitude'
+import { network } from '../config'
 
 const support = network === 'foucoco' ? foucocoSupport : amplitudeSupport
 

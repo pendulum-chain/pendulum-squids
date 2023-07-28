@@ -17,12 +17,13 @@ import {
     Transaction,
     User,
 } from '../model'
-import * as events from '../types/foucoco/events'
+import { amplitudeEvents, foucocoEvents } from '../types/events'
+import { network } from '../config'
 import {
     getPairAssetIdFromAssets,
     getPairStatusFromAssets,
     getTokenBalance,
-} from '../utils/foucoco_token'
+} from '../utils/token'
 
 async function isCompleteMint(
     ctx: EventHandlerContext,
@@ -35,9 +36,18 @@ export async function handleTokenDeposited(ctx: EventHandlerContext) {
     const transactionHash = ctx.event.extrinsic?.hash
     if (!transactionHash) return
     let event
-    const _event = new events.TokensDepositedEvent(ctx, ctx.event)
-    if (_event.isV1) {
-        event = _event.asV1
+    if (network === 'foucoco') {
+        const _event = new foucocoEvents.TokensDepositedEvent(ctx, ctx.event)
+        if (_event.isV1) {
+            event = _event.asV1
+        }
+    } else {
+        const _event = new amplitudeEvents.TokensDepositedEvent(ctx, ctx.event)
+        if (_event.isV3) {
+            event = _event.asV3
+        } else if (_event.isV8) {
+            event = _event.asV8
+        }
     }
 
     if (!event || event?.currencyId.__kind !== 'ZenlinkLPToken') return
@@ -154,10 +164,19 @@ export async function handleTokenWithdrawn(ctx: EventHandlerContext) {
     const transactionHash = ctx.event.extrinsic?.hash
     if (!transactionHash) return
 
-    const _event = new events.TokensWithdrawnEvent(ctx, ctx.event)
     let event
-    if (_event.isV1) {
-        event = _event.asV1
+    if (network === 'foucoco') {
+        const _event = new foucocoEvents.TokensWithdrawnEvent(ctx, ctx.event)
+        if (_event.isV1) {
+            event = _event.asV1
+        }
+    } else {
+        const _event = new amplitudeEvents.TokensWithdrawnEvent(ctx, ctx.event)
+        if (_event.isV3) {
+            event = _event.asV3
+        } else if (_event.isV8) {
+            event = _event.asV8
+        }
     }
 
     if (!event || event?.currencyId.__kind !== 'ZenlinkLPToken') return
@@ -272,9 +291,18 @@ export async function handleTokenWithdrawn(ctx: EventHandlerContext) {
 
 export async function handleTokenTransfer(ctx: EventHandlerContext) {
     let event
-    const _event = new events.TokensTransferEvent(ctx, ctx.event)
-    if (_event.isV1) {
-        event = _event.asV1
+    if (network === 'foucoco') {
+        const _event = new foucocoEvents.TokensTransferEvent(ctx, ctx.event)
+        if (_event.isV1) {
+            event = _event.asV1
+        }
+    } else {
+        const _event = new amplitudeEvents.TokensTransferEvent(ctx, ctx.event)
+        if (_event.isV3) {
+            event = _event.asV3
+        } else if (_event.isV8) {
+            event = _event.asV8
+        }
     }
 
     if (!event || event?.currencyId.__kind !== 'ZenlinkLPToken') return

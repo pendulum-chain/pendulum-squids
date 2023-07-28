@@ -7,6 +7,10 @@ import { zenlinkAssetIdToCurrencyId } from './utils/token'
 export const TOKEN_METADATA_MAP: { [address: string]: TokenBase } = {
     '2124-0-0': { name: 'AMPLITUDE', symbol: 'AMPE', decimals: 12 },
     '2124-2-256': { name: 'Kusama', symbol: 'KSM', decimals: 12 },
+    '2124-2-512': { name: 'Stellar Native', symbol: 'XLM', decimals: 12 },
+    '2124-2-513': { name: 'Stellar USDC', symbol: 'USDC', decimals: 12 },
+    '2124-2-514': { name: 'Stellar TZS', symbol: 'TZS', decimals: 12 },
+    '2124-2-515': { name: 'Stellar BRL', symbol: 'BRL', decimals: 12 },
     // TODO - add more tokens
 }
 

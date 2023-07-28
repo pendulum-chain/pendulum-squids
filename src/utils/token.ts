@@ -70,6 +70,12 @@ export const TZS_ISSUER: Uint8Array = new Uint8Array([
     76, 176, 45, 163, 130, 154, 137, 170, 27, 212, 120, 14, 68, 102, 186,
 ])
 
+export const USDC_CODE: Uint8Array = new Uint8Array([85, 83, 68, 67])
+
+export const TZS_CODE: Uint8Array = new Uint8Array([84, 90, 83, 0])
+
+export const BRL_CODE: Uint8Array = new Uint8Array([66, 82, 76, 0])
+
 export function zenlinkAssetIdToCurrencyId(asset: AssetId): any {
     const assetIndex = Number(asset.assetIndex.toString())
     const tokenType = parseTokenType(assetIndex) as
@@ -109,7 +115,7 @@ export function zenlinkAssetIdToCurrencyId(asset: AssetId): any {
                     __kind: tokenType,
                     value: {
                         __kind: 'AlphaNum4',
-                        code: codec(config.prefix).decode('USDC'),
+                        code: USDC_CODE,
                         issuer: USDT_ISSUER,
                     },
                 }
@@ -118,7 +124,7 @@ export function zenlinkAssetIdToCurrencyId(asset: AssetId): any {
                     __kind: tokenType,
                     value: {
                         __kind: 'AlphaNum4',
-                        code: codec(config.prefix).decode('TZS\0'),
+                        code: TZS_CODE,
                         issuer: TZS_ISSUER,
                     },
                 }
@@ -127,7 +133,7 @@ export function zenlinkAssetIdToCurrencyId(asset: AssetId): any {
                     __kind: tokenType,
                     value: {
                         __kind: 'AlphaNum4',
-                        code: codec(config.prefix).decode('BRL\0'),
+                        code: BRL_CODE,
                         issuer: BRL_ISSUER,
                     },
                 }

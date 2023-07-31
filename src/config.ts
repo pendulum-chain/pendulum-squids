@@ -1,6 +1,8 @@
 import { ProcessorConfig } from './types'
 
-const network: string = process.env.NETWORK || 'amplitude'
+export type Network = 'foucoco' | 'amplitude'
+export const network: Network =
+    <'foucoco' | 'amplitude'>process.env.NETWORK || 'amplitude'
 
 const amplitudeConfig: ProcessorConfig = {
     chainName: 'amplitude',
@@ -16,7 +18,7 @@ const foucocoConfig: ProcessorConfig = {
     prefix: 'amplitude',
     dataSource: {
         archive: 'https://foucoco.archive.subsquid.io/graphql',
-        chain: 'wss://rpc-foucoco.pendulumchain.tech',
+        chain: 'wss://pencol-roa-00.pendulumchain.tech',
     },
 }
 

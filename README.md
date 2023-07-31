@@ -25,7 +25,10 @@ sqd build
 sqd up
 
 # 4. Start the processor
-sqd process
+# For amplitude you would use
+sqd process:amplitude
+# For foucoco you would use
+sqd process:foucoco
 
 # 5. The command above will block the terminal
 #    being busy with fetching the chain data,
@@ -84,6 +87,9 @@ sqd up
 Now, to generate the migrations, run:
 
 ```shell
+# [Optional] Clean previous migrations
+sqd migration:clean
+
 # Build the project, remove any old migrations, then run `npx squid-typeorm-migration generate`
 sqd migration:generate
 

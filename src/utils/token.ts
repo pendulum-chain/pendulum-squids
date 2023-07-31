@@ -1,20 +1,22 @@
 import { EventHandlerContext } from '../types'
-import storage from '../types/storage'
+import { amplitudeStorage, foucocoStorage } from '../types/storage'
 import { AssetId, CurrencyId } from '../types/common'
 import { codec } from '@subsquid/ss58'
-import { config } from '../config'
+import { config, network, Network } from '../config'
 import { invert } from 'lodash'
 
 export const currencyKeyMap: { [index: number]: string } = {
     0: 'Native',
     1: 'XCM',
     2: 'Stellar',
+    3: 'ZenlinkLPToken',
 }
 
 export enum CurrencyTypeEnum {
     Native = 0,
     XCM = 1,
     Stellar = 2,
+    ZenlinkLPToken = 3,
 }
 
 export enum CurrencyIndexEnum {
@@ -53,42 +55,88 @@ export function parseTokenType(assetIndex: number): string {
     return currencyKeyMap[assetU8]
 }
 
-export function zenlinkAssetIdToCurrencyId(asset: AssetId): CurrencyId {
-    const assetIndex = Number(asset.assetIndex.toString())
-    const tokenType = parseTokenType(assetIndex) as 'Stellar' | 'XCM' | 'Native'
-    const assetSymbolIndex = assetIndex & 0x0000_0000_0000_000ff
+export const USDT_ISSUER: Uint8Array = new Uint8Array([
+    59, 153, 17, 56, 14, 254, 152, 139, 160, 168, 144, 14, 177, 207, 228, 79,
+    54, 111, 125, 190, 148, 107, 237, 7, 114, 64, 247, 246, 36, 223, 21, 197,
+])
 
-    // For assets below u8::max(), we use the assetIndex as the XCM index
-    if (assetSymbolIndex < 256) {
+export const BRL_ISSUER: Uint8Array = new Uint8Array([
+    234, 172, 104, 212, 208, 227, 123, 76, 36, 194, 83, 105, 22, 232, 48, 115,
+    95, 3, 45, 13, 107, 42, 28, 143, 202, 59, 197, 162, 94, 8, 62, 58,
+])
+
+export const TZS_ISSUER: Uint8Array = new Uint8Array([
+    52, 201, 75, 42, 75, 169, 232, 181, 123, 34, 84, 125, 203, 179, 15, 68, 60,
+    76, 176, 45, 163, 130, 154, 137, 170, 27, 212, 120, 14, 68, 102, 186,
+])
+
+export const USDC_CODE: Uint8Array = new Uint8Array([85, 83, 68, 67])
+
+export const TZS_CODE: Uint8Array = new Uint8Array([84, 90, 83, 0])
+
+export const BRL_CODE: Uint8Array = new Uint8Array([66, 82, 76, 0])
+
+export function zenlinkAssetIdToCurrencyId(asset: AssetId): any {
+    const assetIndex = Number(asset.assetIndex.toString())
+    const tokenType = parseTokenType(assetIndex) as
+        | 'ZenlinkLPToken'
+        | 'Stellar'
+        | 'XCM'
+        | 'Native'
+    const assetSymbolIndex = assetIndex & 0x0000_0000_0000_00ff
+
+    if (tokenType == 'Native') {
+        return { __kind: 'Native' }
+    } else if (tokenType == 'XCM') {
         return {
-            __kind: 'XCM',
+            __kind: tokenType,
             value: assetSymbolIndex,
         }
-    }
-
-    const tokenSymbol = currencyTokenSymbolMap[assetSymbolIndex]
-
-    if (tokenSymbol == 'XLM') {
+    } else if (tokenType == 'ZenlinkLPToken') {
+        let token0Id = assetIndex & (0x0000_0000_00ff_0000 >> 16)
+        let token0Type = assetIndex & (0x0000_0000_ff00_0000 >> 24)
+        let token1Id = assetIndex & (0x0000_00ff_0000_0000 >> 32)
+        let token1Type = assetIndex & (0x0000_ff00_0000_0000 >> 40)
         return {
-            __kind: 'Stellar',
-            value: {
-                __kind: 'StellarNative',
-            },
+            __kind: tokenType,
+            value: [token0Id, token0Type, token1Id, token1Type],
         }
-    } else {
-        const code = s2u8a(tokenSymbol)
-        // TODO fix me
-        const issuer = s2u8a('')
-        const stellarCurrencyKind =
-            code.length <= 4 ? 'AlphaNum4' : 'AlphaNum12'
-
-        return {
-            __kind: 'Stellar',
-            value: {
-                __kind: stellarCurrencyKind,
-                code,
-                issuer,
-            },
+    } else if (tokenType == 'Stellar') {
+        switch (assetSymbolIndex) {
+            case 0:
+                return {
+                    __kind: tokenType,
+                    value: {
+                        __kind: 'StellarNative',
+                    },
+                }
+            case 1:
+                return {
+                    __kind: tokenType,
+                    value: {
+                        __kind: 'AlphaNum4',
+                        code: USDC_CODE,
+                        issuer: USDT_ISSUER,
+                    },
+                }
+            case 2:
+                return {
+                    __kind: tokenType,
+                    value: {
+                        __kind: 'AlphaNum4',
+                        code: TZS_CODE,
+                        issuer: TZS_ISSUER,
+                    },
+                }
+            case 3:
+                return {
+                    __kind: tokenType,
+                    value: {
+                        __kind: 'AlphaNum4',
+                        code: BRL_CODE,
+                        issuer: BRL_ISSUER,
+                    },
+                }
         }
     }
 }
@@ -131,12 +179,28 @@ export async function getPairAssetIdFromAssets(
     if (pairAssetIds.has(assetsId)) {
         pairAssetId = pairAssetIds.get(assetsId)
     } else {
-        const pairsStorage = new storage.ZenlinkProtocolLiquidityPairsStorage(
-            ctx,
-            ctx.block
-        )
-        if (!pairsStorage.isExists) return undefined
-        pairAssetId = await pairsStorage.asV7.get(assets)
+        const [basePairStorage, versionPairStorage] = (() => {
+            let baseStorage
+            let versionStorage
+            if (network === 'foucoco') {
+                baseStorage =
+                    new foucocoStorage.ZenlinkProtocolLiquidityPairsStorage(
+                        ctx,
+                        ctx.block
+                    )
+                versionStorage = baseStorage.asV1
+            } else {
+                baseStorage =
+                    new amplitudeStorage.ZenlinkProtocolLiquidityPairsStorage(
+                        ctx,
+                        ctx.block
+                    )
+                versionStorage = baseStorage.asV7
+            }
+            return [baseStorage, versionStorage]
+        })()
+        if (!basePairStorage.isExists) return undefined
+        pairAssetId = await versionPairStorage.get(assets)
         if (pairAssetId) {
             pairAssetIds.set(assetsId, pairAssetId)
         }
@@ -160,12 +224,29 @@ export async function getPairStatusFromAssets(
         pairAccount = pairAccounts.get(assetsId)
         return [pairAccount!, BigInt(0)]
     } else {
-        const statusStorage = new storage.ZenlinkProtocolPairStatusesStorage(
-            ctx,
-            ctx.block
-        )
-        if (!statusStorage.isExists) return [undefined, BigInt(0)]
-        const result = await statusStorage.asV7.get(assets)
+        const [baseStorage, versionStorage] = (() => {
+            let baseStorage
+            let versionStorage
+            if (network === 'foucoco') {
+                baseStorage =
+                    new foucocoStorage.ZenlinkProtocolPairStatusesStorage(
+                        ctx,
+                        ctx.block
+                    )
+                versionStorage = baseStorage.asV1
+            } else {
+                baseStorage =
+                    new amplitudeStorage.ZenlinkProtocolPairStatusesStorage(
+                        ctx,
+                        ctx.block
+                    )
+                versionStorage = baseStorage.asV7
+            }
+            return [baseStorage, versionStorage]
+        })()
+
+        if (!baseStorage.isExists) return [undefined, BigInt(0)]
+        const result = await versionStorage.get(assets)
         if (result.__kind === 'Trading') {
             pairAccount = codec(config.prefix).encode(result.value.pairAccount)
             pairAccounts.set(assetsId, pairAccount)
@@ -183,26 +264,39 @@ export async function getTokenBalance(
 ) {
     let result
     if (assetId.__kind === 'Native') {
-        const systemAccountStorage = new storage.SystemAccountStorage(
-            ctx,
-            ctx.block
-        )
-        result = (await systemAccountStorage.asV1.get(account)).data
+        const systemAccountStorage = (() => {
+            if (network === 'foucoco') {
+                return new foucocoStorage.SystemAccountStorage(ctx, ctx.block)
+                    .asV1
+            } else {
+                return new amplitudeStorage.SystemAccountStorage(ctx, ctx.block)
+                    .asV1
+            }
+        })()
+        result = (await systemAccountStorage.get(account)).data
     } else {
-        const tokenAccountsStorage = new storage.TokensAccountsStorage(
-            ctx,
-            ctx.block
-        )
-        if (tokenAccountsStorage.isV3) {
-            result = await tokenAccountsStorage.asV3.get(
+        if (network === 'foucoco') {
+            const tokenAccountsStorage =
+                new foucocoStorage.TokensAccountsStorage(ctx, ctx.block)
+            result = await tokenAccountsStorage.asV1.get(
                 account,
                 assetId as any
             )
-        } else if (tokenAccountsStorage.isV8) {
-            result = await tokenAccountsStorage.asV8.get(
-                account,
-                assetId as any
-            )
+        } else {
+            const tokenAccountsStorage =
+                new amplitudeStorage.TokensAccountsStorage(ctx, ctx.block)
+
+            if (tokenAccountsStorage.isV3) {
+                result = await tokenAccountsStorage.asV3.get(
+                    account,
+                    assetId as any
+                )
+            } else if (tokenAccountsStorage.isV8) {
+                result = await tokenAccountsStorage.asV8.get(
+                    account,
+                    assetId as any
+                )
+            }
         }
     }
 
@@ -215,20 +309,34 @@ export async function getTotalIssuance(
 ) {
     let result
     if (assetId.__kind === 'Native') {
-        const balanceIssuanceStorage = new storage.BalancesTotalIssuanceStorage(
-            ctx,
-            ctx.block
-        )
-        result = await balanceIssuanceStorage.asV1.get()
+        const balanceIssuanceStorage = (() => {
+            if (network === 'foucoco') {
+                return new foucocoStorage.BalancesTotalIssuanceStorage(
+                    ctx,
+                    ctx.block
+                ).asV1
+            } else {
+                return new amplitudeStorage.BalancesTotalIssuanceStorage(
+                    ctx,
+                    ctx.block
+                ).asV1
+            }
+        })()
+        result = await balanceIssuanceStorage.get()
     } else {
-        const tokenIssuanceStorage = new storage.TokensTotalIssuanceStorage(
-            ctx,
-            ctx.block
-        )
-        if (tokenIssuanceStorage.isV3) {
-            result = await tokenIssuanceStorage.asV3.get(assetId as any)
-        } else if (tokenIssuanceStorage.isV8) {
-            result = await tokenIssuanceStorage.asV8.get(assetId as any)
+        if (network === 'foucoco') {
+            const tokenIssuanceStorage =
+                new foucocoStorage.TokensTotalIssuanceStorage(ctx, ctx.block)
+                    .asV1
+            result = await tokenIssuanceStorage.get(assetId as any)
+        } else {
+            const tokenIssuanceStorage =
+                new amplitudeStorage.TokensTotalIssuanceStorage(ctx, ctx.block)
+            if (tokenIssuanceStorage.isV3) {
+                result = await tokenIssuanceStorage.asV3.get(assetId as any)
+            } else if (tokenIssuanceStorage.isV8) {
+                result = await tokenIssuanceStorage.asV8.get(assetId as any)
+            }
         }
     }
 
@@ -245,26 +353,35 @@ export async function getTokenBurned(
     }
     let result
     if (assetId.__kind === 'Native') {
-        const systemAccountStorage = new storage.SystemAccountStorage(
-            ctx,
-            block
-        )
-        result = (await systemAccountStorage.asV1.get(account)).data
+        const systemAccountStorage = (() => {
+            if (network === 'foucoco') {
+                return new foucocoStorage.SystemAccountStorage(ctx, ctx.block)
+                    .asV1
+            } else {
+                return new amplitudeStorage.SystemAccountStorage(ctx, ctx.block)
+                    .asV1
+            }
+        })()
+        result = (await systemAccountStorage.get(account)).data
     } else {
-        const tokenAccountsStorage = new storage.TokensAccountsStorage(
-            ctx,
-            block
-        )
-        if (tokenAccountsStorage.isV3) {
-            result = await tokenAccountsStorage.asV3.get(
-                account,
-                assetId as any
-            )
-        } else if (tokenAccountsStorage.isV8) {
-            result = await tokenAccountsStorage.asV8.get(
-                account,
-                assetId as any
-            )
+        if (network === 'foucoco') {
+            const tokenAccountsStorage =
+                new foucocoStorage.TokensAccountsStorage(ctx, block).asV1
+            result = await tokenAccountsStorage.get(account, assetId as any)
+        } else {
+            const tokenAccountsStorage =
+                new amplitudeStorage.TokensAccountsStorage(ctx, block)
+            if (tokenAccountsStorage.isV3) {
+                result = await tokenAccountsStorage.asV3.get(
+                    account,
+                    assetId as any
+                )
+            } else if (tokenAccountsStorage.isV8) {
+                result = await tokenAccountsStorage.asV8.get(
+                    account,
+                    assetId as any
+                )
+            }
         }
     }
 

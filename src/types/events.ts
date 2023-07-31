@@ -1,8 +1,9 @@
 import * as amplitudeEvents from './amplitude/events'
 import * as foucocoEvents from './foucoco/events'
 
-const network = process.env.NETWORK || 'amplitude'
+import { network } from '../config'
 
 const events = network === 'foucoco' ? foucocoEvents : amplitudeEvents
 
+export { amplitudeEvents, foucocoEvents }
 export default events

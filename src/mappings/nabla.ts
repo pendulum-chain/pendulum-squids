@@ -53,6 +53,7 @@ export const [
 
 export async function handleContractEvent(ctx: EventHandlerContext) {
     if (ctx.event.args.address == BACKSTOP_POOL_CONTRACT_ADDRESS) {
+        getOrCreateBackstopPool(ctx, BACKSTOP_POOL_CONTRACT_ADDRESS)
     } else if (ctx.event.args.address == ROUTER_CONTRACT_ADDRESS) {
     } else if (ctx.event.args.address == MOCK_PLATYPUS_CURVE_CONTRACT_ADDRESS) {
     } else if (ctx.event.args.address == SWAP_POOL_CONTRACT_ADDRESS) {
@@ -68,8 +69,11 @@ export async function getOrCreateBackstopPool(
     let backstop = await ctx.store.get(BackstopPool, address)
     if (!backstop) {
         const contract = new bpool.Contract(ctx, address)
-        let router = getOrCreateRouter(ctx, toHex(await contract.router()))
-        const coverage = contract.coverage()
+        let router = await getOrCreateRouter(
+            ctx,
+            toHex(await contract.router())
+        )
+        let coverage = await contract.coverage()
         backstop = new BackstopPool({
             id: BACKSTOP_POOL_CONTRACT_ADDRESS,
             router: router,
@@ -78,8 +82,8 @@ export async function getOrCreateBackstopPool(
                 toHex(await contract.asset())
             ),
             totalSupply: await contract.totalSupply(),
-            reserves: coverage.get_reserves(),
-            liabilities: coverage.get_liabilities(),
+            reserves: coverage.at(0),
+            liabilities: coverage.at(1),
         })
         ctx.store.save(backstop)
     }
@@ -90,7 +94,7 @@ export async function getOrCreateRouter(
     ctx: EventHandlerContext,
     address: string
 ) {
-    let router = ctx.store.get(Router, address)
+    let router = await ctx.store.get(Router, address)
     if (!router) {
         router = new Router({
             id: address,
@@ -107,7 +111,7 @@ export async function getOrCreateNablaToken(
     ctx: EventHandlerContext,
     address: string
 ) {
-    let nablaToken = ctx.store.get(NablaToken, address)
+    let nablaToken = await ctx.store.get(NablaToken, address)
     if (!nablaToken) {
         const contract = new erc20.Contract(ctx, address)
         nablaToken = new NablaToken({

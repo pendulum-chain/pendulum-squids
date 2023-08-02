@@ -723,7 +723,7 @@ type SwapPool @entity {
 type BackstopPool @entity {
     id: ID! # id can be the address of the backstop pool contract
     router: Router! # link to the Router entity
-    token: Token! # link to the Token entity
+    token: NablaToken! # link to the NablaToken entity
     reserves: BigInt! # current balance of the pool
     liabilities: BigInt! # total Liquidity Provider (LP) deposits
     totalSupply: BigInt! # total supply of LP tokens

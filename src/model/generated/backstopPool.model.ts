@@ -7,7 +7,7 @@ import {
 } from 'typeorm'
 import * as marshal from './marshal'
 import { Router } from './router.model'
-import { Token } from './token.model'
+import { NablaToken } from './nablaToken.model'
 
 @Entity_()
 export class BackstopPool {
@@ -23,8 +23,8 @@ export class BackstopPool {
     router!: Router
 
     @Index_()
-    @ManyToOne_(() => Token, { nullable: true })
-    token!: Token
+    @ManyToOne_(() => NablaToken, { nullable: true })
+    token!: NablaToken
 
     @Column_('numeric', {
         transformer: marshal.bigintTransformer,

@@ -702,7 +702,7 @@ type Router @entity {
     paused: Boolean! # whether the router is paused
 }
 
-type Token @entity {
+type NablaToken @entity {
     id: ID! # id can be the address of the token contract
     decimals: Int! # number of decimal places the token can be split into
     name: String! # name of the token

@@ -2182,7 +2182,7 @@ export interface Constructor_new {
     symbol: string
 }
 
-export type string = string
+// export type string = string
 
 export type u256 = bigint
 

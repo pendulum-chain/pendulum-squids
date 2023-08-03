@@ -2,9 +2,10 @@ import { EventHandlerContext } from '../types'
 import { network } from '../config'
 import * as ss58 from '@subsquid/ss58'
 import { toHex } from '@subsquid/util-internal-hex'
+import { BackstopPool, Router, NablaToken, SwapPool } from '../model'
 import * as bpool from '../abi/backstop'
-import { BackstopPool, Router, NablaToken } from '../model'
 import * as erc20 from '../abi/erc20'
+import * as spool from '../abi/swap'
 
 function ss8ToHex(ss8Address: string[]) {
     var addresses = []
@@ -53,12 +54,14 @@ export const [
 
 export async function handleContractEvent(ctx: EventHandlerContext) {
     if (ctx.event.args.address == BACKSTOP_POOL_CONTRACT_ADDRESS) {
-        getOrCreateBackstopPool(ctx, BACKSTOP_POOL_CONTRACT_ADDRESS)
+        await getOrCreateBackstopPool(ctx, BACKSTOP_POOL_CONTRACT_ADDRESS)
     } else if (ctx.event.args.address == ROUTER_CONTRACT_ADDRESS) {
+        await getOrCreateRouter(ctx, ROUTER_CONTRACT_ADDRESS)
     } else if (ctx.event.args.address == MOCK_PLATYPUS_CURVE_CONTRACT_ADDRESS) {
     } else if (ctx.event.args.address == SWAP_POOL_CONTRACT_ADDRESS) {
     } else if (ctx.event.args.address == MOCK_ORACLE_CONTRACT_ADDRESS) {
     } else if (ctx.event.args.address == MOCK_ERC20_CONTRACT_ADDRESS) {
+        await getOrCreateNablaToken(ctx, MOCK_ERC20_CONTRACT_ADDRESS)
     }
 }
 
@@ -124,3 +127,24 @@ export async function getOrCreateNablaToken(
     }
     return nablaToken
 }
+
+// export async function getOrCreateSwapPool(
+//     ctx: EventHandlerContext,
+//     address: string
+// ) {
+//     let swapPool = await ctx.store.get(SwapPool, address)
+//     if (!swapPool) {
+//         const contract = new spool.Contract(ctx, address)
+//         let router = await getOrCreateRouter(ctx, toHex(await contract.router()))
+//         let backstop = await getOrCreateBackstopPool(ctx, toHex(await contract.backstop()))
+//         // let tocken = await getOrCreateNablaToken(ctx, )
+//         swapPool = new SwapPool({
+//             id: address,
+//             router: router,
+//             backstop: backstop
+
+//         })
+//         ctx.store.save(swapPool)
+//     }
+//     return swapPool
+// }

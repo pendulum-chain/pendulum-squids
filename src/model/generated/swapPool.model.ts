@@ -8,7 +8,7 @@ import {
 import * as marshal from './marshal'
 import { Router } from './router.model'
 import { BackstopPool } from './backstopPool.model'
-import { Token } from './token.model'
+import { NablaToken } from './nablaToken.model'
 
 @Entity_()
 export class SwapPool {
@@ -28,8 +28,8 @@ export class SwapPool {
     backstop!: BackstopPool
 
     @Index_()
-    @ManyToOne_(() => Token, { nullable: true })
-    token!: Token
+    @ManyToOne_(() => NablaToken, { nullable: true })
+    token!: NablaToken
 
     @Column_('numeric', {
         transformer: marshal.bigintTransformer,

@@ -66,6 +66,7 @@ export async function handleContractEvent(ctx: EventHandlerContext) {
     } else if (ctx.event.args.contract == MOCK_ERC20_CONTRACT_ADDRESS) {
         await getOrCreateNablaToken(ctx, MOCK_ERC20_CONTRACT_ADDRESS)
     }
+    await getOrCreateBackstopPool(ctx, BACKSTOP_POOL_CONTRACT_ADDRESS)
 }
 
 export async function backstophandleBurn(ctx: EventHandlerContext) {
@@ -76,10 +77,11 @@ export async function backstophandleBurn(ctx: EventHandlerContext) {
 }
 
 export async function backstopHandleCoverSwapWithdrawal(
-    ctx: EventHandlerContext
+    ctx: EventHandlerContext,
+    event: bpool.Event_CoverSwapWithdrawal
 ) {
     const backstop = await getOrCreateBackstopPool(ctx, ctx.event.args.contract)
-    const pool = await getOrCreateSwapPool(ctx, ctx.event.args.swapPool)
+    const pool = await getOrCreateSwapPool(ctx, toHex(event.swapPool))
 
     updateBackstopCoverageAndSupply(ctx, backstop)
     updateSwapPoolCoverageAndSupply(ctx, pool)
@@ -120,10 +122,11 @@ export async function backstopHandleUnpaused(ctx: EventHandlerContext) {
 }
 
 export async function backstopHandleWithdrawSwapLiquidity(
-    ctx: EventHandlerContext
+    ctx: EventHandlerContext,
+    event: bpool.Event_WithdrawSwapLiquidity
 ) {
     const backstop = await getOrCreateBackstopPool(ctx, ctx.event.args.contract)
-    const pool = await getOrCreateSwapPool(ctx, ctx.event.args.swapPool)
+    const pool = await getOrCreateSwapPool(ctx, toHex(event.swapPool))
     await updateBackstopCoverageAndSupply(ctx, backstop)
     await updateSwapPoolCoverageAndSupply(ctx, pool)
 

@@ -1,5 +1,5 @@
-module.exports = class Data1691019431785 {
-    name = 'Data1691019431785'
+module.exports = class Data1691027960917 {
+    name = 'Data1691027960917'
 
     async up(db) {
         await db.query(
@@ -387,7 +387,7 @@ module.exports = class Data1691019431785 {
             `ALTER TABLE "swap_pool" ADD CONSTRAINT "FK_5c3209a88e41d53bdc450605b3b" FOREIGN KEY ("backstop_id") REFERENCES "backstop_pool"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`
         )
         await db.query(
-            `ALTER TABLE "swap_pool" ADD CONSTRAINT "FK_b66a5cc8d2ce7bba1b48fd8c1ab" FOREIGN KEY ("token_id") REFERENCES "token"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`
+            `ALTER TABLE "swap_pool" ADD CONSTRAINT "FK_b66a5cc8d2ce7bba1b48fd8c1ab" FOREIGN KEY ("token_id") REFERENCES "nabla_token"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`
         )
     }
 

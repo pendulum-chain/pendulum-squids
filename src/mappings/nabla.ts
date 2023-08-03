@@ -66,6 +66,93 @@ export async function handleContractEvent(ctx: EventHandlerContext) {
     }
 }
 
+export async function backstophandleBurn(ctx: EventHandlerContext) {
+    const backstop = await getOrCreateBackstopPool(ctx, ctx.event.args.address)
+
+    await updateBackstopCoverageAndSupply(ctx, backstop)
+    ctx.store.save(backstop)
+}
+
+export async function backstopHandleCoverSwapWithdrawal(
+    ctx: EventHandlerContext
+) {
+    const backstop = await getOrCreateBackstopPool(ctx, ctx.event.args.address)
+    const pool = await getOrCreateSwapPool(ctx, ctx.event.args.swapPool)
+
+    updateBackstopCoverageAndSupply(ctx, backstop)
+    updateSwapPoolCoverageAndSupply(ctx, pool)
+
+    ctx.store.save(backstop)
+    ctx.store.save(pool)
+}
+
+export async function backstopHandleMint(ctx: EventHandlerContext) {
+    const backstop = await getOrCreateBackstopPool(ctx, ctx.event.args.address)
+
+    updateBackstopCoverageAndSupply(ctx, backstop)
+    ctx.store.save(backstop)
+}
+
+export async function backstopHandleOwnershipTransferred(
+    ctx: EventHandlerContext
+) {
+    // This event will always be emitted on pool creation
+    const backstop = await getOrCreateBackstopPool(ctx, ctx.event.args.address)
+    ctx.store.save(backstop)
+}
+
+export async function backstopHandlePaused(ctx: EventHandlerContext) {
+    const backstop = await getOrCreateBackstopPool(ctx, ctx.event.args.address)
+
+    backstop.paused = true
+    ctx.store.save(backstop)
+}
+
+export async function backstopHandleTransfer(ctx: EventHandlerContext) {}
+
+export async function backstopHandleUnpaused(ctx: EventHandlerContext) {
+    const backstop = await getOrCreateBackstopPool(ctx, ctx.event.args.address)
+
+    backstop.paused = false
+    ctx.store.save(backstop)
+}
+
+export async function backstopHandleWithdrawSwapLiquidity(
+    ctx: EventHandlerContext
+) {
+    const backstop = await getOrCreateBackstopPool(ctx, ctx.event.args.address)
+    const pool = await getOrCreateSwapPool(ctx, ctx.event.args.swapPool)
+    await updateBackstopCoverageAndSupply(ctx, backstop)
+    await updateSwapPoolCoverageAndSupply(ctx, pool)
+
+    ctx.store.save(backstop)
+    ctx.store.save(pool)
+}
+
+export async function updateBackstopCoverageAndSupply(
+    ctx: EventHandlerContext,
+    backstop: BackstopPool
+) {
+    const contract = new bpool.Contract(ctx, backstop.id)
+    const coverage = await contract.coverage()
+
+    backstop.totalSupply = await contract.totalSupply()
+    backstop.reserves = coverage[0]
+    backstop.liabilities = coverage[1]
+}
+
+export async function updateSwapPoolCoverageAndSupply(
+    ctx: EventHandlerContext,
+    pool: SwapPool
+) {
+    const contract = new spool.Contract(ctx, pool.id)
+    const coverage = await contract.coverage()
+
+    pool.totalSupply = await contract.totalSupply()
+    pool.reserves = coverage[0]
+    pool.liabilities = coverage[1]
+}
+
 export async function getOrCreateBackstopPool(
     ctx: EventHandlerContext,
     address: string
@@ -86,8 +173,8 @@ export async function getOrCreateBackstopPool(
                 toHex(await contract.asset())
             ),
             totalSupply: await contract.totalSupply(),
-            reserves: coverage.at(0),
-            liabilities: coverage.at(1),
+            reserves: coverage[0],
+            liabilities: coverage[1],
         })
         ctx.store.save(backstop)
     }
@@ -155,8 +242,8 @@ export async function getOrCreateSwapPool(
             backstop: backstop,
             token: token,
             totalSupply: await contract.totalSupply(),
-            reserves: coverage.at(0),
-            liabilities: coverage.at(1),
+            reserves: coverage[0],
+            liabilities: coverage[1],
             paused: false,
         })
         ctx.store.save(swapPool)

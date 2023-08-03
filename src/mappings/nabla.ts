@@ -149,7 +149,10 @@ export async function backstopHandlePaused(ctx: EventHandlerContext) {
     ctx.store.save(backstop)
 }
 
-export async function backstopHandleTransfer(ctx: EventHandlerContext) {}
+export async function backstopHandleTransfer(ctx: EventHandlerContext) {
+    const backstop = await getOrCreateBackstopPool(ctx, ctx.event.args.contract)
+    ctx.store.save(backstop)
+}
 
 export async function backstopHandleUnpaused(ctx: EventHandlerContext) {
     const backstop = await getOrCreateBackstopPool(ctx, ctx.event.args.contract)
@@ -299,6 +302,7 @@ export async function getOrCreateBackstopPool(
             totalSupply: await contract.totalSupply(),
             reserves: coverage[0],
             liabilities: coverage[1],
+            paused: false,
         })
         ctx.store.save(backstop)
     }

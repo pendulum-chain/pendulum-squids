@@ -6,6 +6,7 @@ import { BackstopPool, Router, NablaToken, SwapPool } from '../model'
 import * as bpool from '../abi/backstop'
 import * as erc20 from '../abi/erc20'
 import * as spool from '../abi/swap'
+import * as rou from '../abi/router'
 
 function ss8ToHex(ss8Address: string[]) {
     var addresses = []
@@ -54,19 +55,54 @@ export const [
 
 export async function handleContractEvent(ctx: EventHandlerContext) {
     if (ctx.event.args.contract == BACKSTOP_POOL_CONTRACT_ADDRESS) {
-        await getOrCreateBackstopPool(ctx, BACKSTOP_POOL_CONTRACT_ADDRESS)
+        const event = bpool.decodeEvent(ctx.event.args.data)
+        if (event.__kind == 'Burn') {
+            await backstophandleBurn(ctx)
+        } else if (event.__kind == 'CoverSwapWithdrawal') {
+            await backstopHandleCoverSwapWithdrawal(ctx, event)
+        } else if (event.__kind == 'WithdrawSwapLiquidity') {
+            await backstopHandleWithdrawSwapLiquidity(ctx, event)
+        } else if (event.__kind == 'Mint') {
+            await backstopHandleMint(ctx)
+        } else if (event.__kind == 'OwnershipTransferred') {
+            await backstopHandleOwnershipTransferred(ctx)
+        } else if (event.__kind == 'Paused') {
+            await backstopHandlePaused(ctx)
+        } else if (event.__kind == 'Unpaused') {
+            await backstopHandleUnpaused(ctx)
+        } else if (event.__kind == 'Transfer') {
+            await backstopHandleTransfer(ctx)
+        }
     } else if (ctx.event.args.contract == ROUTER_CONTRACT_ADDRESS) {
-        await getOrCreateRouter(ctx, ROUTER_CONTRACT_ADDRESS)
-    } else if (
-        ctx.event.args.contract == MOCK_PLATYPUS_CURVE_CONTRACT_ADDRESS
-    ) {
+        const event = rou.decodeEvent(ctx.event.args.data)
+        if (event.__kind == 'OwnershipTransferred') {
+            await routerHandleOwnershipTransferred(ctx)
+        } else if (event.__kind == 'Paused') {
+            await routerHandlePaused(ctx)
+        } else if (event.__kind == 'Swap') {
+            await routerHandleSwap(ctx)
+        }
     } else if (ctx.event.args.contract == SWAP_POOL_CONTRACT_ADDRESS) {
+        const event = spool.decodeEvent(ctx.event.args.data)
+        if (event.__kind == 'BackstopDrain') {
+            await swapHandleBackstopDrain(ctx)
+        } else if (event.__kind == 'Burn') {
+            await swapHandleBurn(ctx)
+        } else if (event.__kind == 'Mint') {
+            await swapHandleMint(ctx)
+        } else if (event.__kind == 'ChargedSwapFees') {
+            await swapHandleChargedSwapFees(ctx)
+        } else if (event.__kind == 'OwnershipTransferred') {
+            await swapHandleOwnershipTransferred(ctx)
+        } else if (event.__kind == 'Paused') {
+            await swapHandlePaused(ctx)
+        } else if (event.__kind == 'Unpaused') {
+            await swapHandleUnpaused(ctx)
+        } else if (event.__kind == 'Transfer') {
+            await swapHandleTransfer(ctx)
+        }
         await getOrCreateSwapPool(ctx, SWAP_POOL_CONTRACT_ADDRESS)
-    } else if (ctx.event.args.contract == MOCK_ORACLE_CONTRACT_ADDRESS) {
-    } else if (ctx.event.args.contract == MOCK_ERC20_CONTRACT_ADDRESS) {
-        await getOrCreateNablaToken(ctx, MOCK_ERC20_CONTRACT_ADDRESS)
     }
-    await getOrCreateBackstopPool(ctx, BACKSTOP_POOL_CONTRACT_ADDRESS)
 }
 
 export async function backstophandleBurn(ctx: EventHandlerContext) {

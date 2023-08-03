@@ -81,6 +81,8 @@ export async function handleContractEvent(ctx: EventHandlerContext) {
             await routerHandlePaused(ctx)
         } else if (event.__kind == 'Swap') {
             await routerHandleSwap(ctx)
+        } else if (event.__kind == 'Unpaused') {
+            await routerHandleUnpaused(ctx)
         }
     } else if (ctx.event.args.contract == SWAP_POOL_CONTRACT_ADDRESS) {
         const event = spool.decodeEvent(ctx.event.args.data)
@@ -101,7 +103,6 @@ export async function handleContractEvent(ctx: EventHandlerContext) {
         } else if (event.__kind == 'Transfer') {
             await swapHandleTransfer(ctx)
         }
-        await getOrCreateSwapPool(ctx, SWAP_POOL_CONTRACT_ADDRESS)
     }
 }
 
@@ -233,6 +234,13 @@ export async function routerHandlePaused(ctx: EventHandlerContext) {
     const router = await getOrCreateRouter(ctx, ctx.event.args.contract)
     // Set the 'paused' property to true
     router.paused = true
+    ctx.store.save(router)
+}
+
+export async function routerHandleUnpaused(ctx: EventHandlerContext) {
+    const router = await getOrCreateRouter(ctx, ctx.event.args.contract)
+    // Set the 'paused' property to false
+    router.paused = false
     ctx.store.save(router)
 }
 

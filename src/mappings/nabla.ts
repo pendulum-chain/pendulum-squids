@@ -293,7 +293,7 @@ export async function getOrCreateBackstopPool(
         )
         let coverage = await contract.coverage()
         backstop = new BackstopPool({
-            id: BACKSTOP_POOL_CONTRACT_ADDRESS,
+            id: address,
             router: router,
             token: await getOrCreateNablaToken(
                 ctx,

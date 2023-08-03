@@ -129,6 +129,57 @@ export async function backstopHandleWithdrawSwapLiquidity(
     ctx.store.save(pool)
 }
 
+export async function swapHandleBackstopDrain(ctx: EventHandlerContext) {
+    const pool = await getOrCreateSwapPool(ctx, ctx.event.args.address)
+    const backstop = await getOrCreateBackstopPool(ctx, pool.backstop.id)
+
+    await updateSwapPoolCoverageAndSupply(ctx, pool)
+    await updateBackstopCoverageAndSupply(ctx, backstop)
+
+    ctx.store.save(pool)
+    ctx.store.save(backstop)
+}
+
+export async function swapHandleBurn(ctx: EventHandlerContext) {
+    const pool = await getOrCreateSwapPool(ctx, ctx.event.args.address)
+
+    await updateSwapPoolCoverageAndSupply(ctx, pool)
+    ctx.store.save(pool)
+}
+
+export function swapHandleChargedSwapFees(ctx: EventHandlerContext) {
+    // TODO
+}
+
+export async function swapHandleMint(ctx: EventHandlerContext) {
+    const pool = await getOrCreateSwapPool(ctx, ctx.event.args.address)
+
+    await updateSwapPoolCoverageAndSupply(ctx, pool)
+    ctx.store.save(pool)
+}
+
+export async function swapHandleOwnershipTransferred(ctx: EventHandlerContext) {
+    // This event will always be emitted on pool creation
+    const pool = await getOrCreateSwapPool(ctx, ctx.event.args.address)
+    ctx.store.save(pool)
+}
+
+export async function swapHandlePaused(ctx: EventHandlerContext) {
+    const pool = await getOrCreateSwapPool(ctx, ctx.event.args.address)
+
+    pool.paused = true
+    ctx.store.save(pool)
+}
+
+export async function swapHandleTransfer(ctx: EventHandlerContext) {}
+
+export async function swapHandleUnpaused(ctx: EventHandlerContext) {
+    const pool = await getOrCreateSwapPool(ctx, ctx.event.args.address)
+
+    pool.paused = false
+    ctx.store.save(pool)
+}
+
 export async function updateBackstopCoverageAndSupply(
     ctx: EventHandlerContext,
     backstop: BackstopPool

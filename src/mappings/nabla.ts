@@ -180,6 +180,30 @@ export async function swapHandleUnpaused(ctx: EventHandlerContext) {
     ctx.store.save(pool)
 }
 
+export async function routerHandleOwnershipTransferred(
+    ctx: EventHandlerContext
+) {
+    // This event will always be emitted on router creation
+    const router = await getOrCreateRouter(ctx, ctx.event.args.address)
+    ctx.store.save(router)
+}
+
+export async function routerHandlePaused(ctx: EventHandlerContext) {
+    const router = await getOrCreateRouter(ctx, ctx.event.args.address)
+    // Set the 'paused' property to true
+    router.paused = true
+    ctx.store.save(router)
+}
+
+export async function routerHandleSwap(ctx: EventHandlerContext) {
+    await getOrCreateRouter(ctx, ctx.event.args.address)
+}
+
+export async function routerHandleSwapPoolRegistered(ctx: EventHandlerContext) {
+    await getOrCreateRouter(ctx, ctx.event.args.address)
+    await getOrCreateSwapPool(ctx, ctx.event.args.pool)
+}
+
 export async function updateBackstopCoverageAndSupply(
     ctx: EventHandlerContext,
     backstop: BackstopPool

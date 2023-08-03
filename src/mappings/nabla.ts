@@ -59,6 +59,7 @@ export async function handleContractEvent(ctx: EventHandlerContext) {
         await getOrCreateRouter(ctx, ROUTER_CONTRACT_ADDRESS)
     } else if (ctx.event.args.address == MOCK_PLATYPUS_CURVE_CONTRACT_ADDRESS) {
     } else if (ctx.event.args.address == SWAP_POOL_CONTRACT_ADDRESS) {
+        await getOrCreateSwapPool(ctx, SWAP_POOL_CONTRACT_ADDRESS)
     } else if (ctx.event.args.address == MOCK_ORACLE_CONTRACT_ADDRESS) {
     } else if (ctx.event.args.address == MOCK_ERC20_CONTRACT_ADDRESS) {
         await getOrCreateNablaToken(ctx, MOCK_ERC20_CONTRACT_ADDRESS)
@@ -128,23 +129,37 @@ export async function getOrCreateNablaToken(
     return nablaToken
 }
 
-// export async function getOrCreateSwapPool(
-//     ctx: EventHandlerContext,
-//     address: string
-// ) {
-//     let swapPool = await ctx.store.get(SwapPool, address)
-//     if (!swapPool) {
-//         const contract = new spool.Contract(ctx, address)
-//         let router = await getOrCreateRouter(ctx, toHex(await contract.router()))
-//         let backstop = await getOrCreateBackstopPool(ctx, toHex(await contract.backstop()))
-//         // let tocken = await getOrCreateNablaToken(ctx, )
-//         swapPool = new SwapPool({
-//             id: address,
-//             router: router,
-//             backstop: backstop
-
-//         })
-//         ctx.store.save(swapPool)
-//     }
-//     return swapPool
-// }
+export async function getOrCreateSwapPool(
+    ctx: EventHandlerContext,
+    address: string
+) {
+    let swapPool = await ctx.store.get(SwapPool, address)
+    if (!swapPool) {
+        const contract = new spool.Contract(ctx, address)
+        let router = await getOrCreateRouter(
+            ctx,
+            toHex(await contract.router())
+        )
+        let backstop = await getOrCreateBackstopPool(
+            ctx,
+            toHex(await contract.backstop())
+        )
+        let token = await getOrCreateNablaToken(
+            ctx,
+            toHex(await contract.asset())
+        )
+        let coverage = await contract.coverage()
+        swapPool = new SwapPool({
+            id: address,
+            router: router,
+            backstop: backstop,
+            token: token,
+            totalSupply: await contract.totalSupply(),
+            reserves: coverage.at(0),
+            liabilities: coverage.at(1),
+            paused: false,
+        })
+        ctx.store.save(swapPool)
+    }
+    return swapPool
+}

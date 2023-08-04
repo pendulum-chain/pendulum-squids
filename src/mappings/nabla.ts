@@ -317,8 +317,8 @@ export async function getOrCreateRouter(
     if (!router) {
         router = new Router({
             id: address,
-            swapPools: [],
-            backstopPools: [],
+            // swapPools: [],
+            // backstopPools: [],
             paused: false,
         })
         ctx.store.save(router)

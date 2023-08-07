@@ -21,19 +21,17 @@ function ss8ToHex(ss8Address: string[]) {
 const FOUCOCO_CONTRACTS = [
     '6h7p67AZyzWiN42FSzkWyGZaqMuajo2BAm43LXBQHVXJ8sq7', // Backstop Pool
     '6mrTyH54tYXKsVxrahapG1S54cVMqqwqtnmTLLbj3NZT2f1k', // Router
-    '6mnENTpY6B5mqtUHsjv3BxwKucT9hqF761QrYGfD22ccLzdC', // Platypus Curve
-    '6gxRBjkhfaWMAhMQmEA1MUvGssc2f9ercXPZrzFUKWTTaCyq', // Swap Pool example
-    '6n32n4F11qfFXfFYhVj15fChZTXpVP5zJSM98361gK5QKrxW', // Mock Oracle
-    '6h6JMHYBV7P6uQekZXzHmmpzx7tzHutTyx448MnFogR6dNde', // ERC20 example
+    '6gxRBjkhfaWMAhMQmEA1MUvGssc2f9ercXPZrzFUKWTTaCyq', // Swap Pool USD
+    '6kauoQTrdZzBCR3RcqJKJwxEGeQyj6zd3yx8H7XBNwbzrcT5', // Swap Pool EUR
+    '6mMDtTPgghASfTpW4cuwdxSJvuM6mvGMxTHZxXQf9cWVUioS', // Swap Pool ETH
 ]
 
 const AMPLITUDE_CONTRACTS = [
     '6h7p67AZyzWiN42FSzkWyGZaqMuajo2BAm43LXBQHVXJ8sq7', // Backstop Pool
     '6mrTyH54tYXKsVxrahapG1S54cVMqqwqtnmTLLbj3NZT2f1k', // Router
-    '6mnENTpY6B5mqtUHsjv3BxwKucT9hqF761QrYGfD22ccLzdC', // Platypus Curve
-    '6gxRBjkhfaWMAhMQmEA1MUvGssc2f9ercXPZrzFUKWTTaCyq', // Swap Pool example
-    '6n32n4F11qfFXfFYhVj15fChZTXpVP5zJSM98361gK5QKrxW', // Mock Oracle
-    '6h6JMHYBV7P6uQekZXzHmmpzx7tzHutTyx448MnFogR6dNde', // ERC20 example
+    '6gxRBjkhfaWMAhMQmEA1MUvGssc2f9ercXPZrzFUKWTTaCyq', // Swap Pool USD
+    '6kauoQTrdZzBCR3RcqJKJwxEGeQyj6zd3yx8H7XBNwbzrcT5', // Swap Pool EUR
+    '6mMDtTPgghASfTpW4cuwdxSJvuM6mvGMxTHZxXQf9cWVUioS', // Swap Pool ETH
 ]
 
 function getContractsAddresses() {
@@ -47,10 +45,9 @@ function getContractsAddresses() {
 export const [
     BACKSTOP_POOL_CONTRACT_ADDRESS,
     ROUTER_CONTRACT_ADDRESS,
-    MOCK_PLATYPUS_CURVE_CONTRACT_ADDRESS,
-    SWAP_POOL_CONTRACT_ADDRESS,
-    MOCK_ORACLE_CONTRACT_ADDRESS,
-    MOCK_ERC20_CONTRACT_ADDRESS,
+    SWAP_POOL_USD_CONTRACT_ADDRESS,
+    SWAP_POOL_EUR_CONTRACT_ADDRESS,
+    SWAP_POOL_ETH_CONTRACT_ADDRESS,
 ] = getContractsAddresses()
 
 export async function handleContractEvent(ctx: EventHandlerContext) {
@@ -84,7 +81,11 @@ export async function handleContractEvent(ctx: EventHandlerContext) {
         } else if (event.__kind == 'Unpaused') {
             await routerHandleUnpaused(ctx)
         }
-    } else if (ctx.event.args.contract == SWAP_POOL_CONTRACT_ADDRESS) {
+    } else if (
+        ctx.event.args.contract == SWAP_POOL_USD_CONTRACT_ADDRESS ||
+        SWAP_POOL_ETH_CONTRACT_ADDRESS ||
+        SWAP_POOL_EUR_CONTRACT_ADDRESS
+    ) {
         const event = spool.decodeEvent(ctx.event.args.data)
         if (event.__kind == 'BackstopDrain') {
             await swapHandleBackstopDrain(ctx)

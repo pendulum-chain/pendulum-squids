@@ -24,10 +24,9 @@ import { toHex } from '@subsquid/util-internal-hex'
 import {
     BACKSTOP_POOL_CONTRACT_ADDRESS,
     ROUTER_CONTRACT_ADDRESS,
-    MOCK_PLATYPUS_CURVE_CONTRACT_ADDRESS,
-    SWAP_POOL_CONTRACT_ADDRESS,
-    MOCK_ORACLE_CONTRACT_ADDRESS,
-    MOCK_ERC20_CONTRACT_ADDRESS,
+    SWAP_POOL_USD_CONTRACT_ADDRESS,
+    SWAP_POOL_ETH_CONTRACT_ADDRESS,
+    SWAP_POOL_EUR_CONTRACT_ADDRESS,
 } from './mappings/nabla'
 
 const DataSelection = { data: { event: true } } as const
@@ -52,13 +51,9 @@ const processor = new SubstrateBatchProcessor()
     .addEvent('Tokens.BalanceSet', DataSelection)
     .addContractsContractEmitted(BACKSTOP_POOL_CONTRACT_ADDRESS, DataSelection)
     .addContractsContractEmitted(ROUTER_CONTRACT_ADDRESS, DataSelection)
-    .addContractsContractEmitted(
-        MOCK_PLATYPUS_CURVE_CONTRACT_ADDRESS,
-        DataSelection
-    )
-    .addContractsContractEmitted(SWAP_POOL_CONTRACT_ADDRESS, DataSelection)
-    .addContractsContractEmitted(MOCK_ORACLE_CONTRACT_ADDRESS, DataSelection)
-    .addContractsContractEmitted(MOCK_ERC20_CONTRACT_ADDRESS, DataSelection)
+    .addContractsContractEmitted(SWAP_POOL_ETH_CONTRACT_ADDRESS, DataSelection)
+    .addContractsContractEmitted(SWAP_POOL_USD_CONTRACT_ADDRESS, DataSelection)
+    .addContractsContractEmitted(SWAP_POOL_EUR_CONTRACT_ADDRESS, DataSelection)
 
 type Item = BatchProcessorItem<typeof processor>
 export type Ctx = BatchContext<Store, Item>

@@ -31,10 +31,6 @@ import {
 
 const DataSelection = { data: { event: true } } as const
 
-const CONTRACT_ADDRESS_SS58 = 'XnrLUQucQvzp5kaaWLG9Q3LbZw5DPwpGn69B5YcywSWVr5w'
-const CONTRACT_ADDRESS = toHex(ss58.decode(CONTRACT_ADDRESS_SS58).bytes)
-const SS58_PREFIX = ss58.decode(CONTRACT_ADDRESS_SS58).prefix
-
 const processor = new SubstrateBatchProcessor()
     .setDataSource(config.dataSource)
 

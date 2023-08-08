@@ -83,8 +83,8 @@ export async function handleContractEvent(ctx: EventHandlerContext) {
         }
     } else if (
         ctx.event.args.contract == SWAP_POOL_USD_CONTRACT_ADDRESS ||
-        SWAP_POOL_ETH_CONTRACT_ADDRESS ||
-        SWAP_POOL_EUR_CONTRACT_ADDRESS
+        ctx.event.args.contract == SWAP_POOL_ETH_CONTRACT_ADDRESS ||
+        ctx.event.args.contract == SWAP_POOL_EUR_CONTRACT_ADDRESS
     ) {
         const event = spool.decodeEvent(ctx.event.args.data)
         if (event.__kind == 'BackstopDrain') {

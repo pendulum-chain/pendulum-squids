@@ -18,17 +18,6 @@ import {
 import { handleBalanceTransfer } from './mappings/balances'
 import { handleContractEvent } from './mappings/nabla'
 
-import * as ss58 from '@subsquid/ss58'
-import { toHex } from '@subsquid/util-internal-hex'
-
-import {
-    BACKSTOP_POOL_CONTRACT_ADDRESS,
-    ROUTER_CONTRACT_ADDRESS,
-    SWAP_POOL_USD_CONTRACT_ADDRESS,
-    SWAP_POOL_ETH_CONTRACT_ADDRESS,
-    SWAP_POOL_EUR_CONTRACT_ADDRESS,
-} from './mappings/nabla'
-
 const DataSelection = { data: { event: true } } as const
 
 const processor = new SubstrateBatchProcessor()
@@ -45,11 +34,7 @@ const processor = new SubstrateBatchProcessor()
     .addEvent('Tokens.Deposited', DataSelection)
     .addEvent('Tokens.Withdrawn', DataSelection)
     .addEvent('Tokens.BalanceSet', DataSelection)
-    .addContractsContractEmitted(BACKSTOP_POOL_CONTRACT_ADDRESS, DataSelection)
-    .addContractsContractEmitted(ROUTER_CONTRACT_ADDRESS, DataSelection)
-    .addContractsContractEmitted(SWAP_POOL_ETH_CONTRACT_ADDRESS, DataSelection)
-    .addContractsContractEmitted(SWAP_POOL_USD_CONTRACT_ADDRESS, DataSelection)
-    .addContractsContractEmitted(SWAP_POOL_EUR_CONTRACT_ADDRESS, DataSelection)
+    .addEvent('Contracts.ContractEmitted', DataSelection)
 
 type Item = BatchProcessorItem<typeof processor>
 export type Ctx = BatchContext<Store, Item>

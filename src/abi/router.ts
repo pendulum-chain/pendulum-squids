@@ -7,9 +7,9 @@ export const metadata = {
         version: '0.0.1',
     },
     source: {
-        compiler: 'solang 0.2.2',
-        hash: '0xfd8e170ed515f435015416d1d85ab4c87b6ae7bb4727f79ca0b6e79577f286f3',
-        language: 'Solidity 0.2.2',
+        compiler: 'solang 0.3.0',
+        hash: '0x90602d70aefe9082b524fd105e672dc3425492e4c5762aafe2e660243dace897',
+        language: 'Solidity 0.3.0',
     },
     spec: {
         constructors: [
@@ -77,6 +77,30 @@ export const metadata = {
                 ],
                 docs: [''],
                 label: 'OwnershipTransferred',
+            },
+            {
+                args: [
+                    {
+                        docs: [],
+                        indexed: false,
+                        label: 'pool',
+                        type: {
+                            displayName: ['ink_env', 'types', 'AccountId'],
+                            type: 2,
+                        },
+                    },
+                    {
+                        docs: [],
+                        indexed: false,
+                        label: 'asset',
+                        type: {
+                            displayName: ['ink_env', 'types', 'AccountId'],
+                            type: 2,
+                        },
+                    },
+                ],
+                docs: ['Emitted when a new pool is registered\n\n'],
+                label: 'SwapPoolRegistered',
             },
             {
                 args: [
@@ -607,12 +631,12 @@ export class Contract {
         return this.stateCall('0x8da5cb5b', [])
     }
 
-    poolByAsset(pool: AccountId): Promise<AccountId> {
-        return this.stateCall('0x06de94d8', [pool])
+    poolByAsset(account: AccountId): Promise<AccountId> {
+        return this.stateCall('0x06de94d8', [account])
     }
 
-    oracleByAsset(oracle: AccountId): Promise<AccountId> {
-        return this.stateCall('0x38163032', [oracle])
+    oracleByAsset(account: AccountId): Promise<AccountId> {
+        return this.stateCall('0x38163032', [account])
     }
 
     getAmountOut(_amountIn: u256, _tokenInOut: AccountId[]): Promise<u256> {
@@ -636,6 +660,7 @@ export type Event =
     | Event_Paused
     | Event_Unpaused
     | Event_OwnershipTransferred
+    | Event_SwapPoolRegistered
     | Event_Swap
 
 export interface Event_Paused {
@@ -652,6 +677,12 @@ export interface Event_OwnershipTransferred {
     __kind: 'OwnershipTransferred'
     previousOwner: AccountId
     newOwner: AccountId
+}
+
+export interface Event_SwapPoolRegistered {
+    __kind: 'SwapPoolRegistered'
+    pool: AccountId
+    asset: AccountId
 }
 
 export interface Event_Swap {
@@ -712,7 +743,7 @@ export interface Message_transferOwnership {
  */
 export interface Message_poolByAsset {
     __kind: 'poolByAsset'
-    pool: AccountId
+    account: AccountId
 }
 
 /**
@@ -720,7 +751,7 @@ export interface Message_poolByAsset {
  */
 export interface Message_oracleByAsset {
     __kind: 'oracleByAsset'
-    oracle: AccountId
+    account: AccountId
 }
 
 /**

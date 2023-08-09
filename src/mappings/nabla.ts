@@ -80,6 +80,8 @@ export async function handleContractEvent(ctx: EventHandlerContext) {
             await routerHandleSwap(ctx)
         } else if (event.__kind == 'Unpaused') {
             await routerHandleUnpaused(ctx)
+        } else if (event.__kind == 'SwapPoolRegistered') {
+            await routerHandleSwapPoolRegistered(ctx, event)
         }
     } else if (
         ctx.event.args.contract == SWAP_POOL_USD_CONTRACT_ADDRESS ||
@@ -252,9 +254,12 @@ export async function routerHandleSwap(ctx: EventHandlerContext) {
     await getOrCreateRouter(ctx, ctx.event.args.contract)
 }
 
-export async function routerHandleSwapPoolRegistered(ctx: EventHandlerContext) {
+export async function routerHandleSwapPoolRegistered(
+    ctx: EventHandlerContext,
+    event: rou.Event_SwapPoolRegistered
+) {
     await getOrCreateRouter(ctx, ctx.event.args.contract)
-    await getOrCreateSwapPool(ctx, ctx.event.args.pool)
+    await getOrCreateSwapPool(ctx, toHex(event.pool))
 }
 
 export async function updateBackstopCoverageAndSupply(

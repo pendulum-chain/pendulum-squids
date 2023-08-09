@@ -35,3 +35,19 @@ export const ONE_BI = 1n
 export const ZERO_BD = BigDecimal(0)
 export const ONE_BD = BigDecimal(1)
 export const BI_18 = 1000000000000000000n
+
+export const FOUCOCO_CONTRACTS = {
+    backstopPoolContracts: ['6h7p67AZyzWiN42FSzkWyGZaqMuajo2BAm43LXBQHVXJ8sq7'],
+    routerContracts: ['6mrTyH54tYXKsVxrahapG1S54cVMqqwqtnmTLLbj3NZT2f1k'],
+    swapPoolContracts: [
+        '6gxRBjkhfaWMAhMQmEA1MUvGssc2f9ercXPZrzFUKWTTaCyq',
+        '6kauoQTrdZzBCR3RcqJKJwxEGeQyj6zd3yx8H7XBNwbzrcT5',
+        '6mMDtTPgghASfTpW4cuwdxSJvuM6mvGMxTHZxXQf9cWVUioS',
+    ],
+}
+
+export const AMPLITUDE_CONTRACTS = {
+    backstopPoolContracts: [],
+    routerContracts: [],
+    swapPoolContracts: [],
+}

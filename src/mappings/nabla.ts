@@ -7,6 +7,17 @@ import * as bpool from '../abi/backstop'
 import * as erc20 from '../abi/erc20'
 import * as spool from '../abi/swap'
 import * as rou from '../abi/router'
+import { FOUCOCO_CONTRACTS, AMPLITUDE_CONTRACTS } from '../constants'
+
+function getContractsAddresses() {
+    const { backstopPoolContracts, routerContracts, swapPoolContracts } =
+        getContracts()
+    return [
+        ss8ToHex(backstopPoolContracts),
+        ss8ToHex(routerContracts),
+        ss8ToHex(swapPoolContracts),
+    ]
+}
 
 function ss8ToHex(ss8Address: string[]) {
     var addresses = []
@@ -18,40 +29,22 @@ function ss8ToHex(ss8Address: string[]) {
     return addresses
 }
 
-const FOUCOCO_CONTRACTS = [
-    '6h7p67AZyzWiN42FSzkWyGZaqMuajo2BAm43LXBQHVXJ8sq7', // Backstop Pool
-    '6mrTyH54tYXKsVxrahapG1S54cVMqqwqtnmTLLbj3NZT2f1k', // Router
-    '6gxRBjkhfaWMAhMQmEA1MUvGssc2f9ercXPZrzFUKWTTaCyq', // Swap Pool USD
-    '6kauoQTrdZzBCR3RcqJKJwxEGeQyj6zd3yx8H7XBNwbzrcT5', // Swap Pool EUR
-    '6mMDtTPgghASfTpW4cuwdxSJvuM6mvGMxTHZxXQf9cWVUioS', // Swap Pool ETH
-]
-
-const AMPLITUDE_CONTRACTS = [
-    '6h7p67AZyzWiN42FSzkWyGZaqMuajo2BAm43LXBQHVXJ8sq7', // Backstop Pool
-    '6mrTyH54tYXKsVxrahapG1S54cVMqqwqtnmTLLbj3NZT2f1k', // Router
-    '6gxRBjkhfaWMAhMQmEA1MUvGssc2f9ercXPZrzFUKWTTaCyq', // Swap Pool USD
-    '6kauoQTrdZzBCR3RcqJKJwxEGeQyj6zd3yx8H7XBNwbzrcT5', // Swap Pool EUR
-    '6mMDtTPgghASfTpW4cuwdxSJvuM6mvGMxTHZxXQf9cWVUioS', // Swap Pool ETH
-]
-
-function getContractsAddresses() {
+function getContracts() {
     if (network == 'foucoco') {
-        return ss8ToHex(FOUCOCO_CONTRACTS)
+        return FOUCOCO_CONTRACTS
     } else {
-        return ss8ToHex(AMPLITUDE_CONTRACTS)
+        return AMPLITUDE_CONTRACTS
     }
 }
 
 export const [
-    BACKSTOP_POOL_CONTRACT_ADDRESS,
-    ROUTER_CONTRACT_ADDRESS,
-    SWAP_POOL_USD_CONTRACT_ADDRESS,
-    SWAP_POOL_EUR_CONTRACT_ADDRESS,
-    SWAP_POOL_ETH_CONTRACT_ADDRESS,
+    BACKSTOP_POOL_CONTRACTS_ADDRESSES,
+    ROUTER_CONTRACTS_ADDRESSES,
+    SWAP_POOL_CONTRACTS_ADDRESSES,
 ] = getContractsAddresses()
 
 export async function handleContractEvent(ctx: EventHandlerContext) {
-    if (ctx.event.args.contract == BACKSTOP_POOL_CONTRACT_ADDRESS) {
+    if (BACKSTOP_POOL_CONTRACTS_ADDRESSES.includes(ctx.event.args.contract)) {
         const event = bpool.decodeEvent(ctx.event.args.data)
         if (event.__kind == 'Burn') {
             await backstophandleBurn(ctx)
@@ -70,7 +63,7 @@ export async function handleContractEvent(ctx: EventHandlerContext) {
         } else if (event.__kind == 'Transfer') {
             await backstopHandleTransfer(ctx)
         }
-    } else if (ctx.event.args.contract == ROUTER_CONTRACT_ADDRESS) {
+    } else if (ROUTER_CONTRACTS_ADDRESSES.includes(ctx.event.args.contract)) {
         const event = rou.decodeEvent(ctx.event.args.data)
         if (event.__kind == 'OwnershipTransferred') {
             await routerHandleOwnershipTransferred(ctx)
@@ -84,9 +77,7 @@ export async function handleContractEvent(ctx: EventHandlerContext) {
             await routerHandleSwapPoolRegistered(ctx, event)
         }
     } else if (
-        ctx.event.args.contract == SWAP_POOL_USD_CONTRACT_ADDRESS ||
-        ctx.event.args.contract == SWAP_POOL_ETH_CONTRACT_ADDRESS ||
-        ctx.event.args.contract == SWAP_POOL_EUR_CONTRACT_ADDRESS
+        SWAP_POOL_CONTRACTS_ADDRESSES.includes(ctx.event.args.contract)
     ) {
         const event = spool.decodeEvent(ctx.event.args.data)
         if (event.__kind == 'BackstopDrain') {

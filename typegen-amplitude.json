@@ -8,6 +8,23 @@
         "Tokens.Deposited",
         "Tokens.Withdrawn",
         "Tokens.BalanceSet",
+
+        "Farming.FarmingPoolCreated",
+        "Farming.FarmingPoolReset",
+        "Farming.FarmingPoolClosed",
+        "Farming.FarmingPoolKilled",
+        "Farming.FarmingPoolEdited",
+        "Farming.Charged",
+        "Farming.Deposited",
+        "Farming.Withdrawn",
+        "Farming.Claimed",
+        "Farming.WithdrawClaimed",
+        "Farming.GaugeWithdrawn",
+        "Farming.AllForceGaugeClaimed",
+        "Farming.PartiallyForceGaugeClaimed",
+        "Farming.AllRetired",
+        "Farming.PartiallyRetired",
+        "Farming.RetireLimitSet",
         "ZenlinkProtocol.AssetSwap",
         "ZenlinkProtocol.LiquidityAdded",
         "ZenlinkProtocol.LiquidityRemoved"
@@ -20,6 +37,11 @@
         "Timestamp.Now",
         "Tokens.Accounts",
         "Tokens.TotalIssuance",
+
+        "Farming.PoolInfos",
+        "Farming.GaugePoolInfos",
+        "Farming.GaugeInfos",
+        "Farming.SharesAndWithdrawnRewards",
         "ZenlinkProtocol.PairStatuses",
         "ZenlinkProtocol.LiquidityPairs"
     ]

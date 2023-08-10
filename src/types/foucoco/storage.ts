@@ -45,6 +45,258 @@ export interface BalancesTotalIssuanceStorageV1 {
     get(): Promise<bigint>
 }
 
+export class FarmingGaugeInfosStorage extends StorageBase {
+    protected getPrefix() {
+        return 'Farming'
+    }
+
+    protected getName() {
+        return 'GaugeInfos'
+    }
+
+    get isV1(): boolean {
+        return (
+            this.getTypeHash() ===
+            'bfcac1c2fc5422a1bb4fc529e0239e7a73cb9de789e8d33533d200ba8dec513f'
+        )
+    }
+
+    get asV1(): FarmingGaugeInfosStorageV1 {
+        assert(this.isV1)
+        return this as any
+    }
+}
+
+export interface FarmingGaugeInfosStorageV1 {
+    get(key1: number, key2: Uint8Array): Promise<v1.GaugeInfo | undefined>
+    getAll(): Promise<v1.GaugeInfo[]>
+    getMany(keys: [number, Uint8Array][]): Promise<(v1.GaugeInfo | undefined)[]>
+    getKeys(): Promise<[number, Uint8Array][]>
+    getKeys(key1: number): Promise<[number, Uint8Array][]>
+    getKeys(key1: number, key2: Uint8Array): Promise<[number, Uint8Array][]>
+    getKeysPaged(pageSize: number): AsyncIterable<[number, Uint8Array][]>
+    getKeysPaged(
+        pageSize: number,
+        key1: number
+    ): AsyncIterable<[number, Uint8Array][]>
+    getKeysPaged(
+        pageSize: number,
+        key1: number,
+        key2: Uint8Array
+    ): AsyncIterable<[number, Uint8Array][]>
+    getPairs(): Promise<[k: [number, Uint8Array], v: v1.GaugeInfo][]>
+    getPairs(
+        key1: number
+    ): Promise<[k: [number, Uint8Array], v: v1.GaugeInfo][]>
+    getPairs(
+        key1: number,
+        key2: Uint8Array
+    ): Promise<[k: [number, Uint8Array], v: v1.GaugeInfo][]>
+    getPairsPaged(
+        pageSize: number
+    ): AsyncIterable<[k: [number, Uint8Array], v: v1.GaugeInfo][]>
+    getPairsPaged(
+        pageSize: number,
+        key1: number
+    ): AsyncIterable<[k: [number, Uint8Array], v: v1.GaugeInfo][]>
+    getPairsPaged(
+        pageSize: number,
+        key1: number,
+        key2: Uint8Array
+    ): AsyncIterable<[k: [number, Uint8Array], v: v1.GaugeInfo][]>
+}
+
+export class FarmingGaugePoolInfosStorage extends StorageBase {
+    protected getPrefix() {
+        return 'Farming'
+    }
+
+    protected getName() {
+        return 'GaugePoolInfos'
+    }
+
+    /**
+     *  Record gauge farming pool info.
+     *
+     *  map PoolId => GaugePoolInfo
+     */
+    get isV1(): boolean {
+        return (
+            this.getTypeHash() ===
+            '416ce745d59e070e1ac33ea21b05aa73d21df5fd40c136ceb8b314e3584a7cd9'
+        )
+    }
+
+    /**
+     *  Record gauge farming pool info.
+     *
+     *  map PoolId => GaugePoolInfo
+     */
+    get asV1(): FarmingGaugePoolInfosStorageV1 {
+        assert(this.isV1)
+        return this as any
+    }
+}
+
+/**
+ *  Record gauge farming pool info.
+ *
+ *  map PoolId => GaugePoolInfo
+ */
+export interface FarmingGaugePoolInfosStorageV1 {
+    get(key: number): Promise<v1.GaugePoolInfo | undefined>
+    getAll(): Promise<v1.GaugePoolInfo[]>
+    getMany(keys: number[]): Promise<(v1.GaugePoolInfo | undefined)[]>
+    getKeys(): Promise<number[]>
+    getKeys(key: number): Promise<number[]>
+    getKeysPaged(pageSize: number): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, key: number): AsyncIterable<number[]>
+    getPairs(): Promise<[k: number, v: v1.GaugePoolInfo][]>
+    getPairs(key: number): Promise<[k: number, v: v1.GaugePoolInfo][]>
+    getPairsPaged(
+        pageSize: number
+    ): AsyncIterable<[k: number, v: v1.GaugePoolInfo][]>
+    getPairsPaged(
+        pageSize: number,
+        key: number
+    ): AsyncIterable<[k: number, v: v1.GaugePoolInfo][]>
+}
+
+export class FarmingPoolInfosStorage extends StorageBase {
+    protected getPrefix() {
+        return 'Farming'
+    }
+
+    protected getName() {
+        return 'PoolInfos'
+    }
+
+    /**
+     *  Record reward pool info.
+     *
+     *  map PoolId => PoolInfo
+     */
+    get isV1(): boolean {
+        return (
+            this.getTypeHash() ===
+            '1fe4c061f2de853f79b38ceacbdfdaa793e296003e91a1aba0e7f5e03969f44e'
+        )
+    }
+
+    /**
+     *  Record reward pool info.
+     *
+     *  map PoolId => PoolInfo
+     */
+    get asV1(): FarmingPoolInfosStorageV1 {
+        assert(this.isV1)
+        return this as any
+    }
+}
+
+/**
+ *  Record reward pool info.
+ *
+ *  map PoolId => PoolInfo
+ */
+export interface FarmingPoolInfosStorageV1 {
+    get(key: number): Promise<v1.PoolInfo | undefined>
+    getAll(): Promise<v1.PoolInfo[]>
+    getMany(keys: number[]): Promise<(v1.PoolInfo | undefined)[]>
+    getKeys(): Promise<number[]>
+    getKeys(key: number): Promise<number[]>
+    getKeysPaged(pageSize: number): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, key: number): AsyncIterable<number[]>
+    getPairs(): Promise<[k: number, v: v1.PoolInfo][]>
+    getPairs(key: number): Promise<[k: number, v: v1.PoolInfo][]>
+    getPairsPaged(
+        pageSize: number
+    ): AsyncIterable<[k: number, v: v1.PoolInfo][]>
+    getPairsPaged(
+        pageSize: number,
+        key: number
+    ): AsyncIterable<[k: number, v: v1.PoolInfo][]>
+}
+
+export class FarmingSharesAndWithdrawnRewardsStorage extends StorageBase {
+    protected getPrefix() {
+        return 'Farming'
+    }
+
+    protected getName() {
+        return 'SharesAndWithdrawnRewards'
+    }
+
+    /**
+     *  Record share amount, reward currency and withdrawn reward amount for
+     *  specific `AccountId` under `PoolId`.
+     *
+     *  double_map (PoolId, AccountId) => ShareInfo
+     */
+    get isV1(): boolean {
+        return (
+            this.getTypeHash() ===
+            'a052ada8bd1f1deef2d049fefb81c7816d8ccd88e8d80b620d13e028e3ca5215'
+        )
+    }
+
+    /**
+     *  Record share amount, reward currency and withdrawn reward amount for
+     *  specific `AccountId` under `PoolId`.
+     *
+     *  double_map (PoolId, AccountId) => ShareInfo
+     */
+    get asV1(): FarmingSharesAndWithdrawnRewardsStorageV1 {
+        assert(this.isV1)
+        return this as any
+    }
+}
+
+/**
+ *  Record share amount, reward currency and withdrawn reward amount for
+ *  specific `AccountId` under `PoolId`.
+ *
+ *  double_map (PoolId, AccountId) => ShareInfo
+ */
+export interface FarmingSharesAndWithdrawnRewardsStorageV1 {
+    get(key1: number, key2: Uint8Array): Promise<v1.ShareInfo | undefined>
+    getAll(): Promise<v1.ShareInfo[]>
+    getMany(keys: [number, Uint8Array][]): Promise<(v1.ShareInfo | undefined)[]>
+    getKeys(): Promise<[number, Uint8Array][]>
+    getKeys(key1: number): Promise<[number, Uint8Array][]>
+    getKeys(key1: number, key2: Uint8Array): Promise<[number, Uint8Array][]>
+    getKeysPaged(pageSize: number): AsyncIterable<[number, Uint8Array][]>
+    getKeysPaged(
+        pageSize: number,
+        key1: number
+    ): AsyncIterable<[number, Uint8Array][]>
+    getKeysPaged(
+        pageSize: number,
+        key1: number,
+        key2: Uint8Array
+    ): AsyncIterable<[number, Uint8Array][]>
+    getPairs(): Promise<[k: [number, Uint8Array], v: v1.ShareInfo][]>
+    getPairs(
+        key1: number
+    ): Promise<[k: [number, Uint8Array], v: v1.ShareInfo][]>
+    getPairs(
+        key1: number,
+        key2: Uint8Array
+    ): Promise<[k: [number, Uint8Array], v: v1.ShareInfo][]>
+    getPairsPaged(
+        pageSize: number
+    ): AsyncIterable<[k: [number, Uint8Array], v: v1.ShareInfo][]>
+    getPairsPaged(
+        pageSize: number,
+        key1: number
+    ): AsyncIterable<[k: [number, Uint8Array], v: v1.ShareInfo][]>
+    getPairsPaged(
+        pageSize: number,
+        key1: number,
+        key2: Uint8Array
+    ): AsyncIterable<[k: [number, Uint8Array], v: v1.ShareInfo][]>
+}
+
 export class SystemAccountStorage extends StorageBase {
     protected getPrefix() {
         return 'System'

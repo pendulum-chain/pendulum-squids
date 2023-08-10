@@ -5,6 +5,7 @@ import { toHex } from '@subsquid/util-internal-hex'
 import { BackstopPool, Router, NablaToken, SwapPool } from '../model'
 import * as bpool from '../abi/backstop'
 import * as erc20 from '../abi/erc20'
+import * as mockErc20 from '../abi/mockErc20'
 import * as spool from '../abi/swap'
 import * as rou from '../abi/router'
 import { FOUCOCO_CONTRACTS, AMPLITUDE_CONTRACTS } from '../constants'
@@ -51,23 +52,29 @@ enum EventType {
 
 function getEventAndEventType(ctx: EventHandlerContext) {
     try {
-        const event = bpool.decodeEvent(ctx.event.args.data)
-        const eventType = EventType.BackstopPoolEvent
+        const event = mockErc20.decodeEvent(ctx.event.args.data)
+        const eventType = undefined
         return { event, eventType }
     } catch {
         try {
-            const event = spool.decodeEvent(ctx.event.args.data)
-            const eventType = EventType.SwapPoolEvent
+            const event = bpool.decodeEvent(ctx.event.args.data)
+            const eventType = EventType.BackstopPoolEvent
             return { event, eventType }
         } catch {
             try {
-                const event = rou.decodeEvent(ctx.event.args.data)
-                const eventType = EventType.RouterEvent
+                const event = spool.decodeEvent(ctx.event.args.data)
+                const eventType = EventType.SwapPoolEvent
                 return { event, eventType }
             } catch {
-                const event = undefined
-                const eventType = undefined
-                return { event, eventType }
+                try {
+                    const event = rou.decodeEvent(ctx.event.args.data)
+                    const eventType = EventType.RouterEvent
+                    return { event, eventType }
+                } catch {
+                    const event = undefined
+                    const eventType = undefined
+                    return { event, eventType }
+                }
             }
         }
     }
@@ -75,8 +82,6 @@ function getEventAndEventType(ctx: EventHandlerContext) {
 
 export async function handleContractEvent(ctx: EventHandlerContext) {
     const { event, eventType } = getEventAndEventType(ctx)
-    // if (BACKSTOP_POOL_CONTRACTS_ADDRESSES.includes(ctx.event.args.contract)) {
-    //     const event = bpool.decodeEvent(ctx.event.args.data)
     if (eventType == EventType.BackstopPoolEvent) {
         if (event.__kind == 'Burn') {
             await backstophandleBurn(ctx)
@@ -95,9 +100,7 @@ export async function handleContractEvent(ctx: EventHandlerContext) {
         } else if (event.__kind == 'Transfer') {
             await backstopHandleTransfer(ctx)
         }
-    } // else if (ROUTER_CONTRACTS_ADDRESSES.includes(ctx.event.args.contract)) {
-    else if (eventType == EventType.RouterEvent) {
-        // const event = rou.decodeEvent(ctx.event.args.data)
+    } else if (eventType == EventType.RouterEvent) {
         if (event.__kind == 'OwnershipTransferred') {
             await routerHandleOwnershipTransferred(ctx)
         } else if (event.__kind == 'Paused') {
@@ -109,11 +112,7 @@ export async function handleContractEvent(ctx: EventHandlerContext) {
         } else if (event.__kind == 'SwapPoolRegistered') {
             await routerHandleSwapPoolRegistered(ctx, event)
         }
-    } else if (
-        // SWAP_POOL_CONTRACTS_ADDRESSES.includes(ctx.event.args.contract)
-        eventType == EventType.SwapPoolEvent
-    ) {
-        // const event = spool.decodeEvent(ctx.event.args.data)
+    } else if (eventType == EventType.SwapPoolEvent) {
         if (event.__kind == 'BackstopDrain') {
             await swapHandleBackstopDrain(ctx)
         } else if (event.__kind == 'Burn') {
@@ -131,8 +130,6 @@ export async function handleContractEvent(ctx: EventHandlerContext) {
         } else if (event.__kind == 'Transfer') {
             await swapHandleTransfer(ctx)
         }
-    } else {
-        console.log('Another contract emitted an event...')
     }
 }
 

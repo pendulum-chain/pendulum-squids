@@ -93,6 +93,7 @@ processor.run(new TypeormDatabase(), async (ctx) => {
                             event: item.event,
                         })
                         break
+                    // zenlink
                     case 'ZenlinkProtocol.LiquidityAdded':
                         await handleLiquidityAdded({
                             ...ctx,
@@ -114,6 +115,91 @@ processor.run(new TypeormDatabase(), async (ctx) => {
                             event: item.event,
                         })
                         break
+                    // farming
+                    case 'Farming.FarmingPoolCreated':
+                        console.log(
+                            'Farming.FarmingPoolCreated',
+                            ctx,
+                            block,
+                            item
+                        )
+                        await handleFarmingPoolCreated({
+                            ...ctx,
+                            block: block.header,
+                            event: item.event,
+                        })
+                        break
+                    case 'Farming.FarmingPoolReset':
+                        await handleFarmingPoolReset({
+                            ...ctx,
+                            block: block.header,
+                            event: item.event,
+                        })
+                        break
+                    case 'Farming.FarmingPoolClosed':
+                        await handleFarmingPoolClosed({
+                            ...ctx,
+                            block: block.header,
+                            event: item.event,
+                        })
+                        break
+                    case 'Farming.FarmingPoolKilled':
+                        await handleFarmingPoolKilled({
+                            ...ctx,
+                            block: block.header,
+                            event: item.event,
+                        })
+                        break
+                    case 'Farming.FarmingPoolEdited':
+                        await handleFarmingPoolEdited({
+                            ...ctx,
+                            block: block.header,
+                            event: item.event,
+                        })
+                        break
+                    case 'Farming.Charged':
+                        await handleFarmingCharged({
+                            ...ctx,
+                            block: block.header,
+                            event: item.event,
+                        })
+                        break
+                    case 'Farming.Deposited':
+                        await handleFarmingDeposited({
+                            ...ctx,
+                            block: block.header,
+                            event: item.event,
+                        })
+                        break
+                    case 'Farming.Withdrawn':
+                        await handleFarmingWithdrawn({
+                            ...ctx,
+                            block: block.header,
+                            event: item.event,
+                        })
+                        break
+                    case 'Farming.Claimed':
+                        await handleFarmingClaimed({
+                            ...ctx,
+                            block: block.header,
+                            event: item.event,
+                        })
+                        break
+                    case 'Farming.WithdrawClaimed':
+                        await handleFarmingWithdrawClaimed({
+                            ...ctx,
+                            block: block.header,
+                            event: item.event,
+                        })
+                        break
+                    case 'Farming.GaugeWithdrawn':
+                        await handleFarmingGaugeWithdrawn({
+                            ...ctx,
+                            block: block.header,
+                            event: item.event,
+                        })
+                        break
+                    // balances
                     case 'Balances.Transfer':
                         await handleBalanceTransfer({
                             ...ctx,

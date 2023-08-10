@@ -4,6 +4,19 @@ import {
     SubstrateBatchProcessor,
 } from '@subsquid/substrate-processor'
 import { Store, TypeormDatabase } from '@subsquid/typeorm-store'
+import {
+    handleFarmingCharged,
+    handleFarmingClaimed,
+    handleFarmingDeposited,
+    handleFarmingGaugeWithdrawn,
+    handleFarmingPoolClosed,
+    handleFarmingPoolCreated,
+    handleFarmingPoolEdited,
+    handleFarmingPoolKilled,
+    handleFarmingPoolReset,
+    handleFarmingWithdrawClaimed,
+    handleFarmingWithdrawn,
+} from './mappings/farming/handle'
 import { config } from './config'
 import {
     handleAssetSwap,
@@ -26,6 +39,23 @@ const processor = new SubstrateBatchProcessor()
     .addEvent('ZenlinkProtocol.LiquidityAdded', DataSelection)
     .addEvent('ZenlinkProtocol.LiquidityRemoved', DataSelection)
     .addEvent('ZenlinkProtocol.AssetSwap', DataSelection)
+    // Farming
+    .addEvent('Farming.FarmingPoolCreated', DataSelection)
+    .addEvent('Farming.FarmingPoolReset', DataSelection)
+    .addEvent('Farming.FarmingPoolClosed', DataSelection)
+    .addEvent('Farming.FarmingPoolKilled', DataSelection)
+    .addEvent('Farming.FarmingPoolEdited', DataSelection)
+    .addEvent('Farming.Charged', DataSelection)
+    .addEvent('Farming.Deposited', DataSelection)
+    .addEvent('Farming.Withdrawn', DataSelection)
+    .addEvent('Farming.Claimed', DataSelection)
+    .addEvent('Farming.WithdrawClaimed', DataSelection)
+    .addEvent('Farming.GaugeWithdrawn', DataSelection)
+    .addEvent('Farming.AllForceGaugeClaimed', DataSelection)
+    .addEvent('Farming.PartiallyForceGaugeClaimed', DataSelection)
+    .addEvent('Farming.AllRetired', DataSelection)
+    .addEvent('Farming.PartiallyRetired', DataSelection)
+    .addEvent('Farming.RetireLimitSet', DataSelection)
 
     .addEvent('Balances.Transfer', DataSelection)
 

@@ -43,9 +43,41 @@ export const [
     SWAP_POOL_CONTRACTS_ADDRESSES,
 ] = getContractsAddresses()
 
-export async function handleContractEvent(ctx: EventHandlerContext) {
-    if (BACKSTOP_POOL_CONTRACTS_ADDRESSES.includes(ctx.event.args.contract)) {
+enum EventType {
+    BackstopPoolEvent,
+    RouterEvent,
+    SwapPoolEvent,
+}
+
+function getEventAndEventType(ctx: EventHandlerContext) {
+    try {
         const event = bpool.decodeEvent(ctx.event.args.data)
+        const eventType = EventType.BackstopPoolEvent
+        return { event, eventType }
+    } catch {
+        try {
+            const event = spool.decodeEvent(ctx.event.args.data)
+            const eventType = EventType.SwapPoolEvent
+            return { event, eventType }
+        } catch {
+            try {
+                const event = rou.decodeEvent(ctx.event.args.data)
+                const eventType = EventType.RouterEvent
+                return { event, eventType }
+            } catch {
+                const event = undefined
+                const eventType = undefined
+                return { event, eventType }
+            }
+        }
+    }
+}
+
+export async function handleContractEvent(ctx: EventHandlerContext) {
+    const { event, eventType } = getEventAndEventType(ctx)
+    // if (BACKSTOP_POOL_CONTRACTS_ADDRESSES.includes(ctx.event.args.contract)) {
+    //     const event = bpool.decodeEvent(ctx.event.args.data)
+    if (eventType == EventType.BackstopPoolEvent) {
         if (event.__kind == 'Burn') {
             await backstophandleBurn(ctx)
         } else if (event.__kind == 'CoverSwapWithdrawal') {
@@ -63,8 +95,9 @@ export async function handleContractEvent(ctx: EventHandlerContext) {
         } else if (event.__kind == 'Transfer') {
             await backstopHandleTransfer(ctx)
         }
-    } else if (ROUTER_CONTRACTS_ADDRESSES.includes(ctx.event.args.contract)) {
-        const event = rou.decodeEvent(ctx.event.args.data)
+    } // else if (ROUTER_CONTRACTS_ADDRESSES.includes(ctx.event.args.contract)) {
+    else if (eventType == EventType.RouterEvent) {
+        // const event = rou.decodeEvent(ctx.event.args.data)
         if (event.__kind == 'OwnershipTransferred') {
             await routerHandleOwnershipTransferred(ctx)
         } else if (event.__kind == 'Paused') {
@@ -77,9 +110,10 @@ export async function handleContractEvent(ctx: EventHandlerContext) {
             await routerHandleSwapPoolRegistered(ctx, event)
         }
     } else if (
-        SWAP_POOL_CONTRACTS_ADDRESSES.includes(ctx.event.args.contract)
+        // SWAP_POOL_CONTRACTS_ADDRESSES.includes(ctx.event.args.contract)
+        eventType == EventType.SwapPoolEvent
     ) {
-        const event = spool.decodeEvent(ctx.event.args.data)
+        // const event = spool.decodeEvent(ctx.event.args.data)
         if (event.__kind == 'BackstopDrain') {
             await swapHandleBackstopDrain(ctx)
         } else if (event.__kind == 'Burn') {
@@ -97,6 +131,8 @@ export async function handleContractEvent(ctx: EventHandlerContext) {
         } else if (event.__kind == 'Transfer') {
             await swapHandleTransfer(ctx)
         }
+    } else {
+        console.log('Another contract emitted an event...')
     }
 }
 

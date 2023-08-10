@@ -6,7 +6,6 @@ import {
     updateSingleTokenLockHourData,
 } from '../mappings/farming/update'
 import { handleLiquiditySync } from '../mappings/protocol'
-// import { handleLiquiditySync } from "../mappings/protocol";
 import { Bundle, Farm, Incentive, Pair, SingleTokenLock } from '../model'
 import { EventHandlerContext } from '../types'
 import {
@@ -26,11 +25,11 @@ import {
     FarmingRetireLimitSetEvent,
     FarmingWithdrawClaimedEvent,
     FarmingWithdrawnEvent,
-} from '../types/events'
+} from '../types/foucoco/events'
 import {
     FarmingPoolInfosStorage,
     FarmingSharesAndWithdrawnRewardsStorage,
-} from '../types/storage'
+} from '../types/foucoco/storage'
 import { convertTokenToDecimal, getTimePerBlock } from './helpers'
 import { sortAssets } from './sort'
 import {
@@ -44,8 +43,8 @@ import {
 export function formatFarmingCreatedPoolEvent(ctx: EventHandlerContext) {
     let event
     const _event = new FarmingFarmingPoolCreatedEvent(ctx)
-    if (_event.isV944) {
-        event = _event.asV944
+    if (_event.isV1) {
+        event = _event.asV1
     }
     return event
 }
@@ -53,8 +52,8 @@ export function formatFarmingCreatedPoolEvent(ctx: EventHandlerContext) {
 export function formatFarmingPoolResetEvent(ctx: EventHandlerContext) {
     let event
     const _event = new FarmingFarmingPoolResetEvent(ctx)
-    if (_event.isV944) {
-        event = _event.asV944
+    if (_event.isV1) {
+        event = _event.asV1
     }
     return event
 }
@@ -62,8 +61,8 @@ export function formatFarmingPoolResetEvent(ctx: EventHandlerContext) {
 export function formatFarmingPoolClosedEvent(ctx: EventHandlerContext) {
     let event
     const _event = new FarmingFarmingPoolClosedEvent(ctx)
-    if (_event.isV944) {
-        event = _event.asV944
+    if (_event.isV1) {
+        event = _event.asV1
     }
     return event
 }
@@ -71,8 +70,8 @@ export function formatFarmingPoolClosedEvent(ctx: EventHandlerContext) {
 export function formatFarmingPoolKilledEvent(ctx: EventHandlerContext) {
     let event
     const _event = new FarmingFarmingPoolKilledEvent(ctx)
-    if (_event.isV944) {
-        event = _event.asV944
+    if (_event.isV1) {
+        event = _event.asV1
     }
     return event
 }
@@ -80,8 +79,8 @@ export function formatFarmingPoolKilledEvent(ctx: EventHandlerContext) {
 export function formatFarmingPoolEditedEvent(ctx: EventHandlerContext) {
     let event
     const _event = new FarmingFarmingPoolEditedEvent(ctx)
-    if (_event.isV944) {
-        event = _event.asV944
+    if (_event.isV1) {
+        event = _event.asV1
     }
     return event
 }
@@ -89,8 +88,8 @@ export function formatFarmingPoolEditedEvent(ctx: EventHandlerContext) {
 export function formatFarmingChargedEvent(ctx: EventHandlerContext) {
     let event
     const _event = new FarmingChargedEvent(ctx)
-    if (_event.isV944) {
-        event = _event.asV944
+    if (_event.isV1) {
+        event = _event.asV1
     }
     return event
 }
@@ -98,8 +97,8 @@ export function formatFarmingChargedEvent(ctx: EventHandlerContext) {
 export function formatFarmingDepositedEvent(ctx: EventHandlerContext) {
     let event
     const _event = new FarmingDepositedEvent(ctx)
-    if (_event.isV944) {
-        event = _event.asV944
+    if (_event.isV1) {
+        event = _event.asV1
     }
     return event
 }
@@ -107,8 +106,8 @@ export function formatFarmingDepositedEvent(ctx: EventHandlerContext) {
 export function formatFarmingWithdrawnEvent(ctx: EventHandlerContext) {
     let event
     const _event = new FarmingWithdrawnEvent(ctx)
-    if (_event.isV944) {
-        event = _event.asV944
+    if (_event.isV1) {
+        event = _event.asV1
     }
     return event
 }
@@ -116,8 +115,8 @@ export function formatFarmingWithdrawnEvent(ctx: EventHandlerContext) {
 export function formatFarmingClaimedEvent(ctx: EventHandlerContext) {
     let event
     const _event = new FarmingClaimedEvent(ctx)
-    if (_event.isV944) {
-        event = _event.asV944
+    if (_event.isV1) {
+        event = _event.asV1
     }
     return event
 }
@@ -125,8 +124,8 @@ export function formatFarmingClaimedEvent(ctx: EventHandlerContext) {
 export function formatFarmingWithdrawClaimedEvent(ctx: EventHandlerContext) {
     let event
     const _event = new FarmingWithdrawClaimedEvent(ctx)
-    if (_event.isV948) {
-        event = _event.asV948
+    if (_event.isV1) {
+        event = _event.asV1
     }
     return event
 }
@@ -134,8 +133,8 @@ export function formatFarmingWithdrawClaimedEvent(ctx: EventHandlerContext) {
 export function formatFarmingGaugeWithdrawnEvent(ctx: EventHandlerContext) {
     let event
     const _event = new FarmingGaugeWithdrawnEvent(ctx)
-    if (_event.isV944) {
-        event = _event.asV944
+    if (_event.isV1) {
+        event = _event.asV1
     }
     return event
 }
@@ -145,8 +144,8 @@ export function formatFarmingAllForceGaugeClaimedEvent(
 ) {
     let event
     const _event = new FarmingAllForceGaugeClaimedEvent(ctx)
-    if (_event.isV944) {
-        event = _event.asV944
+    if (_event.isV1) {
+        event = _event.asV1
     }
     return event
 }
@@ -156,8 +155,8 @@ export function formatFarmingPartiallyForceGaugeClaimedEvent(
 ) {
     let event
     const _event = new FarmingPartiallyForceGaugeClaimedEvent(ctx)
-    if (_event.isV944) {
-        event = _event.asV944
+    if (_event.isV1) {
+        event = _event.asV1
     }
     return event
 }
@@ -165,8 +164,8 @@ export function formatFarmingPartiallyForceGaugeClaimedEvent(
 export function formatFarmingAllRetiredEvent(ctx: EventHandlerContext) {
     let event
     const _event = new FarmingAllRetiredEvent(ctx)
-    if (_event.isV944) {
-        event = _event.asV944
+    if (_event.isV1) {
+        event = _event.asV1
     }
     return event
 }
@@ -174,8 +173,8 @@ export function formatFarmingAllRetiredEvent(ctx: EventHandlerContext) {
 export function formatFarmingPartiallyRetiredEvent(ctx: EventHandlerContext) {
     let event
     const _event = new FarmingPartiallyRetiredEvent(ctx)
-    if (_event.isV944) {
-        event = _event.asV944
+    if (_event.isV1) {
+        event = _event.asV1
     }
     return event
 }
@@ -183,8 +182,8 @@ export function formatFarmingPartiallyRetiredEvent(ctx: EventHandlerContext) {
 export function formatFarmingRetireLimitSetEvent(ctx: EventHandlerContext) {
     let event
     const _event = new FarmingRetireLimitSetEvent(ctx)
-    if (_event.isV944) {
-        event = _event.asV944
+    if (_event.isV1) {
+        event = _event.asV1
     }
     return event
 }
@@ -199,14 +198,8 @@ export async function getFamingPoolInfo(
     let result
 
     const farmingPoolInfoStorage = new FarmingPoolInfosStorage(ctx, block)
-    if (farmingPoolInfoStorage.isV944) {
-        result = await farmingPoolInfoStorage.asV944.get(pid)
-    } else if (farmingPoolInfoStorage.isV956) {
-        result = await farmingPoolInfoStorage.asV956.get(pid)
-    } else if (farmingPoolInfoStorage.isV962) {
-        result = await farmingPoolInfoStorage.asV962.get(pid)
-    } else if (farmingPoolInfoStorage.isV968) {
-        result = await farmingPoolInfoStorage.asV968.get(pid)
+    if (farmingPoolInfoStorage.isV1) {
+        result = await farmingPoolInfoStorage.asV1.get(pid)
     }
     return result
 }
@@ -219,12 +212,8 @@ export async function getFamingSharesAndWithdrawnRewards(
     let result
 
     const storage = new FarmingSharesAndWithdrawnRewardsStorage(ctx, ctx.block)
-    if (storage.isV944) {
-        result = await storage.asV944.get(pid, user)
-    } else if (storage.isV956) {
-        result = await storage.asV956.get(pid, user)
-    } else if (storage.isV962) {
-        result = await storage.asV962.get(pid, user)
+    if (storage.isV1) {
+        result = await storage.asV1.get(pid, user)
     }
     return result
 }
@@ -307,16 +296,19 @@ export async function updateFarmingPoolInfo(
 
     let farmingData: Farm | undefined
 
-    if (farmingToken.__kind === 'LPToken') {
+    if (farmingToken.__kind === 'ZenlinkLPToken') {
         const [token0Symbol, token0Id, token1Symbol, token1Id] =
             farmingToken.value
         const token0Index = parseToTokenIndex(
             token0Id,
-            Number(invertedTokenSymbolMap[token0Symbol.__kind])
+            // TODO think about this
+            // Number(invertedTokenSymbolMap[token0Symbol])
+            Number(token0Symbol)
         )
         const token1Index = parseToTokenIndex(
             token1Id,
-            Number(invertedTokenSymbolMap[token1Symbol.__kind])
+            // Number(invertedTokenSymbolMap[token1Symbol])
+            Number(token1Symbol)
         )
         const _asset0 = {
             chainId: CHAIN_ID,
@@ -480,7 +472,7 @@ export async function killFarmingPoolInfo(
         hash: ctx.block.parentHash,
     })
     const farmingTokens = farmingPoolInfo?.tokensProportion.map(
-        (item) => item[0]
+        (item: any) => item[0]
     )!
     const farmingToken = farmingTokens[0]
     const assetIdIndex = currencyIdToAssetIndex(farmingToken)
@@ -500,7 +492,7 @@ export async function killFarmingPoolInfo(
     let stakeApr = '0'
 
     const basicRewardPerDay = await Promise.all(
-        farmingPoolInfo!.basicRewards.map(async (item) => {
+        farmingPoolInfo!.basicRewards.map(async (item: any) => {
             const assetIndex = currencyIdToAssetIndex(item[0])
             const token = await getOrCreateToken(ctx, {
                 chainId: CHAIN_ID,
@@ -523,7 +515,7 @@ export async function killFarmingPoolInfo(
     )
 
     const basicRewardEthPerDay = await Promise.all(
-        farmingPoolInfo!.basicRewards.map(async (item) => {
+        farmingPoolInfo!.basicRewards.map(async (item: any) => {
             const assetIndex = currencyIdToAssetIndex(item[0])
             const token = await getOrCreateToken(ctx, {
                 chainId: CHAIN_ID,

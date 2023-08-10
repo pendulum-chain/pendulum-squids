@@ -2,7 +2,7 @@ import { EventHandlerContext } from '../../types'
 import {
     FarmingFarmingPoolCreatedEvent,
     TokensBalanceSetEvent,
-} from '../../types/events'
+} from '../../types/foucoco/events'
 import {
     formatFarmingAllForceGaugeClaimedEvent,
     formatFarmingAllRetiredEvent,

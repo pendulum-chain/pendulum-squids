@@ -1,6 +1,4 @@
 import { EventHandlerContext } from '../types'
-import { network } from '../config'
-import * as ss58 from '@subsquid/ss58'
 import { toHex } from '@subsquid/util-internal-hex'
 import { BackstopPool, Router, NablaToken, SwapPool } from '../model'
 import * as bpool from '../abi/backstop'
@@ -8,41 +6,6 @@ import * as erc20 from '../abi/erc20'
 import * as mockErc20 from '../abi/mockErc20'
 import * as spool from '../abi/swap'
 import * as rou from '../abi/router'
-import { FOUCOCO_CONTRACTS, AMPLITUDE_CONTRACTS } from '../constants'
-
-function getContractsAddresses() {
-    const { backstopPoolContracts, routerContracts, swapPoolContracts } =
-        getContracts()
-    return [
-        ss8ToHex(backstopPoolContracts),
-        ss8ToHex(routerContracts),
-        ss8ToHex(swapPoolContracts),
-    ]
-}
-
-function ss8ToHex(ss8Address: string[]) {
-    var addresses = []
-
-    for (var address of ss8Address) {
-        addresses.push(toHex(ss58.decode(address).bytes))
-    }
-
-    return addresses
-}
-
-function getContracts() {
-    if (network == 'foucoco') {
-        return FOUCOCO_CONTRACTS
-    } else {
-        return AMPLITUDE_CONTRACTS
-    }
-}
-
-export const [
-    BACKSTOP_POOL_CONTRACTS_ADDRESSES,
-    ROUTER_CONTRACTS_ADDRESSES,
-    SWAP_POOL_CONTRACTS_ADDRESSES,
-] = getContractsAddresses()
 
 enum EventType {
     BackstopPoolEvent,

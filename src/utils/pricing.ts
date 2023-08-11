@@ -6,17 +6,12 @@ import { Pair } from '../model'
 import { EventHandlerContext } from '../types'
 import { assetIdFromAddress } from './token'
 
-export const WNATIVE = '2001-0-0'
-export const USDC = '2001-2-2048'
-export const KSM = '2001-2-516'
-export const aUSD = '2001-2-770'
-export const WNATIVE_USDC = '2001-2-8796093023744'
+export const WNATIVE = '2124-0-0'
+export const KSM = '2124-2-256'
 
 export const WHITELIST: string[] = [
-    '2001-0-0', // wnative
-    '2001-2-2048', // usdc
-    '2001-2-519', // zlk
-    '2001-2-516', // ksm
+    '2124-0-0', // wnative
+    '2124-2-256', // ksm
 ]
 
 // minimum liquidity required to count towards tracked volume for pairs with small # of Lps
@@ -25,38 +20,25 @@ export const MINIMUM_USD_THRESHOLD_NEW_PAIRS = new BigDecimal(1000)
 // minimum liquidity for price to get tracked
 export const MINIMUM_LIQUIDITY_THRESHOLD_ETH = new BigDecimal(5)
 
+// This function is used to get the price of our native token in USD
+// We use the ratio of the ksm-native pair and the KSM price stored in the on-chain price oracle to derive the price.
 export async function getEthPriceInUSD(
     ctx: EventHandlerContext
 ): Promise<BigDecimal> {
-    const usdcPair = await getPair(ctx, [
-        assetIdFromAddress(WNATIVE),
-        assetIdFromAddress(USDC),
-    ])
-    if (usdcPair) {
-        return usdcPair.token0.id === USDC
-            ? BigDecimal(usdcPair.token0Price)
-            : BigDecimal(usdcPair.token1Price)
-    }
-
-    // get ethprice from bnc-ksm > ksm-aUSD pair
-    const ksmPair = await getPair(ctx, [
-        assetIdFromAddress(KSM),
-        assetIdFromAddress(aUSD),
-    ])
     const wnativePair = await getPair(ctx, [
         assetIdFromAddress(WNATIVE),
         assetIdFromAddress(KSM),
     ])
-    if (ksmPair && wnativePair) {
-        const ksmPrice =
-            ksmPair.token0.id === aUSD
-                ? BigDecimal(ksmPair.token0Price)
-                : BigDecimal(ksmPair.token1Price)
-        return wnativePair.token0.id === KSM
-            ? BigDecimal(wnativePair.token0Price).mul(ksmPrice)
-            : BigDecimal(wnativePair.token1Price).mul(ksmPrice)
+
+    if (!wnativePair) {
+        return BigDecimal(0)
     }
-    return BigDecimal(0)
+
+    // TODO get ksm price from on-chain price oracle
+    const ksmPrice = 0
+    return wnativePair.token0.id === KSM
+        ? BigDecimal(wnativePair.token0Price).mul(ksmPrice)
+        : BigDecimal(wnativePair.token1Price).mul(ksmPrice)
 }
 
 /**
@@ -67,6 +49,7 @@ export async function findEthPerToken(
     ctx: EventHandlerContext,
     tokenId: string
 ): Promise<BigDecimal> {
+    // The basis of our prices is our native token, which we assign to have a price of 1 unit
     if (tokenId === WNATIVE) {
         return ONE_BD
     }

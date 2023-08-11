@@ -41,6 +41,38 @@ export class BalancesTransferEvent {
     }
 }
 
+export class DiaOracleModuleUpdatedPricesEvent {
+    private readonly _chain: Chain
+    private readonly event: Event
+
+    constructor(ctx: EventContext)
+    constructor(ctx: ChainContext, event: Event)
+    constructor(ctx: EventContext, event?: Event) {
+        event = event || ctx.event
+        assert(event.name === 'DiaOracleModule.UpdatedPrices')
+        this._chain = ctx._chain
+        this.event = event
+    }
+
+    /**
+     * Event is triggered when prices are updated
+     */
+    get isV1(): boolean {
+        return (
+            this._chain.getEventHash('DiaOracleModule.UpdatedPrices') ===
+            'a95ec71ae20ecf7d0621b22ad3f636dc4dea11a58a924e27d208ba412c7fe74d'
+        )
+    }
+
+    /**
+     * Event is triggered when prices are updated
+     */
+    get asV1(): [[Uint8Array, Uint8Array], v1.CoinInfo][] {
+        assert(this.isV1)
+        return this._chain.decodeEvent(this.event)
+    }
+}
+
 export class FarmingAllForceGaugeClaimedEvent {
     private readonly _chain: Chain
     private readonly event: Event

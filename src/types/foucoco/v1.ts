@@ -1,5 +1,14 @@
 import type { Result, Option } from './support'
 
+export interface CoinInfo {
+    symbol: Uint8Array
+    name: Uint8Array
+    blockchain: Uint8Array
+    supply: bigint
+    lastUpdateTimestamp: bigint
+    price: bigint
+}
+
 export type CurrencyId =
     | CurrencyId_Native
     | CurrencyId_XCM
@@ -29,6 +38,11 @@ export interface AssetId {
     chainId: number
     assetType: number
     assetIndex: bigint
+}
+
+export interface Type_507 {
+    blockchain: Uint8Array
+    symbol: Uint8Array
 }
 
 export interface GaugeInfo {

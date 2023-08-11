@@ -45,6 +45,59 @@ export interface BalancesTotalIssuanceStorageV1 {
     get(): Promise<bigint>
 }
 
+export class DiaOracleModuleCoinInfosMapStorage extends StorageBase {
+    protected getPrefix() {
+        return 'DiaOracleModule'
+    }
+
+    protected getName() {
+        return 'CoinInfosMap'
+    }
+
+    /**
+     *  Map of all the coins names to their respective info and price
+     */
+    get isV1(): boolean {
+        return (
+            this.getTypeHash() ===
+            'ca6255144b7cf6607b20ac2559a85f4365b5839095dca04f10bcdbb06d6b7d8f'
+        )
+    }
+
+    /**
+     *  Map of all the coins names to their respective info and price
+     */
+    get asV1(): DiaOracleModuleCoinInfosMapStorageV1 {
+        assert(this.isV1)
+        return this as any
+    }
+}
+
+/**
+ *  Map of all the coins names to their respective info and price
+ */
+export interface DiaOracleModuleCoinInfosMapStorageV1 {
+    get(key: v1.Type_507): Promise<v1.CoinInfo>
+    getAll(): Promise<v1.CoinInfo[]>
+    getMany(keys: v1.Type_507[]): Promise<v1.CoinInfo[]>
+    getKeys(): Promise<v1.Type_507[]>
+    getKeys(key: v1.Type_507): Promise<v1.Type_507[]>
+    getKeysPaged(pageSize: number): AsyncIterable<v1.Type_507[]>
+    getKeysPaged(
+        pageSize: number,
+        key: v1.Type_507
+    ): AsyncIterable<v1.Type_507[]>
+    getPairs(): Promise<[k: v1.Type_507, v: v1.CoinInfo][]>
+    getPairs(key: v1.Type_507): Promise<[k: v1.Type_507, v: v1.CoinInfo][]>
+    getPairsPaged(
+        pageSize: number
+    ): AsyncIterable<[k: v1.Type_507, v: v1.CoinInfo][]>
+    getPairsPaged(
+        pageSize: number,
+        key: v1.Type_507
+    ): AsyncIterable<[k: v1.Type_507, v: v1.CoinInfo][]>
+}
+
 export class FarmingGaugeInfosStorage extends StorageBase {
     protected getPrefix() {
         return 'Farming'

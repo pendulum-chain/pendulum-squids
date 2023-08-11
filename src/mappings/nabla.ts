@@ -1,11 +1,11 @@
 import { EventHandlerContext } from '../types'
 import { toHex } from '@subsquid/util-internal-hex'
 import { BackstopPool, Router, NablaToken, SwapPool } from '../model'
-import * as bpool from '../abi/backstop'
-import * as erc20 from '../abi/erc20'
-import * as mockErc20 from '../abi/mockErc20'
-import * as spool from '../abi/swap'
-import * as rou from '../abi/router'
+import * as backstopPoolAbi from '../abi/backstop'
+import * as erc20Abi from '../abi/erc20'
+import * as mockErc20Abi from '../abi/mockErc20'
+import * as swapPoolAbi from '../abi/swap'
+import * as routerAbi from '../abi/router'
 
 enum EventType {
     BackstopPoolEvent = 1,
@@ -13,7 +13,11 @@ enum EventType {
     SwapPoolEvent,
 }
 
-type Event = mockErc20.Event | bpool.Event | spool.Event | rou.Event
+type Event =
+    | mockErc20Abi.Event
+    | backstopPoolAbi.Event
+    | swapPoolAbi.Event
+    | routerAbi.Event
 
 interface Decoder {
     decodeEvent(hex: string): Event
@@ -36,7 +40,7 @@ function getEventAndEventType(ctx: EventHandlerContext): {
     event: Event | null
     eventType: EventType | null
 } {
-    const decoders = [mockErc20, bpool, spool, rou]
+    const decoders = [mockErc20Abi, backstopPoolAbi, swapPoolAbi, routerAbi]
     const eventTypes = [
         null,
         EventType.BackstopPoolEvent,
@@ -124,7 +128,7 @@ export async function backstophandleBurn(ctx: EventHandlerContext) {
 
 export async function backstopHandleCoverSwapWithdrawal(
     ctx: EventHandlerContext,
-    event: bpool.Event_CoverSwapWithdrawal
+    event: backstopPoolAbi.Event_CoverSwapWithdrawal
 ) {
     const backstop = await getOrCreateBackstopPool(ctx, ctx.event.args.contract)
     const pool = await getOrCreateSwapPool(ctx, toHex(event.swapPool))
@@ -172,7 +176,7 @@ export async function backstopHandleUnpaused(ctx: EventHandlerContext) {
 
 export async function backstopHandleWithdrawSwapLiquidity(
     ctx: EventHandlerContext,
-    event: bpool.Event_WithdrawSwapLiquidity
+    event: backstopPoolAbi.Event_WithdrawSwapLiquidity
 ) {
     const backstop = await getOrCreateBackstopPool(ctx, ctx.event.args.contract)
     const pool = await getOrCreateSwapPool(ctx, toHex(event.swapPool))
@@ -262,7 +266,7 @@ export async function routerHandleSwap(ctx: EventHandlerContext) {
 
 export async function routerHandleSwapPoolRegistered(
     ctx: EventHandlerContext,
-    event: rou.Event_SwapPoolRegistered
+    event: routerAbi.Event_SwapPoolRegistered
 ) {
     await getOrCreateRouter(ctx, ctx.event.args.contract)
     await getOrCreateSwapPool(ctx, toHex(event.pool))
@@ -272,7 +276,7 @@ export async function updateBackstopCoverageAndSupply(
     ctx: EventHandlerContext,
     backstop: BackstopPool
 ) {
-    const contract = new bpool.Contract(ctx, backstop.id)
+    const contract = new backstopPoolAbi.Contract(ctx, backstop.id)
     const coverage = await contract.coverage()
 
     backstop.totalSupply = await contract.totalSupply()
@@ -284,7 +288,7 @@ export async function updateSwapPoolCoverageAndSupply(
     ctx: EventHandlerContext,
     pool: SwapPool
 ) {
-    const contract = new spool.Contract(ctx, pool.id)
+    const contract = new swapPoolAbi.Contract(ctx, pool.id)
     const coverage = await contract.coverage()
 
     pool.totalSupply = await contract.totalSupply()
@@ -298,7 +302,7 @@ export async function getOrCreateBackstopPool(
 ) {
     let backstop = await ctx.store.get(BackstopPool, address)
     if (!backstop) {
-        const contract = new bpool.Contract(ctx, address)
+        const contract = new backstopPoolAbi.Contract(ctx, address)
         let router = await getOrCreateRouter(
             ctx,
             toHex(await contract.router())
@@ -342,7 +346,7 @@ export async function getOrCreateNablaToken(
 ) {
     let nablaToken = await ctx.store.get(NablaToken, address)
     if (!nablaToken) {
-        const contract = new erc20.Contract(ctx, address)
+        const contract = new erc20Abi.Contract(ctx, address)
         nablaToken = new NablaToken({
             id: address,
             decimals: await contract.decimals(),
@@ -360,7 +364,7 @@ export async function getOrCreateSwapPool(
 ) {
     let swapPool = await ctx.store.get(SwapPool, address)
     if (!swapPool) {
-        const contract = new spool.Contract(ctx, address)
+        const contract = new swapPool.Contract(ctx, address)
         let router = await getOrCreateRouter(
             ctx,
             toHex(await contract.router())

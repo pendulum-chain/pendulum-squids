@@ -3,7 +3,6 @@ import { toHex } from '@subsquid/util-internal-hex'
 import { BackstopPool, Router, NablaToken, SwapPool } from '../model'
 import * as backstopPoolAbi from '../abi/backstop'
 import * as erc20Abi from '../abi/erc20'
-import * as mockErc20Abi from '../abi/mockErc20'
 import * as swapPoolAbi from '../abi/swap'
 import * as routerAbi from '../abi/router'
 
@@ -14,7 +13,7 @@ enum EventType {
 }
 
 type Event =
-    | mockErc20Abi.Event
+    | erc20Abi.Event
     | backstopPoolAbi.Event
     | swapPoolAbi.Event
     | routerAbi.Event
@@ -40,7 +39,7 @@ function getEventAndEventType(ctx: EventHandlerContext): {
     event: Event | null
     eventType: EventType | null
 } {
-    const decoders = [mockErc20Abi, backstopPoolAbi, swapPoolAbi, routerAbi]
+    const decoders = [erc20Abi, backstopPoolAbi, swapPoolAbi, routerAbi]
     const eventTypes = [
         null,
         EventType.BackstopPoolEvent,
@@ -364,7 +363,7 @@ export async function getOrCreateSwapPool(
 ) {
     let swapPool = await ctx.store.get(SwapPool, address)
     if (!swapPool) {
-        const contract = new swapPool.Contract(ctx, address)
+        const contract = new swapPoolAbi.Contract(ctx, address)
         let router = await getOrCreateRouter(
             ctx,
             toHex(await contract.router())

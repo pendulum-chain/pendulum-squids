@@ -29,6 +29,7 @@ import {
     handleTokenWithdrawn,
 } from './mappings/token'
 import { handleBalanceTransfer } from './mappings/balances'
+import { handleUpdatedPrices } from './mappings/prices'
 
 const DataSelection = { data: { event: true } } as const
 
@@ -58,6 +59,8 @@ const processor = new SubstrateBatchProcessor()
     .addEvent('Farming.RetireLimitSet', DataSelection)
 
     .addEvent('Balances.Transfer', DataSelection)
+
+    .addEvent('DiaOracleModule.UpdatedPrices', DataSelection)
 
     .addEvent('Tokens.Transfer', DataSelection)
     .addEvent('Tokens.Deposited', DataSelection)
@@ -202,6 +205,14 @@ processor.run(new TypeormDatabase(), async (ctx) => {
                     // balances
                     case 'Balances.Transfer':
                         await handleBalanceTransfer({
+                            ...ctx,
+                            block: block.header,
+                            event: item.event,
+                        })
+                        break
+                    // price oracle
+                    case 'DiaOracleModule.UpdatedPrices':
+                        await handleUpdatedPrices({
                             ...ctx,
                             block: block.header,
                             event: item.event,

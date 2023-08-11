@@ -1,46 +1,41 @@
-import { TOKEN_METADATA_MAP, ZERO_BD } from '../constants'
-import { Token } from '../model'
-import { EventHandlerContext } from '../types'
 import {
-    addressFromAsset,
-    getTotalIssuance,
-    u8a2s,
-    zenlinkAssetIdToCurrencyId,
-} from '../utils/token'
-import { AssetId } from '../types/common'
+    PRICE_ORACLE_KEYS_TO_ADDRESS,
+    TOKEN_METADATA_MAP,
+    ZERO_BD,
+} from '../constants'
+import { OraclePrice } from '../model'
+import { EventHandlerContext } from '../types'
 
 export async function getOrCreateOraclePrice(
     ctx: EventHandlerContext,
-    asset: AssetId
-): Promise<Token | undefined> {
-    const address = addressFromAsset(asset)
-    let token = await ctx.store.get(Token, address)
+    blockchain: string,
+    symbol: string
+): Promise<OraclePrice | undefined> {
+    const key = `${blockchain}-${symbol}`
+    // Derive the Zenlink asset ID from the blockchain and symbol
+    const priceOracleKey = PRICE_ORACLE_KEYS_TO_ADDRESS[key]
+    // If the price oracle key is not defined, then we don't have a price oracle for this token
+    if (!priceOracleKey) return undefined
 
-    if (!token) {
-        const metadata = TOKEN_METADATA_MAP[address]
+    let price = await ctx.store.get(OraclePrice, priceOracleKey)
+
+    if (!price) {
+        const metadata = TOKEN_METADATA_MAP[priceOracleKey]
 
         if (!metadata) return undefined
-        const { name, symbol, decimals } = metadata
-        const totalSupply = await getTotalIssuance(
-            ctx,
-            zenlinkAssetIdToCurrencyId(asset)
-        )
-        token = new Token({
-            id: address.toLowerCase(),
+        const { name, symbol, decimals, blockchain } = metadata
+        price = new OraclePrice({
+            id: priceOracleKey,
             name,
             symbol,
-            totalSupply: totalSupply?.toString() ?? '0',
-            decimals,
-            derivedETH: ZERO_BD.toString(),
-            tradeVolume: ZERO_BD.toString(),
-            tradeVolumeUSD: ZERO_BD.toString(),
-            untrackedVolumeUSD: ZERO_BD.toString(),
-            totalLiquidity: ZERO_BD.toString(),
-            txCount: 0,
+            blockchain,
+            timestamp: 0n,
+            price: ZERO_BD.toString(),
+            supply: ZERO_BD.toString(),
         })
 
-        await ctx.store.save(token)
+        await ctx.store.save(price)
     }
 
-    return token
+    return price
 }

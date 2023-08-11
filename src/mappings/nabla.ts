@@ -8,44 +8,63 @@ import * as spool from '../abi/swap'
 import * as rou from '../abi/router'
 
 enum EventType {
-    BackstopPoolEvent,
+    BackstopPoolEvent = 1,
     RouterEvent,
     SwapPoolEvent,
 }
 
-function getEventAndEventType(ctx: EventHandlerContext) {
+type Event = mockErc20.Event | bpool.Event | spool.Event | rou.Event
+
+interface Decoder {
+    decodeEvent(hex: string): Event
+}
+
+function decodeEvent(
+    data: any,
+    decoder: Decoder
+): { result: Event | null; error: Error | null } {
     try {
-        const event = mockErc20.decodeEvent(ctx.event.args.data)
-        const eventType = undefined
-        return { event, eventType }
-    } catch {
-        try {
-            const event = bpool.decodeEvent(ctx.event.args.data)
-            const eventType = EventType.BackstopPoolEvent
+        const event = decoder.decodeEvent(data)
+        return { result: event, error: null }
+    } catch (err: any) {
+        return { result: null, error: err }
+    }
+}
+
+// Iterates over all decoders and returns the first successfully decoded event
+function getEventAndEventType(ctx: EventHandlerContext): {
+    event: Event | null
+    eventType: EventType | null
+} {
+    const decoders = [mockErc20, bpool, spool, rou]
+    const eventTypes = [
+        null,
+        EventType.BackstopPoolEvent,
+        EventType.SwapPoolEvent,
+        EventType.RouterEvent,
+    ]
+
+    for (let i = 0; i < decoders.length; i++) {
+        const { result: event, error: err } = decodeEvent(
+            ctx.event.args.data,
+            decoders[i]
+        )
+        if (!err) {
+            const eventType = eventTypes[i]
             return { event, eventType }
-        } catch {
-            try {
-                const event = spool.decodeEvent(ctx.event.args.data)
-                const eventType = EventType.SwapPoolEvent
-                return { event, eventType }
-            } catch {
-                try {
-                    const event = rou.decodeEvent(ctx.event.args.data)
-                    const eventType = EventType.RouterEvent
-                    return { event, eventType }
-                } catch {
-                    const event = undefined
-                    const eventType = undefined
-                    return { event, eventType }
-                }
-            }
         }
     }
+
+    return { event: null, eventType: null }
 }
 
 export async function handleContractEvent(ctx: EventHandlerContext) {
     const { event, eventType } = getEventAndEventType(ctx)
-    if (eventType == EventType.BackstopPoolEvent) {
+    if (!event || !eventType) {
+        return
+    }
+
+    if (eventType === EventType.BackstopPoolEvent) {
         if (event.__kind == 'Burn') {
             await backstophandleBurn(ctx)
         } else if (event.__kind == 'CoverSwapWithdrawal') {
@@ -63,7 +82,7 @@ export async function handleContractEvent(ctx: EventHandlerContext) {
         } else if (event.__kind == 'Transfer') {
             await backstopHandleTransfer(ctx)
         }
-    } else if (eventType == EventType.RouterEvent) {
+    } else if (eventType === EventType.RouterEvent) {
         if (event.__kind == 'OwnershipTransferred') {
             await routerHandleOwnershipTransferred(ctx)
         } else if (event.__kind == 'Paused') {
@@ -75,7 +94,7 @@ export async function handleContractEvent(ctx: EventHandlerContext) {
         } else if (event.__kind == 'SwapPoolRegistered') {
             await routerHandleSwapPoolRegistered(ctx, event)
         }
-    } else if (eventType == EventType.SwapPoolEvent) {
+    } else if (eventType === EventType.SwapPoolEvent) {
         if (event.__kind == 'BackstopDrain') {
             await swapHandleBackstopDrain(ctx)
         } else if (event.__kind == 'Burn') {

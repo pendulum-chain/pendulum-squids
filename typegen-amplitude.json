@@ -9,6 +9,8 @@
         "Tokens.Withdrawn",
         "Tokens.BalanceSet",
 
+        "DiaOracleModule.UpdatedPrices",
+
         "Farming.FarmingPoolCreated",
         "Farming.FarmingPoolReset",
         "Farming.FarmingPoolClosed",
@@ -37,6 +39,8 @@
         "Timestamp.Now",
         "Tokens.Accounts",
         "Tokens.TotalIssuance",
+
+        "DiaOracleModule.CoinInfosMap",
 
         "Farming.PoolInfos",
         "Farming.GaugePoolInfos",

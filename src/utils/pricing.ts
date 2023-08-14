@@ -5,6 +5,7 @@ import { getOrCreateToken } from '../entities/token'
 import { Pair } from '../model'
 import { EventHandlerContext } from '../types'
 import { assetIdFromAddress } from './token'
+import { getOrCreateOraclePrice } from '../entities/oraclePrice'
 
 export const WNATIVE = '2124-0-0'
 export const KSM = '2124-2-256'
@@ -34,8 +35,12 @@ export async function getEthPriceInUSD(
         return BigDecimal(0)
     }
 
-    // TODO get ksm price from on-chain price oracle
-    const ksmPrice = 0
+    const ksmOraclePrice = await getOrCreateOraclePrice(ctx, 'Kusama', 'KSM')
+    if (!ksmOraclePrice) {
+        return BigDecimal(0)
+    }
+    const ksmPrice = ksmOraclePrice.price
+
     return wnativePair.token0.id === KSM
         ? BigDecimal(wnativePair.token0Price).mul(ksmPrice)
         : BigDecimal(wnativePair.token1Price).mul(ksmPrice)

@@ -122,12 +122,6 @@ processor.run(new TypeormDatabase(), async (ctx) => {
                         break
                     // farming
                     case 'Farming.FarmingPoolCreated':
-                        console.log(
-                            'Farming.FarmingPoolCreated',
-                            ctx,
-                            block,
-                            item
-                        )
                         await handleFarmingPoolCreated({
                             ...ctx,
                             block: block.header,

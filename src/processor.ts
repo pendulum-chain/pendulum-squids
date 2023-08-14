@@ -16,6 +16,7 @@ import {
     handleTokenWithdrawn,
 } from './mappings/token'
 import { handleBalanceTransfer } from './mappings/balances'
+import { handleContractEvent } from './mappings/nabla'
 
 const DataSelection = { data: { event: true } } as const
 
@@ -33,6 +34,7 @@ const processor = new SubstrateBatchProcessor()
     .addEvent('Tokens.Deposited', DataSelection)
     .addEvent('Tokens.Withdrawn', DataSelection)
     .addEvent('Tokens.BalanceSet', DataSelection)
+    .addEvent('Contracts.ContractEmitted', DataSelection)
 
 type Item = BatchProcessorItem<typeof processor>
 export type Ctx = BatchContext<Store, Item>
@@ -86,6 +88,13 @@ processor.run(new TypeormDatabase(), async (ctx) => {
                         break
                     case 'Balances.Transfer':
                         await handleBalanceTransfer({
+                            ...ctx,
+                            block: block.header,
+                            event: item.event,
+                        })
+                        break
+                    case 'Contracts.ContractEmitted':
+                        await handleContractEvent({
                             ...ctx,
                             block: block.header,
                             event: item.event,

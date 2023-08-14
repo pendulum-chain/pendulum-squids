@@ -1,5 +1,5 @@
-module.exports = class Data1690558576230 {
-    name = 'Data1690558576230'
+module.exports = class Data1691027960917 {
+    name = 'Data1691027960917'
 
     async up(db) {
         await db.query(
@@ -231,6 +231,33 @@ module.exports = class Data1690558576230 {
             `CREATE TABLE "zlk_info" ("id" character varying NOT NULL, "updated_date" TIMESTAMP WITH TIME ZONE NOT NULL, "burn" numeric NOT NULL, CONSTRAINT "PK_58853b5e24384aba0da2023e91e" PRIMARY KEY ("id"))`
         )
         await db.query(
+            `CREATE TABLE "nabla_token" ("id" character varying NOT NULL, "decimals" integer NOT NULL, "name" text NOT NULL, "symbol" text NOT NULL, CONSTRAINT "PK_d036fec883bded17a5c2e09cf0a" PRIMARY KEY ("id"))`
+        )
+        await db.query(
+            `CREATE TABLE "backstop_pool" ("id" character varying NOT NULL, "reserves" numeric NOT NULL, "liabilities" numeric NOT NULL, "total_supply" numeric NOT NULL, "paused" boolean NOT NULL, "router_id" character varying, "token_id" character varying, CONSTRAINT "PK_bf2d01d9ce60ad9ee4b1b087d9d" PRIMARY KEY ("id"))`
+        )
+        await db.query(
+            `CREATE INDEX "IDX_13ef09b925620aedf12b3342ca" ON "backstop_pool" ("router_id") `
+        )
+        await db.query(
+            `CREATE INDEX "IDX_8a7a25fa2d22ff634bd3041d81" ON "backstop_pool" ("token_id") `
+        )
+        await db.query(
+            `CREATE TABLE "swap_pool" ("id" character varying NOT NULL, "reserves" numeric NOT NULL, "liabilities" numeric NOT NULL, "total_supply" numeric NOT NULL, "paused" boolean NOT NULL, "router_id" character varying, "backstop_id" character varying, "token_id" character varying, CONSTRAINT "PK_e78e7b899d2e3327494e5fe975d" PRIMARY KEY ("id"))`
+        )
+        await db.query(
+            `CREATE INDEX "IDX_2f5409f002e18e4a6e2fddd858" ON "swap_pool" ("router_id") `
+        )
+        await db.query(
+            `CREATE INDEX "IDX_5c3209a88e41d53bdc450605b3" ON "swap_pool" ("backstop_id") `
+        )
+        await db.query(
+            `CREATE INDEX "IDX_b66a5cc8d2ce7bba1b48fd8c1a" ON "swap_pool" ("token_id") `
+        )
+        await db.query(
+            `CREATE TABLE "router" ("id" character varying NOT NULL, "paused" boolean NOT NULL, CONSTRAINT "PK_510c864aa88ac8eb3a306789801" PRIMARY KEY ("id"))`
+        )
+        await db.query(
             `ALTER TABLE "stable_swap_event" ADD CONSTRAINT "FK_3a147c85b92441217540579be88" FOREIGN KEY ("stable_swap_id") REFERENCES "stable_swap"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`
         )
         await db.query(
@@ -347,6 +374,21 @@ module.exports = class Data1690558576230 {
         await db.query(
             `ALTER TABLE "zenlink_day_info" ADD CONSTRAINT "FK_3049b8ac70203e95dfc6b42c027" FOREIGN KEY ("stable_info_id") REFERENCES "stable_swap_day_data"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`
         )
+        await db.query(
+            `ALTER TABLE "backstop_pool" ADD CONSTRAINT "FK_13ef09b925620aedf12b3342caa" FOREIGN KEY ("router_id") REFERENCES "router"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`
+        )
+        await db.query(
+            `ALTER TABLE "backstop_pool" ADD CONSTRAINT "FK_8a7a25fa2d22ff634bd3041d818" FOREIGN KEY ("token_id") REFERENCES "nabla_token"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`
+        )
+        await db.query(
+            `ALTER TABLE "swap_pool" ADD CONSTRAINT "FK_2f5409f002e18e4a6e2fddd8582" FOREIGN KEY ("router_id") REFERENCES "router"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`
+        )
+        await db.query(
+            `ALTER TABLE "swap_pool" ADD CONSTRAINT "FK_5c3209a88e41d53bdc450605b3b" FOREIGN KEY ("backstop_id") REFERENCES "backstop_pool"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`
+        )
+        await db.query(
+            `ALTER TABLE "swap_pool" ADD CONSTRAINT "FK_b66a5cc8d2ce7bba1b48fd8c1ab" FOREIGN KEY ("token_id") REFERENCES "nabla_token"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`
+        )
     }
 
     async down(db) {
@@ -426,6 +468,15 @@ module.exports = class Data1690558576230 {
         await db.query(`DROP INDEX "public"."IDX_9f281ffbf4f668c1671ae24aeb"`)
         await db.query(`DROP INDEX "public"."IDX_3049b8ac70203e95dfc6b42c02"`)
         await db.query(`DROP TABLE "zlk_info"`)
+        await db.query(`DROP TABLE "nabla_token"`)
+        await db.query(`DROP TABLE "backstop_pool"`)
+        await db.query(`DROP INDEX "public"."IDX_13ef09b925620aedf12b3342ca"`)
+        await db.query(`DROP INDEX "public"."IDX_8a7a25fa2d22ff634bd3041d81"`)
+        await db.query(`DROP TABLE "swap_pool"`)
+        await db.query(`DROP INDEX "public"."IDX_2f5409f002e18e4a6e2fddd858"`)
+        await db.query(`DROP INDEX "public"."IDX_5c3209a88e41d53bdc450605b3"`)
+        await db.query(`DROP INDEX "public"."IDX_b66a5cc8d2ce7bba1b48fd8c1a"`)
+        await db.query(`DROP TABLE "router"`)
         await db.query(
             `ALTER TABLE "stable_swap_event" DROP CONSTRAINT "FK_3a147c85b92441217540579be88"`
         )
@@ -542,6 +593,21 @@ module.exports = class Data1690558576230 {
         )
         await db.query(
             `ALTER TABLE "zenlink_day_info" DROP CONSTRAINT "FK_3049b8ac70203e95dfc6b42c027"`
+        )
+        await db.query(
+            `ALTER TABLE "backstop_pool" DROP CONSTRAINT "FK_13ef09b925620aedf12b3342caa"`
+        )
+        await db.query(
+            `ALTER TABLE "backstop_pool" DROP CONSTRAINT "FK_8a7a25fa2d22ff634bd3041d818"`
+        )
+        await db.query(
+            `ALTER TABLE "swap_pool" DROP CONSTRAINT "FK_2f5409f002e18e4a6e2fddd8582"`
+        )
+        await db.query(
+            `ALTER TABLE "swap_pool" DROP CONSTRAINT "FK_5c3209a88e41d53bdc450605b3b"`
+        )
+        await db.query(
+            `ALTER TABLE "swap_pool" DROP CONSTRAINT "FK_b66a5cc8d2ce7bba1b48fd8c1ab"`
         )
     }
 }

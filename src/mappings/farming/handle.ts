@@ -1,9 +1,5 @@
 import { EventHandlerContext } from '../../types'
 import {
-    FarmingFarmingPoolCreatedEvent,
-    TokensBalanceSetEvent,
-} from '../../types/foucoco/events'
-import {
     formatFarmingAllForceGaugeClaimedEvent,
     formatFarmingAllRetiredEvent,
     formatFarmingChargedEvent,

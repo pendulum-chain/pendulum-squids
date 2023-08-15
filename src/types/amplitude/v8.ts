@@ -1,10 +1,6 @@
 import type { Result, Option } from './support'
 
-export type CurrencyId =
-    | CurrencyId_Native
-    | CurrencyId_XCM
-    | CurrencyId_Stellar
-    | CurrencyId_ZenlinkLPToken
+export type CurrencyId = CurrencyId_Native | CurrencyId_XCM | CurrencyId_Stellar
 
 export interface CurrencyId_Native {
     __kind: 'Native'
@@ -18,11 +14,6 @@ export interface CurrencyId_XCM {
 export interface CurrencyId_Stellar {
     __kind: 'Stellar'
     value: Asset
-}
-
-export interface CurrencyId_ZenlinkLPToken {
-    __kind: 'ZenlinkLPToken'
-    value: [number, number, number, number]
 }
 
 export interface Type_452 {

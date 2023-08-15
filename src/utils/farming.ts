@@ -8,133 +8,189 @@ import {
 import { handleLiquiditySync } from '../mappings/protocol'
 import { Bundle, Farm, Incentive, Pair, SingleTokenLock } from '../model'
 import { EventHandlerContext } from '../types'
-import {
-    FarmingAllForceGaugeClaimedEvent,
-    FarmingAllRetiredEvent,
-    FarmingChargedEvent,
-    FarmingClaimedEvent,
-    FarmingDepositedEvent,
-    FarmingFarmingPoolClosedEvent,
-    FarmingFarmingPoolCreatedEvent,
-    FarmingFarmingPoolEditedEvent,
-    FarmingFarmingPoolKilledEvent,
-    FarmingFarmingPoolResetEvent,
-    FarmingGaugeWithdrawnEvent,
-    FarmingPartiallyForceGaugeClaimedEvent,
-    FarmingPartiallyRetiredEvent,
-    FarmingRetireLimitSetEvent,
-    FarmingWithdrawClaimedEvent,
-    FarmingWithdrawnEvent,
-} from '../types/foucoco/events'
-import {
-    FarmingPoolInfosStorage,
-    FarmingSharesAndWithdrawnRewardsStorage,
-} from '../types/foucoco/storage'
+import { foucocoEvents, amplitudeEvents } from '../types/events'
+import { amplitudeStorage, foucocoStorage } from '../types/storage'
 import { convertTokenToDecimal, getTimePerBlock } from './helpers'
 import { sortAssets } from './sort'
 import {
-    addressFromAsset,
     currencyIdToAssetIndex,
-    getPairAssetIdFromAssets,
     invertedTokenSymbolMap,
     parseToTokenIndex,
 } from './token'
+import { config, network } from '../config'
 
 export function formatFarmingCreatedPoolEvent(ctx: EventHandlerContext) {
     let event
-    const _event = new FarmingFarmingPoolCreatedEvent(ctx)
-    if (_event.isV1) {
-        event = _event.asV1
+    if (network === 'foucoco') {
+        const _event = new foucocoEvents.FarmingFarmingPoolCreatedEvent(ctx)
+        if (_event.isV1) {
+            event = _event.asV1
+        }
+    } else {
+        const _event = new amplitudeEvents.FarmingFarmingPoolCreatedEvent(ctx)
+        if (_event.isV10) {
+            event = _event.asV10
+        }
     }
     return event
 }
 
 export function formatFarmingPoolResetEvent(ctx: EventHandlerContext) {
     let event
-    const _event = new FarmingFarmingPoolResetEvent(ctx)
-    if (_event.isV1) {
-        event = _event.asV1
+    if (network === 'foucoco') {
+        const _event = new foucocoEvents.FarmingFarmingPoolResetEvent(ctx)
+        if (_event.isV1) {
+            event = _event.asV1
+        }
+    } else {
+        const _event = new amplitudeEvents.FarmingFarmingPoolResetEvent(ctx)
+        if (_event.isV10) {
+            event = _event.asV10
+        }
     }
     return event
 }
 
 export function formatFarmingPoolClosedEvent(ctx: EventHandlerContext) {
     let event
-    const _event = new FarmingFarmingPoolClosedEvent(ctx)
-    if (_event.isV1) {
-        event = _event.asV1
+    if (network === 'foucoco') {
+        const _event = new foucocoEvents.FarmingFarmingPoolClosedEvent(ctx)
+        if (_event.isV1) {
+            event = _event.asV1
+        }
+    } else {
+        const _event = new amplitudeEvents.FarmingFarmingPoolClosedEvent(ctx)
+        if (_event.isV10) {
+            event = _event.asV10
+        }
     }
     return event
 }
 
 export function formatFarmingPoolKilledEvent(ctx: EventHandlerContext) {
     let event
-    const _event = new FarmingFarmingPoolKilledEvent(ctx)
-    if (_event.isV1) {
-        event = _event.asV1
+    if (network === 'foucoco') {
+        const _event = new foucocoEvents.FarmingFarmingPoolKilledEvent(ctx)
+        if (_event.isV1) {
+            event = _event.asV1
+        }
+    } else {
+        const _event = new amplitudeEvents.FarmingFarmingPoolKilledEvent(ctx)
+        if (_event.isV10) {
+            event = _event.asV10
+        }
     }
     return event
 }
 
 export function formatFarmingPoolEditedEvent(ctx: EventHandlerContext) {
     let event
-    const _event = new FarmingFarmingPoolEditedEvent(ctx)
-    if (_event.isV1) {
-        event = _event.asV1
+    if (network === 'foucoco') {
+        const _event = new foucocoEvents.FarmingFarmingPoolEditedEvent(ctx)
+        if (_event.isV1) {
+            event = _event.asV1
+        }
+    } else {
+        const _event = new amplitudeEvents.FarmingFarmingPoolEditedEvent(ctx)
+        if (_event.isV10) {
+            event = _event.asV10
+        }
     }
     return event
 }
 
 export function formatFarmingChargedEvent(ctx: EventHandlerContext) {
     let event
-    const _event = new FarmingChargedEvent(ctx)
-    if (_event.isV1) {
-        event = _event.asV1
+    if (network === 'foucoco') {
+        const _event = new foucocoEvents.FarmingChargedEvent(ctx)
+        if (_event.isV1) {
+            event = _event.asV1
+        }
+    } else {
+        const _event = new amplitudeEvents.FarmingChargedEvent(ctx)
+        if (_event.isV10) {
+            event = _event.asV10
+        }
     }
     return event
 }
 
 export function formatFarmingDepositedEvent(ctx: EventHandlerContext) {
     let event
-    const _event = new FarmingDepositedEvent(ctx)
-    if (_event.isV1) {
-        event = _event.asV1
+    if (network === 'foucoco') {
+        const _event = new foucocoEvents.FarmingDepositedEvent(ctx)
+        if (_event.isV1) {
+            event = _event.asV1
+        }
+    } else {
+        const _event = new amplitudeEvents.FarmingDepositedEvent(ctx)
+        if (_event.isV10) {
+            event = _event.asV10
+        }
     }
     return event
 }
 
 export function formatFarmingWithdrawnEvent(ctx: EventHandlerContext) {
     let event
-    const _event = new FarmingWithdrawnEvent(ctx)
-    if (_event.isV1) {
-        event = _event.asV1
+    if (network === 'foucoco') {
+        const _event = new foucocoEvents.FarmingWithdrawnEvent(ctx)
+        if (_event.isV1) {
+            event = _event.asV1
+        }
+    } else {
+        const _event = new amplitudeEvents.FarmingWithdrawnEvent(ctx)
+        if (_event.isV10) {
+            event = _event.asV10
+        }
     }
     return event
 }
 
 export function formatFarmingClaimedEvent(ctx: EventHandlerContext) {
     let event
-    const _event = new FarmingClaimedEvent(ctx)
-    if (_event.isV1) {
-        event = _event.asV1
+    if (network === 'foucoco') {
+        const _event = new foucocoEvents.FarmingClaimedEvent(ctx)
+        if (_event.isV1) {
+            event = _event.asV1
+        }
+    } else {
+        const _event = new amplitudeEvents.FarmingClaimedEvent(ctx)
+        if (_event.isV10) {
+            event = _event.asV10
+        }
     }
     return event
 }
 
 export function formatFarmingWithdrawClaimedEvent(ctx: EventHandlerContext) {
     let event
-    const _event = new FarmingWithdrawClaimedEvent(ctx)
-    if (_event.isV1) {
-        event = _event.asV1
+    if (network === 'foucoco') {
+        const _event = new foucocoEvents.FarmingWithdrawClaimedEvent(ctx)
+        if (_event.isV1) {
+            event = _event.asV1
+        }
+    } else {
+        const _event = new amplitudeEvents.FarmingWithdrawClaimedEvent(ctx)
+        if (_event.isV10) {
+            event = _event.asV10
+        }
     }
     return event
 }
 
 export function formatFarmingGaugeWithdrawnEvent(ctx: EventHandlerContext) {
     let event
-    const _event = new FarmingGaugeWithdrawnEvent(ctx)
-    if (_event.isV1) {
-        event = _event.asV1
+    if (network === 'foucoco') {
+        const _event = new foucocoEvents.FarmingGaugeWithdrawnEvent(ctx)
+        if (_event.isV1) {
+            event = _event.asV1
+        }
+    } else {
+        const _event = new amplitudeEvents.FarmingGaugeWithdrawnEvent(ctx)
+        if (_event.isV10) {
+            event = _event.asV10
+        }
     }
     return event
 }
@@ -143,9 +199,16 @@ export function formatFarmingAllForceGaugeClaimedEvent(
     ctx: EventHandlerContext
 ) {
     let event
-    const _event = new FarmingAllForceGaugeClaimedEvent(ctx)
-    if (_event.isV1) {
-        event = _event.asV1
+    if (network === 'foucoco') {
+        const _event = new foucocoEvents.FarmingAllForceGaugeClaimedEvent(ctx)
+        if (_event.isV1) {
+            event = _event.asV1
+        }
+    } else {
+        const _event = new amplitudeEvents.FarmingAllForceGaugeClaimedEvent(ctx)
+        if (_event.isV10) {
+            event = _event.asV10
+        }
     }
     return event
 }
@@ -154,36 +217,67 @@ export function formatFarmingPartiallyForceGaugeClaimedEvent(
     ctx: EventHandlerContext
 ) {
     let event
-    const _event = new FarmingPartiallyForceGaugeClaimedEvent(ctx)
-    if (_event.isV1) {
-        event = _event.asV1
+    if (network === 'foucoco') {
+        const _event = new foucocoEvents.FarmingPartiallyForceGaugeClaimedEvent(
+            ctx
+        )
+        if (_event.isV1) {
+            event = _event.asV1
+        }
+    } else {
+        const _event =
+            new amplitudeEvents.FarmingPartiallyForceGaugeClaimedEvent(ctx)
+        if (_event.isV10) {
+            event = _event.asV10
+        }
     }
     return event
 }
 
 export function formatFarmingAllRetiredEvent(ctx: EventHandlerContext) {
     let event
-    const _event = new FarmingAllRetiredEvent(ctx)
-    if (_event.isV1) {
-        event = _event.asV1
+    if (network === 'foucoco') {
+        const _event = new foucocoEvents.FarmingAllRetiredEvent(ctx)
+        if (_event.isV1) {
+            event = _event.asV1
+        }
+    } else {
+        const _event = new amplitudeEvents.FarmingAllRetiredEvent(ctx)
+        if (_event.isV10) {
+            event = _event.asV10
+        }
     }
     return event
 }
 
 export function formatFarmingPartiallyRetiredEvent(ctx: EventHandlerContext) {
     let event
-    const _event = new FarmingPartiallyRetiredEvent(ctx)
-    if (_event.isV1) {
-        event = _event.asV1
+    if (network === 'foucoco') {
+        const _event = new foucocoEvents.FarmingPartiallyRetiredEvent(ctx)
+        if (_event.isV1) {
+            event = _event.asV1
+        }
+    } else {
+        const _event = new amplitudeEvents.FarmingPartiallyRetiredEvent(ctx)
+        if (_event.isV10) {
+            event = _event.asV10
+        }
     }
     return event
 }
 
 export function formatFarmingRetireLimitSetEvent(ctx: EventHandlerContext) {
     let event
-    const _event = new FarmingRetireLimitSetEvent(ctx)
-    if (_event.isV1) {
-        event = _event.asV1
+    if (network === 'foucoco') {
+        const _event = new foucocoEvents.FarmingRetireLimitSetEvent(ctx)
+        if (_event.isV1) {
+            event = _event.asV1
+        }
+    } else {
+        const _event = new amplitudeEvents.FarmingRetireLimitSetEvent(ctx)
+        if (_event.isV10) {
+            event = _event.asV10
+        }
     }
     return event
 }
@@ -196,10 +290,18 @@ export async function getFamingPoolInfo(
     }
 ) {
     let result
-
-    const farmingPoolInfoStorage = new FarmingPoolInfosStorage(ctx, block)
-    if (farmingPoolInfoStorage.isV1) {
-        result = await farmingPoolInfoStorage.asV1.get(pid)
+    if (network === 'foucoco') {
+        const farmingPoolInfoStorage =
+            new foucocoStorage.FarmingPoolInfosStorage(ctx, block)
+        if (farmingPoolInfoStorage.isV1) {
+            result = await farmingPoolInfoStorage.asV1.get(pid)
+        }
+    } else {
+        const farmingPoolInfoStorage =
+            new amplitudeStorage.FarmingPoolInfosStorage(ctx, block)
+        if (farmingPoolInfoStorage.isV10) {
+            result = await farmingPoolInfoStorage.asV10.get(pid)
+        }
     }
     return result
 }
@@ -211,9 +313,24 @@ export async function getFamingSharesAndWithdrawnRewards(
 ) {
     let result
 
-    const storage = new FarmingSharesAndWithdrawnRewardsStorage(ctx, ctx.block)
-    if (storage.isV1) {
-        result = await storage.asV1.get(pid, user)
+    if (network === 'foucoco') {
+        const storage =
+            new foucocoStorage.FarmingSharesAndWithdrawnRewardsStorage(
+                ctx,
+                ctx.block
+            )
+        if (storage.isV1) {
+            result = await storage.asV1.get(pid, user)
+        }
+    } else {
+        const storage =
+            new amplitudeStorage.FarmingSharesAndWithdrawnRewardsStorage(
+                ctx,
+                ctx.block
+            )
+        if (storage.isV10) {
+            result = await storage.asV10.get(pid, user)
+        }
     }
     return result
 }

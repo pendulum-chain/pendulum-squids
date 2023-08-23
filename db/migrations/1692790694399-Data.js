@@ -1,9 +1,9 @@
-module.exports = class Data1692027399799 {
-    name = 'Data1692027399799'
+module.exports = class Data1692790694399 {
+    name = 'Data1692790694399'
 
     async up(db) {
         await db.query(
-            `CREATE TABLE "oracle_price" ("id" character varying NOT NULL, "symbol" text NOT NULL, "name" text NOT NULL, "blockchain" text NOT NULL, "timestamp" numeric NOT NULL, "price" text NOT NULL, "supply" text NOT NULL, CONSTRAINT "PK_606c938b2474588b154eb625f3b" PRIMARY KEY ("id"))`
+            `CREATE TABLE "oracle_price" ("id" character varying NOT NULL, "symbol" text NOT NULL, "name" text NOT NULL, "blockchain" text NOT NULL, "timestamp" numeric NOT NULL, "price" text NOT NULL, "supply" text NOT NULL, "decimals" integer NOT NULL, CONSTRAINT "PK_606c938b2474588b154eb625f3b" PRIMARY KEY ("id"))`
         )
         await db.query(
             `CREATE INDEX "IDX_6554f47abd46667280a2523381" ON "oracle_price" ("symbol") `

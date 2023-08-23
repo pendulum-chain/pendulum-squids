@@ -45,4 +45,7 @@ export class OraclePrice {
      */
     @Column_('text', { nullable: false })
     supply!: string
+
+    @Column_('int4', { nullable: false })
+    decimals!: number
 }

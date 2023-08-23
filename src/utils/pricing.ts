@@ -40,10 +40,13 @@ export async function getEthPriceInUSD(
         return BigDecimal(0)
     }
     const ksmPrice = ksmOraclePrice.price
+    const ksmPriceDecimal = BigDecimal(ksmPrice).div(
+        10 ** ksmOraclePrice.decimals
+    )
 
     return wnativePair.token0.id === KSM
-        ? BigDecimal(wnativePair.token0Price).mul(ksmPrice)
-        : BigDecimal(wnativePair.token1Price).mul(ksmPrice)
+        ? BigDecimal(wnativePair.token0Price).mul(ksmPriceDecimal)
+        : BigDecimal(wnativePair.token1Price).mul(ksmPriceDecimal)
 }
 
 /**

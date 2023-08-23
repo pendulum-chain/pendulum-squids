@@ -8,6 +8,7 @@ type OraclePrice @entity {
     price: String! @index
     "BigDecimal"
     supply: String!
+    decimals: Int!
 }
 
 type Transfer @entity {

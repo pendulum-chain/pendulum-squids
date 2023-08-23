@@ -30,6 +30,7 @@ export async function getOrCreateOraclePrice(
             symbol,
             blockchain,
             timestamp: 0n,
+            decimals,
             price: ZERO_BD.toString(),
             supply: ZERO_BD.toString(),
         })

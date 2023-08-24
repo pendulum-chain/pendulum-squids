@@ -42,17 +42,53 @@ function decodeEvent(
     }
 }
 
+function isSwapPoolEvent(ctx: EventHandlerContext) {
+    const contract = new swapPoolAbi.Contract(ctx, ctx.event.args.contract)
+
+    try {
+        contract.router()
+        contract.backstop()
+        contract.accumulatedSlippage()
+        contract.poolCap()
+        return true
+    } catch {
+        return false
+    }
+}
+
+function isRouterEvent(ctx: EventHandlerContext) {
+    const contract = new routerAbi.Contract(ctx, ctx.event.args.contract)
+
+    try {
+        contract.poolByAsset(new Uint8Array(Buffer.from('0x00', 'hex')))
+        return true
+    } catch {
+        return false
+    }
+}
+
+function isBacstopPoolEvent(ctx: EventHandlerContext) {
+    const contract = new backstopPoolAbi.Contract(ctx, ctx.event.args.contract)
+
+    try {
+        contract.getBackedPool(0n)
+        return true
+    } catch {
+        return false
+    }
+}
+
 // Iterates over all decoders and returns the first successfully decoded event
 function getEventAndEventType(ctx: EventHandlerContext): {
     event: Event | null
     eventType: EventType | null
 } {
-    const decoders = [erc20Abi, backstopPoolAbi, swapPoolAbi, routerAbi]
+    const decoders = [erc20Abi, swapPoolAbi, routerAbi, backstopPoolAbi]
     const eventTypes = [
         null,
-        EventType.BackstopPoolEvent,
         EventType.SwapPoolEvent,
         EventType.RouterEvent,
+        EventType.BackstopPoolEvent,
     ]
 
     for (let i = 0; i < decoders.length; i++) {

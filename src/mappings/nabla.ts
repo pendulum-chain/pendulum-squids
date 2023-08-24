@@ -42,63 +42,69 @@ function decodeEvent(
     }
 }
 
-function isSwapPoolEvent(ctx: EventHandlerContext) {
-    const contract = new swapPoolAbi.Contract(ctx, ctx.event.args.contract)
-
+async function isSwapPoolEvent(ctx: EventHandlerContext) {
     try {
-        contract.router()
-        contract.backstop()
-        contract.accumulatedSlippage()
-        contract.poolCap()
+        const contract = new swapPoolAbi.Contract(ctx, ctx.event.args.contract)
+        await contract.router()
+        await contract.backstop()
+        await contract.accumulatedSlippage()
+        await contract.poolCap()
         return true
     } catch {
         return false
     }
 }
 
-function isRouterEvent(ctx: EventHandlerContext) {
-    const contract = new routerAbi.Contract(ctx, ctx.event.args.contract)
-
+async function isRouterEvent(ctx: EventHandlerContext) {
     try {
-        contract.poolByAsset(new Uint8Array(Buffer.from('0x00', 'hex')))
+        const contract = new routerAbi.Contract(ctx, ctx.event.args.contract)
+        await contract.poolByAsset(new Uint8Array(32))
         return true
     } catch {
         return false
     }
 }
 
-function isBacstopPoolEvent(ctx: EventHandlerContext) {
-    const contract = new backstopPoolAbi.Contract(ctx, ctx.event.args.contract)
-
+async function isBackstopPoolEvent(ctx: EventHandlerContext) {
     try {
-        contract.getBackedPool(0n)
+        const contract = new backstopPoolAbi.Contract(
+            ctx,
+            ctx.event.args.contract
+        )
+        await contract.getBackedPool(0n)
         return true
     } catch {
         return false
     }
+}
+
+async function verifyEvent(veryfier: Function, ctx: EventHandlerContext) {
+    return veryfier(ctx)
 }
 
 // Iterates over all decoders and returns the first successfully decoded event
-function getEventAndEventType(ctx: EventHandlerContext): {
+async function getEventAndEventType(ctx: EventHandlerContext): Promise<{
     event: Event | null
     eventType: EventType | null
-} {
-    const decoders = [erc20Abi, swapPoolAbi, routerAbi, backstopPoolAbi]
+}> {
+    const veryfiers = [isBackstopPoolEvent, isRouterEvent, isSwapPoolEvent]
+    const decoders = [backstopPoolAbi, routerAbi, swapPoolAbi]
     const eventTypes = [
-        null,
-        EventType.SwapPoolEvent,
-        EventType.RouterEvent,
         EventType.BackstopPoolEvent,
+        EventType.RouterEvent,
+        EventType.SwapPoolEvent,
     ]
 
-    for (let i = 0; i < decoders.length; i++) {
-        const { result: event, error: err } = decodeEvent(
-            ctx.event.args.data,
-            decoders[i]
-        )
-        if (!err) {
-            const eventType = eventTypes[i]
-            return { event, eventType }
+    for (let i = 0; i < veryfiers.length; i++) {
+        if (await verifyEvent(veryfiers[i], ctx)) {
+            const { result: event, error: err } = decodeEvent(
+                ctx.event.args.data,
+                decoders[i]
+            )
+            if (!err) {
+                const eventType = eventTypes[i]
+                return { event, eventType }
+            }
         }
     }
 
@@ -106,7 +112,7 @@ function getEventAndEventType(ctx: EventHandlerContext): {
 }
 
 export async function handleContractEvent(ctx: EventHandlerContext) {
-    const { event, eventType } = getEventAndEventType(ctx)
+    const { event, eventType } = await getEventAndEventType(ctx)
     if (!event || !eventType) {
         return
     }

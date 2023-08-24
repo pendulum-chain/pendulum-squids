@@ -5,6 +5,10 @@ import * as backstopPoolAbi from '../abi/backstop'
 import * as erc20Abi from '../abi/erc20'
 import * as swapPoolAbi from '../abi/swap'
 import * as routerAbi from '../abi/router'
+import { codec } from '@subsquid/ss58'
+import { config } from '../config'
+const { hexToU8a } = require('@polkadot/util')
+import * as ss58 from '@subsquid/ss58'
 
 enum EventType {
     BackstopPoolEvent = 1,
@@ -20,6 +24,10 @@ type Event =
 
 interface Decoder {
     decodeEvent(hex: string): Event
+}
+
+function ss58ToHex(address: string) {
+    return toHex(ss58.decode(address).bytes)
 }
 
 function decodeEvent(
@@ -275,7 +283,7 @@ export async function updateBackstopCoverageAndSupply(
     ctx: EventHandlerContext,
     backstop: BackstopPool
 ) {
-    const contract = new backstopPoolAbi.Contract(ctx, backstop.id)
+    const contract = new backstopPoolAbi.Contract(ctx, ss58ToHex(backstop.id))
     const coverage = await contract.coverage()
 
     backstop.totalSupply = await contract.totalSupply()
@@ -287,7 +295,7 @@ export async function updateSwapPoolCoverageAndSupply(
     ctx: EventHandlerContext,
     pool: SwapPool
 ) {
-    const contract = new swapPoolAbi.Contract(ctx, pool.id)
+    const contract = new swapPoolAbi.Contract(ctx, ss58ToHex(pool.id))
     const coverage = await contract.coverage()
 
     pool.totalSupply = await contract.totalSupply()
@@ -297,11 +305,12 @@ export async function updateSwapPoolCoverageAndSupply(
 
 export async function getOrCreateBackstopPool(
     ctx: EventHandlerContext,
-    address: string
+    hexAddress: string
 ) {
+    let address = codec(config.prefix).encode(hexToU8a(hexAddress))
     let backstop = await ctx.store.get(BackstopPool, address)
     if (!backstop) {
-        const contract = new backstopPoolAbi.Contract(ctx, address)
+        const contract = new backstopPoolAbi.Contract(ctx, hexAddress)
         let router = await getOrCreateRouter(
             ctx,
             toHex(await contract.router())
@@ -326,8 +335,9 @@ export async function getOrCreateBackstopPool(
 
 export async function getOrCreateRouter(
     ctx: EventHandlerContext,
-    address: string
+    hexAddress: string
 ) {
+    let address = codec(config.prefix).encode(hexToU8a(hexAddress))
     let router = await ctx.store.get(Router, address)
     if (!router) {
         router = new Router({
@@ -341,11 +351,12 @@ export async function getOrCreateRouter(
 
 export async function getOrCreateNablaToken(
     ctx: EventHandlerContext,
-    address: string
+    hexAddress: string
 ) {
+    let address = codec(config.prefix).encode(hexToU8a(hexAddress))
     let nablaToken = await ctx.store.get(NablaToken, address)
     if (!nablaToken) {
-        const contract = new erc20Abi.Contract(ctx, address)
+        const contract = new erc20Abi.Contract(ctx, hexAddress)
         nablaToken = new NablaToken({
             id: address,
             decimals: await contract.decimals(),
@@ -359,11 +370,12 @@ export async function getOrCreateNablaToken(
 
 export async function getOrCreateSwapPool(
     ctx: EventHandlerContext,
-    address: string
+    hexAddress: string
 ) {
+    let address = codec(config.prefix).encode(hexToU8a(hexAddress))
     let swapPool = await ctx.store.get(SwapPool, address)
     if (!swapPool) {
-        const contract = new swapPoolAbi.Contract(ctx, address)
+        const contract = new swapPoolAbi.Contract(ctx, hexAddress)
         let router = await getOrCreateRouter(
             ctx,
             toHex(await contract.router())

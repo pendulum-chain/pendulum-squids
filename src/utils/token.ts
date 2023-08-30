@@ -2,7 +2,7 @@ import { EventHandlerContext } from '../types'
 import { amplitudeStorage, foucocoStorage } from '../types/storage'
 import { AssetId, CurrencyId } from '../types/common'
 import { codec } from '@subsquid/ss58'
-import { config, network, Network } from '../config'
+import { config, network } from '../config'
 import { invert } from 'lodash'
 
 export const currencyKeyMap: { [index: number]: string } = {
@@ -139,6 +139,49 @@ export function zenlinkAssetIdToCurrencyId(asset: AssetId): any {
                 }
         }
     }
+}
+
+// Adheres to derivations defined in [this](https://github.com/pendulum-chain/pendulum/blob/6f92a8d695a7a5ea23c769f03d5f3a621334094e/runtime/common/src/zenlink.rs#L63) function
+export function currencyIdToAssetIndex(currency: CurrencyId): number {
+    const tokenType = CurrencyTypeEnum[currency.__kind]
+    let tokenIndex = 0
+
+    switch (currency.__kind) {
+        case 'Native':
+            tokenIndex = 0
+            break
+        case 'XCM':
+            tokenIndex = currency.value
+            break
+        case 'Stellar':
+            switch (currency.value.__kind) {
+                case 'StellarNative':
+                    tokenIndex = 0
+                    break
+                case 'AlphaNum4':
+                    switch (u8a2s(currency.value.code)) {
+                        case 'USDC':
+                            tokenIndex = 1
+                            break
+                        case 'TZS':
+                            tokenIndex = 2
+                            break
+                        case 'BRL':
+                            tokenIndex = 3
+                            break
+                    }
+            }
+            break
+        case 'ZenlinkLPToken':
+            tokenIndex =
+                (currency.value[0] << 16) +
+                (currency.value[1] << 24) +
+                (currency.value[2] << 32) +
+                (currency.value[3] << 40)
+            break
+    }
+
+    return parseToTokenIndex(tokenType, tokenIndex)
 }
 
 export function u8a2s(u8a: Uint8Array) {

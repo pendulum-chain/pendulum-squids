@@ -11,6 +11,7 @@ export type EventHandlerContext<T extends EventDataRequest = { event: true }> =
 
 export interface TokenBase {
     name: string
+    blockchain: string
     symbol: string
     decimals: number
 }

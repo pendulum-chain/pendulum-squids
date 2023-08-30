@@ -1,7 +1,22 @@
-module.exports = class Data1691027960917 {
-    name = 'Data1691027960917'
+module.exports = class Data1692790694399 {
+    name = 'Data1692790694399'
 
     async up(db) {
+        await db.query(
+            `CREATE TABLE "oracle_price" ("id" character varying NOT NULL, "symbol" text NOT NULL, "name" text NOT NULL, "blockchain" text NOT NULL, "timestamp" numeric NOT NULL, "price" text NOT NULL, "supply" text NOT NULL, "decimals" integer NOT NULL, CONSTRAINT "PK_606c938b2474588b154eb625f3b" PRIMARY KEY ("id"))`
+        )
+        await db.query(
+            `CREATE INDEX "IDX_6554f47abd46667280a2523381" ON "oracle_price" ("symbol") `
+        )
+        await db.query(
+            `CREATE INDEX "IDX_2026224855490e321e5c0b6911" ON "oracle_price" ("blockchain") `
+        )
+        await db.query(
+            `CREATE INDEX "IDX_a77ac6d79f0929522f5a1aefcb" ON "oracle_price" ("timestamp") `
+        )
+        await db.query(
+            `CREATE INDEX "IDX_f7c9bf3bae39fb0a75f12b87dd" ON "oracle_price" ("price") `
+        )
         await db.query(
             `CREATE TABLE "transfer" ("id" character varying NOT NULL, "block_number" integer NOT NULL, "timestamp" TIMESTAMP WITH TIME ZONE NOT NULL, "extrinsic_hash" text, "from" text NOT NULL, "to" text NOT NULL, "amount" numeric NOT NULL, "fee" numeric NOT NULL, CONSTRAINT "PK_fd9ddbdd49a17afcbe014401295" PRIMARY KEY ("id"))`
         )
@@ -392,6 +407,11 @@ module.exports = class Data1691027960917 {
     }
 
     async down(db) {
+        await db.query(`DROP TABLE "oracle_price"`)
+        await db.query(`DROP INDEX "public"."IDX_6554f47abd46667280a2523381"`)
+        await db.query(`DROP INDEX "public"."IDX_2026224855490e321e5c0b6911"`)
+        await db.query(`DROP INDEX "public"."IDX_a77ac6d79f0929522f5a1aefcb"`)
+        await db.query(`DROP INDEX "public"."IDX_f7c9bf3bae39fb0a75f12b87dd"`)
         await db.query(`DROP TABLE "transfer"`)
         await db.query(`DROP INDEX "public"."IDX_d6624eacc30144ea97915fe846"`)
         await db.query(`DROP INDEX "public"."IDX_70ff8b624c3118ac3a4862d22c"`)

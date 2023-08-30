@@ -87,7 +87,7 @@ async function getEventAndEventType(ctx: EventHandlerContext): Promise<{
     event: Event | null
     eventType: EventType | null
 }> {
-    const veryfiers = [isBackstopPoolEvent, isRouterEvent, isSwapPoolEvent]
+    const verifiers = [isBackstopPoolEvent, isRouterEvent, isSwapPoolEvent]
     const decoders = [backstopPoolAbi, routerAbi, swapPoolAbi]
     const eventTypes = [
         EventType.BackstopPoolEvent,

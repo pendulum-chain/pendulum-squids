@@ -30,18 +30,6 @@ function ss58ToHex(address: string) {
     return toHex(ss58.decode(address).bytes)
 }
 
-function decodeEvent(
-    data: any,
-    decoder: Decoder
-): { result: Event | null; error: Error | null } {
-    try {
-        const event = decoder.decodeEvent(data)
-        return { result: event, error: null }
-    } catch (err: any) {
-        return { result: null, error: err }
-    }
-}
-
 async function isSwapPoolEvent(ctx: EventHandlerContext) {
     try {
         const contract = new swapPoolAbi.Contract(ctx, ctx.event.args.contract)
@@ -49,9 +37,9 @@ async function isSwapPoolEvent(ctx: EventHandlerContext) {
         await contract.backstop()
         await contract.accumulatedSlippage()
         await contract.poolCap()
-        return true
+        return swapPoolAbi.decodeEvent(ctx.event.args.data)
     } catch {
-        return false
+        return undefined
     }
 }
 
@@ -59,9 +47,9 @@ async function isRouterEvent(ctx: EventHandlerContext) {
     try {
         const contract = new routerAbi.Contract(ctx, ctx.event.args.contract)
         await contract.poolByAsset(new Uint8Array(32))
-        return true
+        return routerAbi.decodeEvent(ctx.event.args.data)
     } catch {
-        return false
+        return undefined
     }
 }
 
@@ -72,9 +60,9 @@ async function isBackstopPoolEvent(ctx: EventHandlerContext) {
             ctx.event.args.contract
         )
         await contract.getBackedPool(0n)
-        return true
+        return backstopPoolAbi.decodeEvent(ctx.event.args.data)
     } catch {
-        return false
+        return undefined
     }
 }
 
@@ -88,7 +76,6 @@ async function getEventAndEventType(ctx: EventHandlerContext): Promise<{
     eventType: EventType | null
 }> {
     const verifiers = [isBackstopPoolEvent, isRouterEvent, isSwapPoolEvent]
-    const decoders = [backstopPoolAbi, routerAbi, swapPoolAbi]
     const eventTypes = [
         EventType.BackstopPoolEvent,
         EventType.RouterEvent,
@@ -97,15 +84,10 @@ async function getEventAndEventType(ctx: EventHandlerContext): Promise<{
 
     // Iterate over all verifiers and try to decode the event to the given type
     for (let i = 0; i < verifiers.length; i++) {
-        if (await verifyEvent(verifiers[i], ctx)) {
-            const { result: event, error: err } = decodeEvent(
-                ctx.event.args.data,
-                decoders[i]
-            )
-            if (!err) {
-                const eventType = eventTypes[i]
-                return { event, eventType }
-            }
+        const event = await verifyEvent(verifiers[i], ctx)
+        if (event != undefined) {
+            const eventType = eventTypes[i]
+            return { event, eventType }
         }
     }
 

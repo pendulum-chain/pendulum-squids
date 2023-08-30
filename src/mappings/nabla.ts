@@ -95,8 +95,9 @@ async function getEventAndEventType(ctx: EventHandlerContext): Promise<{
         EventType.SwapPoolEvent,
     ]
 
-    for (let i = 0; i < veryfiers.length; i++) {
-        if (await verifyEvent(veryfiers[i], ctx)) {
+    // Iterate over all verifiers and try to decode the event to the given type
+    for (let i = 0; i < verifiers.length; i++) {
+        if (await verifyEvent(verifiers[i], ctx)) {
             const { result: event, error: err } = decodeEvent(
                 ctx.event.args.data,
                 decoders[i]

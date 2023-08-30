@@ -78,8 +78,8 @@ async function isBackstopPoolEvent(ctx: EventHandlerContext) {
     }
 }
 
-async function verifyEvent(veryfier: Function, ctx: EventHandlerContext) {
-    return veryfier(ctx)
+async function verifyEvent(verifier: Function, ctx: EventHandlerContext) {
+    return verifier(ctx)
 }
 
 // Iterates over all decoders and returns the first successfully decoded event

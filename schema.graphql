@@ -1,3 +1,16 @@
+type OraclePrice @entity {
+    id: ID!
+    symbol: String! @index
+    name: String!
+    blockchain: String! @index
+    timestamp: BigInt! @index
+    "BigDecimal"
+    price: String! @index
+    "BigDecimal"
+    supply: String!
+    decimals: Int!
+}
+
 type Transfer @entity {
     id: ID!
     blockNumber: Int! @index

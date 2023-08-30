@@ -1,9 +1,23 @@
 import type { Result, Option } from './support'
 
+export interface CoinInfo {
+    symbol: Uint8Array
+    name: Uint8Array
+    blockchain: Uint8Array
+    supply: bigint
+    lastUpdateTimestamp: bigint
+    price: bigint
+}
+
 export interface AssetId {
     chainId: number
     assetType: number
     assetIndex: bigint
+}
+
+export interface Type_445 {
+    blockchain: Uint8Array
+    symbol: Uint8Array
 }
 
 export type PairStatus =

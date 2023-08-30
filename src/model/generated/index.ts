@@ -1,3 +1,4 @@
+export * from './oraclePrice.model'
 export * from './transfer.model'
 export * from './zenlinkInfo.model'
 export * from './factory.model'

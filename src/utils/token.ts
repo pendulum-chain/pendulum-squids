@@ -339,6 +339,11 @@ export async function getTokenBalance(
                     account,
                     assetId as any
                 )
+            } else if (tokenAccountsStorage.isV10) {
+                result = await tokenAccountsStorage.asV10.get(
+                    account,
+                    assetId as any
+                )
             }
         }
     }

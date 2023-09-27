@@ -384,6 +384,8 @@ export async function getTotalIssuance(
                 result = await tokenIssuanceStorage.asV3.get(assetId as any)
             } else if (tokenIssuanceStorage.isV8) {
                 result = await tokenIssuanceStorage.asV8.get(assetId as any)
+            } else if (tokenIssuanceStorage.isV10) {
+                result = await tokenIssuanceStorage.asV10.get(assetId as any)
             }
         }
     }
@@ -426,6 +428,11 @@ export async function getTokenBurned(
                 )
             } else if (tokenAccountsStorage.isV8) {
                 result = await tokenAccountsStorage.asV8.get(
+                    account,
+                    assetId as any
+                )
+            } else if (tokenAccountsStorage.isV10) {
+                result = await tokenAccountsStorage.asV10.get(
                     account,
                     assetId as any
                 )

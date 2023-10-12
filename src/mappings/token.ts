@@ -47,6 +47,8 @@ export async function handleTokenDeposited(ctx: EventHandlerContext) {
             event = _event.asV3
         } else if (_event.isV8) {
             event = _event.asV8
+        } else if (_event.isV10) {
+            event = _event.asV10
         }
     }
 
@@ -97,6 +99,7 @@ export async function handleTokenDeposited(ctx: EventHandlerContext) {
     pair.totalSupply = (
         await getPairStatusFromAssets(ctx, [asset0, asset1], false)
     )[1].toString()
+    console.log('set pair total supply', pair.totalSupply)
     const { burns, mints } = transaction
     let burn: Burn
     if (burns.length > 0) {
@@ -176,6 +179,8 @@ export async function handleTokenWithdrawn(ctx: EventHandlerContext) {
             event = _event.asV3
         } else if (_event.isV8) {
             event = _event.asV8
+        } else if (_event.isV10) {
+            event = _event.asV10
         }
     }
 
@@ -226,6 +231,7 @@ export async function handleTokenWithdrawn(ctx: EventHandlerContext) {
     pair.totalSupply = (
         await getPairStatusFromAssets(ctx, [asset0, asset1], false)
     )[1].toString()
+    console.log('also set pair.totalSupply', pair.totalSupply)
     const { burns, mints } = transaction
     let burn: Burn
     if (burns.length > 0) {
@@ -302,6 +308,8 @@ export async function handleTokenTransfer(ctx: EventHandlerContext) {
             event = _event.asV3
         } else if (_event.isV8) {
             event = _event.asV8
+        } else if (_event.isV10) {
+            event = _event.asV10
         }
     }
 

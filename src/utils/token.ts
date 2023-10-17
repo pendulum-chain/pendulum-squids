@@ -331,6 +331,7 @@ export async function getTokenBalance(
                     .asV1
             } else if (network === 'pendulum') {
                 return new pendulumStorage.SystemAccountStorage(ctx, ctx.block)
+                    .asV1
             } else {
                 return new amplitudeStorage.SystemAccountStorage(ctx, ctx.block)
                     .asV1

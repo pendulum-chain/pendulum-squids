@@ -317,7 +317,7 @@ export async function handleTokenTransfer(ctx: EventHandlerContext) {
             event = _event.asV1
         }
     } else if (network === 'pendulum') {
-        const _event = new pendulumEvents.TokensDepositedEvent(ctx, ctx.event)
+        const _event = new pendulumEvents.TokensTransferEvent(ctx, ctx.event)
         if (_event.isV1) {
             event = _event.asV1
         } else {

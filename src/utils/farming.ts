@@ -26,6 +26,12 @@ export function formatFarmingCreatedPoolEvent(ctx: EventHandlerContext) {
         if (_event.isV1) {
             event = _event.asV1
         }
+    } else if (network == 'pendulum') {
+        const _event = new foucocoEvents.FarmingFarmingPoolCreatedEvent(
+            ctx,
+            ctx.event
+        )
+        event = _event.asV1
     } else {
         const _event = new amplitudeEvents.FarmingFarmingPoolCreatedEvent(ctx)
         if (_event.isV10) {

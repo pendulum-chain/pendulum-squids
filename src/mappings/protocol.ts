@@ -172,11 +172,11 @@ export async function handleLiquidityAdded(ctx: EventHandlerContext) {
         )
         event = _event.asV1
     } else if (network == 'pendulum') {
-        const _event = new foucocoEvents.ZenlinkProtocolLiquidityAddedEvent(
+        const _event = new pendulumEvents.ZenlinkProtocolLiquidityAddedEvent(
             ctx,
             ctx.event
         )
-        event = _event.asV1
+        event = _event.asV3
     } else {
         const _event = new amplitudeEvents.ZenlinkProtocolLiquidityAddedEvent(
             ctx,
@@ -254,11 +254,11 @@ export async function handleLiquidityRemoved(ctx: EventHandlerContext) {
         )
         event = _event.asV1
     } else if (network == 'pendulum') {
-        const _event = new foucocoEvents.ZenlinkProtocolLiquidityRemovedEvent(
+        const _event = new pendulumEvents.ZenlinkProtocolLiquidityRemovedEvent(
             ctx,
             ctx.event
         )
-        event = _event.asV1
+        event = _event.asV3
     } else {
         const _event = new amplitudeEvents.ZenlinkProtocolLiquidityRemovedEvent(
             ctx,
@@ -352,11 +352,11 @@ export async function handleAssetSwap(ctx: EventHandlerContext) {
         )
         event = _event.asV1
     } else if (network == 'pendulum') {
-        const _event = new foucocoEvents.ZenlinkProtocolAssetSwapEvent(
+        const _event = new pendulumEvents.ZenlinkProtocolAssetSwapEvent(
             ctx,
             ctx.event
         )
-        event = _event.asV1
+        event = _event.asV3
     } else {
         const _event = new amplitudeEvents.ZenlinkProtocolAssetSwapEvent(
             ctx,

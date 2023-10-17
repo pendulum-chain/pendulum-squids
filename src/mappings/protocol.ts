@@ -3,7 +3,7 @@ import { getFactory, getTransaction } from '../entities/utils'
 import { Big as BigDecimal } from 'big.js'
 import { Bundle, Burn, Mint, Pair, Swap, Transaction, User } from '../model'
 import { EventHandlerContext } from '../types'
-import { amplitudeEvents, foucocoEvents } from '../types/events'
+import { amplitudeEvents, foucocoEvents, pendulumEvents } from '../types/events'
 import { convertTokenToDecimal } from '../utils/helpers'
 import { sortAssets } from '../utils/sort'
 import {
@@ -171,6 +171,12 @@ export async function handleLiquidityAdded(ctx: EventHandlerContext) {
             ctx.event
         )
         event = _event.asV1
+    } else if (network == 'pendulum') {
+        const _event = new foucocoEvents.ZenlinkProtocolLiquidityAddedEvent(
+            ctx,
+            ctx.event
+        )
+        event = _event.asV1
     } else {
         const _event = new amplitudeEvents.ZenlinkProtocolLiquidityAddedEvent(
             ctx,
@@ -242,6 +248,12 @@ export async function handleLiquidityRemoved(ctx: EventHandlerContext) {
 
     let event
     if (network === 'foucoco') {
+        const _event = new foucocoEvents.ZenlinkProtocolLiquidityRemovedEvent(
+            ctx,
+            ctx.event
+        )
+        event = _event.asV1
+    } else if (network == 'pendulum') {
         const _event = new foucocoEvents.ZenlinkProtocolLiquidityRemovedEvent(
             ctx,
             ctx.event
@@ -334,6 +346,12 @@ export async function handleAssetSwap(ctx: EventHandlerContext) {
 
     let event
     if (network === 'foucoco') {
+        const _event = new foucocoEvents.ZenlinkProtocolAssetSwapEvent(
+            ctx,
+            ctx.event
+        )
+        event = _event.asV1
+    } else if (network == 'pendulum') {
         const _event = new foucocoEvents.ZenlinkProtocolAssetSwapEvent(
             ctx,
             ctx.event

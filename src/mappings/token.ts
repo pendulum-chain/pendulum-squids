@@ -41,6 +41,9 @@ export async function handleTokenDeposited(ctx: EventHandlerContext) {
         if (_event.isV1) {
             event = _event.asV1
         }
+    } else if (network == 'pendulum') {
+        const _event = new foucocoEvents.TokensDepositedEvent(ctx, ctx.event)
+        event = _event.asV1
     } else {
         const _event = new amplitudeEvents.TokensDepositedEvent(ctx, ctx.event)
         if (_event.isV3) {
@@ -173,6 +176,9 @@ export async function handleTokenWithdrawn(ctx: EventHandlerContext) {
         if (_event.isV1) {
             event = _event.asV1
         }
+    } else if (network == 'pendulum') {
+        const _event = new foucocoEvents.TokensWithdrawnEvent(ctx, ctx.event)
+        event = _event.asV1
     } else {
         const _event = new amplitudeEvents.TokensWithdrawnEvent(ctx, ctx.event)
         if (_event.isV3) {
@@ -302,6 +308,9 @@ export async function handleTokenTransfer(ctx: EventHandlerContext) {
         if (_event.isV1) {
             event = _event.asV1
         }
+    } else if (network == 'pendulum') {
+        const _event = new foucocoEvents.TokensTransferEvent(ctx, ctx.event)
+        event = _event.asV1
     } else {
         const _event = new amplitudeEvents.TokensTransferEvent(ctx, ctx.event)
         if (_event.isV3) {

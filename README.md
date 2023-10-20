@@ -1,6 +1,6 @@
 # Pendulum Squids
 
-This repository contains the code for the subsquid indexers that we deploy for our three networks Pendulum, Amplitude, and Foucoco. 
+This repository contains the code for the subsquid indexers that we deploy for our three networks Pendulum, Amplitude, and Foucoco.
 
 ## Prerequisites
 
@@ -26,6 +26,8 @@ sqd up
 
 # 4. Start the processor
 # For amplitude you would use
+sqd process:pendulum
+# For amplitude you would use
 sqd process:amplitude
 # For foucoco you would use
 sqd process:foucoco
@@ -39,7 +41,7 @@ sqd process:foucoco
 sqd serve
 ```
 
-## Context 
+## Context
 
 ### Organizations
 
@@ -108,6 +110,8 @@ in [this](https://docs.subsquid.io/deploy-squid/quickstart/) document.
 Deploying the squid to the `pendulum` organization is done by running the following command:
 
 ```shell
+# Deploying the pendulum squid
+sqd deploy --org pendulum . -m squid-pendulum.yaml
 # Deploying the amplitude squid
 sqd deploy --org pendulum . -m squid-amplitude.yaml
 # Deploying the foucoco squid
@@ -120,6 +124,7 @@ To deploy the squid to the production environment you should run the following c
 
 ```shell
 # Replace {version} with the version you define in the `squid.yaml` file
+sqd prod pendulum-squid@{version}
 sqd prod amplitude-squid@{version}
 sqd prod foucoco-squid@{version}
 ```
@@ -146,6 +151,12 @@ sqd typegen
 ```
 
 In our case, we have two typegen files: `typegen-amplitude.json` and `typegen-foucoco.json`. The previous command should be replaced by
+
+```shell
+sqd typegen:pendulum
+```
+
+Or
 
 ```shell
 sqd typegen:amplitude

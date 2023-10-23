@@ -26,6 +26,13 @@ export function formatFarmingCreatedPoolEvent(ctx: EventHandlerContext) {
         if (_event.isV1) {
             event = _event.asV1
         }
+    } else if (network === 'pendulum') {
+        // FIXME: Change foucocoEvents to pendulumEvents when the farming pallet is implemented on pendulum.
+        const _event = new foucocoEvents.FarmingFarmingPoolCreatedEvent(
+            ctx,
+            ctx.event
+        )
+        event = _event.asV1
     } else {
         const _event = new amplitudeEvents.FarmingFarmingPoolCreatedEvent(ctx)
         if (_event.isV10) {
@@ -42,6 +49,13 @@ export function formatFarmingPoolResetEvent(ctx: EventHandlerContext) {
         if (_event.isV1) {
             event = _event.asV1
         }
+    } else if (network === 'pendulum') {
+        // FIXME: Change foucocoEvents to pendulumEvents when the farming pallet is implemented on pendulum.
+        const _event = new foucocoEvents.FarmingFarmingPoolResetEvent(
+            ctx,
+            ctx.event
+        )
+        event = _event.asV1
     } else {
         const _event = new amplitudeEvents.FarmingFarmingPoolResetEvent(ctx)
         if (_event.isV10) {
@@ -58,6 +72,13 @@ export function formatFarmingPoolClosedEvent(ctx: EventHandlerContext) {
         if (_event.isV1) {
             event = _event.asV1
         }
+    } else if (network === 'pendulum') {
+        // FIXME: Change foucocoEvents to pendulumEvents when the farming pallet is implemented on pendulum.
+        const _event = new foucocoEvents.FarmingFarmingPoolClosedEvent(
+            ctx,
+            ctx.event
+        )
+        event = _event.asV1
     } else {
         const _event = new amplitudeEvents.FarmingFarmingPoolClosedEvent(ctx)
         if (_event.isV10) {
@@ -74,6 +95,13 @@ export function formatFarmingPoolKilledEvent(ctx: EventHandlerContext) {
         if (_event.isV1) {
             event = _event.asV1
         }
+    } else if (network === 'pendulum') {
+        // FIXME: Change foucocoEvents to pendulumEvents when the farming pallet is implemented on pendulum.
+        const _event = new foucocoEvents.FarmingFarmingPoolKilledEvent(
+            ctx,
+            ctx.event
+        )
+        event = _event.asV1
     } else {
         const _event = new amplitudeEvents.FarmingFarmingPoolKilledEvent(ctx)
         if (_event.isV10) {
@@ -90,6 +118,13 @@ export function formatFarmingPoolEditedEvent(ctx: EventHandlerContext) {
         if (_event.isV1) {
             event = _event.asV1
         }
+    } else if (network === 'pendulum') {
+        // FIXME: Change foucocoEvents to pendulumEvents when the farming pallet is implemented on pendulum.
+        const _event = new foucocoEvents.FarmingFarmingPoolEditedEvent(
+            ctx,
+            ctx.event
+        )
+        event = _event.asV1
     } else {
         const _event = new amplitudeEvents.FarmingFarmingPoolEditedEvent(ctx)
         if (_event.isV10) {
@@ -106,6 +141,10 @@ export function formatFarmingChargedEvent(ctx: EventHandlerContext) {
         if (_event.isV1) {
             event = _event.asV1
         }
+    } else if (network === 'pendulum') {
+        // FIXME: Change foucocoEvents to pendulumEvents when the farming pallet is implemented on pendulum.
+        const _event = new foucocoEvents.FarmingChargedEvent(ctx, ctx.event)
+        event = _event.asV1
     } else {
         const _event = new amplitudeEvents.FarmingChargedEvent(ctx)
         if (_event.isV10) {
@@ -122,6 +161,10 @@ export function formatFarmingDepositedEvent(ctx: EventHandlerContext) {
         if (_event.isV1) {
             event = _event.asV1
         }
+    } else if (network === 'pendulum') {
+        // FIXME: Change foucocoEvents to pendulumEvents when the farming pallet is implemented on pendulum.
+        const _event = new foucocoEvents.FarmingDepositedEvent(ctx, ctx.event)
+        event = _event.asV1
     } else {
         const _event = new amplitudeEvents.FarmingDepositedEvent(ctx)
         if (_event.isV10) {
@@ -138,6 +181,10 @@ export function formatFarmingWithdrawnEvent(ctx: EventHandlerContext) {
         if (_event.isV1) {
             event = _event.asV1
         }
+    } else if (network === 'pendulum') {
+        // FIXME: Change foucocoEvents to pendulumEvents when the farming pallet is implemented on pendulum.
+        const _event = new foucocoEvents.FarmingWithdrawnEvent(ctx, ctx.event)
+        event = _event.asV1
     } else {
         const _event = new amplitudeEvents.FarmingWithdrawnEvent(ctx)
         if (_event.isV10) {
@@ -154,6 +201,10 @@ export function formatFarmingClaimedEvent(ctx: EventHandlerContext) {
         if (_event.isV1) {
             event = _event.asV1
         }
+    } else if (network === 'pendulum') {
+        // FIXME: Change foucocoEvents to pendulumEvents when the farming pallet is implemented on pendulum.
+        const _event = new foucocoEvents.FarmingClaimedEvent(ctx, ctx.event)
+        event = _event.asV1
     } else {
         const _event = new amplitudeEvents.FarmingClaimedEvent(ctx)
         if (_event.isV10) {
@@ -170,6 +221,13 @@ export function formatFarmingWithdrawClaimedEvent(ctx: EventHandlerContext) {
         if (_event.isV1) {
             event = _event.asV1
         }
+    } else if (network === 'pendulum') {
+        // FIXME: Change foucocoEvents to pendulumEvents when the farming pallet is implemented on pendulum.
+        const _event = new foucocoEvents.FarmingWithdrawClaimedEvent(
+            ctx,
+            ctx.event
+        )
+        event = _event.asV1
     } else {
         const _event = new amplitudeEvents.FarmingWithdrawClaimedEvent(ctx)
         if (_event.isV10) {
@@ -186,6 +244,13 @@ export function formatFarmingGaugeWithdrawnEvent(ctx: EventHandlerContext) {
         if (_event.isV1) {
             event = _event.asV1
         }
+    } else if (network === 'pendulum') {
+        // FIXME: Change foucocoEvents to pendulumEvents when the farming pallet is implemented on pendulum.
+        const _event = new foucocoEvents.FarmingGaugeWithdrawnEvent(
+            ctx,
+            ctx.event
+        )
+        event = _event.asV1
     } else {
         const _event = new amplitudeEvents.FarmingGaugeWithdrawnEvent(ctx)
         if (_event.isV10) {
@@ -204,6 +269,13 @@ export function formatFarmingAllForceGaugeClaimedEvent(
         if (_event.isV1) {
             event = _event.asV1
         }
+    } else if (network === 'pendulum') {
+        // FIXME: Change foucocoEvents to pendulumEvents when the farming pallet is implemented on pendulum.
+        const _event = new foucocoEvents.FarmingAllForceGaugeClaimedEvent(
+            ctx,
+            ctx.event
+        )
+        event = _event.asV1
     } else {
         const _event = new amplitudeEvents.FarmingAllForceGaugeClaimedEvent(ctx)
         if (_event.isV10) {
@@ -224,6 +296,13 @@ export function formatFarmingPartiallyForceGaugeClaimedEvent(
         if (_event.isV1) {
             event = _event.asV1
         }
+    } else if (network === 'pendulum') {
+        // FIXME: Change foucocoEvents to pendulumEvents when the farming pallet is implemented on pendulum.
+        const _event = new foucocoEvents.FarmingPartiallyForceGaugeClaimedEvent(
+            ctx,
+            ctx.event
+        )
+        event = _event.asV1
     } else {
         const _event =
             new amplitudeEvents.FarmingPartiallyForceGaugeClaimedEvent(ctx)
@@ -241,6 +320,10 @@ export function formatFarmingAllRetiredEvent(ctx: EventHandlerContext) {
         if (_event.isV1) {
             event = _event.asV1
         }
+    } else if (network === 'pendulum') {
+        // FIXME: Change foucocoEvents to pendulumEvents when the farming pallet is implemented on pendulum.
+        const _event = new foucocoEvents.FarmingAllRetiredEvent(ctx, ctx.event)
+        event = _event.asV1
     } else {
         const _event = new amplitudeEvents.FarmingAllRetiredEvent(ctx)
         if (_event.isV10) {
@@ -257,6 +340,13 @@ export function formatFarmingPartiallyRetiredEvent(ctx: EventHandlerContext) {
         if (_event.isV1) {
             event = _event.asV1
         }
+    } else if (network === 'pendulum') {
+        // FIXME: Change foucocoEvents to pendulumEvents when the farming pallet is implemented on pendulum.
+        const _event = new foucocoEvents.FarmingPartiallyRetiredEvent(
+            ctx,
+            ctx.event
+        )
+        event = _event.asV1
     } else {
         const _event = new amplitudeEvents.FarmingPartiallyRetiredEvent(ctx)
         if (_event.isV10) {
@@ -273,6 +363,13 @@ export function formatFarmingRetireLimitSetEvent(ctx: EventHandlerContext) {
         if (_event.isV1) {
             event = _event.asV1
         }
+    } else if (network === 'pendulum') {
+        // FIXME: Change foucocoEvents to pendulumEvents when the farming pallet is implemented on pendulum.
+        const _event = new foucocoEvents.FarmingRetireLimitSetEvent(
+            ctx,
+            ctx.event
+        )
+        event = _event.asV1
     } else {
         const _event = new amplitudeEvents.FarmingRetireLimitSetEvent(ctx)
         if (_event.isV10) {
@@ -296,6 +393,13 @@ export async function getFamingPoolInfo(
         if (farmingPoolInfoStorage.isV1) {
             result = await farmingPoolInfoStorage.asV1.get(pid)
         }
+    } else if (network === 'pendulum') {
+        // FIXME: Change foucocoStorage to pendulumStorage when the farming pallet is implemented on pendulum.
+        const farmingPoolInfoStorage =
+            new foucocoStorage.FarmingPoolInfosStorage(ctx, block)
+        if (farmingPoolInfoStorage.isV1) {
+            result = await farmingPoolInfoStorage.asV1.get(pid)
+        }
     } else {
         const farmingPoolInfoStorage =
             new amplitudeStorage.FarmingPoolInfosStorage(ctx, block)
@@ -314,6 +418,16 @@ export async function getFamingSharesAndWithdrawnRewards(
     let result
 
     if (network === 'foucoco') {
+        const storage =
+            new foucocoStorage.FarmingSharesAndWithdrawnRewardsStorage(
+                ctx,
+                ctx.block
+            )
+        if (storage.isV1) {
+            result = await storage.asV1.get(pid, user)
+        }
+    } else if (network === 'pendulum') {
+        // FIXME: Change foucocoStorage to pendulumStorage when the farming pallet is implemented on pendulum.
         const storage =
             new foucocoStorage.FarmingSharesAndWithdrawnRewardsStorage(
                 ctx,

@@ -1,16 +1,22 @@
 import { EventHandlerContext } from '../types'
-import { foucocoEvents, amplitudeEvents } from '../types/events'
+import { foucocoEvents, amplitudeEvents, pendulumEvents } from '../types/events'
 import { network } from '../config'
 import { getOrCreateOraclePrice } from '../entities/oraclePrice'
 
 export async function handleUpdatedPrices(ctx: EventHandlerContext) {
     let event
-    if (network !== 'foucoco') {
+    if (network === 'foucoco') {
         const _event = new foucocoEvents.DiaOracleModuleUpdatedPricesEvent(
             ctx,
             ctx.event
         )
         event = _event.asV1
+    } else if (network === 'pendulum') {
+        const _event = new pendulumEvents.DiaOracleModuleUpdatedPricesEvent(
+            ctx,
+            ctx.event
+        )
+        event = _event.asV3
     } else {
         const _event = new amplitudeEvents.DiaOracleModuleUpdatedPricesEvent(
             ctx,

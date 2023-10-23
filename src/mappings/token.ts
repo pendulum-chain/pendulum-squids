@@ -16,6 +16,7 @@ import {
     Token,
     Transaction,
     User,
+    TokenTransfer,
 } from '../model'
 import { amplitudeEvents, foucocoEvents } from '../types/events'
 import { network } from '../config'
@@ -314,6 +315,40 @@ export async function handleTokenTransfer(ctx: EventHandlerContext) {
     }
 
     if (!event || event?.currencyId.__kind !== 'ZenlinkLPToken') return
+    if (event?.currencyId.__kind !== 'ZenlinkLPToken') {
+        const from = codec(config.prefix).encode(event.from)
+        const to = codec(config.prefix).encode(event.to)
+        const currencyId = codec(config.prefix).encode(event.currencyId)
+        const amount = event.amount
+
+        const tokenTransfer = new TokenTransfer({
+            id: ctx.event.id,
+            blockNumber: ctx.block.height,
+            timestamp: new Date(ctx.block.timestamp),
+            extrinsicHash: ctx.event.extrinsic?.hash,
+            from,
+            to,
+            amount: amount,
+            currencyId: currencyId,
+        })
+
+        ctx.store.save(tokenTransfer)
+        return
+    }
+
+    const tokenTransfer = new TokenTransfer({
+        id: ctx.event.id,
+        blockNumber: ctx.block.height,
+        timestamp: new Date(ctx.block.timestamp),
+        extrinsicHash: ctx.event.extrinsic?.hash,
+        from: codec(config.prefix).encode(event.from),
+        to: codec(config.prefix).encode(event.to),
+        amount: event.amount,
+        currencyId: 'ZenlinkLPToken',
+    })
+
+    ctx.store.save(tokenTransfer)
+
     const [token0Id, token0Type, token1Id, token1Type] = event.currencyId.value
     let token0Index = (token0Type << 8) + token0Id
     let token1Index = (token1Type << 8) + token1Id
@@ -342,7 +377,6 @@ export async function handleTokenTransfer(ctx: EventHandlerContext) {
             stableSwapLiquidityPositions: [],
             usdSwapped: ZERO_BD.toString(),
         })
-        await ctx.store.save(userFrom)
     }
     const positionFrom = await updateLiquidityPosition(ctx, pair, userFrom)
     positionFrom.liquidityTokenBalance =

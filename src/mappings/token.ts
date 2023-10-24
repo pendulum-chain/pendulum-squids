@@ -314,11 +314,11 @@ export async function handleTokenTransfer(ctx: EventHandlerContext) {
         }
     }
 
-    if (!event || event?.currencyId.__kind !== 'ZenlinkLPToken') return
+    if (!event) return
     if (event?.currencyId.__kind !== 'ZenlinkLPToken') {
         const from = codec(config.prefix).encode(event.from)
         const to = codec(config.prefix).encode(event.to)
-        const currencyId = codec(config.prefix).encode(event.currencyId)
+        const currencyId = String(event.currencyId)
         const amount = event.amount
 
         const tokenTransfer = new TokenTransfer({
@@ -344,7 +344,7 @@ export async function handleTokenTransfer(ctx: EventHandlerContext) {
         from: codec(config.prefix).encode(event.from),
         to: codec(config.prefix).encode(event.to),
         amount: event.amount,
-        currencyId: 'ZenlinkLPToken',
+        currencyId: String(event.currencyId),
     })
 
     ctx.store.save(tokenTransfer)

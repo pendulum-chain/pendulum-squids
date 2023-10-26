@@ -1,0 +1,32 @@
+{
+    "outDir": "src/types/pendulum",
+    "specVersions": "https://pendulum.archive.subsquid.io/graphql",
+    "events": [
+        "Balances.Transfer",
+
+        "Tokens.Transfer",
+        "Tokens.Deposited",
+        "Tokens.Withdrawn",
+        "Tokens.BalanceSet",
+
+        "DiaOracleModule.UpdatedPrices",
+
+        "ZenlinkProtocol.AssetSwap",
+        "ZenlinkProtocol.LiquidityAdded",
+        "ZenlinkProtocol.LiquidityRemoved"
+    ],
+    "calls": [],
+    "storage": [
+        "Balances.TotalIssuance",
+        "System.Account",
+        "System.BlockHash",
+        "Timestamp.Now",
+        "Tokens.Accounts",
+        "Tokens.TotalIssuance",
+
+        "DiaOracleModule.CoinInfosMap",
+
+        "ZenlinkProtocol.PairStatuses",
+        "ZenlinkProtocol.LiquidityPairs"
+    ]
+}

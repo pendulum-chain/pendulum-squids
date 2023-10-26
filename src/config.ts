@@ -1,8 +1,17 @@
 import { ProcessorConfig } from './types'
 
-export type Network = 'foucoco' | 'amplitude'
+export type Network = 'foucoco' | 'amplitude' | 'pendulum'
 export const network: Network =
-    <'foucoco' | 'amplitude'>process.env.NETWORK || 'amplitude'
+    <'foucoco' | 'amplitude' | 'pendulum'>process.env.NETWORK || 'amplitude'
+
+const pendulumConfig: ProcessorConfig = {
+    chainName: 'pendulum',
+    prefix: 'pendulum',
+    dataSource: {
+        archive: 'https://pendulum.archive.subsquid.io/graphql',
+        chain: 'wss://rpc-pendulum.pendulumchain.tech',
+    },
+}
 
 const amplitudeConfig: ProcessorConfig = {
     chainName: 'amplitude',
@@ -23,6 +32,10 @@ const foucocoConfig: ProcessorConfig = {
 }
 
 export const config: ProcessorConfig =
-    network === 'foucoco' ? foucocoConfig : amplitudeConfig
+    network === 'foucoco'
+        ? foucocoConfig
+        : network === 'amplitude'
+        ? amplitudeConfig
+        : pendulumConfig
 
 console.log('Using ProcessorConfig: ', config)

@@ -48,6 +48,10 @@
             "description": "Generate data access classes for an substrate metadata",
             "cmd": ["squid-substrate-typegen", "./typegen-foucoco.json"]
         },
+        "typegen:pendulum": {
+            "description": "Generate data access classes for an substrate metadata",
+            "cmd": ["squid-substrate-typegen", "./typegen-pendulum.json"]
+        },
         "process:foucoco": {
             "description": "Load .env and start the squid processor for Foucoco",
             "deps": ["build", "migration:apply"],
@@ -62,6 +66,14 @@
             "cmd": ["node", "--require=dotenv/config", "lib/processor.js"],
             "env": {
                 "NETWORK": "amplitude"
+            }
+        },
+        "process:pendulum": {
+            "description": "Load .env and start the squid processor for Pendulum",
+            "deps": ["build", "migration:apply"],
+            "cmd": ["node", "--require=dotenv/config", "lib/processor.js"],
+            "env": {
+                "NETWORK": "pendulum"
             }
         },
         "process:prod": {

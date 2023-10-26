@@ -1,5 +1,9 @@
 import { EventHandlerContext } from '../types'
-import { amplitudeStorage, foucocoStorage } from '../types/storage'
+import {
+    amplitudeStorage,
+    foucocoStorage,
+    pendulumStorage,
+} from '../types/storage'
 import { AssetId, CurrencyId } from '../types/common'
 import { codec } from '@subsquid/ss58'
 import { config, network } from '../config'
@@ -232,6 +236,13 @@ export async function getPairAssetIdFromAssets(
                         ctx.block
                     )
                 versionStorage = baseStorage.asV1
+            } else if (network === 'pendulum') {
+                baseStorage =
+                    new pendulumStorage.ZenlinkProtocolLiquidityPairsStorage(
+                        ctx,
+                        ctx.block
+                    )
+                versionStorage = baseStorage.asV3
             } else {
                 baseStorage =
                     new amplitudeStorage.ZenlinkProtocolLiquidityPairsStorage(
@@ -277,6 +288,13 @@ export async function getPairStatusFromAssets(
                         ctx.block
                     )
                 versionStorage = baseStorage.asV1
+            } else if (network === 'pendulum') {
+                baseStorage =
+                    new pendulumStorage.ZenlinkProtocolPairStatusesStorage(
+                        ctx,
+                        ctx.block
+                    )
+                versionStorage = baseStorage.asV3
             } else {
                 baseStorage =
                     new amplitudeStorage.ZenlinkProtocolPairStatusesStorage(
@@ -311,6 +329,9 @@ export async function getTokenBalance(
             if (network === 'foucoco') {
                 return new foucocoStorage.SystemAccountStorage(ctx, ctx.block)
                     .asV1
+            } else if (network === 'pendulum') {
+                return new pendulumStorage.SystemAccountStorage(ctx, ctx.block)
+                    .asV1
             } else {
                 return new amplitudeStorage.SystemAccountStorage(ctx, ctx.block)
                     .asV1
@@ -325,6 +346,20 @@ export async function getTokenBalance(
                 account,
                 assetId as any
             )
+        } else if (network === 'pendulum') {
+            const tokenAccountsStorage =
+                new pendulumStorage.TokensAccountsStorage(ctx, ctx.block)
+            if (tokenAccountsStorage.isV1) {
+                result = await tokenAccountsStorage.asV1.get(
+                    account,
+                    assetId as any
+                )
+            } else {
+                result = await tokenAccountsStorage.asV3.get(
+                    account,
+                    assetId as any
+                )
+            }
         } else {
             const tokenAccountsStorage =
                 new amplitudeStorage.TokensAccountsStorage(ctx, ctx.block)
@@ -363,6 +398,11 @@ export async function getTotalIssuance(
                     ctx,
                     ctx.block
                 ).asV1
+            } else if (network === 'pendulum') {
+                return new pendulumStorage.BalancesTotalIssuanceStorage(
+                    ctx,
+                    ctx.block
+                ).asV1
             } else {
                 return new amplitudeStorage.BalancesTotalIssuanceStorage(
                     ctx,
@@ -375,6 +415,11 @@ export async function getTotalIssuance(
         if (network === 'foucoco') {
             const tokenIssuanceStorage =
                 new foucocoStorage.TokensTotalIssuanceStorage(ctx, ctx.block)
+                    .asV1
+            result = await tokenIssuanceStorage.get(assetId as any)
+        } else if (network === 'pendulum') {
+            const tokenIssuanceStorage =
+                new pendulumStorage.TokensTotalIssuanceStorage(ctx, ctx.block)
                     .asV1
             result = await tokenIssuanceStorage.get(assetId as any)
         } else {
@@ -407,6 +452,9 @@ export async function getTokenBurned(
             if (network === 'foucoco') {
                 return new foucocoStorage.SystemAccountStorage(ctx, ctx.block)
                     .asV1
+            } else if (network === 'pendulum') {
+                return new pendulumStorage.SystemAccountStorage(ctx, ctx.block)
+                    .asV1
             } else {
                 return new amplitudeStorage.SystemAccountStorage(ctx, ctx.block)
                     .asV1
@@ -417,6 +465,10 @@ export async function getTokenBurned(
         if (network === 'foucoco') {
             const tokenAccountsStorage =
                 new foucocoStorage.TokensAccountsStorage(ctx, block).asV1
+            result = await tokenAccountsStorage.get(account, assetId as any)
+        } else if (network === 'pendulum') {
+            const tokenAccountsStorage =
+                new pendulumStorage.TokensAccountsStorage(ctx, block).asV1
             result = await tokenAccountsStorage.get(account, assetId as any)
         } else {
             const tokenAccountsStorage =

@@ -60,7 +60,22 @@ export async function handleTokenDeposited(ctx: EventHandlerContext) {
         }
     }
 
-    if (!event || event?.currencyId.__kind !== 'ZenlinkLPToken') return
+    if (!event) return
+
+    const tokenDeposit = new TokenDeposit({
+        id: ctx.event.id,
+        blockNumber: ctx.block.height,
+        timestamp: new Date(ctx.block.timestamp),
+        extrinsicHash: ctx.event.extrinsic?.hash,
+        who: event.who,
+        amount: event.amount,
+        currencyId: JSON.stringify(event.currencyId),
+    })
+
+    ctx.store.save(tokenDeposit)
+
+    if (event?.currencyId.__kind !== 'ZenlinkLPToken') return
+
     const [token0Id, token0Type, token1Id, token1Type] = event.currencyId.value
     let token0Index = (token0Type << 8) + token0Id
     let token1Index = (token1Type << 8) + token1Id
@@ -199,7 +214,22 @@ export async function handleTokenWithdrawn(ctx: EventHandlerContext) {
         }
     }
 
-    if (!event || event?.currencyId.__kind !== 'ZenlinkLPToken') return
+    if (!event) return
+
+    const tokenWithdrawn = new TokenWithdrawn({
+        id: ctx.event.id,
+        blockNumber: ctx.block.height,
+        timestamp: new Date(ctx.block.timestamp),
+        extrinsicHash: ctx.event.extrinsic?.hash,
+        who: event.who,
+        amount: event.amount,
+        currencyId: JSON.stringify(event.currencyId),
+    })
+
+    ctx.store.save(tokenWithdrawn)
+
+    if (event?.currencyId.__kind !== 'ZenlinkLPToken') return
+
     const [token0Id, token0Type, token1Id, token1Type] = event.currencyId.value
     let token0Index = (token0Type << 8) + token0Id
     let token1Index = (token1Type << 8) + token1Id
@@ -336,26 +366,6 @@ export async function handleTokenTransfer(ctx: EventHandlerContext) {
     }
 
     if (!event) return
-    if (event?.currencyId.__kind !== 'ZenlinkLPToken') {
-        const from = codec(config.prefix).encode(event.from)
-        const to = codec(config.prefix).encode(event.to)
-        const currencyId = JSON.stringify(event.currencyId)
-        const amount = event.amount
-
-        const tokenTransfer = new TokenTransfer({
-            id: ctx.event.id,
-            blockNumber: ctx.block.height,
-            timestamp: new Date(ctx.block.timestamp),
-            extrinsicHash: ctx.event.extrinsic?.hash,
-            from,
-            to,
-            amount: amount,
-            currencyId: currencyId,
-        })
-
-        ctx.store.save(tokenTransfer)
-        return
-    }
 
     const tokenTransfer = new TokenTransfer({
         id: ctx.event.id,
@@ -369,6 +379,8 @@ export async function handleTokenTransfer(ctx: EventHandlerContext) {
     })
 
     ctx.store.save(tokenTransfer)
+
+    if (event?.currencyId.__kind !== 'ZenlinkLPToken') return
 
     const [token0Id, token0Type, token1Id, token1Type] = event.currencyId.value
     let token0Index = (token0Type << 8) + token0Id

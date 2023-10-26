@@ -17,6 +17,8 @@ import {
     Transaction,
     User,
     TokenTransfer,
+    TokenDeposit,
+    TokenWithdrawn,
 } from '../model'
 import { amplitudeEvents, foucocoEvents, pendulumEvents } from '../types/events'
 import { network } from '../config'
@@ -67,7 +69,7 @@ export async function handleTokenDeposited(ctx: EventHandlerContext) {
         blockNumber: ctx.block.height,
         timestamp: new Date(ctx.block.timestamp),
         extrinsicHash: ctx.event.extrinsic?.hash,
-        who: event.who,
+        who: codec(config.prefix).encode(event.who),
         amount: event.amount,
         currencyId: JSON.stringify(event.currencyId),
     })
@@ -221,7 +223,7 @@ export async function handleTokenWithdrawn(ctx: EventHandlerContext) {
         blockNumber: ctx.block.height,
         timestamp: new Date(ctx.block.timestamp),
         extrinsicHash: ctx.event.extrinsic?.hash,
-        who: event.who,
+        who: codec(config.prefix).encode(event.who),
         amount: event.amount,
         currencyId: JSON.stringify(event.currencyId),
     })

@@ -276,6 +276,26 @@ type TokenTransfer @entity {
     amount: BigInt! @index
 }
 
+type TokenDeposit @entity {
+    id: ID!
+    blockNumber: Int! @index
+    timestamp: DateTime! @index
+    extrinsicHash: String @index
+    who: String!
+    currencyId: String!
+    amount: BigInt! @index
+}
+
+type TokenWithdrawn @entity {
+    id: ID!
+    blockNumber: Int! @index
+    timestamp: DateTime! @index
+    extrinsicHash: String @index
+    who: String!
+    currencyId: String!
+    amount: BigInt! @index
+}
+
 type Pair @entity {
     # pair address
     id: ID!

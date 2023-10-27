@@ -85,3 +85,18 @@ client.subscribe(
         },
     }
 )
+
+/// Example of query with where clause, that can be used to filter transfers of a specific currencyId from a specific account,
+/// to a specific account.
+/*
+query: `
+subscription {
+  tokenTransfers(where: {from_eq: "6mYqNJsaGLNduqMdBFhj3ZdzkLy9kghThEUHE3MswphpoATv", to_eq: "6izw2Zx6zcgA44G51ptCKWbsLeyDE4hgVcvKifAkfDr2tATc", currencyId_eq: "XCM(0)"}) {
+    from
+    to
+    amount
+    currencyId
+  }
+}
+`
+*/

@@ -1,5 +1,5 @@
-module.exports = class Data1694647643082 {
-    name = 'Data1694647643082'
+module.exports = class Data1698431749757 {
+    name = 'Data1698431749757'
 
     async up(db) {
         await db.query(
@@ -223,6 +223,51 @@ module.exports = class Data1694647643082 {
         )
         await db.query(
             `CREATE INDEX "IDX_0795adc3723792868094ec76c0" ON "zenlink_info" ("stable_swap_info_id") `
+        )
+        await db.query(
+            `CREATE TABLE "token_transfer" ("id" character varying NOT NULL, "block_number" integer NOT NULL, "timestamp" TIMESTAMP WITH TIME ZONE NOT NULL, "extrinsic_hash" text, "from" text NOT NULL, "to" text NOT NULL, "currency_id" text NOT NULL, "amount" numeric NOT NULL, CONSTRAINT "PK_77384b7f5874553f012eba9da41" PRIMARY KEY ("id"))`
+        )
+        await db.query(
+            `CREATE INDEX "IDX_b47f7192b72dd8436ef4e6d253" ON "token_transfer" ("block_number") `
+        )
+        await db.query(
+            `CREATE INDEX "IDX_752d6c330729a7b2e283003374" ON "token_transfer" ("timestamp") `
+        )
+        await db.query(
+            `CREATE INDEX "IDX_2ef35b71d641ec79b7de3ac237" ON "token_transfer" ("extrinsic_hash") `
+        )
+        await db.query(
+            `CREATE INDEX "IDX_aae50046f62ba400c07477fb6c" ON "token_transfer" ("amount") `
+        )
+        await db.query(
+            `CREATE TABLE "token_deposit" ("id" character varying NOT NULL, "block_number" integer NOT NULL, "timestamp" TIMESTAMP WITH TIME ZONE NOT NULL, "extrinsic_hash" text, "who" text NOT NULL, "currency_id" text NOT NULL, "amount" numeric NOT NULL, CONSTRAINT "PK_7c5eea7aeab3f0e71da8d2d9f4f" PRIMARY KEY ("id"))`
+        )
+        await db.query(
+            `CREATE INDEX "IDX_395da815b9927f13e2f87c6b54" ON "token_deposit" ("block_number") `
+        )
+        await db.query(
+            `CREATE INDEX "IDX_0f87d313517eaa806c75444749" ON "token_deposit" ("timestamp") `
+        )
+        await db.query(
+            `CREATE INDEX "IDX_7194acc3ea037189ff3da743ec" ON "token_deposit" ("extrinsic_hash") `
+        )
+        await db.query(
+            `CREATE INDEX "IDX_d23ae7a0ea1f640e8e9875b3c2" ON "token_deposit" ("amount") `
+        )
+        await db.query(
+            `CREATE TABLE "token_withdrawn" ("id" character varying NOT NULL, "block_number" integer NOT NULL, "timestamp" TIMESTAMP WITH TIME ZONE NOT NULL, "extrinsic_hash" text, "who" text NOT NULL, "currency_id" text NOT NULL, "amount" numeric NOT NULL, CONSTRAINT "PK_658727649cde2e20f8cf69abeb5" PRIMARY KEY ("id"))`
+        )
+        await db.query(
+            `CREATE INDEX "IDX_e7fd99cae9a1df2e8f69d60892" ON "token_withdrawn" ("block_number") `
+        )
+        await db.query(
+            `CREATE INDEX "IDX_70e98131fb737e4dce4455ca43" ON "token_withdrawn" ("timestamp") `
+        )
+        await db.query(
+            `CREATE INDEX "IDX_867e6d004e7a4994b3b2aeba63" ON "token_withdrawn" ("extrinsic_hash") `
+        )
+        await db.query(
+            `CREATE INDEX "IDX_5697bf049746e5102413ebd832" ON "token_withdrawn" ("amount") `
         )
         await db.query(
             `CREATE TABLE "bundle" ("id" character varying NOT NULL, "eth_price" text NOT NULL, CONSTRAINT "PK_637e3f87e837d6532109c198dea" PRIMARY KEY ("id"))`
@@ -481,6 +526,21 @@ module.exports = class Data1694647643082 {
         await db.query(`DROP TABLE "zenlink_info"`)
         await db.query(`DROP INDEX "public"."IDX_9a6b55d2085464668b622dffe6"`)
         await db.query(`DROP INDEX "public"."IDX_0795adc3723792868094ec76c0"`)
+        await db.query(`DROP TABLE "token_transfer"`)
+        await db.query(`DROP INDEX "public"."IDX_b47f7192b72dd8436ef4e6d253"`)
+        await db.query(`DROP INDEX "public"."IDX_752d6c330729a7b2e283003374"`)
+        await db.query(`DROP INDEX "public"."IDX_2ef35b71d641ec79b7de3ac237"`)
+        await db.query(`DROP INDEX "public"."IDX_aae50046f62ba400c07477fb6c"`)
+        await db.query(`DROP TABLE "token_deposit"`)
+        await db.query(`DROP INDEX "public"."IDX_395da815b9927f13e2f87c6b54"`)
+        await db.query(`DROP INDEX "public"."IDX_0f87d313517eaa806c75444749"`)
+        await db.query(`DROP INDEX "public"."IDX_7194acc3ea037189ff3da743ec"`)
+        await db.query(`DROP INDEX "public"."IDX_d23ae7a0ea1f640e8e9875b3c2"`)
+        await db.query(`DROP TABLE "token_withdrawn"`)
+        await db.query(`DROP INDEX "public"."IDX_e7fd99cae9a1df2e8f69d60892"`)
+        await db.query(`DROP INDEX "public"."IDX_70e98131fb737e4dce4455ca43"`)
+        await db.query(`DROP INDEX "public"."IDX_867e6d004e7a4994b3b2aeba63"`)
+        await db.query(`DROP INDEX "public"."IDX_5697bf049746e5102413ebd832"`)
         await db.query(`DROP TABLE "bundle"`)
         await db.query(`DROP TABLE "factory_day_data"`)
         await db.query(`DROP TABLE "stable_day_data"`)

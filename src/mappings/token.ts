@@ -85,8 +85,6 @@ export async function handleTokenDeposited(ctx: EventHandlerContext) {
                     currencyId =
                         'Stellar::AlphaNum4(' +
                         String(event.currencyId.value.code) +
-                        ',' +
-                        String(event.currencyId.value.issuer) +
                         ')'
                     break
                 }
@@ -94,8 +92,6 @@ export async function handleTokenDeposited(ctx: EventHandlerContext) {
                     currencyId =
                         'Stellar::AlphaNum12(' +
                         String(event.currencyId.value.code) +
-                        ',' +
-                        String(event.currencyId.value.issuer) +
                         ')'
                     break
                 }
@@ -292,8 +288,6 @@ export async function handleTokenWithdrawn(ctx: EventHandlerContext) {
                     currencyId =
                         'Stellar::AlphaNum4(' +
                         String(event.currencyId.value.code) +
-                        ',' +
-                        String(event.currencyId.value.issuer) +
                         ')'
                     break
                 }
@@ -301,8 +295,6 @@ export async function handleTokenWithdrawn(ctx: EventHandlerContext) {
                     currencyId =
                         'Stellar::AlphaNum12(' +
                         String(event.currencyId.value.code) +
-                        ',' +
-                        String(event.currencyId.value.issuer) +
                         ')'
                     break
                 }
@@ -497,8 +489,6 @@ export async function handleTokenTransfer(ctx: EventHandlerContext) {
                     currencyId =
                         'Stellar::AlphaNum4(' +
                         String(event.currencyId.value.code) +
-                        ',' +
-                        String(event.currencyId.value.issuer) +
                         ')'
                     break
                 }
@@ -506,8 +496,6 @@ export async function handleTokenTransfer(ctx: EventHandlerContext) {
                     currencyId =
                         'Stellar::AlphaNum12(' +
                         String(event.currencyId.value.code) +
-                        ',' +
-                        String(event.currencyId.value.issuer) +
                         ')'
                     break
                 }

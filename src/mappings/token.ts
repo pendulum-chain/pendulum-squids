@@ -102,7 +102,18 @@ export async function handleTokenDeposited(ctx: EventHandlerContext) {
             }
         }
         case 'XCM': {
-            currencyId = 'XCM(' + String(event.currencyId.value) + ')'
+            switch (typeof event.currencyId.value) {
+                case 'number': {
+                    currencyId = 'XCM(' + String(event.currencyId.value) + ')'
+                    break
+                }
+                case 'object': {
+                    currencyId =
+                        'XCM(' + String(event.currencyId.value.__kind) + ')'
+                    break
+                }
+            }
+            break
         }
     }
 
@@ -299,7 +310,18 @@ export async function handleTokenWithdrawn(ctx: EventHandlerContext) {
             break
         }
         case 'XCM': {
-            currencyId = 'XCM(' + String(event.currencyId.value) + ')'
+            switch (typeof event.currencyId.value) {
+                case 'number': {
+                    currencyId = 'XCM(' + String(event.currencyId.value) + ')'
+                    break
+                }
+                case 'object': {
+                    currencyId =
+                        'XCM(' + String(event.currencyId.value.__kind) + ')'
+                    break
+                }
+            }
+            break
         }
     }
 
@@ -490,9 +512,21 @@ export async function handleTokenTransfer(ctx: EventHandlerContext) {
                     break
                 }
             }
+            break
         }
         case 'XCM': {
-            currencyId = 'XCM(' + String(event.currencyId.value) + ')'
+            switch (typeof event.currencyId.value) {
+                case 'number': {
+                    currencyId = 'XCM(' + String(event.currencyId.value) + ')'
+                    break
+                }
+                case 'object': {
+                    currencyId =
+                        'XCM(' + String(event.currencyId.value.__kind) + ')'
+                    break
+                }
+            }
+            break
         }
     }
 

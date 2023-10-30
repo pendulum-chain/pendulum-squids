@@ -28,6 +28,7 @@ import {
     getPairStatusFromAssets,
     getTokenBalance,
 } from '../utils/token'
+const { Address } = require('stellar-base')
 
 const { hexToU8a } = require('@polkadot/util')
 
@@ -36,6 +37,11 @@ async function isCompleteMint(
     mintId: string
 ): Promise<boolean> {
     return !!(await ctx.store.get(Mint, mintId))?.sender // sufficient checks
+}
+
+function deriveStellarPublicKeyFromBytes(event: any) {
+    const address = Address.account(event.currencyId.value.issuer)
+    return address.toString()
 }
 
 function beautifyCurrencyIdString(event: any) {
@@ -61,9 +67,7 @@ function beautifyCurrencyIdString(event: any) {
                         'Stellar::AlphaNum4(' +
                         String(event.currencyId.value.code) +
                         ', ' +
-                        codec(config.prefix).encode(
-                            hexToU8a(toHex(event.currencyId.value.issuer))
-                        )
+                        deriveStellarPublicKeyFromBytes(event)
                     ;(')')
                     break
                 }
@@ -72,9 +76,7 @@ function beautifyCurrencyIdString(event: any) {
                         'Stellar::AlphaNum12(' +
                         String(event.currencyId.value.code) +
                         ', ' +
-                        codec(config.prefix).encode(
-                            hexToU8a(toHex(event.currencyId.value.issuer))
-                        )
+                        deriveStellarPublicKeyFromBytes(event)
                     ;(')')
                     break
                 }
@@ -87,9 +89,34 @@ function beautifyCurrencyIdString(event: any) {
                     break
                 }
                 case 'object': {
-                    currencyId =
-                        'XCM(' + String(event.currencyId.value.__kind) + ')'
-                    break
+                    switch (event.currencyId.value.__kind) {
+                        case 'AlphaNum4': {
+                            currencyId =
+                                'XCM(' +
+                                'Stellar::AlphaNum4(' +
+                                String(event.currencyId.value.code) +
+                                ', ' +
+                                deriveStellarPublicKeyFromBytes(event)
+                            ;('))')
+                            break
+                        }
+                        case 'AlphaNum12': {
+                            currencyId = 'XCM('
+                            'Stellar::AlphaNum12(' +
+                                String(event.currencyId.value.code) +
+                                ', ' +
+                                deriveStellarPublicKeyFromBytes(event)
+                            ;('))')
+                            break
+                        }
+                        default: {
+                            currencyId =
+                                'XCM(' +
+                                String(event.currencyId.value.__kind) +
+                                ')'
+                            break
+                        }
+                    }
                 }
             }
             break

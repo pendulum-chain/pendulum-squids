@@ -117,6 +117,7 @@ function beautifyCurrencyIdString(event: any) {
                             break
                         }
                     }
+                    break
                 }
             }
             break

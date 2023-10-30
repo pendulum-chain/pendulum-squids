@@ -35,35 +35,7 @@ async function isCompleteMint(
     return !!(await ctx.store.get(Mint, mintId))?.sender // sufficient checks
 }
 
-export async function handleTokenDeposited(ctx: EventHandlerContext) {
-    const transactionHash = ctx.event.extrinsic?.hash
-    if (!transactionHash) return
-    let event
-    if (network === 'foucoco') {
-        const _event = new foucocoEvents.TokensDepositedEvent(ctx, ctx.event)
-        if (_event.isV1) {
-            event = _event.asV1
-        }
-    } else if (network === 'pendulum') {
-        const _event = new pendulumEvents.TokensDepositedEvent(ctx, ctx.event)
-        if (_event.isV1) {
-            event = _event.asV1
-        } else {
-            event = _event.asV3
-        }
-    } else {
-        const _event = new amplitudeEvents.TokensDepositedEvent(ctx, ctx.event)
-        if (_event.isV3) {
-            event = _event.asV3
-        } else if (_event.isV8) {
-            event = _event.asV8
-        } else if (_event.isV10) {
-            event = _event.asV10
-        }
-    }
-
-    if (!event) return
-
+function beautifyCurrencyIdString(event: any) {
     let currencyId = ''
     switch (event.currencyId.__kind) {
         case 'ZenlinkLPToken': {
@@ -112,6 +84,40 @@ export async function handleTokenDeposited(ctx: EventHandlerContext) {
             break
         }
     }
+
+    return currencyId
+}
+
+export async function handleTokenDeposited(ctx: EventHandlerContext) {
+    const transactionHash = ctx.event.extrinsic?.hash
+    if (!transactionHash) return
+    let event
+    if (network === 'foucoco') {
+        const _event = new foucocoEvents.TokensDepositedEvent(ctx, ctx.event)
+        if (_event.isV1) {
+            event = _event.asV1
+        }
+    } else if (network === 'pendulum') {
+        const _event = new pendulumEvents.TokensDepositedEvent(ctx, ctx.event)
+        if (_event.isV1) {
+            event = _event.asV1
+        } else {
+            event = _event.asV3
+        }
+    } else {
+        const _event = new amplitudeEvents.TokensDepositedEvent(ctx, ctx.event)
+        if (_event.isV3) {
+            event = _event.asV3
+        } else if (_event.isV8) {
+            event = _event.asV8
+        } else if (_event.isV10) {
+            event = _event.asV10
+        }
+    }
+
+    if (!event) return
+
+    const currencyId = beautifyCurrencyIdString(event)
 
     const tokenDeposit = new TokenDeposit({
         id: ctx.event.id,
@@ -267,55 +273,7 @@ export async function handleTokenWithdrawn(ctx: EventHandlerContext) {
 
     if (!event) return
 
-    let currencyId = ''
-    switch (event.currencyId.__kind) {
-        case 'ZenlinkLPToken': {
-            currencyId =
-                'ZenlinkLPToken(' + String(event.currencyId.value) + ')'
-            break
-        }
-        case 'Native': {
-            currencyId = 'Native'
-            break
-        }
-        case 'Stellar': {
-            switch (event.currencyId.value.__kind) {
-                case 'StellarNative': {
-                    currencyId = 'StellarNative'
-                    break
-                }
-                case 'AlphaNum4': {
-                    currencyId =
-                        'Stellar::AlphaNum4(' +
-                        String(event.currencyId.value.code) +
-                        ')'
-                    break
-                }
-                case 'AlphaNum12': {
-                    currencyId =
-                        'Stellar::AlphaNum12(' +
-                        String(event.currencyId.value.code) +
-                        ')'
-                    break
-                }
-            }
-            break
-        }
-        case 'XCM': {
-            switch (typeof event.currencyId.value) {
-                case 'number': {
-                    currencyId = 'XCM(' + String(event.currencyId.value) + ')'
-                    break
-                }
-                case 'object': {
-                    currencyId =
-                        'XCM(' + String(event.currencyId.value.__kind) + ')'
-                    break
-                }
-            }
-            break
-        }
-    }
+    const currencyId = beautifyCurrencyIdString(event)
 
     const tokenWithdrawn = new TokenWithdrawn({
         id: ctx.event.id,
@@ -468,55 +426,7 @@ export async function handleTokenTransfer(ctx: EventHandlerContext) {
 
     if (!event) return
 
-    let currencyId = ''
-    switch (event.currencyId.__kind) {
-        case 'ZenlinkLPToken': {
-            currencyId =
-                'ZenlinkLPToken(' + String(event.currencyId.value) + ')'
-            break
-        }
-        case 'Native': {
-            currencyId = 'Native'
-            break
-        }
-        case 'Stellar': {
-            switch (event.currencyId.value.__kind) {
-                case 'StellarNative': {
-                    currencyId = 'StellarNative'
-                    break
-                }
-                case 'AlphaNum4': {
-                    currencyId =
-                        'Stellar::AlphaNum4(' +
-                        String(event.currencyId.value.code) +
-                        ')'
-                    break
-                }
-                case 'AlphaNum12': {
-                    currencyId =
-                        'Stellar::AlphaNum12(' +
-                        String(event.currencyId.value.code) +
-                        ')'
-                    break
-                }
-            }
-            break
-        }
-        case 'XCM': {
-            switch (typeof event.currencyId.value) {
-                case 'number': {
-                    currencyId = 'XCM(' + String(event.currencyId.value) + ')'
-                    break
-                }
-                case 'object': {
-                    currencyId =
-                        'XCM(' + String(event.currencyId.value.__kind) + ')'
-                    break
-                }
-            }
-            break
-        }
-    }
+    const currencyId = beautifyCurrencyIdString(event)
 
     const tokenTransfer = new TokenTransfer({
         id: ctx.event.id,

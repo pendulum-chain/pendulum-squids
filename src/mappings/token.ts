@@ -1,6 +1,7 @@
 import { codec } from '@subsquid/ss58'
 import { getPair } from '../entities/pair'
 import { getPosition, getTransaction } from '../entities/utils'
+import { toHex } from '@subsquid/util-internal-hex'
 import { CHAIN_ID, ZERO_BD } from '../constants'
 import { EventHandlerContext } from '../types'
 import { config } from '../config'
@@ -27,6 +28,8 @@ import {
     getPairStatusFromAssets,
     getTokenBalance,
 } from '../utils/token'
+
+const { hexToU8a } = require('@polkadot/util')
 
 async function isCompleteMint(
     ctx: EventHandlerContext,
@@ -57,14 +60,22 @@ function beautifyCurrencyIdString(event: any) {
                     currencyId =
                         'Stellar::AlphaNum4(' +
                         String(event.currencyId.value.code) +
-                        ')'
+                        ', ' +
+                        codec(config.prefix).encode(
+                            hexToU8a(toHex(event.currencyId.value.issuer))
+                        )
+                    ;(')')
                     break
                 }
                 case 'AlphaNum12': {
                     currencyId =
                         'Stellar::AlphaNum12(' +
                         String(event.currencyId.value.code) +
-                        ')'
+                        ', ' +
+                        codec(config.prefix).encode(
+                            hexToU8a(toHex(event.currencyId.value.issuer))
+                        )
+                    ;(')')
                     break
                 }
             }

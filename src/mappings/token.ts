@@ -28,9 +28,7 @@ import {
     getPairStatusFromAssets,
     getTokenBalance,
 } from '../utils/token'
-const { Address } = require('stellar-base')
-
-const { hexToU8a } = require('@polkadot/util')
+import { StrKey } from 'stellar-base'
 
 async function isCompleteMint(
     ctx: EventHandlerContext,
@@ -40,8 +38,8 @@ async function isCompleteMint(
 }
 
 function deriveStellarPublicKeyFromBytes(event: any) {
-    const address = Address.account(event.currencyId.value.issuer)
-    return address.toString()
+    const address = StrKey.encodeEd25519PublicKey(event.currencyId.value.issuer)
+    return address
 }
 
 function beautifyCurrencyIdString(event: any) {

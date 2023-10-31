@@ -1,6 +1,6 @@
 manifestVersion: subsquid.io/v0.1
 name: amplitude-squid
-version: 5
+version: 6
 description: 'Amplitude Kusama Squid'
 build:
 deploy:
@@ -24,3 +24,4 @@ deploy:
             - '100'
             - '--dumb-cache-max-age'
             - '1000'
+            - '--subscriptions'

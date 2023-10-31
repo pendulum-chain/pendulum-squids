@@ -192,3 +192,69 @@ Now, to deploy the squid into an Aquarium organization, run the following comman
 ```shell
 sqd deploy --org pendulum . -m squid-foucoco.yaml
 ```
+
+## Subscribe to specific events
+
+[Here](./scripts/subscribeTransfer.js) you can find a link to an example JavaScript snippet that can be used to subscribe to specific events.
+
+The first step is to create a new client:
+
+```javascript
+const port = process.env.GQL_PORT || 4350
+const host = process.env.GQL_HOST || 'localhost'
+const proto = process.env.GQL_PROTO || 'ws'
+
+const client = createClient({
+    webSocketImpl: WebSocket,
+    url: `${proto}://${host}:${port}/graphql`,
+})
+```
+
+In the code above, `proto` represents the protocol to be used, `host` is the squid host and `port` is the exposed port.
+
+Here is an example of a client subscription to tokenTransfers events:
+
+```javascript
+client.subscribe(
+    {
+        query: `
+    subscription {
+        tokenTransfers(limit: 2, orderBy: timestamp_DESC) {
+          from
+          to
+          amount
+          currencyId
+        }
+    }
+    `,
+    },
+    {
+        next: (data) => {
+            console.log(`New token transfers: ${JSON.stringify(data)}`)
+        },
+        error: (error) => {
+            console.error('error', error)
+        },
+        complete: () => {
+            console.log('done!')
+        },
+    }
+)
+```
+
+In this example, we're simply logging the query result when new events are registered in the squid. You can choose to handle these events in a different way, for example, by automating processes based on specific events.
+
+As seen in the previous example, the query structure is similar to graphql queries that we use in the squid graphql endpoint. The only difference is that it is wrapped inside a subscription statement:
+
+```
+subscription {
+        tokenTransfers(limit: 2, orderBy: timestamp_DESC) {
+          from
+          to
+          amount
+          currencyId
+        }
+    }
+```
+
+You subscribe to multiple events in the same process by calling client.subscribe (Refer to the [example file](./scripts/subscribeTransfer.js) if you have any doubts about how it works).

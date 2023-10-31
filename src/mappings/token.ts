@@ -1,6 +1,7 @@
 import { codec } from '@subsquid/ss58'
 import { getPair } from '../entities/pair'
 import { getPosition, getTransaction } from '../entities/utils'
+import { toHex } from '@subsquid/util-internal-hex'
 import { CHAIN_ID, ZERO_BD } from '../constants'
 import { EventHandlerContext } from '../types'
 import { config } from '../config'
@@ -16,6 +17,9 @@ import {
     Token,
     Transaction,
     User,
+    TokenTransfer,
+    TokenDeposit,
+    TokenWithdrawn,
 } from '../model'
 import { amplitudeEvents, foucocoEvents, pendulumEvents } from '../types/events'
 import { network } from '../config'
@@ -24,12 +28,81 @@ import {
     getPairStatusFromAssets,
     getTokenBalance,
 } from '../utils/token'
+import { StrKey } from 'stellar-base'
 
 async function isCompleteMint(
     ctx: EventHandlerContext,
     mintId: string
 ): Promise<boolean> {
     return !!(await ctx.store.get(Mint, mintId))?.sender // sufficient checks
+}
+
+function deriveStellarPublicKeyFromBytes(event: any) {
+    const address = StrKey.encodeEd25519PublicKey(event.currencyId.value.issuer)
+    return address
+}
+
+function beautifyCurrencyIdString(event: any) {
+    let currencyId = ''
+
+    switch (event.currencyId.__kind) {
+        case 'ZenlinkLPToken': {
+            currencyId =
+                'ZenlinkLPToken(' + String(event.currencyId.value) + ')'
+            break
+        }
+        case 'Native': {
+            currencyId = 'Native'
+            break
+        }
+        case 'Stellar': {
+            switch (event.currencyId.value.__kind) {
+                case 'StellarNative': {
+                    currencyId = 'StellarNative'
+                    break
+                }
+                case 'AlphaNum4': {
+                    currencyId =
+                        'Stellar::AlphaNum4(' +
+                        String(event.currencyId.value.code) +
+                        ',' +
+                        deriveStellarPublicKeyFromBytes(event) +
+                        ')'
+                    break
+                }
+                case 'AlphaNum12': {
+                    currencyId =
+                        'Stellar::AlphaNum12(' +
+                        String(event.currencyId.value.code) +
+                        ',' +
+                        deriveStellarPublicKeyFromBytes(event) +
+                        ')'
+                    break
+                }
+            }
+            break
+        }
+        case 'XCM': {
+            switch (typeof event.currencyId.value) {
+                case 'number': {
+                    currencyId = 'XCM(' + String(event.currencyId.value) + ')'
+                    break
+                }
+                // Probably a ForeignCurrencyId
+                case 'object': {
+                    currencyId =
+                        'XCM(' + String(event.currencyId.value.__kind) + ')'
+                    break
+                }
+            }
+            break
+        }
+        default:
+            currencyId = JSON.stringify(event.currencyId)
+            break
+    }
+
+    return currencyId
 }
 
 export async function handleTokenDeposited(ctx: EventHandlerContext) {
@@ -59,7 +132,24 @@ export async function handleTokenDeposited(ctx: EventHandlerContext) {
         }
     }
 
-    if (!event || event?.currencyId.__kind !== 'ZenlinkLPToken') return
+    if (!event) return
+
+    const currencyId = beautifyCurrencyIdString(event)
+
+    const tokenDeposit = new TokenDeposit({
+        id: ctx.event.id,
+        blockNumber: ctx.block.height,
+        timestamp: new Date(ctx.block.timestamp),
+        extrinsicHash: ctx.event.extrinsic?.hash,
+        who: codec(config.prefix).encode(event.who),
+        amount: event.amount,
+        currencyId: currencyId,
+    })
+
+    ctx.store.save(tokenDeposit)
+
+    if (event?.currencyId.__kind !== 'ZenlinkLPToken') return
+
     const [token0Id, token0Type, token1Id, token1Type] = event.currencyId.value
     let token0Index = (token0Type << 8) + token0Id
     let token1Index = (token1Type << 8) + token1Id
@@ -106,7 +196,6 @@ export async function handleTokenDeposited(ctx: EventHandlerContext) {
     pair.totalSupply = (
         await getPairStatusFromAssets(ctx, [asset0, asset1], false)
     )[1].toString()
-    console.log('set pair total supply', pair.totalSupply)
     const { burns, mints } = transaction
     let burn: Burn
     if (burns.length > 0) {
@@ -198,7 +287,24 @@ export async function handleTokenWithdrawn(ctx: EventHandlerContext) {
         }
     }
 
-    if (!event || event?.currencyId.__kind !== 'ZenlinkLPToken') return
+    if (!event) return
+
+    const currencyId = beautifyCurrencyIdString(event)
+
+    const tokenWithdrawn = new TokenWithdrawn({
+        id: ctx.event.id,
+        blockNumber: ctx.block.height,
+        timestamp: new Date(ctx.block.timestamp),
+        extrinsicHash: ctx.event.extrinsic?.hash,
+        who: codec(config.prefix).encode(event.who),
+        amount: event.amount,
+        currencyId: currencyId,
+    })
+
+    ctx.store.save(tokenWithdrawn)
+
+    if (event?.currencyId.__kind !== 'ZenlinkLPToken') return
+
     const [token0Id, token0Type, token1Id, token1Type] = event.currencyId.value
     let token0Index = (token0Type << 8) + token0Id
     let token1Index = (token1Type << 8) + token1Id
@@ -245,7 +351,6 @@ export async function handleTokenWithdrawn(ctx: EventHandlerContext) {
     pair.totalSupply = (
         await getPairStatusFromAssets(ctx, [asset0, asset1], false)
     )[1].toString()
-    console.log('also set pair.totalSupply', pair.totalSupply)
     const { burns, mints } = transaction
     let burn: Burn
     if (burns.length > 0) {
@@ -334,7 +439,25 @@ export async function handleTokenTransfer(ctx: EventHandlerContext) {
         }
     }
 
-    if (!event || event?.currencyId.__kind !== 'ZenlinkLPToken') return
+    if (!event) return
+
+    const currencyId = beautifyCurrencyIdString(event)
+
+    const tokenTransfer = new TokenTransfer({
+        id: ctx.event.id,
+        blockNumber: ctx.block.height,
+        timestamp: new Date(ctx.block.timestamp),
+        extrinsicHash: ctx.event.extrinsic?.hash,
+        from: codec(config.prefix).encode(event.from),
+        to: codec(config.prefix).encode(event.to),
+        amount: event.amount,
+        currencyId: currencyId,
+    })
+
+    ctx.store.save(tokenTransfer)
+
+    if (event?.currencyId.__kind !== 'ZenlinkLPToken') return
+
     const [token0Id, token0Type, token1Id, token1Type] = event.currencyId.value
     let token0Index = (token0Type << 8) + token0Id
     let token1Index = (token1Type << 8) + token1Id
@@ -363,7 +486,6 @@ export async function handleTokenTransfer(ctx: EventHandlerContext) {
             stableSwapLiquidityPositions: [],
             usdSwapped: ZERO_BD.toString(),
         })
-        await ctx.store.save(userFrom)
     }
     const positionFrom = await updateLiquidityPosition(ctx, pair, userFrom)
     positionFrom.liquidityTokenBalance =

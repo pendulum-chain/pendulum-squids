@@ -65,7 +65,8 @@ function beautifyCurrencyIdString(event: any) {
                         'Stellar::AlphaNum4(' +
                         String(event.currencyId.value.code) +
                         ', ' +
-                        deriveStellarPublicKeyFromBytes(event)
+                        deriveStellarPublicKeyFromBytes(event) +
+                        ')'
                     ;(')')
                     break
                 }
@@ -74,7 +75,8 @@ function beautifyCurrencyIdString(event: any) {
                         'Stellar::AlphaNum12(' +
                         String(event.currencyId.value.code) +
                         ', ' +
-                        deriveStellarPublicKeyFromBytes(event)
+                        deriveStellarPublicKeyFromBytes(event) +
+                        ')'
                     ;(')')
                     break
                 }
@@ -94,7 +96,8 @@ function beautifyCurrencyIdString(event: any) {
                                 'Stellar::AlphaNum4(' +
                                 String(event.currencyId.value.code) +
                                 ', ' +
-                                deriveStellarPublicKeyFromBytes(event)
+                                deriveStellarPublicKeyFromBytes(event) +
+                                ')'
                             ;('))')
                             break
                         }
@@ -103,7 +106,8 @@ function beautifyCurrencyIdString(event: any) {
                             'Stellar::AlphaNum12(' +
                                 String(event.currencyId.value.code) +
                                 ', ' +
-                                deriveStellarPublicKeyFromBytes(event)
+                                deriveStellarPublicKeyFromBytes(event) +
+                                ')'
                             ;('))')
                             break
                         }

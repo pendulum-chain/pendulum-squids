@@ -195,7 +195,7 @@ sqd deploy --org pendulum . -m squid-foucoco.yaml
 
 ## Subscribe to specific events
 
-[Here](https://github.com/pendulum-chain/pendulum-squids/blob/e84f874b8211064b54d858eb53be8a0aa1e52d07/scripts/suscribeTransfer.js#L1) you an find a link to an example JavaScript snippet that can be used to subscribe to specific events.
+[Here](./scripts/subscribeTransfer.js) you can find a link to an example JavaScript snippet that can be used to subscribe to specific events.
 
 The first step is to create a new client:
 
@@ -257,4 +257,4 @@ subscription {
     }
 ```
 
-You subscribe to multiple events in the same process by calling client.subscribe (Refer to the [example file](https://github.com/pendulum-chain/pendulum-squids/blob/e84f874b8211064b54d858eb53be8a0aa1e52d07/scripts/suscribeTransfer.js#L1) if you have any doubts about how it works).
+You subscribe to multiple events in the same process by calling client.subscribe (Refer to the [example file](./scripts/subscribeTransfer.js) if you have any doubts about how it works).

@@ -196,7 +196,6 @@ export async function handleTokenDeposited(ctx: EventHandlerContext) {
     pair.totalSupply = (
         await getPairStatusFromAssets(ctx, [asset0, asset1], false)
     )[1].toString()
-    console.log('set pair total supply', pair.totalSupply)
     const { burns, mints } = transaction
     let burn: Burn
     if (burns.length > 0) {
@@ -352,7 +351,6 @@ export async function handleTokenWithdrawn(ctx: EventHandlerContext) {
     pair.totalSupply = (
         await getPairStatusFromAssets(ctx, [asset0, asset1], false)
     )[1].toString()
-    console.log('also set pair.totalSupply', pair.totalSupply)
     const { burns, mints } = transaction
     let burn: Burn
     if (burns.length > 0) {

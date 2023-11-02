@@ -1,10 +1,9 @@
 import { codec } from '@subsquid/ss58'
 import { getPair } from '../entities/pair'
 import { getPosition, getTransaction } from '../entities/utils'
-import { toHex } from '@subsquid/util-internal-hex'
 import { CHAIN_ID, ZERO_BD } from '../constants'
 import { EventHandlerContext } from '../types'
-import { config } from '../config'
+import { config, network } from '../config'
 import { Big as BigDecimal } from 'big.js'
 import { createLiquidityPosition } from '../utils/helpers'
 import {
@@ -15,19 +14,14 @@ import {
     Mint,
     Pair,
     Token,
+    TokenDeposit,
+    TokenTransfer,
+    TokenWithdrawn,
     Transaction,
     User,
-    TokenTransfer,
-    TokenDeposit,
-    TokenWithdrawn,
 } from '../model'
 import { amplitudeEvents, foucocoEvents, pendulumEvents } from '../types/events'
-import { network } from '../config'
-import {
-    getPairAssetIdFromAssets,
-    getPairStatusFromAssets,
-    getTokenBalance,
-} from '../utils/token'
+import { getPairStatusFromAssets, getTokenBalance } from '../utils/token'
 import { StrKey } from 'stellar-base'
 
 async function isCompleteMint(
@@ -37,9 +31,15 @@ async function isCompleteMint(
     return !!(await ctx.store.get(Mint, mintId))?.sender // sufficient checks
 }
 
-function deriveStellarPublicKeyFromBytes(event: any) {
-    const address = StrKey.encodeEd25519PublicKey(event.currencyId.value.issuer)
-    return address
+function rawAssetCodeToString(code: Uint8Array) {
+    // Filter out the null bytes because they cause issues with the postgres database
+    const filteredCode = code.filter((byte) => byte !== 0)
+    return String.fromCharCode(...filteredCode)
+}
+
+function deriveStellarPublicKeyFromBytes(issuer: Uint8Array) {
+    const buffer = Buffer.from(issuer.buffer)
+    return StrKey.encodeEd25519PublicKey(buffer)
 }
 
 function beautifyCurrencyIdString(event: any) {
@@ -64,18 +64,22 @@ function beautifyCurrencyIdString(event: any) {
                 case 'AlphaNum4': {
                     currencyId =
                         'Stellar::AlphaNum4(' +
-                        String(event.currencyId.value.code) +
+                        rawAssetCodeToString(event.currencyId.value.code) +
                         ',' +
-                        deriveStellarPublicKeyFromBytes(event) +
+                        deriveStellarPublicKeyFromBytes(
+                            event.currencyId.value.issuer
+                        ) +
                         ')'
                     break
                 }
                 case 'AlphaNum12': {
                     currencyId =
                         'Stellar::AlphaNum12(' +
-                        String(event.currencyId.value.code) +
+                        rawAssetCodeToString(event.currencyId.value.code) +
                         ',' +
-                        deriveStellarPublicKeyFromBytes(event) +
+                        deriveStellarPublicKeyFromBytes(
+                            event.currencyId.value.issuer
+                        ) +
                         ')'
                     break
                 }

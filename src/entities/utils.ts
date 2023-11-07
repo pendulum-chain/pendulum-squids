@@ -6,7 +6,7 @@ import {
     ZenlinkInfo,
     ZLKInfo,
 } from '../model'
-import { EventHandlerContext } from '../types'
+import { EventHandlerContext } from '../processor'
 
 export async function getFactory(ctx: EventHandlerContext) {
     const factory = await ctx.store.get(Factory, '1')
@@ -34,7 +34,7 @@ export async function getZenlinkInfo(ctx: EventHandlerContext) {
     if (!zenlinkInfo) {
         zenlinkInfo = new ZenlinkInfo({
             id: '1',
-            updatedDate: new Date(ctx.block.timestamp),
+            updatedDate: new Date(ctx.block.timestamp!),
             totalVolumeUSD: ZERO_BD.toString(),
             totalTvlUSD: ZERO_BD.toString(),
             txCount: 0,
@@ -54,7 +54,7 @@ export async function getZLKInfo(ctx: EventHandlerContext) {
     if (!zlkInfo) {
         zlkInfo = new ZLKInfo({
             id: '1',
-            updatedDate: new Date(ctx.block.timestamp),
+            updatedDate: new Date(ctx.block.timestamp!),
             // holders: 0,
             // circulatingSupply: 0n,
             // totalIssue: 0n,

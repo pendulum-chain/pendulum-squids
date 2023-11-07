@@ -11,7 +11,7 @@ import {
     ZenlinkDayInfo,
     ZenlinkInfo,
 } from '../model'
-import { EventHandlerContext } from '../types'
+import { EventHandlerContext } from '../processor'
 import { Big as BigDecimal } from 'big.js'
 import { getZenlinkInfo } from '../entities/utils'
 
@@ -20,7 +20,7 @@ export async function updateFactoryDayData(
 ): Promise<FactoryDayData> {
     const factory = await ctx.store.get(Factory, '1')
     const { timestamp } = ctx.block
-    const dayID = parseInt((timestamp / 86400000).toString(), 10)
+    const dayID = parseInt((timestamp! / 86400000).toString(), 10)
     const dayStartTimestamp = Number(dayID) * 86400000
     let factoryDayData = await ctx.store.get(FactoryDayData, dayID.toString())
     if (!factoryDayData) {
@@ -49,7 +49,7 @@ export async function updatePairDayData(
     pair: Pair
 ): Promise<PairDayData> {
     const { timestamp } = ctx.block
-    const dayID = parseInt((timestamp / 86400000).toString(), 10)
+    const dayID = parseInt((timestamp! / 86400000).toString(), 10)
     const dayStartTimestamp = Number(dayID) * 86400000
     const dayPairID = `${pair.id as string}-${dayID}`
     let pairDayData = await ctx.store.get(PairDayData, dayPairID)
@@ -81,7 +81,7 @@ export async function updatePairHourData(
     pair: Pair
 ): Promise<PairHourData> {
     const { timestamp } = ctx.block
-    const hourIndex = parseInt((timestamp / 3600000).toString(), 10)
+    const hourIndex = parseInt((timestamp! / 3600000).toString(), 10)
     const hourStartUnix = Number(hourIndex) * 3600000
     const dayPairID = `${pair.id as string}-${hourIndex}`
     let pairHourData = await ctx.store.get(PairHourData, dayPairID)
@@ -111,7 +111,7 @@ export async function updateTokenDayData(
 ): Promise<TokenDayData> {
     const bundle = (await ctx.store.get(Bundle, '1'))!
     const { timestamp } = ctx.block
-    const dayID = parseInt((timestamp / 86400000).toString(), 10)
+    const dayID = parseInt((timestamp! / 86400000).toString(), 10)
     const dayStartTimestamp = Number(dayID) * 86400000
     const tokenDayID = `${token.id}-${dayID}`
     let tokenDayData = await ctx.store.get(TokenDayData, tokenDayID)
@@ -149,7 +149,7 @@ export async function updateZenlinkDayInfo(
     ctx: EventHandlerContext
 ): Promise<ZenlinkDayInfo> {
     const { timestamp } = ctx.block
-    const dayID = parseInt((timestamp / 86400000).toString(), 10)
+    const dayID = parseInt((timestamp! / 86400000).toString(), 10)
     const dayStartTimestamp = Number(dayID) * 86400000
     let factoryDayData = await ctx.store.get(FactoryDayData, dayID.toString())
     if (!factoryDayData) {
@@ -190,7 +190,7 @@ export async function updateZenlinkInfo(
         // .add(stableSwapInfo.totalVolumeUSD)
         .toFixed(6)
     zenlinkInfo.txCount = factory?.txCount || 0
-    zenlinkInfo.updatedDate = new Date(ctx.block.timestamp)
+    zenlinkInfo.updatedDate = new Date(ctx.block.timestamp!)
     await ctx.store.save(zenlinkInfo)
     return zenlinkInfo
 }

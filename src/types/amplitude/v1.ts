@@ -1,4 +1,10 @@
-import type { Result, Option } from './support'
+import { sts, Result, Option, Bytes, BitSequence } from './support'
+
+export type H256 = Bytes
+
+export const H256 = sts.bytes()
+
+export type AccountId32 = Bytes
 
 export interface AccountInfo {
     nonce: number
@@ -14,3 +20,24 @@ export interface AccountData {
     miscFrozen: bigint
     feeFrozen: bigint
 }
+
+export const AccountInfo: sts.Type<AccountInfo> = sts.struct(() => {
+    return {
+        nonce: sts.number(),
+        consumers: sts.number(),
+        providers: sts.number(),
+        sufficients: sts.number(),
+        data: AccountData,
+    }
+})
+
+export const AccountData: sts.Type<AccountData> = sts.struct(() => {
+    return {
+        free: sts.bigint(),
+        reserved: sts.bigint(),
+        miscFrozen: sts.bigint(),
+        feeFrozen: sts.bigint(),
+    }
+})
+
+export const AccountId32 = sts.bytes()

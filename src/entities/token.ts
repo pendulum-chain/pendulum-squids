@@ -1,6 +1,6 @@
 import { TOKEN_METADATA_MAP, ZERO_BD } from '../constants'
 import { Token } from '../model'
-import { EventHandlerContext } from '../types'
+import { EventHandlerContext } from '../processor'
 import {
     addressFromAsset,
     getTotalIssuance,

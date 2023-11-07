@@ -4,7 +4,7 @@ import {
     ZERO_BD,
 } from '../constants'
 import { OraclePrice } from '../model'
-import { EventHandlerContext } from '../types'
+import { EventHandlerContext } from '../processor'
 
 export async function getOrCreateOraclePrice(
     ctx: EventHandlerContext,

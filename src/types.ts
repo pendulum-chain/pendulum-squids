@@ -1,13 +1,8 @@
-import { EventDataRequest } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import {
-    SubstrateProcessor,
-    BlockHandlerContext as _BlockHandlerContext,
-    EventHandlerContext as _EventHandlerContext,
+    SubstrateBatchProcessor,
+    FieldSelection,
 } from '@subsquid/substrate-processor'
 import { Store } from '@subsquid/typeorm-store'
-
-export type EventHandlerContext<T extends EventDataRequest = { event: true }> =
-    _EventHandlerContext<Store, T>
 
 export interface TokenBase {
     name: string
@@ -19,6 +14,10 @@ export interface TokenBase {
 export interface ProcessorConfig {
     chainName: string
     prefix: number | string
-    dataSource: Parameters<SubstrateProcessor<Store>['setDataSource']>[0]
-    blockRange?: Parameters<SubstrateProcessor<Store>['setBlockRange']>[0]
+    dataSource: Parameters<
+        SubstrateBatchProcessor<FieldSelection>['setDataSource']
+    >[0]
+    blockRange?: Parameters<
+        SubstrateBatchProcessor<FieldSelection>['setBlockRange']
+    >[0]
 }

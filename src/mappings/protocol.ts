@@ -2,7 +2,7 @@ import { getPair } from '../entities/pair'
 import { getFactory, getTransaction } from '../entities/utils'
 import { Big as BigDecimal } from 'big.js'
 import { Bundle, Burn, Mint, Pair, Swap, Transaction, User } from '../model'
-import { EventHandlerContext } from '../types'
+import { EventHandlerContext } from '../processor'
 import { amplitudeEvents, foucocoEvents, pendulumEvents } from '../types/events'
 import { convertTokenToDecimal } from '../utils/helpers'
 import { sortAssets } from '../utils/sort'
@@ -30,6 +30,7 @@ import {
     updateTokenDayData,
     updateZenlinkInfo,
 } from '../utils/updates'
+const { hexToU8a } = require('@polkadot/util')
 
 export async function handleLiquiditySync(
     ctx: EventHandlerContext,
@@ -166,23 +167,17 @@ export async function handleLiquidityAdded(ctx: EventHandlerContext) {
 
     let event
     if (network === 'foucoco') {
-        const _event = new foucocoEvents.ZenlinkProtocolLiquidityAddedEvent(
-            ctx,
+        event = foucocoEvents.zenlinkProtocol.liquidityAdded.v7.decode(
             ctx.event
         )
-        event = _event.asV1
     } else if (network == 'pendulum') {
-        const _event = new pendulumEvents.ZenlinkProtocolLiquidityAddedEvent(
-            ctx,
+        event = pendulumEvents.zenlinkProtocol.liquidityAdded.v7.decode(
             ctx.event
         )
-        event = _event.asV3
     } else {
-        const _event = new amplitudeEvents.ZenlinkProtocolLiquidityAddedEvent(
-            ctx,
+        event = amplitudeEvents.zenlinkProtocol.liquidityAdded.v7.decode(
             ctx.event
         )
-        event = _event.asV7
     }
 
     const [asset0, asset1] = sortAssets([event[1], event[2]])
@@ -219,7 +214,7 @@ export async function handleLiquidityAdded(ctx: EventHandlerContext) {
     mint.sender = codec(config.prefix).encode(event[0])
     mint.amount0 = token0Amount.toFixed(6)
     mint.amount1 = token1Amount.toFixed(6)
-    mint.logIndex = ctx.event.indexInBlock
+    mint.logIndex = ctx.event.index
     mint.amountUSD = amountTotalUSD.toFixed(6)
     await ctx.store.save(mint)
 
@@ -248,23 +243,17 @@ export async function handleLiquidityRemoved(ctx: EventHandlerContext) {
 
     let event
     if (network === 'foucoco') {
-        const _event = new foucocoEvents.ZenlinkProtocolLiquidityRemovedEvent(
-            ctx,
+        event = foucocoEvents.zenlinkProtocol.liquidityRemoved.v7.decode(
             ctx.event
         )
-        event = _event.asV1
     } else if (network == 'pendulum') {
-        const _event = new pendulumEvents.ZenlinkProtocolLiquidityRemovedEvent(
-            ctx,
+        event = pendulumEvents.zenlinkProtocol.liquidityRemoved.v7.decode(
             ctx.event
         )
-        event = _event.asV3
     } else {
-        const _event = new amplitudeEvents.ZenlinkProtocolLiquidityRemovedEvent(
-            ctx,
+        event = amplitudeEvents.zenlinkProtocol.liquidityRemoved.v7.decode(
             ctx.event
         )
-        event = _event.asV7
     }
 
     const [asset0, asset1] = sortAssets([event[2], event[3]])
@@ -324,7 +313,7 @@ export async function handleLiquidityRemoved(ctx: EventHandlerContext) {
     burn.to = to
     burn.amount0 = token0Amount.toFixed(6)
     burn.amount1 = token1Amount.toFixed(6)
-    burn.logIndex = ctx.event.indexInBlock
+    burn.logIndex = ctx.event.index
     burn.amountUSD = amountTotalUSD.toFixed(6)
     await ctx.store.save(burn)
 
@@ -346,23 +335,11 @@ export async function handleAssetSwap(ctx: EventHandlerContext) {
 
     let event
     if (network === 'foucoco') {
-        const _event = new foucocoEvents.ZenlinkProtocolAssetSwapEvent(
-            ctx,
-            ctx.event
-        )
-        event = _event.asV1
+        event = foucocoEvents.zenlinkProtocol.assetSwap.v7.decode(ctx.event)
     } else if (network == 'pendulum') {
-        const _event = new pendulumEvents.ZenlinkProtocolAssetSwapEvent(
-            ctx,
-            ctx.event
-        )
-        event = _event.asV3
+        event = pendulumEvents.zenlinkProtocol.assetSwap.v7.decode(ctx.event)
     } else {
-        const _event = new amplitudeEvents.ZenlinkProtocolAssetSwapEvent(
-            ctx,
-            ctx.event
-        )
-        event = _event.asV7
+        event = amplitudeEvents.zenlinkProtocol.assetSwap.v7.decode(ctx.event)
     }
     const path = event[2]
     const amounts = event[3]
@@ -519,7 +496,7 @@ export async function handleAssetSwap(ctx: EventHandlerContext) {
             transaction = new Transaction({
                 id: txHash,
                 blockNumber: BigInt(ctx.block.height),
-                timestamp: new Date(ctx.block.timestamp),
+                timestamp: new Date(ctx.block.timestamp!),
                 mints: [],
                 swaps: [],
                 burns: [],
@@ -535,7 +512,7 @@ export async function handleAssetSwap(ctx: EventHandlerContext) {
             id: swapId,
             transaction,
             pair,
-            timestamp: new Date(ctx.block.timestamp),
+            timestamp: new Date(ctx.block.timestamp!),
             amount0In: amount0In.toFixed(6),
             amount1In: amount1In.toFixed(6),
             amount0Out: amount0Out.toFixed(6),
@@ -543,7 +520,7 @@ export async function handleAssetSwap(ctx: EventHandlerContext) {
             sender: sender.toLowerCase(),
             from: sender.toLowerCase(),
             to: to.toLowerCase(),
-            logIndex: ctx.event.indexInBlock,
+            logIndex: ctx.event.index,
             amountUSD: trackedAmountUSD.eq(ZERO_BD)
                 ? derivedAmountUSD.toFixed(6)
                 : trackedAmountUSD.toFixed(6),

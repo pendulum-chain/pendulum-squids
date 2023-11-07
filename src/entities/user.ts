@@ -3,7 +3,7 @@ import { codec } from '@subsquid/ss58'
 import { config } from '../config'
 import { ZERO_BD } from '../constants'
 import { User } from '../model'
-import { EventHandlerContext } from '../types'
+import { EventHandlerContext } from '../processor'
 
 export async function getUser(
     ctx: EventHandlerContext,

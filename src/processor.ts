@@ -1,8 +1,12 @@
 import {
-    BatchContext,
-    BatchProcessorItem,
+    SubstrateBatchProcessorFields,
+    DataHandlerContext,
     SubstrateBatchProcessor,
+    Block,
+    BlockHeader,
+    Event,
 } from '@subsquid/substrate-processor'
+
 import { Store, TypeormDatabase } from '@subsquid/typeorm-store'
 import {
     handleFarmingCharged,
@@ -29,7 +33,7 @@ import {
     handleTokenWithdrawn,
 } from './mappings/token'
 import { handleBalanceTransfer } from './mappings/balances'
-import { handleContractEvent } from './mappings/nabla'
+//import { handleContractEvent } from './mappings/nabla'
 import { handleUpdatedPrices } from './mappings/prices'
 
 const DataSelection = { data: { event: true } } as const
@@ -47,6 +51,9 @@ const processor = new SubstrateBatchProcessor()
             hash: true,
             fee: true,
             tip: true,
+        },
+        block: {
+            timestamp: true,
         },
     })
     .addEvent({
@@ -86,8 +93,12 @@ const processor = new SubstrateBatchProcessor()
         extrinsic: true,
     })
 
-type Item = BatchProcessorItem<typeof processor>
-export type Ctx = BatchContext<Store, Item>
+type Fields = SubstrateBatchProcessorFields<typeof processor>
+type Ctx = DataHandlerContext<Store, Fields>
+export interface EventHandlerContext extends Ctx {
+    block: BlockHeader<Fields>
+    event: Event<Fields>
+}
 
 processor.run(new TypeormDatabase(), async (ctx) => {
     for (let block of ctx.blocks) {
@@ -224,13 +235,13 @@ processor.run(new TypeormDatabase(), async (ctx) => {
                         })
                         break
                     // contracts
-                    case 'Contracts.ContractEmitted':
-                        await handleContractEvent({
-                            ...ctx,
-                            block: block.header,
-                            event: item,
-                        })
-                        break
+                    // case 'Contracts.ContractEmitted':
+                    //     await handleContractEvent({
+                    //         ...ctx,
+                    //         block: block.header,
+                    //         event: item,
+                    //     })
+                    //     break
                     // price oracle
                     case 'DiaOracleModule.UpdatedPrices':
                         await handleUpdatedPrices({

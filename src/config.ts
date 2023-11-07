@@ -1,5 +1,5 @@
 import { ProcessorConfig } from './types'
-
+import { lookupArchive } from '@subsquid/archive-registry'
 export type Network = 'foucoco' | 'amplitude' | 'pendulum'
 export const network: Network =
     <'foucoco' | 'amplitude' | 'pendulum'>process.env.NETWORK || 'amplitude'
@@ -17,7 +17,7 @@ const amplitudeConfig: ProcessorConfig = {
     chainName: 'amplitude',
     prefix: 'amplitude',
     dataSource: {
-        archive: 'https://amplitude.archive.subsquid.io/graphql',
+        archive: lookupArchive('amplitude', { release: 'ArrowSquid' }),
         chain: 'wss://rpc-amplitude.pendulumchain.tech',
     },
 }

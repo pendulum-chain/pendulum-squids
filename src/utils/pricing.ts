@@ -3,7 +3,7 @@ import { ONE_BD, ZERO_BD } from '../constants'
 import { getPair } from '../entities/pair'
 import { getOrCreateToken } from '../entities/token'
 import { Pair } from '../model'
-import { EventHandlerContext } from '../types'
+import { EventHandlerContext } from '../processor'
 import { assetIdFromAddress } from './token'
 import { getOrCreateOraclePrice } from '../entities/oraclePrice'
 

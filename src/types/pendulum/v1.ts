@@ -1,15 +1,10 @@
-import type { Result, Option } from './support'
+import { sts, Result, Option, Bytes, BitSequence } from './support'
 
-export type CurrencyId = CurrencyId_Native | CurrencyId_XCM
+export type H256 = Bytes
 
-export interface CurrencyId_Native {
-    __kind: 'Native'
-}
+export const H256 = sts.bytes()
 
-export interface CurrencyId_XCM {
-    __kind: 'XCM'
-    value: ForeignCurrencyId
-}
+export type AccountId32 = Bytes
 
 export interface AccountInfo {
     nonce: number
@@ -19,102 +14,30 @@ export interface AccountInfo {
     data: AccountData
 }
 
-export interface Type_361 {
-    free: bigint
-    reserved: bigint
-    frozen: bigint
-}
-
-export type ForeignCurrencyId =
-    | ForeignCurrencyId_KSM
-    | ForeignCurrencyId_KAR
-    | ForeignCurrencyId_AUSD
-    | ForeignCurrencyId_BNC
-    | ForeignCurrencyId_VsKSM
-    | ForeignCurrencyId_HKO
-    | ForeignCurrencyId_MOVR
-    | ForeignCurrencyId_SDN
-    | ForeignCurrencyId_KINT
-    | ForeignCurrencyId_KBTC
-    | ForeignCurrencyId_GENS
-    | ForeignCurrencyId_XOR
-    | ForeignCurrencyId_TEER
-    | ForeignCurrencyId_KILT
-    | ForeignCurrencyId_PHA
-    | ForeignCurrencyId_ZTG
-    | ForeignCurrencyId_USD
-
-export interface ForeignCurrencyId_KSM {
-    __kind: 'KSM'
-}
-
-export interface ForeignCurrencyId_KAR {
-    __kind: 'KAR'
-}
-
-export interface ForeignCurrencyId_AUSD {
-    __kind: 'AUSD'
-}
-
-export interface ForeignCurrencyId_BNC {
-    __kind: 'BNC'
-}
-
-export interface ForeignCurrencyId_VsKSM {
-    __kind: 'VsKSM'
-}
-
-export interface ForeignCurrencyId_HKO {
-    __kind: 'HKO'
-}
-
-export interface ForeignCurrencyId_MOVR {
-    __kind: 'MOVR'
-}
-
-export interface ForeignCurrencyId_SDN {
-    __kind: 'SDN'
-}
-
-export interface ForeignCurrencyId_KINT {
-    __kind: 'KINT'
-}
-
-export interface ForeignCurrencyId_KBTC {
-    __kind: 'KBTC'
-}
-
-export interface ForeignCurrencyId_GENS {
-    __kind: 'GENS'
-}
-
-export interface ForeignCurrencyId_XOR {
-    __kind: 'XOR'
-}
-
-export interface ForeignCurrencyId_TEER {
-    __kind: 'TEER'
-}
-
-export interface ForeignCurrencyId_KILT {
-    __kind: 'KILT'
-}
-
-export interface ForeignCurrencyId_PHA {
-    __kind: 'PHA'
-}
-
-export interface ForeignCurrencyId_ZTG {
-    __kind: 'ZTG'
-}
-
-export interface ForeignCurrencyId_USD {
-    __kind: 'USD'
-}
-
 export interface AccountData {
     free: bigint
     reserved: bigint
     miscFrozen: bigint
     feeFrozen: bigint
 }
+
+export const AccountInfo: sts.Type<AccountInfo> = sts.struct(() => {
+    return {
+        nonce: sts.number(),
+        consumers: sts.number(),
+        providers: sts.number(),
+        sufficients: sts.number(),
+        data: AccountData,
+    }
+})
+
+export const AccountData: sts.Type<AccountData> = sts.struct(() => {
+    return {
+        free: sts.bigint(),
+        reserved: sts.bigint(),
+        miscFrozen: sts.bigint(),
+        feeFrozen: sts.bigint(),
+    }
+})
+
+export const AccountId32 = sts.bytes()

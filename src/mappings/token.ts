@@ -3,10 +3,11 @@ import { getPair } from '../entities/pair'
 import { getPosition, getTransaction } from '../entities/utils'
 import { toHex } from '@subsquid/util-internal-hex'
 import { CHAIN_ID, ZERO_BD } from '../constants'
-import { EventHandlerContext } from '../types'
+import { EventHandlerContext } from '../processor'
 import { config } from '../config'
 import { Big as BigDecimal } from 'big.js'
 import { createLiquidityPosition } from '../utils/helpers'
+import { hexToU8a } from '@polkadot/util'
 import {
     Bundle,
     Burn,
@@ -110,25 +111,18 @@ export async function handleTokenDeposited(ctx: EventHandlerContext) {
     if (!transactionHash) return
     let event
     if (network === 'foucoco') {
-        const _event = new foucocoEvents.TokensDepositedEvent(ctx, ctx.event)
-        if (_event.isV1) {
-            event = _event.asV1
-        }
+        event = foucocoEvents.tokens.deposited.v10.decode(ctx.event)
     } else if (network === 'pendulum') {
-        const _event = new pendulumEvents.TokensDepositedEvent(ctx, ctx.event)
-        if (_event.isV1) {
-            event = _event.asV1
-        } else {
-            event = _event.asV3
-        }
+        event = pendulumEvents.tokens.deposited.v10.decode(ctx.event)
     } else {
-        const _event = new amplitudeEvents.TokensDepositedEvent(ctx, ctx.event)
-        if (_event.isV3) {
-            event = _event.asV3
-        } else if (_event.isV8) {
-            event = _event.asV8
-        } else if (_event.isV10) {
-            event = _event.asV10
+        if (amplitudeEvents.tokens.deposited.v3.is(ctx.event)) {
+            event = amplitudeEvents.tokens.deposited.v3.decode(ctx.event)
+        }
+        if (amplitudeEvents.tokens.deposited.v8.is(ctx.event)) {
+            event = amplitudeEvents.tokens.deposited.v8.decode(ctx.event)
+        }
+        if (amplitudeEvents.tokens.deposited.v10.is(ctx.event)) {
+            event = amplitudeEvents.tokens.deposited.v10.decode(ctx.event)
         }
     }
 
@@ -139,7 +133,7 @@ export async function handleTokenDeposited(ctx: EventHandlerContext) {
     const tokenDeposit = new TokenDeposit({
         id: ctx.event.id,
         blockNumber: ctx.block.height,
-        timestamp: new Date(ctx.block.timestamp),
+        timestamp: new Date(ctx.block.timestamp!),
         extrinsicHash: ctx.event.extrinsic?.hash,
         who: codec(config.prefix).encode(event.who),
         amount: event.amount,
@@ -185,7 +179,7 @@ export async function handleTokenDeposited(ctx: EventHandlerContext) {
         transaction = new Transaction({
             id: transactionHash,
             blockNumber: BigInt(ctx.block.height),
-            timestamp: new Date(ctx.block.timestamp),
+            timestamp: new Date(ctx.block.timestamp!),
             mints: [],
             burns: [],
             swaps: [],
@@ -209,7 +203,7 @@ export async function handleTokenDeposited(ctx: EventHandlerContext) {
                 needsComplete: false,
                 pair,
                 liquidity: value,
-                timestamp: new Date(ctx.block.timestamp),
+                timestamp: new Date(ctx.block.timestamp!),
             })
         }
     } else {
@@ -219,7 +213,7 @@ export async function handleTokenDeposited(ctx: EventHandlerContext) {
             needsComplete: false,
             pair,
             liquidity: value,
-            timestamp: new Date(ctx.block.timestamp),
+            timestamp: new Date(ctx.block.timestamp!),
         })
     }
 
@@ -265,25 +259,18 @@ export async function handleTokenWithdrawn(ctx: EventHandlerContext) {
 
     let event
     if (network === 'foucoco') {
-        const _event = new foucocoEvents.TokensWithdrawnEvent(ctx, ctx.event)
-        if (_event.isV1) {
-            event = _event.asV1
-        }
+        event = foucocoEvents.tokens.withdrawn.v10.decode(ctx.event)
     } else if (network === 'pendulum') {
-        const _event = new pendulumEvents.TokensWithdrawnEvent(ctx, ctx.event)
-        if (_event.isV1) {
-            event = _event.asV1
-        } else {
-            event = _event.asV3
-        }
+        event = pendulumEvents.tokens.withdrawn.v10.decode(ctx.event)
     } else {
-        const _event = new amplitudeEvents.TokensWithdrawnEvent(ctx, ctx.event)
-        if (_event.isV3) {
-            event = _event.asV3
-        } else if (_event.isV8) {
-            event = _event.asV8
-        } else if (_event.isV10) {
-            event = _event.asV10
+        if (amplitudeEvents.tokens.withdrawn.v3.is(ctx.event)) {
+            event = amplitudeEvents.tokens.withdrawn.v3.decode(ctx.event)
+        }
+        if (amplitudeEvents.tokens.withdrawn.v8.is(ctx.event)) {
+            event = amplitudeEvents.tokens.withdrawn.v8.decode(ctx.event)
+        }
+        if (amplitudeEvents.tokens.withdrawn.v10.is(ctx.event)) {
+            event = amplitudeEvents.tokens.withdrawn.v10.decode(ctx.event)
         }
     }
 
@@ -294,7 +281,7 @@ export async function handleTokenWithdrawn(ctx: EventHandlerContext) {
     const tokenWithdrawn = new TokenWithdrawn({
         id: ctx.event.id,
         blockNumber: ctx.block.height,
-        timestamp: new Date(ctx.block.timestamp),
+        timestamp: new Date(ctx.block.timestamp!),
         extrinsicHash: ctx.event.extrinsic?.hash,
         who: codec(config.prefix).encode(event.who),
         amount: event.amount,
@@ -340,7 +327,7 @@ export async function handleTokenWithdrawn(ctx: EventHandlerContext) {
         transaction = new Transaction({
             id: transactionHash,
             blockNumber: BigInt(ctx.block.height),
-            timestamp: new Date(ctx.block.timestamp),
+            timestamp: new Date(ctx.block.timestamp!),
             mints: [],
             burns: [],
             swaps: [],
@@ -364,7 +351,7 @@ export async function handleTokenWithdrawn(ctx: EventHandlerContext) {
                 needsComplete: false,
                 pair,
                 liquidity: value,
-                timestamp: new Date(ctx.block.timestamp),
+                timestamp: new Date(ctx.block.timestamp!),
             })
         }
     } else {
@@ -374,7 +361,7 @@ export async function handleTokenWithdrawn(ctx: EventHandlerContext) {
             needsComplete: false,
             pair,
             liquidity: value,
-            timestamp: new Date(ctx.block.timestamp),
+            timestamp: new Date(ctx.block.timestamp!),
         })
     }
 
@@ -417,25 +404,18 @@ export async function handleTokenWithdrawn(ctx: EventHandlerContext) {
 export async function handleTokenTransfer(ctx: EventHandlerContext) {
     let event
     if (network === 'foucoco') {
-        const _event = new foucocoEvents.TokensTransferEvent(ctx, ctx.event)
-        if (_event.isV1) {
-            event = _event.asV1
-        }
+        event = foucocoEvents.tokens.transfer.v10.decode(ctx.event)
     } else if (network === 'pendulum') {
-        const _event = new pendulumEvents.TokensTransferEvent(ctx, ctx.event)
-        if (_event.isV1) {
-            event = _event.asV1
-        } else {
-            event = _event.asV3
-        }
+        event = pendulumEvents.tokens.transfer.v10.decode(ctx.event)
     } else {
-        const _event = new amplitudeEvents.TokensTransferEvent(ctx, ctx.event)
-        if (_event.isV3) {
-            event = _event.asV3
-        } else if (_event.isV8) {
-            event = _event.asV8
-        } else if (_event.isV10) {
-            event = _event.asV10
+        if (amplitudeEvents.tokens.transfer.v3.is(ctx.event)) {
+            event = amplitudeEvents.tokens.transfer.v3.decode(ctx.event)
+        }
+        if (amplitudeEvents.tokens.transfer.v8.is(ctx.event)) {
+            event = amplitudeEvents.tokens.transfer.v8.decode(ctx.event)
+        }
+        if (amplitudeEvents.tokens.transfer.v10.is(ctx.event)) {
+            event = amplitudeEvents.tokens.transfer.v10.decode(ctx.event)
         }
     }
 
@@ -446,7 +426,7 @@ export async function handleTokenTransfer(ctx: EventHandlerContext) {
     const tokenTransfer = new TokenTransfer({
         id: ctx.event.id,
         blockNumber: ctx.block.height,
-        timestamp: new Date(ctx.block.timestamp),
+        timestamp: new Date(ctx.block.timestamp!),
         extrinsicHash: ctx.event.extrinsic?.hash,
         from: codec(config.prefix).encode(event.from),
         to: codec(config.prefix).encode(event.to),
@@ -554,7 +534,7 @@ export async function createLiquiditySnapShot(
         snapshot = new LiquidityPositionSnapshot({
             id: `${position.id}${timestamp}`,
             liquidityPosition: position,
-            timestamp: new Date(timestamp),
+            timestamp: new Date(timestamp!),
             block: ctx.block.height,
             user: position.user,
             pair: position.pair,

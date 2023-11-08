@@ -33,7 +33,7 @@ import {
     handleTokenWithdrawn,
 } from './mappings/token'
 import { handleBalanceTransfer } from './mappings/balances'
-//import { handleContractEvent } from './mappings/nabla'
+import { handleContractEvent } from './mappings/nabla'
 import { handleUpdatedPrices } from './mappings/prices'
 
 const DataSelection = { data: { event: true } } as const
@@ -88,6 +88,7 @@ const processor = new SubstrateBatchProcessor()
             'Tokens.BalanceSet',
             // Contracts
             'Contracts.ContractEmitted',
+            //Perhaps as in docs 'EVM.Log',
         ],
         call: true,
         extrinsic: true,
@@ -235,13 +236,13 @@ processor.run(new TypeormDatabase(), async (ctx) => {
                         })
                         break
                     // contracts
-                    // case 'Contracts.ContractEmitted':
-                    //     await handleContractEvent({
-                    //         ...ctx,
-                    //         block: block.header,
-                    //         event: item,
-                    //     })
-                    //     break
+                    case 'Contracts.ContractEmitted':
+                        await handleContractEvent({
+                            ...ctx,
+                            block: block.header,
+                            event: item,
+                        })
+                        break
                     // price oracle
                     case 'DiaOracleModule.UpdatedPrices':
                         await handleUpdatedPrices({

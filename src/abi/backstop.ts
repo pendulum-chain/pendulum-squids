@@ -1,301 +1,2271 @@
-import * as ethers from 'ethers'
-import { LogEvent, Func, ContractBase } from './abi.support'
-import { ABI_JSON } from './backstop.abi'
+import { Abi, Bytes, encodeCall, decodeResult } from '@subsquid/ink-abi'
 
-export const abi = new ethers.Interface(ABI_JSON)
-
-export const events = {
-    Approval: new LogEvent<
-        [owner: string, spender: string, value: bigint] & {
-            owner: string
-            spender: string
-            value: bigint
-        }
-    >(
-        abi,
-        '0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925'
-    ),
-    Burn: new LogEvent<
-        [
-            sender: string,
-            poolSharesBurned: bigint,
-            amountPrincipleWithdrawn: bigint
-        ] & {
-            sender: string
-            poolSharesBurned: bigint
-            amountPrincipleWithdrawn: bigint
-        }
-    >(
-        abi,
-        '0x49995e5dd6158cf69ad3e9777c46755a1a826a446c6416992167462dad033b2a'
-    ),
-    CoverSwapWithdrawal: new LogEvent<
-        [
-            owner: string,
-            swapPool: string,
-            amountSwapShares: bigint,
-            amountSwapTokens: bigint,
-            amountBackstopTokens: bigint
-        ] & {
-            owner: string
-            swapPool: string
-            amountSwapShares: bigint
-            amountSwapTokens: bigint
-            amountBackstopTokens: bigint
-        }
-    >(
-        abi,
-        '0x2374cec1ef77115db1a9354bf7bd76e8724990f72693799466841132e3a97d51'
-    ),
-    Mint: new LogEvent<
-        [
-            sender: string,
-            poolSharesMinted: bigint,
-            amountPrincipleDeposited: bigint
-        ] & {
-            sender: string
-            poolSharesMinted: bigint
-            amountPrincipleDeposited: bigint
-        }
-    >(
-        abi,
-        '0x4c209b5fc8ad50758f13e2e1088ba56a560dff690a1c6fef26394f4c03821c4f'
-    ),
-    OwnershipTransferred: new LogEvent<
-        [previousOwner: string, newOwner: string] & {
-            previousOwner: string
-            newOwner: string
-        }
-    >(
-        abi,
-        '0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0'
-    ),
-    Paused: new LogEvent<[account: string] & { account: string }>(
-        abi,
-        '0x62e78cea01bee320cd4e420270b5ea74000d11b0c9f74754ebdbfc544b05a258'
-    ),
-    Transfer: new LogEvent<
-        [from: string, to: string, value: bigint] & {
-            from: string
-            to: string
-            value: bigint
-        }
-    >(
-        abi,
-        '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'
-    ),
-    Unpaused: new LogEvent<[account: string] & { account: string }>(
-        abi,
-        '0x5db9ee0a495bf2e6ff9c91a7834c1ba4fdd244a5e8aa4e537bd38aeae4b073aa'
-    ),
-    WithdrawSwapLiquidity: new LogEvent<
-        [
-            owner: string,
-            swapPool: string,
-            amountSwapTokens: bigint,
-            amountBackstopTokens: bigint
-        ] & {
-            owner: string
-            swapPool: string
-            amountSwapTokens: bigint
-            amountBackstopTokens: bigint
-        }
-    >(
-        abi,
-        '0xc70bcd35b96f84df16e862e6b69c3d6ed138ada03ace1a6a55a4caf3da88371b'
-    ),
+export const metadata = {
+    contract: {
+        authors: ['unknown'],
+        name: 'TestableBackstopPool',
+        version: '0.0.1',
+    },
+    source: {
+        compiler: 'solang 0.3.2',
+        hash: '0x9abebd68de3ff890c239f407830e6dfb67ca91b8bda8d8d88d30f9ae16749a3c',
+        language: 'Solidity 0.3.2',
+    },
+    spec: {
+        constructors: [
+            {
+                args: [
+                    {
+                        label: '_router',
+                        type: {
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
+                            type: 2,
+                        },
+                    },
+                    {
+                        label: '_asset',
+                        type: {
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
+                            type: 2,
+                        },
+                    },
+                    {
+                        label: '_curve',
+                        type: {
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
+                            type: 2,
+                        },
+                    },
+                    {
+                        label: '_name',
+                        type: {
+                            displayName: ['string'],
+                            type: 5,
+                        },
+                    },
+                    {
+                        label: '_symbol',
+                        type: {
+                            displayName: ['string'],
+                            type: 5,
+                        },
+                    },
+                ],
+                default: false,
+                docs: [''],
+                label: 'new',
+                payable: false,
+                returnType: null,
+                selector: '0x3e6bb716',
+            },
+        ],
+        docs: [''],
+        environment: {
+            accountId: {
+                displayName: ['AccountId'],
+                type: 2,
+            },
+            balance: {
+                displayName: ['Balance'],
+                type: 13,
+            },
+            blockNumber: {
+                displayName: ['BlockNumber'],
+                type: 14,
+            },
+            chainExtension: {
+                displayName: [],
+                type: 0,
+            },
+            hash: {
+                displayName: ['Hash'],
+                type: 15,
+            },
+            maxEventTopics: 4,
+            timestamp: {
+                displayName: ['Timestamp'],
+                type: 14,
+            },
+        },
+        events: [
+            {
+                args: [
+                    {
+                        docs: [],
+                        indexed: true,
+                        label: 'from',
+                        type: {
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
+                            type: 2,
+                        },
+                    },
+                    {
+                        docs: [],
+                        indexed: true,
+                        label: 'to',
+                        type: {
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
+                            type: 2,
+                        },
+                    },
+                    {
+                        docs: [],
+                        indexed: false,
+                        label: 'value',
+                        type: {
+                            displayName: ['uint256'],
+                            type: 3,
+                        },
+                    },
+                ],
+                docs: [''],
+                label: 'Transfer',
+            },
+            {
+                args: [
+                    {
+                        docs: [],
+                        indexed: true,
+                        label: 'owner',
+                        type: {
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
+                            type: 2,
+                        },
+                    },
+                    {
+                        docs: [],
+                        indexed: true,
+                        label: 'spender',
+                        type: {
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
+                            type: 2,
+                        },
+                    },
+                    {
+                        docs: [],
+                        indexed: false,
+                        label: 'value',
+                        type: {
+                            displayName: ['uint256'],
+                            type: 3,
+                        },
+                    },
+                ],
+                docs: [''],
+                label: 'Approval',
+            },
+            {
+                args: [
+                    {
+                        docs: [],
+                        indexed: false,
+                        label: 'account',
+                        type: {
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
+                            type: 2,
+                        },
+                    },
+                ],
+                docs: [''],
+                label: 'Paused',
+            },
+            {
+                args: [
+                    {
+                        docs: [],
+                        indexed: false,
+                        label: 'account',
+                        type: {
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
+                            type: 2,
+                        },
+                    },
+                ],
+                docs: [''],
+                label: 'Unpaused',
+            },
+            {
+                args: [
+                    {
+                        docs: [],
+                        indexed: true,
+                        label: 'previousOwner',
+                        type: {
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
+                            type: 2,
+                        },
+                    },
+                    {
+                        docs: [],
+                        indexed: true,
+                        label: 'newOwner',
+                        type: {
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
+                            type: 2,
+                        },
+                    },
+                ],
+                docs: [''],
+                label: 'OwnershipTransferred',
+            },
+            {
+                args: [
+                    {
+                        docs: [],
+                        indexed: true,
+                        label: 'sender',
+                        type: {
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
+                            type: 2,
+                        },
+                    },
+                    {
+                        docs: [],
+                        indexed: false,
+                        label: 'poolSharesMinted',
+                        type: {
+                            displayName: ['uint256'],
+                            type: 3,
+                        },
+                    },
+                    {
+                        docs: [],
+                        indexed: false,
+                        label: 'amountPrincipleDeposited',
+                        type: {
+                            displayName: ['uint256'],
+                            type: 3,
+                        },
+                    },
+                ],
+                docs: ['emitted on every deposit'],
+                label: 'Mint',
+            },
+            {
+                args: [
+                    {
+                        docs: [],
+                        indexed: true,
+                        label: 'sender',
+                        type: {
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
+                            type: 2,
+                        },
+                    },
+                    {
+                        docs: [],
+                        indexed: false,
+                        label: 'poolSharesBurned',
+                        type: {
+                            displayName: ['uint256'],
+                            type: 3,
+                        },
+                    },
+                    {
+                        docs: [],
+                        indexed: false,
+                        label: 'amountPrincipleWithdrawn',
+                        type: {
+                            displayName: ['uint256'],
+                            type: 3,
+                        },
+                    },
+                ],
+                docs: [
+                    'emitted on every withdrawal special case withdrawal using swap liquidiity: amountPrincipleWithdrawn = 0',
+                ],
+                label: 'Burn',
+            },
+            {
+                args: [
+                    {
+                        docs: [],
+                        indexed: true,
+                        label: 'owner',
+                        type: {
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
+                            type: 2,
+                        },
+                    },
+                    {
+                        docs: [],
+                        indexed: false,
+                        label: 'swapPool',
+                        type: {
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
+                            type: 2,
+                        },
+                    },
+                    {
+                        docs: [],
+                        indexed: false,
+                        label: 'amountSwapShares',
+                        type: {
+                            displayName: ['uint256'],
+                            type: 3,
+                        },
+                    },
+                    {
+                        docs: [],
+                        indexed: false,
+                        label: 'amountSwapTokens',
+                        type: {
+                            displayName: ['uint256'],
+                            type: 3,
+                        },
+                    },
+                    {
+                        docs: [],
+                        indexed: false,
+                        label: 'amountBackstopTokens',
+                        type: {
+                            displayName: ['uint256'],
+                            type: 3,
+                        },
+                    },
+                ],
+                docs: [
+                    'emitted when a swap pool LP withdraws from backstop pool',
+                ],
+                label: 'CoverSwapWithdrawal',
+            },
+            {
+                args: [
+                    {
+                        docs: [],
+                        indexed: true,
+                        label: 'owner',
+                        type: {
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
+                            type: 2,
+                        },
+                    },
+                    {
+                        docs: [],
+                        indexed: false,
+                        label: 'swapPool',
+                        type: {
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
+                            type: 2,
+                        },
+                    },
+                    {
+                        docs: [],
+                        indexed: false,
+                        label: 'amountSwapTokens',
+                        type: {
+                            displayName: ['uint256'],
+                            type: 3,
+                        },
+                    },
+                    {
+                        docs: [],
+                        indexed: false,
+                        label: 'amountBackstopTokens',
+                        type: {
+                            displayName: ['uint256'],
+                            type: 3,
+                        },
+                    },
+                ],
+                docs: [
+                    'emitted when a backstop pool LP withdraws liquidity from swap pool',
+                ],
+                label: 'WithdrawSwapLiquidity',
+            },
+        ],
+        lang_error: {
+            displayName: ['SolidityError'],
+            type: 18,
+        },
+        messages: [
+            {
+                args: [],
+                default: false,
+                docs: [''],
+                label: 'name',
+                mutates: false,
+                payable: false,
+                returnType: {
+                    displayName: ['string'],
+                    type: 5,
+                },
+                selector: '0x06fdde03',
+            },
+            {
+                args: [],
+                default: false,
+                docs: [''],
+                label: 'symbol',
+                mutates: false,
+                payable: false,
+                returnType: {
+                    displayName: ['string'],
+                    type: 5,
+                },
+                selector: '0x95d89b41',
+            },
+            {
+                args: [],
+                default: false,
+                docs: [''],
+                label: 'decimals',
+                mutates: false,
+                payable: false,
+                returnType: {
+                    displayName: ['uint8'],
+                    type: 0,
+                },
+                selector: '0x313ce567',
+            },
+            {
+                args: [],
+                default: false,
+                docs: [''],
+                label: 'totalSupply',
+                mutates: false,
+                payable: false,
+                returnType: {
+                    displayName: ['uint256'],
+                    type: 3,
+                },
+                selector: '0x18160ddd',
+            },
+            {
+                args: [
+                    {
+                        label: 'account',
+                        type: {
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
+                            type: 2,
+                        },
+                    },
+                ],
+                default: false,
+                docs: [''],
+                label: 'balanceOf',
+                mutates: false,
+                payable: false,
+                returnType: {
+                    displayName: ['uint256'],
+                    type: 3,
+                },
+                selector: '0x70a08231',
+            },
+            {
+                args: [
+                    {
+                        label: 'to',
+                        type: {
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
+                            type: 2,
+                        },
+                    },
+                    {
+                        label: 'amount',
+                        type: {
+                            displayName: ['uint256'],
+                            type: 3,
+                        },
+                    },
+                ],
+                default: false,
+                docs: [''],
+                label: 'transfer',
+                mutates: true,
+                payable: false,
+                returnType: {
+                    displayName: ['bool'],
+                    type: 4,
+                },
+                selector: '0xa9059cbb',
+            },
+            {
+                args: [
+                    {
+                        label: 'owner',
+                        type: {
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
+                            type: 2,
+                        },
+                    },
+                    {
+                        label: 'spender',
+                        type: {
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
+                            type: 2,
+                        },
+                    },
+                ],
+                default: false,
+                docs: [''],
+                label: 'allowance',
+                mutates: false,
+                payable: false,
+                returnType: {
+                    displayName: ['uint256'],
+                    type: 3,
+                },
+                selector: '0xdd62ed3e',
+            },
+            {
+                args: [
+                    {
+                        label: 'spender',
+                        type: {
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
+                            type: 2,
+                        },
+                    },
+                    {
+                        label: 'amount',
+                        type: {
+                            displayName: ['uint256'],
+                            type: 3,
+                        },
+                    },
+                ],
+                default: false,
+                docs: [''],
+                label: 'approve',
+                mutates: true,
+                payable: false,
+                returnType: {
+                    displayName: ['bool'],
+                    type: 4,
+                },
+                selector: '0x095ea7b3',
+            },
+            {
+                args: [
+                    {
+                        label: 'from',
+                        type: {
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
+                            type: 2,
+                        },
+                    },
+                    {
+                        label: 'to',
+                        type: {
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
+                            type: 2,
+                        },
+                    },
+                    {
+                        label: 'amount',
+                        type: {
+                            displayName: ['uint256'],
+                            type: 3,
+                        },
+                    },
+                ],
+                default: false,
+                docs: [''],
+                label: 'transferFrom',
+                mutates: true,
+                payable: false,
+                returnType: {
+                    displayName: ['bool'],
+                    type: 4,
+                },
+                selector: '0x23b872dd',
+            },
+            {
+                args: [
+                    {
+                        label: 'spender',
+                        type: {
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
+                            type: 2,
+                        },
+                    },
+                    {
+                        label: 'addedValue',
+                        type: {
+                            displayName: ['uint256'],
+                            type: 3,
+                        },
+                    },
+                ],
+                default: false,
+                docs: [''],
+                label: 'increaseAllowance',
+                mutates: true,
+                payable: false,
+                returnType: {
+                    displayName: ['bool'],
+                    type: 4,
+                },
+                selector: '0x39509351',
+            },
+            {
+                args: [
+                    {
+                        label: 'spender',
+                        type: {
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
+                            type: 2,
+                        },
+                    },
+                    {
+                        label: 'subtractedValue',
+                        type: {
+                            displayName: ['uint256'],
+                            type: 3,
+                        },
+                    },
+                ],
+                default: false,
+                docs: [''],
+                label: 'decreaseAllowance',
+                mutates: true,
+                payable: false,
+                returnType: {
+                    displayName: ['bool'],
+                    type: 4,
+                },
+                selector: '0xa457c2d7',
+            },
+            {
+                args: [],
+                default: false,
+                docs: [''],
+                label: 'paused',
+                mutates: false,
+                payable: false,
+                returnType: {
+                    displayName: ['bool'],
+                    type: 4,
+                },
+                selector: '0x5c975abb',
+            },
+            {
+                args: [],
+                default: false,
+                docs: [''],
+                label: 'owner',
+                mutates: false,
+                payable: false,
+                returnType: {
+                    displayName: ['ink_primitives', 'types', 'AccountId'],
+                    type: 2,
+                },
+                selector: '0x8da5cb5b',
+            },
+            {
+                args: [],
+                default: false,
+                docs: [''],
+                label: 'renounceOwnership',
+                mutates: true,
+                payable: false,
+                returnType: null,
+                selector: '0x715018a6',
+            },
+            {
+                args: [
+                    {
+                        label: 'newOwner',
+                        type: {
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
+                            type: 2,
+                        },
+                    },
+                ],
+                default: false,
+                docs: [''],
+                label: 'transferOwnership',
+                mutates: true,
+                payable: false,
+                returnType: null,
+                selector: '0xf2fde38b',
+            },
+            {
+                args: [],
+                default: false,
+                docs: [''],
+                label: 'poolCap',
+                mutates: false,
+                payable: false,
+                returnType: {
+                    displayName: ['uint256'],
+                    type: 3,
+                },
+                selector: '0xb954dc57',
+            },
+            {
+                args: [],
+                default: false,
+                docs: ["Returns the pooled token's address"],
+                label: 'asset',
+                mutates: false,
+                payable: false,
+                returnType: {
+                    displayName: ['ink_primitives', 'types', 'AccountId'],
+                    type: 2,
+                },
+                selector: '0x38d52e0f',
+            },
+            {
+                args: [],
+                default: false,
+                docs: [''],
+                label: 'router',
+                mutates: false,
+                payable: false,
+                returnType: {
+                    displayName: ['ink_primitives', 'types', 'AccountId'],
+                    type: 2,
+                },
+                selector: '0xf887ea40',
+            },
+            {
+                args: [],
+                default: false,
+                docs: [''],
+                label: 'slippageCurve',
+                mutates: false,
+                payable: false,
+                returnType: {
+                    displayName: ['ink_primitives', 'types', 'AccountId'],
+                    type: 2,
+                },
+                selector: '0xebe26b9e',
+            },
+            {
+                args: [
+                    {
+                        label: '_amount',
+                        type: {
+                            displayName: ['uint256'],
+                            type: 3,
+                        },
+                    },
+                ],
+                default: false,
+                docs: [
+                    'Deposits amount of tokens into pool Will change cov ratio of pool, will increase delta to 0',
+                ],
+                label: 'deposit',
+                mutates: true,
+                payable: false,
+                returnType: {
+                    displayName: [
+                        'TestableBackstopPool',
+                        'deposit',
+                        'return_type',
+                    ],
+                    type: 8,
+                },
+                selector: '0xb6b55f25',
+            },
+            {
+                args: [
+                    {
+                        label: '_maxTokens',
+                        type: {
+                            displayName: ['uint256'],
+                            type: 3,
+                        },
+                    },
+                ],
+                default: false,
+                docs: [
+                    'Set new upper limit of pool reserves. Will disable deposits when reached. Can always set to an amount < current reserves to temporarily restrict deposits.',
+                ],
+                label: 'setPoolCap',
+                mutates: true,
+                payable: false,
+                returnType: null,
+                selector: '0xd835f535',
+            },
+            {
+                args: [
+                    {
+                        label: '_shares',
+                        type: {
+                            displayName: ['uint256'],
+                            type: 3,
+                        },
+                    },
+                    {
+                        label: '_minimumAmount',
+                        type: {
+                            displayName: ['uint256'],
+                            type: 3,
+                        },
+                    },
+                ],
+                default: false,
+                docs: [
+                    'Withdraws liquidity amount of asset ensuring minimum amount required Slippage is applied (withdrawal fee)',
+                ],
+                label: 'withdraw',
+                mutates: true,
+                payable: false,
+                returnType: {
+                    displayName: [
+                        'TestableBackstopPool',
+                        'withdraw',
+                        'return_type',
+                    ],
+                    type: 9,
+                },
+                selector: '0x441a3e70',
+            },
+            {
+                args: [
+                    {
+                        label: '_swapPool',
+                        type: {
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
+                            type: 2,
+                        },
+                    },
+                    {
+                        label: '_insuranceFeeBps',
+                        type: {
+                            displayName: ['uint256'],
+                            type: 3,
+                        },
+                    },
+                ],
+                default: false,
+                docs: [
+                    'Make this backstop pool cover another swap pool Beware: Adding a swap pool holding the same token as the backstop pool\ncan easily cause undesirable conditions and must be secured (i.e. long time lock)!',
+                ],
+                label: 'addSwapPool',
+                mutates: true,
+                payable: false,
+                returnType: null,
+                selector: '0xabb26587',
+            },
+            {
+                args: [
+                    {
+                        label: '_swapPool',
+                        type: {
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
+                            type: 2,
+                        },
+                    },
+                    {
+                        label: '_insuranceFeeBps',
+                        type: {
+                            displayName: ['uint256'],
+                            type: 3,
+                        },
+                    },
+                ],
+                default: false,
+                docs: ["Change a swap pool's insurance withdrawal fee"],
+                label: 'setInsuranceFee',
+                mutates: true,
+                payable: false,
+                returnType: null,
+                selector: '0xc6a78196',
+            },
+            {
+                args: [
+                    {
+                        label: '_swapPool',
+                        type: {
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
+                            type: 2,
+                        },
+                    },
+                    {
+                        label: '_shares',
+                        type: {
+                            displayName: ['uint256'],
+                            type: 3,
+                        },
+                    },
+                    {
+                        label: '_minAmount',
+                        type: {
+                            displayName: ['uint256'],
+                            type: 3,
+                        },
+                    },
+                ],
+                default: false,
+                docs: [
+                    "withdraw from a swap pool using backstop liquidity without slippage only possible if swap pool's coverage ratio < 100%",
+                ],
+                label: 'redeemSwapPoolShares',
+                mutates: true,
+                payable: false,
+                returnType: {
+                    displayName: ['uint256'],
+                    type: 3,
+                },
+                selector: '0x6e7e91fd',
+            },
+            {
+                args: [
+                    {
+                        label: '_swapPool',
+                        type: {
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
+                            type: 2,
+                        },
+                    },
+                    {
+                        label: '_shares',
+                        type: {
+                            displayName: ['uint256'],
+                            type: 3,
+                        },
+                    },
+                    {
+                        label: '_minAmount',
+                        type: {
+                            displayName: ['uint256'],
+                            type: 3,
+                        },
+                    },
+                ],
+                default: false,
+                docs: [
+                    'withdraw from backstop pool, but receive excess liquidity\nof a swap pool without slippage, instead of backstop liquidity',
+                ],
+                label: 'withdrawExcessSwapLiquidity',
+                mutates: true,
+                payable: false,
+                returnType: {
+                    displayName: ['uint256'],
+                    type: 3,
+                },
+                selector: '0xcaf8c105',
+            },
+            {
+                args: [],
+                default: false,
+                docs: ['returns pool coverage ratio'],
+                label: 'coverage',
+                mutates: false,
+                payable: false,
+                returnType: {
+                    displayName: [
+                        'TestableBackstopPool',
+                        'coverage',
+                        'return_type',
+                    ],
+                    type: 10,
+                },
+                selector: '0xee8f6a0e',
+            },
+            {
+                args: [
+                    {
+                        label: '_index',
+                        type: {
+                            displayName: ['uint256'],
+                            type: 3,
+                        },
+                    },
+                ],
+                default: false,
+                docs: ['enumerate swap pools backed by this backstop pool'],
+                label: 'getBackedPool',
+                mutates: false,
+                payable: false,
+                returnType: {
+                    displayName: ['ink_primitives', 'types', 'AccountId'],
+                    type: 2,
+                },
+                selector: '0xa04345f2',
+            },
+            {
+                args: [],
+                default: false,
+                docs: ['get swap pool count backed by this backstop pool'],
+                label: 'getBackedPoolCount',
+                mutates: false,
+                payable: false,
+                returnType: {
+                    displayName: ['uint256'],
+                    type: 3,
+                },
+                selector: '0x5fda8689',
+            },
+            {
+                args: [
+                    {
+                        label: '_swapPool',
+                        type: {
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
+                            type: 2,
+                        },
+                    },
+                ],
+                default: false,
+                docs: ['get insurance withdrawal fee for a given swap pool'],
+                label: 'getInsuranceFee',
+                mutates: false,
+                payable: false,
+                returnType: {
+                    displayName: ['uint256'],
+                    type: 3,
+                },
+                selector: '0x504e0153',
+            },
+            {
+                args: [],
+                default: false,
+                docs: [
+                    "return worth of the whole backstop pool in `asset()`, incl. all\nswap pools' excess liquidity and the backstop pool's liabilities",
+                ],
+                label: 'getTotalPoolWorth',
+                mutates: false,
+                payable: false,
+                returnType: {
+                    displayName: ['uint256'],
+                    type: 3,
+                },
+                selector: '0x18ba24c4',
+            },
+            {
+                args: [
+                    {
+                        label: '_shares',
+                        type: {
+                            displayName: ['uint256'],
+                            type: 3,
+                        },
+                    },
+                ],
+                default: false,
+                docs: [
+                    'Returns the worth of an amount of pool shares (LP tokens) in underlying principle',
+                ],
+                label: 'sharesTargetWorth',
+                mutates: false,
+                payable: false,
+                returnType: {
+                    displayName: ['uint256'],
+                    type: 3,
+                },
+                selector: '0xcc045745',
+            },
+            {
+                args: [
+                    {
+                        label: '_amount',
+                        type: {
+                            displayName: ['uint256'],
+                            type: 3,
+                        },
+                    },
+                ],
+                default: false,
+                docs: [''],
+                label: 'simulateDeposit',
+                mutates: false,
+                payable: false,
+                returnType: {
+                    displayName: [
+                        'TestableBackstopPool',
+                        'simulateDeposit',
+                        'return_type',
+                    ],
+                    type: 11,
+                },
+                selector: '0x923c86e6',
+            },
+            {
+                args: [
+                    {
+                        label: '_shares',
+                        type: {
+                            displayName: ['uint256'],
+                            type: 3,
+                        },
+                    },
+                ],
+                default: false,
+                docs: [''],
+                label: 'simulateWithdrawal',
+                mutates: false,
+                payable: false,
+                returnType: {
+                    displayName: [
+                        'TestableBackstopPool',
+                        'simulateWithdrawal',
+                        'return_type',
+                    ],
+                    type: 12,
+                },
+                selector: '0x42b1fa9d',
+            },
+        ],
+    },
+    storage: {
+        struct: {
+            fields: [
+                {
+                    layout: {
+                        root: {
+                            layout: {
+                                struct: {
+                                    fields: [
+                                        {
+                                            layout: {
+                                                leaf: {
+                                                    key: '0x00000000',
+                                                    ty: 1,
+                                                },
+                                            },
+                                            name: '',
+                                        },
+                                    ],
+                                    name: 'AccountId',
+                                },
+                            },
+                            root_key: '0x00000000',
+                        },
+                    },
+                    name: '_owner',
+                },
+                {
+                    layout: {
+                        root: {
+                            layout: {
+                                leaf: {
+                                    key: '0x00000001',
+                                    ty: 3,
+                                },
+                            },
+                            root_key: '0x00000001',
+                        },
+                    },
+                    name: '_status',
+                },
+                {
+                    layout: {
+                        root: {
+                            layout: {
+                                leaf: {
+                                    key: '0x00000002',
+                                    ty: 4,
+                                },
+                            },
+                            root_key: '0x00000002',
+                        },
+                    },
+                    name: '_paused',
+                },
+                {
+                    layout: {
+                        root: {
+                            layout: {
+                                leaf: {
+                                    key: '0x00000003',
+                                    ty: 3,
+                                },
+                            },
+                            root_key: '0x00000003',
+                        },
+                    },
+                    name: '_balances',
+                },
+                {
+                    layout: {
+                        root: {
+                            layout: {
+                                leaf: {
+                                    key: '0x00000004',
+                                    ty: 3,
+                                },
+                            },
+                            root_key: '0x00000004',
+                        },
+                    },
+                    name: '_allowances',
+                },
+                {
+                    layout: {
+                        root: {
+                            layout: {
+                                leaf: {
+                                    key: '0x00000005',
+                                    ty: 3,
+                                },
+                            },
+                            root_key: '0x00000005',
+                        },
+                    },
+                    name: '_totalSupply',
+                },
+                {
+                    layout: {
+                        root: {
+                            layout: {
+                                leaf: {
+                                    key: '0x00000006',
+                                    ty: 5,
+                                },
+                            },
+                            root_key: '0x00000006',
+                        },
+                    },
+                    name: '_name',
+                },
+                {
+                    layout: {
+                        root: {
+                            layout: {
+                                leaf: {
+                                    key: '0x00000007',
+                                    ty: 5,
+                                },
+                            },
+                            root_key: '0x00000007',
+                        },
+                    },
+                    name: '_symbol',
+                },
+                {
+                    layout: {
+                        root: {
+                            layout: {
+                                struct: {
+                                    fields: [
+                                        {
+                                            layout: {
+                                                leaf: {
+                                                    key: '0x00000008',
+                                                    ty: 1,
+                                                },
+                                            },
+                                            name: '',
+                                        },
+                                    ],
+                                    name: 'AccountId',
+                                },
+                            },
+                            root_key: '0x00000008',
+                        },
+                    },
+                    name: 'poolAsset',
+                },
+                {
+                    layout: {
+                        root: {
+                            layout: {
+                                leaf: {
+                                    key: '0x00000009',
+                                    ty: 3,
+                                },
+                            },
+                            root_key: '0x00000009',
+                        },
+                    },
+                    name: 'poolCap',
+                },
+                {
+                    layout: {
+                        root: {
+                            layout: {
+                                leaf: {
+                                    key: '0x0000000a',
+                                    ty: 3,
+                                },
+                            },
+                            root_key: '0x0000000a',
+                        },
+                    },
+                    name: 'poolAssetMantissa',
+                },
+                {
+                    layout: {
+                        root: {
+                            layout: {
+                                struct: {
+                                    fields: [
+                                        {
+                                            layout: {
+                                                leaf: {
+                                                    key: '0x0000000b',
+                                                    ty: 1,
+                                                },
+                                            },
+                                            name: '',
+                                        },
+                                    ],
+                                    name: 'AccountId',
+                                },
+                            },
+                            root_key: '0x0000000b',
+                        },
+                    },
+                    name: 'router',
+                },
+                {
+                    layout: {
+                        root: {
+                            layout: {
+                                struct: {
+                                    fields: [
+                                        {
+                                            layout: {
+                                                leaf: {
+                                                    key: '0x0000000c',
+                                                    ty: 1,
+                                                },
+                                            },
+                                            name: '',
+                                        },
+                                    ],
+                                    name: 'AccountId',
+                                },
+                            },
+                            root_key: '0x0000000c',
+                        },
+                    },
+                    name: 'slippageCurve',
+                },
+                {
+                    layout: {
+                        root: {
+                            layout: {
+                                leaf: {
+                                    key: '0x0000000d',
+                                    ty: 6,
+                                },
+                            },
+                            root_key: '0x0000000d',
+                        },
+                    },
+                    name: 'swapPools',
+                },
+                {
+                    layout: {
+                        root: {
+                            layout: {
+                                leaf: {
+                                    key: '0x0000000e',
+                                    ty: 3,
+                                },
+                            },
+                            root_key: '0x0000000e',
+                        },
+                    },
+                    name: 'swapPoolInsuranceFeeBps',
+                },
+                {
+                    layout: {
+                        root: {
+                            layout: {
+                                leaf: {
+                                    key: '0x0000000f',
+                                    ty: 4,
+                                },
+                            },
+                            root_key: '0x0000000f',
+                        },
+                    },
+                    name: 'swapPoolCovered',
+                },
+            ],
+            name: 'TestableBackstopPool',
+        },
+    },
+    types: [
+        {
+            id: 0,
+            type: {
+                def: {
+                    primitive: 'u8',
+                },
+                path: ['uint8'],
+            },
+        },
+        {
+            id: 1,
+            type: {
+                def: {
+                    array: {
+                        len: 32,
+                        type: 0,
+                    },
+                },
+            },
+        },
+        {
+            id: 2,
+            type: {
+                def: {
+                    composite: {
+                        fields: [
+                            {
+                                type: 1,
+                            },
+                        ],
+                    },
+                },
+                path: ['ink_primitives', 'types', 'AccountId'],
+            },
+        },
+        {
+            id: 3,
+            type: {
+                def: {
+                    primitive: 'u256',
+                },
+                path: ['uint256'],
+            },
+        },
+        {
+            id: 4,
+            type: {
+                def: {
+                    primitive: 'bool',
+                },
+                path: ['bool'],
+            },
+        },
+        {
+            id: 5,
+            type: {
+                def: {
+                    primitive: 'str',
+                },
+                path: ['string'],
+            },
+        },
+        {
+            id: 6,
+            type: {
+                def: {
+                    sequence: {
+                        type: 2,
+                    },
+                },
+            },
+        },
+        {
+            id: 7,
+            type: {
+                def: {
+                    primitive: 'i256',
+                },
+                path: ['int256'],
+            },
+        },
+        {
+            id: 8,
+            type: {
+                def: {
+                    tuple: [3, 7],
+                },
+                path: ['TestableBackstopPool', 'deposit', 'return_type'],
+            },
+        },
+        {
+            id: 9,
+            type: {
+                def: {
+                    tuple: [3, 7],
+                },
+                path: ['TestableBackstopPool', 'withdraw', 'return_type'],
+            },
+        },
+        {
+            id: 10,
+            type: {
+                def: {
+                    tuple: [3, 3],
+                },
+                path: ['TestableBackstopPool', 'coverage', 'return_type'],
+            },
+        },
+        {
+            id: 11,
+            type: {
+                def: {
+                    tuple: [3, 7],
+                },
+                path: [
+                    'TestableBackstopPool',
+                    'simulateDeposit',
+                    'return_type',
+                ],
+            },
+        },
+        {
+            id: 12,
+            type: {
+                def: {
+                    tuple: [3, 7],
+                },
+                path: [
+                    'TestableBackstopPool',
+                    'simulateWithdrawal',
+                    'return_type',
+                ],
+            },
+        },
+        {
+            id: 13,
+            type: {
+                def: {
+                    primitive: 'u128',
+                },
+                path: ['uint128'],
+            },
+        },
+        {
+            id: 14,
+            type: {
+                def: {
+                    primitive: 'u64',
+                },
+                path: ['uint64'],
+            },
+        },
+        {
+            id: 15,
+            type: {
+                def: {
+                    composite: {
+                        fields: [
+                            {
+                                type: 1,
+                            },
+                        ],
+                    },
+                },
+                path: ['ink_primitives', 'types', 'Hash'],
+            },
+        },
+        {
+            id: 16,
+            type: {
+                def: {
+                    composite: {
+                        fields: [
+                            {
+                                type: 5,
+                            },
+                        ],
+                    },
+                },
+                path: ['0x08c379a0'],
+            },
+        },
+        {
+            id: 17,
+            type: {
+                def: {
+                    composite: {
+                        fields: [
+                            {
+                                type: 3,
+                            },
+                        ],
+                    },
+                },
+                path: ['0x4e487b71'],
+            },
+        },
+        {
+            id: 18,
+            type: {
+                def: {
+                    variant: {
+                        variants: [
+                            {
+                                fields: [
+                                    {
+                                        type: 16,
+                                    },
+                                ],
+                                index: 0,
+                                name: 'Error',
+                            },
+                            {
+                                fields: [
+                                    {
+                                        type: 17,
+                                    },
+                                ],
+                                index: 1,
+                                name: 'Panic',
+                            },
+                        ],
+                    },
+                },
+                path: ['SolidityError'],
+            },
+        },
+    ],
+    version: '4',
 }
 
-export const functions = {
-    addSwapPool: new Func<
-        [_swapPool: string, _insuranceFeeBps: bigint],
-        { _swapPool: string; _insuranceFeeBps: bigint },
-        []
-    >(abi, '0xabb26587'),
-    allowance: new Func<
-        [owner: string, spender: string],
-        { owner: string; spender: string },
-        bigint
-    >(abi, '0xdd62ed3e'),
-    approve: new Func<
-        [spender: string, amount: bigint],
-        { spender: string; amount: bigint },
-        boolean
-    >(abi, '0x095ea7b3'),
-    asset: new Func<[], {}, string>(abi, '0x38d52e0f'),
-    balanceOf: new Func<[account: string], { account: string }, bigint>(
-        abi,
-        '0x70a08231'
-    ),
-    coverage: new Func<
-        [],
-        {},
-        [_reserves: bigint, _liabilities: bigint] & {
-            _reserves: bigint
-            _liabilities: bigint
-        }
-    >(abi, '0xee8f6a0e'),
-    decimals: new Func<[], {}, number>(abi, '0x313ce567'),
-    decreaseAllowance: new Func<
-        [spender: string, subtractedValue: bigint],
-        { spender: string; subtractedValue: bigint },
-        boolean
-    >(abi, '0xa457c2d7'),
-    deposit: new Func<
-        [_amount: bigint],
-        { _amount: bigint },
-        [_poolShares: bigint, _fee: bigint] & {
-            _poolShares: bigint
-            _fee: bigint
-        }
-    >(abi, '0xb6b55f25'),
-    getBackedPool: new Func<[_index: bigint], { _index: bigint }, string>(
-        abi,
-        '0xa04345f2'
-    ),
-    getBackedPoolCount: new Func<[], {}, bigint>(abi, '0x5fda8689'),
-    getInsuranceFee: new Func<
-        [_swapPool: string],
-        { _swapPool: string },
-        bigint
-    >(abi, '0x504e0153'),
-    getTotalPoolWorth: new Func<[], {}, bigint>(abi, '0x18ba24c4'),
-    increaseAllowance: new Func<
-        [spender: string, addedValue: bigint],
-        { spender: string; addedValue: bigint },
-        boolean
-    >(abi, '0x39509351'),
-    name: new Func<[], {}, string>(abi, '0x06fdde03'),
-    owner: new Func<[], {}, string>(abi, '0x8da5cb5b'),
-    paused: new Func<[], {}, boolean>(abi, '0x5c975abb'),
-    poolCap: new Func<[], {}, bigint>(abi, '0xb954dc57'),
-    redeemSwapPoolShares: new Func<
-        [_swapPool: string, _shares: bigint, _minAmount: bigint],
-        { _swapPool: string; _shares: bigint; _minAmount: bigint },
-        bigint
-    >(abi, '0x6e7e91fd'),
-    renounceOwnership: new Func<[], {}, []>(abi, '0x715018a6'),
-    router: new Func<[], {}, string>(abi, '0xf887ea40'),
-    setInsuranceFee: new Func<
-        [_swapPool: string, _insuranceFeeBps: bigint],
-        { _swapPool: string; _insuranceFeeBps: bigint },
-        []
-    >(abi, '0xc6a78196'),
-    setPoolCap: new Func<[_maxTokens: bigint], { _maxTokens: bigint }, []>(
-        abi,
-        '0xd835f535'
-    ),
-    sharesTargetWorth: new Func<[_shares: bigint], { _shares: bigint }, bigint>(
-        abi,
-        '0xcc045745'
-    ),
-    slippageCurve: new Func<[], {}, string>(abi, '0xebe26b9e'),
-    symbol: new Func<[], {}, string>(abi, '0x95d89b41'),
-    totalSupply: new Func<[], {}, bigint>(abi, '0x18160ddd'),
-    transfer: new Func<
-        [to: string, amount: bigint],
-        { to: string; amount: bigint },
-        boolean
-    >(abi, '0xa9059cbb'),
-    transferFrom: new Func<
-        [from: string, to: string, amount: bigint],
-        { from: string; to: string; amount: bigint },
-        boolean
-    >(abi, '0x23b872dd'),
-    transferOwnership: new Func<[newOwner: string], { newOwner: string }, []>(
-        abi,
-        '0xf2fde38b'
-    ),
-    withdraw: new Func<
-        [_shares: bigint, _minimumAmount: bigint],
-        { _shares: bigint; _minimumAmount: bigint },
-        [_finalAmount: bigint, _fee: bigint] & {
-            _finalAmount: bigint
-            _fee: bigint
-        }
-    >(abi, '0x441a3e70'),
-    withdrawExcessSwapLiquidity: new Func<
-        [_swapPool: string, _shares: bigint, _minAmount: bigint],
-        { _swapPool: string; _shares: bigint; _minAmount: bigint },
-        bigint
-    >(abi, '0xcaf8c105'),
+const _abi = new Abi(metadata)
+
+export function decodeEvent(bytes: Bytes): Event {
+    return _abi.decodeEvent(bytes)
 }
 
-export class Contract extends ContractBase {
-    allowance(owner: string, spender: string): Promise<bigint> {
-        return this.eth_call(functions.allowance, [owner, spender])
-    }
+export function decodeMessage(bytes: Bytes): Message {
+    return _abi.decodeMessage(bytes)
+}
 
-    asset(): Promise<string> {
-        return this.eth_call(functions.asset, [])
-    }
+export function decodeConstructor(bytes: Bytes): Constructor {
+    return _abi.decodeConstructor(bytes)
+}
 
-    balanceOf(account: string): Promise<bigint> {
-        return this.eth_call(functions.balanceOf, [account])
+export interface Chain {
+    rpc: {
+        call<T = any>(method: string, params?: unknown[]): Promise<T>
     }
+}
 
-    coverage(): Promise<
-        [_reserves: bigint, _liabilities: bigint] & {
-            _reserves: bigint
-            _liabilities: bigint
-        }
-    > {
-        return this.eth_call(functions.coverage, [])
-    }
+export interface ChainContext {
+    _chain: Chain
+}
 
-    decimals(): Promise<number> {
-        return this.eth_call(functions.decimals, [])
-    }
-
-    getBackedPool(_index: bigint): Promise<string> {
-        return this.eth_call(functions.getBackedPool, [_index])
-    }
-
-    getBackedPoolCount(): Promise<bigint> {
-        return this.eth_call(functions.getBackedPoolCount, [])
-    }
-
-    getInsuranceFee(_swapPool: string): Promise<bigint> {
-        return this.eth_call(functions.getInsuranceFee, [_swapPool])
-    }
-
-    getTotalPoolWorth(): Promise<bigint> {
-        return this.eth_call(functions.getTotalPoolWorth, [])
-    }
+export class Contract {
+    constructor(
+        private ctx: ChainContext,
+        private address: Bytes,
+        private blockHash?: Bytes
+    ) {}
 
     name(): Promise<string> {
-        return this.eth_call(functions.name, [])
-    }
-
-    owner(): Promise<string> {
-        return this.eth_call(functions.owner, [])
-    }
-
-    paused(): Promise<boolean> {
-        return this.eth_call(functions.paused, [])
-    }
-
-    poolCap(): Promise<bigint> {
-        return this.eth_call(functions.poolCap, [])
-    }
-
-    router(): Promise<string> {
-        return this.eth_call(functions.router, [])
-    }
-
-    sharesTargetWorth(_shares: bigint): Promise<bigint> {
-        return this.eth_call(functions.sharesTargetWorth, [_shares])
-    }
-
-    slippageCurve(): Promise<string> {
-        return this.eth_call(functions.slippageCurve, [])
+        return this.stateCall('0x06fdde03', [])
     }
 
     symbol(): Promise<string> {
-        return this.eth_call(functions.symbol, [])
+        return this.stateCall('0x95d89b41', [])
     }
 
-    totalSupply(): Promise<bigint> {
-        return this.eth_call(functions.totalSupply, [])
+    decimals(): Promise<uint8> {
+        return this.stateCall('0x313ce567', [])
+    }
+
+    totalSupply(): Promise<uint256> {
+        return this.stateCall('0x18160ddd', [])
+    }
+
+    balanceOf(account: AccountId): Promise<uint256> {
+        return this.stateCall('0x70a08231', [account])
+    }
+
+    allowance(owner: AccountId, spender: AccountId): Promise<uint256> {
+        return this.stateCall('0xdd62ed3e', [owner, spender])
+    }
+
+    paused(): Promise<bool> {
+        return this.stateCall('0x5c975abb', [])
+    }
+
+    owner(): Promise<AccountId> {
+        return this.stateCall('0x8da5cb5b', [])
+    }
+
+    poolCap(): Promise<uint256> {
+        return this.stateCall('0xb954dc57', [])
+    }
+
+    asset(): Promise<AccountId> {
+        return this.stateCall('0x38d52e0f', [])
+    }
+
+    router(): Promise<AccountId> {
+        return this.stateCall('0xf887ea40', [])
+    }
+
+    slippageCurve(): Promise<AccountId> {
+        return this.stateCall('0xebe26b9e', [])
+    }
+
+    coverage(): Promise<[uint256, uint256]> {
+        return this.stateCall('0xee8f6a0e', [])
+    }
+
+    getBackedPool(_index: uint256): Promise<AccountId> {
+        return this.stateCall('0xa04345f2', [_index])
+    }
+
+    getBackedPoolCount(): Promise<uint256> {
+        return this.stateCall('0x5fda8689', [])
+    }
+
+    getInsuranceFee(_swapPool: AccountId): Promise<uint256> {
+        return this.stateCall('0x504e0153', [_swapPool])
+    }
+
+    getTotalPoolWorth(): Promise<uint256> {
+        return this.stateCall('0x18ba24c4', [])
+    }
+
+    sharesTargetWorth(_shares: uint256): Promise<uint256> {
+        return this.stateCall('0xcc045745', [_shares])
+    }
+
+    simulateDeposit(_amount: uint256): Promise<[uint256, int256]> {
+        return this.stateCall('0x923c86e6', [_amount])
+    }
+
+    simulateWithdrawal(_shares: uint256): Promise<[uint256, int256]> {
+        return this.stateCall('0x42b1fa9d', [_shares])
+    }
+
+    private async stateCall<T>(selector: string, args: any[]): Promise<T> {
+        let input = _abi.encodeMessageInput(selector, args)
+        let data = encodeCall(this.address, input)
+        let result = await this.ctx._chain.rpc.call('state_call', [
+            'ContractsApi_call',
+            data,
+            this.blockHash,
+        ])
+        let value = decodeResult(result)
+        return _abi.decodeMessageOutput(selector, value)
     }
 }
+
+export type int256 = bigint
+
+export type bool = boolean
+
+export type AccountId = Bytes
+
+export type uint256 = bigint
+
+export type uint8 = number
+
+export type string = string
+
+export type Constructor = Constructor_new
+
+/**
+ *
+ */
+export interface Constructor_new {
+    __kind: 'new'
+    router: AccountId
+    asset: AccountId
+    curve: AccountId
+    name: string
+    symbol: string
+}
+
+export type Message =
+    | Message_addSwapPool
+    | Message_allowance
+    | Message_approve
+    | Message_asset
+    | Message_balanceOf
+    | Message_coverage
+    | Message_decimals
+    | Message_decreaseAllowance
+    | Message_deposit
+    | Message_getBackedPool
+    | Message_getBackedPoolCount
+    | Message_getInsuranceFee
+    | Message_getTotalPoolWorth
+    | Message_increaseAllowance
+    | Message_name
+    | Message_owner
+    | Message_paused
+    | Message_poolCap
+    | Message_redeemSwapPoolShares
+    | Message_renounceOwnership
+    | Message_router
+    | Message_setInsuranceFee
+    | Message_setPoolCap
+    | Message_sharesTargetWorth
+    | Message_simulateDeposit
+    | Message_simulateWithdrawal
+    | Message_slippageCurve
+    | Message_symbol
+    | Message_totalSupply
+    | Message_transfer
+    | Message_transferFrom
+    | Message_transferOwnership
+    | Message_withdraw
+    | Message_withdrawExcessSwapLiquidity
+
+/**
+ * Make this backstop pool cover another swap pool Beware: Adding a swap pool holding the same token as the backstop pool
+can easily cause undesirable conditions and must be secured (i.e. long time lock)!
+ */
+export interface Message_addSwapPool {
+    __kind: 'addSwapPool'
+    swapPool: AccountId
+    insuranceFeeBps: uint256
+}
+
+/**
+ *
+ */
+export interface Message_allowance {
+    __kind: 'allowance'
+    owner: AccountId
+    spender: AccountId
+}
+
+/**
+ *
+ */
+export interface Message_approve {
+    __kind: 'approve'
+    spender: AccountId
+    amount: uint256
+}
+
+/**
+ * Returns the pooled token's address
+ */
+export interface Message_asset {
+    __kind: 'asset'
+}
+
+/**
+ *
+ */
+export interface Message_balanceOf {
+    __kind: 'balanceOf'
+    account: AccountId
+}
+
+/**
+ * returns pool coverage ratio
+ */
+export interface Message_coverage {
+    __kind: 'coverage'
+}
+
+/**
+ *
+ */
+export interface Message_decimals {
+    __kind: 'decimals'
+}
+
+/**
+ *
+ */
+export interface Message_decreaseAllowance {
+    __kind: 'decreaseAllowance'
+    spender: AccountId
+    subtractedValue: uint256
+}
+
+/**
+ * Deposits amount of tokens into pool Will change cov ratio of pool, will increase delta to 0
+ */
+export interface Message_deposit {
+    __kind: 'deposit'
+    amount: uint256
+}
+
+/**
+ * enumerate swap pools backed by this backstop pool
+ */
+export interface Message_getBackedPool {
+    __kind: 'getBackedPool'
+    index: uint256
+}
+
+/**
+ * get swap pool count backed by this backstop pool
+ */
+export interface Message_getBackedPoolCount {
+    __kind: 'getBackedPoolCount'
+}
+
+/**
+ * get insurance withdrawal fee for a given swap pool
+ */
+export interface Message_getInsuranceFee {
+    __kind: 'getInsuranceFee'
+    swapPool: AccountId
+}
+
+/**
+ * return worth of the whole backstop pool in `asset()`, incl. all
+swap pools' excess liquidity and the backstop pool's liabilities
+ */
+export interface Message_getTotalPoolWorth {
+    __kind: 'getTotalPoolWorth'
+}
+
+/**
+ *
+ */
+export interface Message_increaseAllowance {
+    __kind: 'increaseAllowance'
+    spender: AccountId
+    addedValue: uint256
+}
+
+/**
+ *
+ */
+export interface Message_name {
+    __kind: 'name'
+}
+
+/**
+ *
+ */
+export interface Message_owner {
+    __kind: 'owner'
+}
+
+/**
+ *
+ */
+export interface Message_paused {
+    __kind: 'paused'
+}
+
+/**
+ *
+ */
+export interface Message_poolCap {
+    __kind: 'poolCap'
+}
+
+/**
+ * withdraw from a swap pool using backstop liquidity without slippage only possible if swap pool's coverage ratio < 100%
+ */
+export interface Message_redeemSwapPoolShares {
+    __kind: 'redeemSwapPoolShares'
+    swapPool: AccountId
+    shares: uint256
+    minAmount: uint256
+}
+
+/**
+ *
+ */
+export interface Message_renounceOwnership {
+    __kind: 'renounceOwnership'
+}
+
+/**
+ *
+ */
+export interface Message_router {
+    __kind: 'router'
+}
+
+/**
+ * Change a swap pool's insurance withdrawal fee
+ */
+export interface Message_setInsuranceFee {
+    __kind: 'setInsuranceFee'
+    swapPool: AccountId
+    insuranceFeeBps: uint256
+}
+
+/**
+ * Set new upper limit of pool reserves. Will disable deposits when reached. Can always set to an amount < current reserves to temporarily restrict deposits.
+ */
+export interface Message_setPoolCap {
+    __kind: 'setPoolCap'
+    maxTokens: uint256
+}
+
+/**
+ * Returns the worth of an amount of pool shares (LP tokens) in underlying principle
+ */
+export interface Message_sharesTargetWorth {
+    __kind: 'sharesTargetWorth'
+    shares: uint256
+}
+
+/**
+ *
+ */
+export interface Message_simulateDeposit {
+    __kind: 'simulateDeposit'
+    amount: uint256
+}
+
+/**
+ *
+ */
+export interface Message_simulateWithdrawal {
+    __kind: 'simulateWithdrawal'
+    shares: uint256
+}
+
+/**
+ *
+ */
+export interface Message_slippageCurve {
+    __kind: 'slippageCurve'
+}
+
+/**
+ *
+ */
+export interface Message_symbol {
+    __kind: 'symbol'
+}
+
+/**
+ *
+ */
+export interface Message_totalSupply {
+    __kind: 'totalSupply'
+}
+
+/**
+ *
+ */
+export interface Message_transfer {
+    __kind: 'transfer'
+    to: AccountId
+    amount: uint256
+}
+
+/**
+ *
+ */
+export interface Message_transferFrom {
+    __kind: 'transferFrom'
+    from: AccountId
+    to: AccountId
+    amount: uint256
+}
+
+/**
+ *
+ */
+export interface Message_transferOwnership {
+    __kind: 'transferOwnership'
+    newOwner: AccountId
+}
+
+/**
+ * Withdraws liquidity amount of asset ensuring minimum amount required Slippage is applied (withdrawal fee)
+ */
+export interface Message_withdraw {
+    __kind: 'withdraw'
+    shares: uint256
+    minimumAmount: uint256
+}
+
+/**
+ * withdraw from backstop pool, but receive excess liquidity
+of a swap pool without slippage, instead of backstop liquidity
+ */
+export interface Message_withdrawExcessSwapLiquidity {
+    __kind: 'withdrawExcessSwapLiquidity'
+    swapPool: AccountId
+    shares: uint256
+    minAmount: uint256
+}
+
+export type Event =
+    | Event_Approval
+    | Event_Burn
+    | Event_CoverSwapWithdrawal
+    | Event_Mint
+    | Event_OwnershipTransferred
+    | Event_Paused
+    | Event_Transfer
+    | Event_Unpaused
+    | Event_WithdrawSwapLiquidity
+
+export interface Event_Approval {
+    __kind: 'Approval'
+    owner: AccountId
+    spender: AccountId
+    value: uint256
+}
+
+export interface Event_Burn {
+    __kind: 'Burn'
+    sender: AccountId
+    poolSharesBurned: uint256
+    amountPrincipleWithdrawn: uint256
+}
+
+export interface Event_CoverSwapWithdrawal {
+    __kind: 'CoverSwapWithdrawal'
+    owner: AccountId
+    swapPool: AccountId
+    amountSwapShares: uint256
+    amountSwapTokens: uint256
+    amountBackstopTokens: uint256
+}
+
+export interface Event_Mint {
+    __kind: 'Mint'
+    sender: AccountId
+    poolSharesMinted: uint256
+    amountPrincipleDeposited: uint256
+}
+
+export interface Event_OwnershipTransferred {
+    __kind: 'OwnershipTransferred'
+    previousOwner: AccountId
+    newOwner: AccountId
+}
+
+export interface Event_Paused {
+    __kind: 'Paused'
+    account: AccountId
+}
+
+export interface Event_Transfer {
+    __kind: 'Transfer'
+    from: AccountId
+    to: AccountId
+    value: uint256
+}
+
+export interface Event_Unpaused {
+    __kind: 'Unpaused'
+    account: AccountId
+}
+
+export interface Event_WithdrawSwapLiquidity {
+    __kind: 'WithdrawSwapLiquidity'
+    owner: AccountId
+    swapPool: AccountId
+    amountSwapTokens: uint256
+    amountBackstopTokens: uint256
+}
+
+export type Result<T, E> =
+    | { __kind: 'Ok'; value: T }
+    | { __kind: 'Err'; value: E }

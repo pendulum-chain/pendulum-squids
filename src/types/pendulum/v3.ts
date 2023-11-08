@@ -1,14 +1,100 @@
 import { sts, Result, Option, Bytes, BitSequence } from './support'
 
+export type PairStatus =
+    | PairStatus_Bootstrap
+    | PairStatus_Disable
+    | PairStatus_Trading
+
+export interface PairStatus_Bootstrap {
+    __kind: 'Bootstrap'
+    value: BootstrapParameter
+}
+
+export interface PairStatus_Disable {
+    __kind: 'Disable'
+}
+
+export interface PairStatus_Trading {
+    __kind: 'Trading'
+    value: PairMetadata
+}
+
+export interface PairMetadata {
+    pairAccount: AccountId32
+    totalSupply: bigint
+}
+
+export interface BootstrapParameter {
+    targetSupply: [bigint, bigint]
+    capacitySupply: [bigint, bigint]
+    accumulatedSupply: [bigint, bigint]
+    endBlockNumber: number
+    pairAccount: AccountId32
+}
+
+export const PairStatus: sts.Type<PairStatus> = sts.closedEnum(() => {
+    return {
+        Bootstrap: BootstrapParameter,
+        Disable: sts.unit(),
+        Trading: PairMetadata,
+    }
+})
+
+export const PairMetadata: sts.Type<PairMetadata> = sts.struct(() => {
+    return {
+        pairAccount: AccountId32,
+        totalSupply: sts.bigint(),
+    }
+})
+
+export const BootstrapParameter: sts.Type<BootstrapParameter> = sts.struct(
+    () => {
+        return {
+            targetSupply: sts.tuple(() => [sts.bigint(), sts.bigint()]),
+            capacitySupply: sts.tuple(() => [sts.bigint(), sts.bigint()]),
+            accumulatedSupply: sts.tuple(() => [sts.bigint(), sts.bigint()]),
+            endBlockNumber: sts.number(),
+            pairAccount: AccountId32,
+        }
+    }
+)
+
+export interface AssetId {
+    chainId: number
+    assetType: number
+    assetIndex: bigint
+}
+
+export interface Type_449 {
+    blockchain: Bytes
+    symbol: Bytes
+}
+
+export interface CoinInfo {
+    symbol: Bytes
+    name: Bytes
+    blockchain: Bytes
+    supply: bigint
+    lastUpdateTimestamp: bigint
+    price: bigint
+}
+
+export const Type_449: sts.Type<Type_449> = sts.struct(() => {
+    return {
+        blockchain: sts.bytes(),
+        symbol: sts.bytes(),
+    }
+})
+
 export type AccountId32 = Bytes
 
-export interface Type_360 {
+export interface Type_418 {
     free: bigint
     reserved: bigint
     frozen: bigint
 }
 
-export const Type_360: sts.Type<Type_360> = sts.struct(() => {
+export const Type_418: sts.Type<Type_418> = sts.struct(() => {
     return {
         free: sts.bigint(),
         reserved: sts.bigint(),
@@ -24,125 +110,33 @@ export interface CurrencyId_Native {
 
 export interface CurrencyId_XCM {
     __kind: 'XCM'
-    value: ForeignCurrencyId
+    value: number
 }
 
-export type ForeignCurrencyId =
-    | ForeignCurrencyId_AUSD
-    | ForeignCurrencyId_BNC
-    | ForeignCurrencyId_GENS
-    | ForeignCurrencyId_HKO
-    | ForeignCurrencyId_KAR
-    | ForeignCurrencyId_KBTC
-    | ForeignCurrencyId_KILT
-    | ForeignCurrencyId_KINT
-    | ForeignCurrencyId_KSM
-    | ForeignCurrencyId_MOVR
-    | ForeignCurrencyId_PHA
-    | ForeignCurrencyId_SDN
-    | ForeignCurrencyId_TEER
-    | ForeignCurrencyId_USD
-    | ForeignCurrencyId_VsKSM
-    | ForeignCurrencyId_XOR
-    | ForeignCurrencyId_ZTG
+export const AssetId: sts.Type<AssetId> = sts.struct(() => {
+    return {
+        chainId: sts.number(),
+        assetType: sts.number(),
+        assetIndex: sts.bigint(),
+    }
+})
 
-export interface ForeignCurrencyId_AUSD {
-    __kind: 'AUSD'
-}
-
-export interface ForeignCurrencyId_BNC {
-    __kind: 'BNC'
-}
-
-export interface ForeignCurrencyId_GENS {
-    __kind: 'GENS'
-}
-
-export interface ForeignCurrencyId_HKO {
-    __kind: 'HKO'
-}
-
-export interface ForeignCurrencyId_KAR {
-    __kind: 'KAR'
-}
-
-export interface ForeignCurrencyId_KBTC {
-    __kind: 'KBTC'
-}
-
-export interface ForeignCurrencyId_KILT {
-    __kind: 'KILT'
-}
-
-export interface ForeignCurrencyId_KINT {
-    __kind: 'KINT'
-}
-
-export interface ForeignCurrencyId_KSM {
-    __kind: 'KSM'
-}
-
-export interface ForeignCurrencyId_MOVR {
-    __kind: 'MOVR'
-}
-
-export interface ForeignCurrencyId_PHA {
-    __kind: 'PHA'
-}
-
-export interface ForeignCurrencyId_SDN {
-    __kind: 'SDN'
-}
-
-export interface ForeignCurrencyId_TEER {
-    __kind: 'TEER'
-}
-
-export interface ForeignCurrencyId_USD {
-    __kind: 'USD'
-}
-
-export interface ForeignCurrencyId_VsKSM {
-    __kind: 'VsKSM'
-}
-
-export interface ForeignCurrencyId_XOR {
-    __kind: 'XOR'
-}
-
-export interface ForeignCurrencyId_ZTG {
-    __kind: 'ZTG'
-}
+export const CoinInfo: sts.Type<CoinInfo> = sts.struct(() => {
+    return {
+        symbol: sts.bytes(),
+        name: sts.bytes(),
+        blockchain: sts.bytes(),
+        supply: sts.bigint(),
+        lastUpdateTimestamp: sts.bigint(),
+        price: sts.bigint(),
+    }
+})
 
 export const AccountId32 = sts.bytes()
 
 export const CurrencyId: sts.Type<CurrencyId> = sts.closedEnum(() => {
     return {
         Native: sts.unit(),
-        XCM: ForeignCurrencyId,
+        XCM: sts.number(),
     }
 })
-
-export const ForeignCurrencyId: sts.Type<ForeignCurrencyId> = sts.closedEnum(
-    () => {
-        return {
-            AUSD: sts.unit(),
-            BNC: sts.unit(),
-            GENS: sts.unit(),
-            HKO: sts.unit(),
-            KAR: sts.unit(),
-            KBTC: sts.unit(),
-            KILT: sts.unit(),
-            KINT: sts.unit(),
-            KSM: sts.unit(),
-            MOVR: sts.unit(),
-            PHA: sts.unit(),
-            SDN: sts.unit(),
-            TEER: sts.unit(),
-            USD: sts.unit(),
-            VsKSM: sts.unit(),
-            XOR: sts.unit(),
-            ZTG: sts.unit(),
-        }
-    }
-)

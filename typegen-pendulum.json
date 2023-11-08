@@ -1,6 +1,6 @@
 {
     "outDir": "src/types/pendulum",
-    "specVersions": "https://v2.archive.subsquid.io/metadata/amplitude",
+    "specVersions": "pendulum-metadata.jsonl",
     "events": [
         "Balances.Transfer",
 

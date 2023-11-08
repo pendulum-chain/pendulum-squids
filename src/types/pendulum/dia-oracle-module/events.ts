@@ -7,19 +7,19 @@ import {
     EventType,
     RuntimeCtx,
 } from '../support'
-import * as v7 from '../v7'
+import * as v3 from '../v3'
 
 export const updatedPrices = {
     name: 'DiaOracleModule.UpdatedPrices',
     /**
      * Event is triggered when prices are updated
      */
-    v7: new EventType(
+    v3: new EventType(
         'DiaOracleModule.UpdatedPrices',
         sts.array(() =>
             sts.tuple(() => [
                 sts.tuple(() => [sts.bytes(), sts.bytes()]),
-                v7.CoinInfo,
+                v3.CoinInfo,
             ])
         )
     ),

@@ -7,53 +7,53 @@ import {
     StorageType,
     RuntimeCtx,
 } from '../support'
-import * as v7 from '../v7'
+import * as v1 from '../v1'
 
 export const coinInfosMap = {
     /**
      *  Map of all the coins names to their respective info and price
      */
-    v7: new StorageType(
+    v1: new StorageType(
         'DiaOracleModule.CoinInfosMap',
         'Default',
-        [v7.Type_445],
-        v7.CoinInfo
-    ) as CoinInfosMapV7,
+        [v1.Type_507],
+        v1.CoinInfo
+    ) as CoinInfosMapV1,
 }
 
 /**
  *  Map of all the coins names to their respective info and price
  */
-export interface CoinInfosMapV7 {
+export interface CoinInfosMapV1 {
     is(block: RuntimeCtx): boolean
-    getDefault(block: Block): v7.CoinInfo
-    get(block: Block, key: v7.Type_445): Promise<v7.CoinInfo | undefined>
+    getDefault(block: Block): v1.CoinInfo
+    get(block: Block, key: v1.Type_507): Promise<v1.CoinInfo | undefined>
     getMany(
         block: Block,
-        keys: v7.Type_445[]
-    ): Promise<(v7.CoinInfo | undefined)[]>
-    getKeys(block: Block): Promise<v7.Type_445[]>
-    getKeys(block: Block, key: v7.Type_445): Promise<v7.Type_445[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v7.Type_445[]>
+        keys: v1.Type_507[]
+    ): Promise<(v1.CoinInfo | undefined)[]>
+    getKeys(block: Block): Promise<v1.Type_507[]>
+    getKeys(block: Block, key: v1.Type_507): Promise<v1.Type_507[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v1.Type_507[]>
     getKeysPaged(
         pageSize: number,
         block: Block,
-        key: v7.Type_445
-    ): AsyncIterable<v7.Type_445[]>
+        key: v1.Type_507
+    ): AsyncIterable<v1.Type_507[]>
     getPairs(
         block: Block
-    ): Promise<[k: v7.Type_445, v: v7.CoinInfo | undefined][]>
+    ): Promise<[k: v1.Type_507, v: v1.CoinInfo | undefined][]>
     getPairs(
         block: Block,
-        key: v7.Type_445
-    ): Promise<[k: v7.Type_445, v: v7.CoinInfo | undefined][]>
+        key: v1.Type_507
+    ): Promise<[k: v1.Type_507, v: v1.CoinInfo | undefined][]>
     getPairsPaged(
         pageSize: number,
         block: Block
-    ): AsyncIterable<[k: v7.Type_445, v: v7.CoinInfo | undefined][]>
+    ): AsyncIterable<[k: v1.Type_507, v: v1.CoinInfo | undefined][]>
     getPairsPaged(
         pageSize: number,
         block: Block,
-        key: v7.Type_445
-    ): AsyncIterable<[k: v7.Type_445, v: v7.CoinInfo | undefined][]>
+        key: v1.Type_507
+    ): AsyncIterable<[k: v1.Type_507, v: v1.CoinInfo | undefined][]>
 }

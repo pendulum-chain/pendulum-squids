@@ -7,7 +7,7 @@ import {
     EventType,
     RuntimeCtx,
 } from '../support'
-import * as v7 from '../v7'
+import * as v3 from '../v3'
 
 export const liquidityAdded = {
     name: 'ZenlinkProtocol.LiquidityAdded',
@@ -15,12 +15,12 @@ export const liquidityAdded = {
      * Add liquidity. \[owner, asset_0, asset_1, add_balance_0, add_balance_1,
      * mint_balance_lp\]
      */
-    v7: new EventType(
+    v3: new EventType(
         'ZenlinkProtocol.LiquidityAdded',
         sts.tuple([
-            v7.AccountId32,
-            v7.AssetId,
-            v7.AssetId,
+            v3.AccountId32,
+            v3.AssetId,
+            v3.AssetId,
             sts.bigint(),
             sts.bigint(),
             sts.bigint(),
@@ -34,13 +34,13 @@ export const liquidityRemoved = {
      * Remove liquidity. \[owner, recipient, asset_0, asset_1, rm_balance_0, rm_balance_1,
      * burn_balance_lp\]
      */
-    v7: new EventType(
+    v3: new EventType(
         'ZenlinkProtocol.LiquidityRemoved',
         sts.tuple([
-            v7.AccountId32,
-            v7.AccountId32,
-            v7.AssetId,
-            v7.AssetId,
+            v3.AccountId32,
+            v3.AccountId32,
+            v3.AssetId,
+            v3.AssetId,
             sts.bigint(),
             sts.bigint(),
             sts.bigint(),
@@ -53,12 +53,12 @@ export const assetSwap = {
     /**
      * Transact in trading \[owner, recipient, swap_path, balances\]
      */
-    v7: new EventType(
+    v3: new EventType(
         'ZenlinkProtocol.AssetSwap',
         sts.tuple([
-            v7.AccountId32,
-            v7.AccountId32,
-            sts.array(() => v7.AssetId),
+            v3.AccountId32,
+            v3.AccountId32,
+            sts.array(() => v3.AssetId),
             sts.array(() => sts.bigint()),
         ])
     ),

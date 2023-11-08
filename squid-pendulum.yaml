@@ -1,11 +1,13 @@
 manifestVersion: subsquid.io/v0.1
 name: pendulum-squid
-version: 6
+version: 7
 description: 'Pendulum Squid'
 build:
 deploy:
     addons:
         postgres:
+            config:
+                statement_timeout: 60000
     processor:
         env:
             NETWORK: 'pendulum'
@@ -25,3 +27,14 @@ deploy:
             - '--dumb-cache-max-age'
             - '1000'
             - '--subscriptions'
+scale:
+    dedicated: true
+    addons:
+        postgres:
+            storage: 10G
+            profile: small
+    processor:
+        profile: small
+    api:
+        profile: small
+        replicas: 1

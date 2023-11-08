@@ -45,7 +45,6 @@ async function isSwapPoolEvent(ctx: EventHandlerContext) {
 async function isRouterEvent(ctx: EventHandlerContext) {
     try {
         const contract = new routerAbi.Contract(ctx, ctx.event.args.contract)
-        await contract.poolByAsset(new Uint8Array(32))
         return routerAbi.decodeEvent(ctx.event.args.data)
     } catch {
         return undefined
@@ -162,7 +161,7 @@ export async function backstopHandleCoverSwapWithdrawal(
     event: backstopPoolAbi.Event_CoverSwapWithdrawal
 ) {
     const backstop = await getOrCreateBackstopPool(ctx, ctx.event.args.contract)
-    const pool = await getOrCreateSwapPool(ctx, toHex(event.swapPool))
+    const pool = await getOrCreateSwapPool(ctx, event.swapPool)
 
     updateBackstopCoverageAndSupply(ctx, backstop)
     updateSwapPoolCoverageAndSupply(ctx, pool)
@@ -210,7 +209,7 @@ export async function backstopHandleWithdrawSwapLiquidity(
     event: backstopPoolAbi.Event_WithdrawSwapLiquidity
 ) {
     const backstop = await getOrCreateBackstopPool(ctx, ctx.event.args.contract)
-    const pool = await getOrCreateSwapPool(ctx, toHex(event.swapPool))
+    const pool = await getOrCreateSwapPool(ctx, event.swapPool)
     await updateBackstopCoverageAndSupply(ctx, backstop)
     await updateSwapPoolCoverageAndSupply(ctx, pool)
 
@@ -300,7 +299,7 @@ export async function routerHandleSwapPoolRegistered(
     event: routerAbi.Event_SwapPoolRegistered
 ) {
     await getOrCreateRouter(ctx, ctx.event.args.contract)
-    await getOrCreateSwapPool(ctx, toHex(event.pool))
+    await getOrCreateSwapPool(ctx, event.pool)
 }
 
 export async function updateBackstopCoverageAndSupply(
@@ -331,22 +330,16 @@ export async function getOrCreateBackstopPool(
     ctx: EventHandlerContext,
     hexAddress: string
 ) {
-    let address = codec(config.prefix).encode(hexToU8a(hexAddress))
+    let address = codec(config.prefix).encode(hexAddress)
     let backstop = await ctx.store.get(BackstopPool, address)
     if (!backstop) {
         const contract = new backstopPoolAbi.Contract(ctx, hexAddress)
-        let router = await getOrCreateRouter(
-            ctx,
-            toHex(await contract.router())
-        )
+        let router = await getOrCreateRouter(ctx, await contract.router())
         let coverage = await contract.coverage()
         backstop = new BackstopPool({
             id: address,
             router: router,
-            token: await getOrCreateNablaToken(
-                ctx,
-                toHex(await contract.asset())
-            ),
+            token: await getOrCreateNablaToken(ctx, await contract.asset()),
             totalSupply: await contract.totalSupply(),
             reserves: coverage[0],
             liabilities: coverage[1],
@@ -361,7 +354,7 @@ export async function getOrCreateRouter(
     ctx: EventHandlerContext,
     hexAddress: string
 ) {
-    let address = codec(config.prefix).encode(hexToU8a(hexAddress))
+    let address = codec(config.prefix).encode(hexAddress)
     let router = await ctx.store.get(Router, address)
     if (!router) {
         router = new Router({
@@ -377,7 +370,7 @@ export async function getOrCreateNablaToken(
     ctx: EventHandlerContext,
     hexAddress: string
 ) {
-    let address = codec(config.prefix).encode(hexToU8a(hexAddress))
+    let address = codec(config.prefix).encode(hexAddress)
     let nablaToken = await ctx.store.get(NablaToken, address)
     if (!nablaToken) {
         const contract = new erc20Abi.Contract(ctx, hexAddress)
@@ -396,22 +389,16 @@ export async function getOrCreateSwapPool(
     ctx: EventHandlerContext,
     hexAddress: string
 ) {
-    let address = codec(config.prefix).encode(hexToU8a(hexAddress))
+    let address = codec(config.prefix).encode(hexAddress)
     let swapPool = await ctx.store.get(SwapPool, address)
     if (!swapPool) {
         const contract = new swapPoolAbi.Contract(ctx, hexAddress)
-        let router = await getOrCreateRouter(
-            ctx,
-            toHex(await contract.router())
-        )
+        let router = await getOrCreateRouter(ctx, await contract.router())
         let backstop = await getOrCreateBackstopPool(
             ctx,
-            toHex(await contract.backstop())
+            await contract.backstop()
         )
-        let token = await getOrCreateNablaToken(
-            ctx,
-            toHex(await contract.asset())
-        )
+        let token = await getOrCreateNablaToken(ctx, await contract.asset())
         let coverage = await contract.coverage()
         swapPool = new SwapPool({
             id: address,

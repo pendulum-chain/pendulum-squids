@@ -163,6 +163,8 @@ export function currencyIdToAssetIndex(currency: CurrencyId): number {
                     tokenIndex = 0
                     break
                 case 'AlphaNum4':
+                    // TODO also a different representation (before was u8, now comes as string
+                    // but is it already hex represented?)
                     switch (u8a2s(hexToU8a(currency.value.code))) {
                         case 'USDC':
                             tokenIndex = 1
@@ -230,10 +232,10 @@ export async function getPairAssetIdFromAssets(
             let versionStorage
             if (network === 'foucoco') {
                 versionStorage =
-                    foucocoStorage.zenlinkProtocol.liquidityPairs.v7
+                    foucocoStorage.zenlinkProtocol.liquidityPairs.v1
             } else if (network === 'pendulum') {
                 versionStorage =
-                    pendulumStorage.zenlinkProtocol.liquidityPairs.v7
+                    pendulumStorage.zenlinkProtocol.liquidityPairs.v3
             } else {
                 versionStorage =
                     amplitudeStorage.zenlinkProtocol.liquidityPairs.v7
@@ -266,12 +268,11 @@ export async function getPairStatusFromAssets(
         return [pairAccount!, BigInt(0)]
     } else {
         const versionStorage = (() => {
-            let baseStorage
             let versionStorage
             if (network === 'foucoco') {
-                versionStorage = foucocoStorage.zenlinkProtocol.pairStatuses.v7
+                versionStorage = foucocoStorage.zenlinkProtocol.pairStatuses.v1
             } else if (network === 'pendulum') {
-                versionStorage = pendulumStorage.zenlinkProtocol.pairStatuses.v7
+                versionStorage = pendulumStorage.zenlinkProtocol.pairStatuses.v3
             } else {
                 versionStorage =
                     amplitudeStorage.zenlinkProtocol.pairStatuses.v7
@@ -310,26 +311,51 @@ export async function getTokenBalance(
                 return amplitudeStorage.system.account.v1
             }
         })()
-        result = (await systemAccountStorage.get(ctx.block, account))!.data
+        result = (await systemAccountStorage.get(ctx.block, account))?.data
     } else {
         if (network === 'foucoco') {
-            result = await foucocoStorage.tokens.accounts.v10.get(
+            result = await foucocoStorage.tokens.accounts.v1.get(
                 ctx.block,
                 account,
                 assetId as any
             )
         } else if (network === 'pendulum') {
-            result = await pendulumStorage.tokens.accounts.v10.get(
-                ctx.block,
-                account,
-                assetId as any
-            )
+            if (pendulumStorage.tokens.accounts.v1.is(ctx.block)) {
+                result = await pendulumStorage.tokens.accounts.v1.get(
+                    ctx.block,
+                    account,
+                    assetId as any
+                )
+            }
+            if (pendulumStorage.tokens.accounts.v3.is(ctx.block)) {
+                result = await pendulumStorage.tokens.accounts.v3.get(
+                    ctx.block,
+                    account,
+                    assetId as any
+                )
+            }
         } else {
-            result = await amplitudeStorage.tokens.accounts.v10.get(
-                ctx.block,
-                account,
-                assetId as any
-            )
+            if (amplitudeStorage.tokens.accounts.v3.is(ctx.block)) {
+                result = await amplitudeStorage.tokens.accounts.v3.get(
+                    ctx.block,
+                    account,
+                    assetId as any
+                )
+            }
+            if (amplitudeStorage.tokens.accounts.v8.is(ctx.block)) {
+                result = await amplitudeStorage.tokens.accounts.v8.get(
+                    ctx.block,
+                    account,
+                    assetId as any
+                )
+            }
+            if (amplitudeStorage.tokens.accounts.v10.is(ctx.block)) {
+                result = await amplitudeStorage.tokens.accounts.v10.get(
+                    ctx.block,
+                    account,
+                    assetId as any
+                )
+            }
         }
     }
 
@@ -354,20 +380,42 @@ export async function getTotalIssuance(
         result = await balanceIssuanceStorage.get(ctx.block)
     } else {
         if (network === 'foucoco') {
-            result = await foucocoStorage.tokens.totalIssuance.v10.get(
+            result = await foucocoStorage.tokens.totalIssuance.v1.get(
                 ctx.block,
                 assetId
             )
         } else if (network === 'pendulum') {
-            result = await pendulumStorage.tokens.totalIssuance.v10.get(
-                ctx.block,
-                assetId
-            )
+            if (pendulumStorage.tokens.totalIssuance.v1.is(ctx.block)) {
+                result = await pendulumStorage.tokens.totalIssuance.v3.get(
+                    ctx.block,
+                    assetId as any
+                )
+            }
+            if (pendulumStorage.tokens.totalIssuance.v3.is(ctx.block)) {
+                result = await pendulumStorage.tokens.totalIssuance.v3.get(
+                    ctx.block,
+                    assetId as any
+                )
+            }
         } else {
-            result = await amplitudeStorage.tokens.totalIssuance.v10.get(
-                ctx.block,
-                assetId
-            )
+            if (amplitudeStorage.tokens.totalIssuance.v3.is(ctx.block)) {
+                result = await amplitudeStorage.tokens.totalIssuance.v3.get(
+                    ctx.block,
+                    assetId as any
+                )
+            }
+            if (amplitudeStorage.tokens.totalIssuance.v8.is(ctx.block)) {
+                result = await amplitudeStorage.tokens.totalIssuance.v8.get(
+                    ctx.block,
+                    assetId as any
+                )
+            }
+            if (amplitudeStorage.tokens.totalIssuance.v10.is(ctx.block)) {
+                result = await amplitudeStorage.tokens.totalIssuance.v10.get(
+                    ctx.block,
+                    assetId as any
+                )
+            }
         }
     }
 
@@ -396,23 +444,48 @@ export async function getTokenBurned(
         result = (await systemAccountStorage.get(ctx.block, account))!.data
     } else {
         if (network === 'foucoco') {
-            result = await foucocoStorage.tokens.accounts.v10.get(
+            result = await foucocoStorage.tokens.accounts.v1.get(
                 ctx.block,
                 account,
                 assetId as any
             )
         } else if (network === 'pendulum') {
-            result = await pendulumStorage.tokens.accounts.v10.get(
-                ctx.block,
-                account,
-                assetId as any
-            )
+            if (pendulumStorage.tokens.accounts.v1.is(ctx.block)) {
+                result = await pendulumStorage.tokens.accounts.v1.get(
+                    ctx.block,
+                    account,
+                    assetId as any
+                )
+            }
+            if (pendulumStorage.tokens.accounts.v3.is(ctx.block)) {
+                result = await pendulumStorage.tokens.accounts.v3.get(
+                    ctx.block,
+                    account,
+                    assetId as any
+                )
+            }
         } else {
-            result = await amplitudeStorage.tokens.accounts.v10.get(
-                ctx.block,
-                account,
-                assetId as any
-            )
+            if (amplitudeStorage.tokens.accounts.v3.is(ctx.block)) {
+                result = await amplitudeStorage.tokens.accounts.v3.get(
+                    ctx.block,
+                    account,
+                    assetId as any
+                )
+            }
+            if (amplitudeStorage.tokens.accounts.v8.is(ctx.block)) {
+                result = await amplitudeStorage.tokens.accounts.v8.get(
+                    ctx.block,
+                    account,
+                    assetId as any
+                )
+            }
+            if (amplitudeStorage.tokens.accounts.v10.is(ctx.block)) {
+                result = await amplitudeStorage.tokens.accounts.v10.get(
+                    ctx.block,
+                    account,
+                    assetId as any
+                )
+            }
         }
     }
 

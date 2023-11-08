@@ -1992,8 +1992,6 @@ export type uint256 = bigint
 
 export type uint8 = number
 
-export type string = string
-
 export type Constructor = Constructor_new
 
 /**

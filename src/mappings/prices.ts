@@ -2,13 +2,13 @@ import { EventHandlerContext } from '../processor'
 import { foucocoEvents, amplitudeEvents, pendulumEvents } from '../types/events'
 import { network } from '../config'
 import { getOrCreateOraclePrice } from '../entities/oraclePrice'
-
+import { hexToString } from '@polkadot/util'
 export async function handleUpdatedPrices(ctx: EventHandlerContext) {
     let event
     if (network === 'foucoco') {
-        event = foucocoEvents.diaOracleModule.updatedPrices.v7.decode(ctx.event)
+        event = foucocoEvents.diaOracleModule.updatedPrices.v1.decode(ctx.event)
     } else if (network === 'pendulum') {
-        event = pendulumEvents.diaOracleModule.updatedPrices.v7.decode(
+        event = pendulumEvents.diaOracleModule.updatedPrices.v3.decode(
             ctx.event
         )
     } else {
@@ -24,8 +24,8 @@ export async function handleUpdatedPrices(ctx: EventHandlerContext) {
             [1]: coinInfo,
         } = data
 
-        const blockchain = blockchainEncoded.toString()
-        const symbol = symbolEncoded.toString()
+        const blockchain = hexToString(blockchainEncoded.toString())
+        const symbol = hexToString(symbolEncoded.toString())
 
         const oraclePrice = await getOrCreateOraclePrice(
             ctx,

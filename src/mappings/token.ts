@@ -111,9 +111,14 @@ export async function handleTokenDeposited(ctx: EventHandlerContext) {
     if (!transactionHash) return
     let event
     if (network === 'foucoco') {
-        event = foucocoEvents.tokens.deposited.v10.decode(ctx.event)
+        event = foucocoEvents.tokens.deposited.v1.decode(ctx.event)
     } else if (network === 'pendulum') {
-        event = pendulumEvents.tokens.deposited.v10.decode(ctx.event)
+        if (pendulumEvents.tokens.deposited.v1.is(ctx.event)) {
+            event = pendulumEvents.tokens.deposited.v1.decode(ctx.event)
+        }
+        if (pendulumEvents.tokens.deposited.v3.is(ctx.event)) {
+            event = pendulumEvents.tokens.deposited.v3.decode(ctx.event)
+        }
     } else {
         if (amplitudeEvents.tokens.deposited.v3.is(ctx.event)) {
             event = amplitudeEvents.tokens.deposited.v3.decode(ctx.event)
@@ -259,9 +264,14 @@ export async function handleTokenWithdrawn(ctx: EventHandlerContext) {
 
     let event
     if (network === 'foucoco') {
-        event = foucocoEvents.tokens.withdrawn.v10.decode(ctx.event)
+        event = foucocoEvents.tokens.withdrawn.v1.decode(ctx.event)
     } else if (network === 'pendulum') {
-        event = pendulumEvents.tokens.withdrawn.v10.decode(ctx.event)
+        if (pendulumEvents.tokens.withdrawn.v1.is(ctx.event)) {
+            event = pendulumEvents.tokens.withdrawn.v1.decode(ctx.event)
+        }
+        if (pendulumEvents.tokens.withdrawn.v3.is(ctx.event)) {
+            event = pendulumEvents.tokens.withdrawn.v3.decode(ctx.event)
+        }
     } else {
         if (amplitudeEvents.tokens.withdrawn.v3.is(ctx.event)) {
             event = amplitudeEvents.tokens.withdrawn.v3.decode(ctx.event)
@@ -404,9 +414,14 @@ export async function handleTokenWithdrawn(ctx: EventHandlerContext) {
 export async function handleTokenTransfer(ctx: EventHandlerContext) {
     let event
     if (network === 'foucoco') {
-        event = foucocoEvents.tokens.transfer.v10.decode(ctx.event)
+        event = foucocoEvents.tokens.transfer.v1.decode(ctx.event)
     } else if (network === 'pendulum') {
-        event = pendulumEvents.tokens.transfer.v10.decode(ctx.event)
+        if (pendulumEvents.tokens.transfer.v1.is(ctx.event)) {
+            event = pendulumEvents.tokens.transfer.v1.decode(ctx.event)
+        }
+        if (pendulumEvents.tokens.transfer.v3.is(ctx.event)) {
+            event = pendulumEvents.tokens.transfer.v3.decode(ctx.event)
+        }
     } else {
         if (amplitudeEvents.tokens.transfer.v3.is(ctx.event)) {
             event = amplitudeEvents.tokens.transfer.v3.decode(ctx.event)

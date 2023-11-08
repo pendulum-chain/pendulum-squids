@@ -30,7 +30,6 @@ import {
     updateTokenDayData,
     updateZenlinkInfo,
 } from '../utils/updates'
-const { hexToU8a } = require('@polkadot/util')
 
 export async function handleLiquiditySync(
     ctx: EventHandlerContext,
@@ -39,7 +38,6 @@ export async function handleLiquiditySync(
     const bundle = (await ctx.store.get(Bundle, '1'))!
     const factory = (await getFactory(ctx))!
     const { token0, token1 } = pair
-
     const asset0 = assetIdFromAddress(token0.id)
     const asset1 = assetIdFromAddress(token1.id)
     const [pairAccount] = await getPairStatusFromAssets(ctx, [asset0, asset1])
@@ -167,11 +165,11 @@ export async function handleLiquidityAdded(ctx: EventHandlerContext) {
 
     let event
     if (network === 'foucoco') {
-        event = foucocoEvents.zenlinkProtocol.liquidityAdded.v7.decode(
+        event = foucocoEvents.zenlinkProtocol.liquidityAdded.v1.decode(
             ctx.event
         )
     } else if (network == 'pendulum') {
-        event = pendulumEvents.zenlinkProtocol.liquidityAdded.v7.decode(
+        event = pendulumEvents.zenlinkProtocol.liquidityAdded.v3.decode(
             ctx.event
         )
     } else {
@@ -243,11 +241,11 @@ export async function handleLiquidityRemoved(ctx: EventHandlerContext) {
 
     let event
     if (network === 'foucoco') {
-        event = foucocoEvents.zenlinkProtocol.liquidityRemoved.v7.decode(
+        event = foucocoEvents.zenlinkProtocol.liquidityRemoved.v1.decode(
             ctx.event
         )
     } else if (network == 'pendulum') {
-        event = pendulumEvents.zenlinkProtocol.liquidityRemoved.v7.decode(
+        event = pendulumEvents.zenlinkProtocol.liquidityRemoved.v3.decode(
             ctx.event
         )
     } else {
@@ -335,9 +333,9 @@ export async function handleAssetSwap(ctx: EventHandlerContext) {
 
     let event
     if (network === 'foucoco') {
-        event = foucocoEvents.zenlinkProtocol.assetSwap.v7.decode(ctx.event)
+        event = foucocoEvents.zenlinkProtocol.assetSwap.v1.decode(ctx.event)
     } else if (network == 'pendulum') {
-        event = pendulumEvents.zenlinkProtocol.assetSwap.v7.decode(ctx.event)
+        event = pendulumEvents.zenlinkProtocol.assetSwap.v3.decode(ctx.event)
     } else {
         event = amplitudeEvents.zenlinkProtocol.assetSwap.v7.decode(ctx.event)
     }

@@ -88,7 +88,6 @@ const processor = new SubstrateBatchProcessor()
             'Tokens.BalanceSet',
             // Contracts
             'Contracts.ContractEmitted',
-            //Perhaps as in docs 'EVM.Log',
         ],
         call: true,
         extrinsic: true,

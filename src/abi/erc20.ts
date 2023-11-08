@@ -1,554 +1,822 @@
 import { Abi, Bytes, encodeCall, decodeResult } from '@subsquid/ink-abi'
 
 export const metadata = {
-    source: {
-        hash: '0x2ab457554b75e4fa0be68a2a768a7e422d3f39ffc0fdcb00faeda8f5a8683bdd',
-        language: 'ink! 3.0.1',
-        compiler: 'rustc 1.63.0-nightly',
-    },
     contract: {
-        name: 'erc20',
-        version: '3.2.0',
-        authors: ['Parity Technologies <admin@parity.io>'],
+        authors: ['unknown'],
+        name: 'TestableERC20Wrapper',
+        version: '0.0.1',
     },
-    V3: {
-        spec: {
-            constructors: [
-                {
-                    args: [
-                        {
-                            label: 'initial_supply',
-                            type: {
-                                displayName: ['Balance'],
-                                type: 0,
-                            },
-                        },
-                    ],
-                    docs: [
-                        'Creates a new ERC-20 contract with the specified initial supply.',
-                    ],
-                    label: 'new',
-                    payable: false,
-                    selector: '0x9bae9d5e',
-                },
-            ],
-            docs: [],
-            events: [
-                {
-                    args: [
-                        {
-                            docs: [],
-                            indexed: true,
-                            label: 'from',
-                            type: {
-                                displayName: ['Option'],
-                                type: 11,
-                            },
-                        },
-                        {
-                            docs: [],
-                            indexed: true,
-                            label: 'to',
-                            type: {
-                                displayName: ['Option'],
-                                type: 11,
-                            },
-                        },
-                        {
-                            docs: [],
-                            indexed: false,
-                            label: 'value',
-                            type: {
-                                displayName: ['Balance'],
-                                type: 0,
-                            },
-                        },
-                    ],
-                    docs: [' Event emitted when a token transfer occurs.'],
-                    label: 'Transfer',
-                },
-                {
-                    args: [
-                        {
-                            docs: [],
-                            indexed: true,
-                            label: 'owner',
-                            type: {
-                                displayName: ['AccountId'],
-                                type: 2,
-                            },
-                        },
-                        {
-                            docs: [],
-                            indexed: true,
-                            label: 'spender',
-                            type: {
-                                displayName: ['AccountId'],
-                                type: 2,
-                            },
-                        },
-                        {
-                            docs: [],
-                            indexed: false,
-                            label: 'value',
-                            type: {
-                                displayName: ['Balance'],
-                                type: 0,
-                            },
-                        },
-                    ],
-                    docs: [
-                        ' Event emitted when an approval occurs that `spender` is allowed to withdraw',
-                        ' up to the amount of `value` tokens from `owner`.',
-                    ],
-                    label: 'Approval',
-                },
-            ],
-            messages: [
-                {
-                    args: [],
-                    docs: [' Returns the total token supply.'],
-                    label: 'total_supply',
-                    mutates: false,
-                    payable: false,
-                    returnType: {
-                        displayName: ['Balance'],
-                        type: 0,
-                    },
-                    selector: '0xdb6375a8',
-                },
-                {
-                    args: [
-                        {
-                            label: 'owner',
-                            type: {
-                                displayName: ['AccountId'],
-                                type: 2,
-                            },
-                        },
-                    ],
-                    docs: [
-                        ' Returns the account balance for the specified `owner`.',
-                        '',
-                        ' Returns `0` if the account is non-existent.',
-                    ],
-                    label: 'balance_of',
-                    mutates: false,
-                    payable: false,
-                    returnType: {
-                        displayName: ['Balance'],
-                        type: 0,
-                    },
-                    selector: '0x0f755a56',
-                },
-                {
-                    args: [
-                        {
-                            label: 'owner',
-                            type: {
-                                displayName: ['AccountId'],
-                                type: 2,
-                            },
-                        },
-                        {
-                            label: 'spender',
-                            type: {
-                                displayName: ['AccountId'],
-                                type: 2,
-                            },
-                        },
-                    ],
-                    docs: [
-                        ' Returns the amount which `spender` is still allowed to withdraw from `owner`.',
-                        '',
-                        ' Returns `0` if no allowance has been set.',
-                    ],
-                    label: 'allowance',
-                    mutates: false,
-                    payable: false,
-                    returnType: {
-                        displayName: ['Balance'],
-                        type: 0,
-                    },
-                    selector: '0x6a00165e',
-                },
-                {
-                    args: [
-                        {
-                            label: 'to',
-                            type: {
-                                displayName: ['AccountId'],
-                                type: 2,
-                            },
-                        },
-                        {
-                            label: 'value',
-                            type: {
-                                displayName: ['Balance'],
-                                type: 0,
-                            },
-                        },
-                    ],
-                    docs: [
-                        " Transfers `value` amount of tokens from the caller's account to account `to`.",
-                        '',
-                        ' On success a `Transfer` event is emitted.',
-                        '',
-                        ' # Errors',
-                        '',
-                        ' Returns `InsufficientBalance` error if there are not enough tokens on',
-                        " the caller's account balance.",
-                    ],
-                    label: 'transfer',
-                    mutates: true,
-                    payable: false,
-                    returnType: {
-                        displayName: ['Result'],
-                        type: 8,
-                    },
-                    selector: '0x84a15da1',
-                },
-                {
-                    args: [
-                        {
-                            label: 'spender',
-                            type: {
-                                displayName: ['AccountId'],
-                                type: 2,
-                            },
-                        },
-                        {
-                            label: 'value',
-                            type: {
-                                displayName: ['Balance'],
-                                type: 0,
-                            },
-                        },
-                    ],
-                    docs: [
-                        " Allows `spender` to withdraw from the caller's account multiple times, up to",
-                        ' the `value` amount.',
-                        '',
-                        ' If this function is called again it overwrites the current allowance with `value`.',
-                        '',
-                        ' An `Approval` event is emitted.',
-                    ],
-                    label: 'approve',
-                    mutates: true,
-                    payable: false,
-                    returnType: {
-                        displayName: ['Result'],
-                        type: 8,
-                    },
-                    selector: '0x681266a0',
-                },
-                {
-                    args: [
-                        {
-                            label: 'from',
-                            type: {
-                                displayName: ['AccountId'],
-                                type: 2,
-                            },
-                        },
-                        {
-                            label: 'to',
-                            type: {
-                                displayName: ['AccountId'],
-                                type: 2,
-                            },
-                        },
-                        {
-                            label: 'value',
-                            type: {
-                                displayName: ['Balance'],
-                                type: 0,
-                            },
-                        },
-                    ],
-                    docs: [
-                        ' Transfers `value` tokens on the behalf of `from` to the account `to`.',
-                        '',
-                        ' This can be used to allow a contract to transfer tokens on ones behalf and/or',
-                        ' to charge fees in sub-currencies, for example.',
-                        '',
-                        ' On success a `Transfer` event is emitted.',
-                        '',
-                        ' # Errors',
-                        '',
-                        ' Returns `InsufficientAllowance` error if there are not enough tokens allowed',
-                        ' for the caller to withdraw from `from`.',
-                        '',
-                        ' Returns `InsufficientBalance` error if there are not enough tokens on',
-                        ' the account balance of `from`.',
-                    ],
-                    label: 'transfer_from',
-                    mutates: true,
-                    payable: false,
-                    returnType: {
-                        displayName: ['Result'],
-                        type: 8,
-                    },
-                    selector: '0x0b396f18',
-                },
-            ],
-        },
-        storage: {
-            struct: {
-                fields: [
-                    {
-                        layout: {
-                            cell: {
-                                key: '0x0000000000000000000000000000000000000000000000000000000000000000',
-                                ty: 0,
-                            },
-                        },
-                        name: 'total_supply',
-                    },
-                    {
-                        layout: {
-                            cell: {
-                                key: '0x0100000000000000000000000000000000000000000000000000000000000000',
-                                ty: 1,
-                            },
-                        },
-                        name: 'balances',
-                    },
-                    {
-                        layout: {
-                            cell: {
-                                key: '0x0200000000000000000000000000000000000000000000000000000000000000',
-                                ty: 6,
-                            },
-                        },
-                        name: 'allowances',
-                    },
-                ],
-            },
-        },
-        types: [
+    source: {
+        compiler: 'solang 0.3.2',
+        hash: '0xcb7e8effdd0165c396793be92cac69d3a78f35d496a4d9a9423e84aac20c5eb4',
+        language: 'Solidity 0.3.2',
+    },
+    spec: {
+        constructors: [
             {
-                id: 0,
-                type: {
-                    def: {
-                        primitive: 'u128',
-                    },
-                },
-            },
-            {
-                id: 1,
-                type: {
-                    def: {
-                        composite: {
-                            fields: [
-                                {
-                                    name: 'offset_key',
-                                    type: 5,
-                                    typeName: 'Key',
-                                },
-                            ],
-                        },
-                    },
-                    params: [
-                        {
-                            name: 'K',
-                            type: 2,
-                        },
-                        {
-                            name: 'V',
+                args: [
+                    {
+                        label: 'name_',
+                        type: {
+                            displayName: ['string'],
                             type: 0,
                         },
-                    ],
-                    path: ['ink_storage', 'lazy', 'mapping', 'Mapping'],
-                },
-            },
-            {
-                id: 2,
-                type: {
-                    def: {
-                        composite: {
-                            fields: [
-                                {
-                                    type: 3,
-                                    typeName: '[u8; 32]',
-                                },
-                            ],
+                    },
+                    {
+                        label: 'symbol_',
+                        type: {
+                            displayName: ['string'],
+                            type: 0,
                         },
                     },
-                    path: ['ink_env', 'types', 'AccountId'],
-                },
-            },
-            {
-                id: 3,
-                type: {
-                    def: {
-                        array: {
-                            len: 32,
+                    {
+                        label: 'decimals_',
+                        type: {
+                            displayName: ['uint8'],
+                            type: 1,
+                        },
+                    },
+                    {
+                        label: 'variant_',
+                        type: {
+                            displayName: [],
+                            type: 2,
+                        },
+                    },
+                    {
+                        label: 'index_',
+                        type: {
+                            displayName: [],
+                            type: 2,
+                        },
+                    },
+                    {
+                        label: 'code_',
+                        type: {
+                            displayName: [],
+                            type: 3,
+                        },
+                    },
+                    {
+                        label: 'issuer_',
+                        type: {
+                            displayName: [],
                             type: 4,
                         },
                     },
-                },
+                ],
+                default: false,
+                docs: [''],
+                label: 'new',
+                payable: false,
+                returnType: null,
+                selector: '0xd3b751bd',
             },
-            {
-                id: 4,
-                type: {
-                    def: {
-                        primitive: 'u8',
-                    },
-                },
+        ],
+        docs: [''],
+        environment: {
+            accountId: {
+                displayName: ['AccountId'],
+                type: 6,
             },
+            balance: {
+                displayName: ['Balance'],
+                type: 8,
+            },
+            blockNumber: {
+                displayName: ['BlockNumber'],
+                type: 9,
+            },
+            chainExtension: {
+                displayName: [],
+                type: 0,
+            },
+            hash: {
+                displayName: ['Hash'],
+                type: 10,
+            },
+            maxEventTopics: 4,
+            timestamp: {
+                displayName: ['Timestamp'],
+                type: 9,
+            },
+        },
+        events: [
             {
-                id: 5,
-                type: {
-                    def: {
-                        composite: {
-                            fields: [
-                                {
-                                    type: 3,
-                                    typeName: '[u8; 32]',
-                                },
+                args: [
+                    {
+                        docs: [],
+                        indexed: true,
+                        label: 'from',
+                        type: {
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
                             ],
+                            type: 6,
                         },
                     },
-                    path: ['ink_primitives', 'Key'],
-                },
-            },
-            {
-                id: 6,
-                type: {
-                    def: {
-                        composite: {
-                            fields: [
-                                {
-                                    name: 'offset_key',
-                                    type: 5,
-                                    typeName: 'Key',
-                                },
+                    {
+                        docs: [],
+                        indexed: true,
+                        label: 'to',
+                        type: {
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
                             ],
+                            type: 6,
                         },
                     },
-                    params: [
-                        {
-                            name: 'K',
-                            type: 7,
+                    {
+                        docs: [],
+                        indexed: false,
+                        label: 'value',
+                        type: {
+                            displayName: ['uint256'],
+                            type: 5,
                         },
-                        {
-                            name: 'V',
-                            type: 0,
-                        },
-                    ],
-                    path: ['ink_storage', 'lazy', 'mapping', 'Mapping'],
-                },
-            },
-            {
-                id: 7,
-                type: {
-                    def: {
-                        tuple: [2, 2],
                     },
-                },
+                ],
+                docs: [''],
+                label: 'Transfer',
             },
             {
-                id: 8,
-                type: {
-                    def: {
-                        variant: {
-                            variants: [
-                                {
-                                    fields: [
-                                        {
-                                            type: 9,
-                                        },
-                                    ],
-                                    index: 0,
-                                    name: 'Ok',
-                                },
-                                {
-                                    fields: [
-                                        {
-                                            type: 10,
-                                        },
-                                    ],
-                                    index: 1,
-                                    name: 'Err',
-                                },
+                args: [
+                    {
+                        docs: [],
+                        indexed: true,
+                        label: 'owner',
+                        type: {
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
                             ],
+                            type: 6,
                         },
                     },
-                    params: [
-                        {
-                            name: 'T',
-                            type: 9,
-                        },
-                        {
-                            name: 'E',
-                            type: 10,
-                        },
-                    ],
-                    path: ['Result'],
-                },
-            },
-            {
-                id: 9,
-                type: {
-                    def: {
-                        tuple: [],
-                    },
-                },
-            },
-            {
-                id: 10,
-                type: {
-                    def: {
-                        variant: {
-                            variants: [
-                                {
-                                    index: 0,
-                                    name: 'InsufficientBalance',
-                                },
-                                {
-                                    index: 1,
-                                    name: 'InsufficientAllowance',
-                                },
+                    {
+                        docs: [],
+                        indexed: true,
+                        label: 'spender',
+                        type: {
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
                             ],
+                            type: 6,
                         },
                     },
-                    path: ['erc20', 'erc20', 'Error'],
-                },
+                    {
+                        docs: [],
+                        indexed: false,
+                        label: 'value',
+                        type: {
+                            displayName: ['uint256'],
+                            type: 5,
+                        },
+                    },
+                ],
+                docs: [''],
+                label: 'Approval',
             },
             {
-                id: 11,
-                type: {
-                    def: {
-                        variant: {
-                            variants: [
-                                {
-                                    index: 0,
-                                    name: 'None',
-                                },
-                                {
-                                    fields: [
-                                        {
-                                            type: 2,
-                                        },
-                                    ],
-                                    index: 1,
-                                    name: 'Some',
-                                },
+                args: [
+                    {
+                        docs: [],
+                        indexed: true,
+                        label: 'to',
+                        type: {
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
                             ],
+                            type: 6,
                         },
                     },
-                    params: [
-                        {
-                            name: 'T',
-                            type: 2,
+                    {
+                        docs: [],
+                        indexed: false,
+                        label: 'value',
+                        type: {
+                            displayName: ['uint256'],
+                            type: 5,
                         },
-                    ],
-                    path: ['Option'],
+                    },
+                ],
+                docs: [''],
+                label: 'Mint',
+            },
+            {
+                args: [
+                    {
+                        docs: [],
+                        indexed: true,
+                        label: 'from',
+                        type: {
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
+                            type: 6,
+                        },
+                    },
+                    {
+                        docs: [],
+                        indexed: false,
+                        label: 'value',
+                        type: {
+                            displayName: ['uint256'],
+                            type: 5,
+                        },
+                    },
+                ],
+                docs: [''],
+                label: 'Burn',
+            },
+        ],
+        lang_error: {
+            displayName: ['SolidityError'],
+            type: 13,
+        },
+        messages: [
+            {
+                args: [],
+                default: false,
+                docs: [''],
+                label: 'name',
+                mutates: false,
+                payable: false,
+                returnType: {
+                    displayName: ['string'],
+                    type: 0,
                 },
+                selector: '0x06fdde03',
+            },
+            {
+                args: [],
+                default: false,
+                docs: [''],
+                label: 'symbol',
+                mutates: false,
+                payable: false,
+                returnType: {
+                    displayName: ['string'],
+                    type: 0,
+                },
+                selector: '0x95d89b41',
+            },
+            {
+                args: [],
+                default: false,
+                docs: [''],
+                label: 'decimals',
+                mutates: false,
+                payable: false,
+                returnType: {
+                    displayName: ['uint8'],
+                    type: 1,
+                },
+                selector: '0x313ce567',
+            },
+            {
+                args: [],
+                default: false,
+                docs: [''],
+                label: 'totalSupply',
+                mutates: true,
+                payable: false,
+                returnType: {
+                    displayName: ['uint256'],
+                    type: 5,
+                },
+                selector: '0x18160ddd',
+            },
+            {
+                args: [
+                    {
+                        label: '_owner',
+                        type: {
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
+                            type: 6,
+                        },
+                    },
+                ],
+                default: false,
+                docs: [''],
+                label: 'balanceOf',
+                mutates: true,
+                payable: false,
+                returnType: {
+                    displayName: ['uint256'],
+                    type: 5,
+                },
+                selector: '0x70a08231',
+            },
+            {
+                args: [
+                    {
+                        label: '_to',
+                        type: {
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
+                            type: 6,
+                        },
+                    },
+                    {
+                        label: '_amount',
+                        type: {
+                            displayName: ['uint256'],
+                            type: 5,
+                        },
+                    },
+                ],
+                default: false,
+                docs: [''],
+                label: 'transfer',
+                mutates: true,
+                payable: false,
+                returnType: {
+                    displayName: ['bool'],
+                    type: 7,
+                },
+                selector: '0xa9059cbb',
+            },
+            {
+                args: [
+                    {
+                        label: '_owner',
+                        type: {
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
+                            type: 6,
+                        },
+                    },
+                    {
+                        label: '_spender',
+                        type: {
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
+                            type: 6,
+                        },
+                    },
+                ],
+                default: false,
+                docs: [''],
+                label: 'allowance',
+                mutates: true,
+                payable: false,
+                returnType: {
+                    displayName: ['uint256'],
+                    type: 5,
+                },
+                selector: '0xdd62ed3e',
+            },
+            {
+                args: [
+                    {
+                        label: '_spender',
+                        type: {
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
+                            type: 6,
+                        },
+                    },
+                    {
+                        label: '_amount',
+                        type: {
+                            displayName: ['uint256'],
+                            type: 5,
+                        },
+                    },
+                ],
+                default: false,
+                docs: [''],
+                label: 'approve',
+                mutates: true,
+                payable: false,
+                returnType: {
+                    displayName: ['bool'],
+                    type: 7,
+                },
+                selector: '0x095ea7b3',
+            },
+            {
+                args: [
+                    {
+                        label: '_from',
+                        type: {
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
+                            type: 6,
+                        },
+                    },
+                    {
+                        label: '_to',
+                        type: {
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
+                            type: 6,
+                        },
+                    },
+                    {
+                        label: '_amount',
+                        type: {
+                            displayName: ['uint256'],
+                            type: 5,
+                        },
+                    },
+                ],
+                default: false,
+                docs: [''],
+                label: 'transferFrom',
+                mutates: true,
+                payable: false,
+                returnType: {
+                    displayName: ['bool'],
+                    type: 7,
+                },
+                selector: '0x23b872dd',
+            },
+            {
+                args: [
+                    {
+                        label: '_to',
+                        type: {
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
+                            type: 6,
+                        },
+                    },
+                    {
+                        label: '_amount',
+                        type: {
+                            displayName: ['uint256'],
+                            type: 5,
+                        },
+                    },
+                ],
+                default: false,
+                docs: [''],
+                label: 'mint',
+                mutates: true,
+                payable: false,
+                returnType: {
+                    displayName: ['bool'],
+                    type: 7,
+                },
+                selector: '0x40c10f19',
+            },
+            {
+                args: [
+                    {
+                        label: '_from',
+                        type: {
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
+                            type: 6,
+                        },
+                    },
+                    {
+                        label: '_amount',
+                        type: {
+                            displayName: ['uint256'],
+                            type: 5,
+                        },
+                    },
+                ],
+                default: false,
+                docs: [''],
+                label: 'burn',
+                mutates: true,
+                payable: false,
+                returnType: {
+                    displayName: ['bool'],
+                    type: 7,
+                },
+                selector: '0x9dc29fac',
             },
         ],
     },
+    storage: {
+        struct: {
+            fields: [
+                {
+                    layout: {
+                        root: {
+                            layout: {
+                                leaf: {
+                                    key: '0x00000000',
+                                    ty: 0,
+                                },
+                            },
+                            root_key: '0x00000000',
+                        },
+                    },
+                    name: '_name',
+                },
+                {
+                    layout: {
+                        root: {
+                            layout: {
+                                leaf: {
+                                    key: '0x00000001',
+                                    ty: 0,
+                                },
+                            },
+                            root_key: '0x00000001',
+                        },
+                    },
+                    name: '_symbol',
+                },
+                {
+                    layout: {
+                        root: {
+                            layout: {
+                                leaf: {
+                                    key: '0x00000002',
+                                    ty: 1,
+                                },
+                            },
+                            root_key: '0x00000002',
+                        },
+                    },
+                    name: '_decimals',
+                },
+                {
+                    layout: {
+                        root: {
+                            layout: {
+                                leaf: {
+                                    key: '0x00000003',
+                                    ty: 2,
+                                },
+                            },
+                            root_key: '0x00000003',
+                        },
+                    },
+                    name: '_variant',
+                },
+                {
+                    layout: {
+                        root: {
+                            layout: {
+                                leaf: {
+                                    key: '0x00000004',
+                                    ty: 2,
+                                },
+                            },
+                            root_key: '0x00000004',
+                        },
+                    },
+                    name: '_index',
+                },
+                {
+                    layout: {
+                        root: {
+                            layout: {
+                                leaf: {
+                                    key: '0x00000005',
+                                    ty: 3,
+                                },
+                            },
+                            root_key: '0x00000005',
+                        },
+                    },
+                    name: '_code',
+                },
+                {
+                    layout: {
+                        root: {
+                            layout: {
+                                leaf: {
+                                    key: '0x00000006',
+                                    ty: 4,
+                                },
+                            },
+                            root_key: '0x00000006',
+                        },
+                    },
+                    name: '_issuer',
+                },
+            ],
+            name: 'TestableERC20Wrapper',
+        },
+    },
+    types: [
+        {
+            id: 0,
+            type: {
+                def: {
+                    primitive: 'str',
+                },
+                path: ['string'],
+            },
+        },
+        {
+            id: 1,
+            type: {
+                def: {
+                    primitive: 'u8',
+                },
+                path: ['uint8'],
+            },
+        },
+        {
+            id: 2,
+            type: {
+                def: {
+                    array: {
+                        len: 1,
+                        type: 1,
+                    },
+                },
+            },
+        },
+        {
+            id: 3,
+            type: {
+                def: {
+                    array: {
+                        len: 12,
+                        type: 1,
+                    },
+                },
+            },
+        },
+        {
+            id: 4,
+            type: {
+                def: {
+                    array: {
+                        len: 32,
+                        type: 1,
+                    },
+                },
+            },
+        },
+        {
+            id: 5,
+            type: {
+                def: {
+                    primitive: 'u256',
+                },
+                path: ['uint256'],
+            },
+        },
+        {
+            id: 6,
+            type: {
+                def: {
+                    composite: {
+                        fields: [
+                            {
+                                type: 4,
+                            },
+                        ],
+                    },
+                },
+                path: ['ink_primitives', 'types', 'AccountId'],
+            },
+        },
+        {
+            id: 7,
+            type: {
+                def: {
+                    primitive: 'bool',
+                },
+                path: ['bool'],
+            },
+        },
+        {
+            id: 8,
+            type: {
+                def: {
+                    primitive: 'u128',
+                },
+                path: ['uint128'],
+            },
+        },
+        {
+            id: 9,
+            type: {
+                def: {
+                    primitive: 'u64',
+                },
+                path: ['uint64'],
+            },
+        },
+        {
+            id: 10,
+            type: {
+                def: {
+                    composite: {
+                        fields: [
+                            {
+                                type: 4,
+                            },
+                        ],
+                    },
+                },
+                path: ['ink_primitives', 'types', 'Hash'],
+            },
+        },
+        {
+            id: 11,
+            type: {
+                def: {
+                    composite: {
+                        fields: [
+                            {
+                                type: 0,
+                            },
+                        ],
+                    },
+                },
+                path: ['0x08c379a0'],
+            },
+        },
+        {
+            id: 12,
+            type: {
+                def: {
+                    composite: {
+                        fields: [
+                            {
+                                type: 5,
+                            },
+                        ],
+                    },
+                },
+                path: ['0x4e487b71'],
+            },
+        },
+        {
+            id: 13,
+            type: {
+                def: {
+                    variant: {
+                        variants: [
+                            {
+                                fields: [
+                                    {
+                                        type: 11,
+                                    },
+                                ],
+                                index: 0,
+                                name: 'Error',
+                            },
+                            {
+                                fields: [
+                                    {
+                                        type: 12,
+                                    },
+                                ],
+                                index: 1,
+                                name: 'Panic',
+                            },
+                        ],
+                    },
+                },
+                path: ['SolidityError'],
+            },
+        },
+    ],
+    version: '4',
 }
 
 const _abi = new Abi(metadata)
@@ -582,16 +850,16 @@ export class Contract {
         private blockHash?: Bytes
     ) {}
 
-    total_supply(): Promise<Balance> {
-        return this.stateCall('0xdb6375a8', [])
+    name(): Promise<string> {
+        return this.stateCall('0x06fdde03', [])
     }
 
-    balance_of(owner: AccountId): Promise<Balance> {
-        return this.stateCall('0x0f755a56', [owner])
+    symbol(): Promise<string> {
+        return this.stateCall('0x95d89b41', [])
     }
 
-    allowance(owner: AccountId, spender: AccountId): Promise<Balance> {
-        return this.stateCall('0x6a00165e', [owner, spender])
+    decimals(): Promise<uint8> {
+        return this.stateCall('0x313ce567', [])
     }
 
     private async stateCall<T>(selector: string, args: any[]): Promise<T> {
@@ -607,32 +875,39 @@ export class Contract {
     }
 }
 
-export type AccountId = Bytes
-
-export type Balance = bigint
+export type uint8 = number
 
 export type Constructor = Constructor_new
 
 /**
- * Creates a new ERC-20 contract with the specified initial supply.
+ *
  */
 export interface Constructor_new {
     __kind: 'new'
-    initialSupply: Balance
+    name: string
+    symbol: string
+    decimals: uint8
+    variant: Bytes
+    index: Bytes
+    code: Bytes
+    issuer: Bytes
 }
 
 export type Message =
     | Message_allowance
     | Message_approve
-    | Message_balance_of
-    | Message_total_supply
+    | Message_balanceOf
+    | Message_burn
+    | Message_decimals
+    | Message_mint
+    | Message_name
+    | Message_symbol
+    | Message_totalSupply
     | Message_transfer
-    | Message_transfer_from
+    | Message_transferFrom
 
 /**
- *  Returns the amount which `spender` is still allowed to withdraw from `owner`.
  *
- *  Returns `0` if no allowance has been set.
  */
 export interface Message_allowance {
     __kind: 'allowance'
@@ -641,89 +916,117 @@ export interface Message_allowance {
 }
 
 /**
- *  Allows `spender` to withdraw from the caller's account multiple times, up to
- *  the `value` amount.
  *
- *  If this function is called again it overwrites the current allowance with `value`.
- *
- *  An `Approval` event is emitted.
  */
 export interface Message_approve {
     __kind: 'approve'
     spender: AccountId
-    value: Balance
+    amount: uint256
 }
 
 /**
- *  Returns the account balance for the specified `owner`.
  *
- *  Returns `0` if the account is non-existent.
  */
-export interface Message_balance_of {
-    __kind: 'balance_of'
+export interface Message_balanceOf {
+    __kind: 'balanceOf'
     owner: AccountId
 }
 
 /**
- *  Returns the total token supply.
+ *
  */
-export interface Message_total_supply {
-    __kind: 'total_supply'
+export interface Message_burn {
+    __kind: 'burn'
+    from: AccountId
+    amount: uint256
 }
 
 /**
- *  Transfers `value` amount of tokens from the caller's account to account `to`.
  *
- *  On success a `Transfer` event is emitted.
+ */
+export interface Message_decimals {
+    __kind: 'decimals'
+}
+
+/**
  *
- *  # Errors
+ */
+export interface Message_mint {
+    __kind: 'mint'
+    to: AccountId
+    amount: uint256
+}
+
+/**
  *
- *  Returns `InsufficientBalance` error if there are not enough tokens on
- *  the caller's account balance.
+ */
+export interface Message_name {
+    __kind: 'name'
+}
+
+/**
+ *
+ */
+export interface Message_symbol {
+    __kind: 'symbol'
+}
+
+/**
+ *
+ */
+export interface Message_totalSupply {
+    __kind: 'totalSupply'
+}
+
+/**
+ *
  */
 export interface Message_transfer {
     __kind: 'transfer'
     to: AccountId
-    value: Balance
+    amount: uint256
 }
 
 /**
- *  Transfers `value` tokens on the behalf of `from` to the account `to`.
  *
- *  This can be used to allow a contract to transfer tokens on ones behalf and/or
- *  to charge fees in sub-currencies, for example.
- *
- *  On success a `Transfer` event is emitted.
- *
- *  # Errors
- *
- *  Returns `InsufficientAllowance` error if there are not enough tokens allowed
- *  for the caller to withdraw from `from`.
- *
- *  Returns `InsufficientBalance` error if there are not enough tokens on
- *  the account balance of `from`.
  */
-export interface Message_transfer_from {
-    __kind: 'transfer_from'
+export interface Message_transferFrom {
+    __kind: 'transferFrom'
     from: AccountId
     to: AccountId
-    value: Balance
+    amount: uint256
 }
 
-export type Event = Event_Approval | Event_Transfer
+export type uint256 = bigint
+
+export type AccountId = Bytes
+
+export type Event = Event_Approval | Event_Burn | Event_Mint | Event_Transfer
 
 export interface Event_Approval {
     __kind: 'Approval'
     owner: AccountId
     spender: AccountId
-    value: Balance
+    value: uint256
+}
+
+export interface Event_Burn {
+    __kind: 'Burn'
+    from: AccountId
+    value: uint256
+}
+
+export interface Event_Mint {
+    __kind: 'Mint'
+    to: AccountId
+    value: uint256
 }
 
 export interface Event_Transfer {
     __kind: 'Transfer'
-    from?: AccountId | undefined
-    to?: AccountId | undefined
-    value: Balance
+    from: AccountId
+    to: AccountId
+    value: uint256
 }
 
 export type Result<T, E> =

@@ -26,7 +26,7 @@ const foucocoConfig: ProcessorConfig = {
     chainName: 'foucoco',
     prefix: 'amplitude',
     dataSource: {
-        archive: 'https://foucoco.archive.subsquid.io/graphql',
+        archive: lookupArchive('foucoco'),
         chain: 'wss://pencol-roa-00.pendulumchain.tech',
     },
 }

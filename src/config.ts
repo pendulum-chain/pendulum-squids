@@ -8,7 +8,7 @@ const pendulumConfig: ProcessorConfig = {
     chainName: 'pendulum',
     prefix: 'pendulum',
     dataSource: {
-        archive: 'https://pendulum.archive.subsquid.io/graphql',
+        archive: lookupArchive('pendulum'),
         chain: 'wss://rpc-pendulum.pendulumchain.tech',
     },
 }

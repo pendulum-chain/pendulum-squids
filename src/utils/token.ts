@@ -80,6 +80,11 @@ export const TZS_CODE: Uint8Array = new Uint8Array([84, 90, 83, 0])
 
 export const BRL_CODE: Uint8Array = new Uint8Array([66, 82, 76, 0])
 
+function uint8ArrToHex(uintArray: Uint8Array): string {
+    let buffer = Buffer.from(uintArray)
+    return '0x' + buffer.toString('hex')
+}
+
 export function zenlinkAssetIdToCurrencyId(asset: AssetId): any {
     const assetIndex = Number(asset.assetIndex.toString())
     const tokenType = parseTokenType(assetIndex) as
@@ -119,8 +124,8 @@ export function zenlinkAssetIdToCurrencyId(asset: AssetId): any {
                     __kind: tokenType,
                     value: {
                         __kind: 'AlphaNum4',
-                        code: USDC_CODE,
-                        issuer: USDT_ISSUER,
+                        code: uint8ArrToHex(USDC_CODE),
+                        issuer: uint8ArrToHex(USDT_ISSUER),
                     },
                 }
             case 2:
@@ -128,8 +133,8 @@ export function zenlinkAssetIdToCurrencyId(asset: AssetId): any {
                     __kind: tokenType,
                     value: {
                         __kind: 'AlphaNum4',
-                        code: TZS_CODE,
-                        issuer: TZS_ISSUER,
+                        code: uint8ArrToHex(TZS_CODE),
+                        issuer: uint8ArrToHex(TZS_ISSUER),
                     },
                 }
             case 3:
@@ -137,8 +142,8 @@ export function zenlinkAssetIdToCurrencyId(asset: AssetId): any {
                     __kind: tokenType,
                     value: {
                         __kind: 'AlphaNum4',
-                        code: BRL_CODE,
-                        issuer: BRL_ISSUER,
+                        code: uint8ArrToHex(BRL_CODE),
+                        issuer: uint8ArrToHex(BRL_ISSUER),
                     },
                 }
         }
@@ -286,6 +291,7 @@ export async function getPairStatusFromAssets(
         if (!result) return [undefined, BigInt(0)]
 
         if (result.__kind === 'Trading') {
+            //TODO Maybe a problem
             pairAccount = codec(config.prefix).encode(result.value.pairAccount)
             pairAccounts.set(assetsId, pairAccount)
             return [pairAccount, result.value.totalSupply]
@@ -382,7 +388,7 @@ export async function getTotalIssuance(
         if (network === 'foucoco') {
             result = await foucocoStorage.tokens.totalIssuance.v1.get(
                 ctx.block,
-                assetId
+                assetId as any
             )
         } else if (network === 'pendulum') {
             if (pendulumStorage.tokens.totalIssuance.v1.is(ctx.block)) {

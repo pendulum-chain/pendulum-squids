@@ -24,7 +24,6 @@ import {
 import { amplitudeEvents, foucocoEvents, pendulumEvents } from '../types/events'
 import { getPairStatusFromAssets, getTokenBalance } from '../utils/token'
 import { StrKey } from 'stellar-base'
-
 async function isCompleteMint(
     ctx: EventHandlerContext,
     mintId: string
@@ -32,14 +31,31 @@ async function isCompleteMint(
     return !!(await ctx.store.get(Mint, mintId))?.sender // sufficient checks
 }
 
-function rawAssetCodeToString(code: Uint8Array) {
-    // Filter out the null bytes because they cause issues with the postgres database
-    const filteredCode = code.filter((byte) => byte !== 0)
-    return String.fromCharCode(...filteredCode)
+function hexAssetCodeToString(code: string) {
+    // Decode hex code to ascii if it starts with 0x
+    if (code.startsWith('0x')) {
+        return trimCode(code)
+    }
+
+    return code
+}
+function trimCode(code: string): string {
+    if (code.startsWith('0x')) {
+        // Filter out the null bytes
+        const filtered = code.replace(/00/g, '')
+        return Buffer.from(filtered.slice(2), 'hex').toString().trim()
+    } else {
+        // Convert to hex string
+        const hex = Buffer.from(code).toString('hex')
+        // Filter out the null bytes
+        const filtered = hex.replace(/00/g, '')
+        // Convert back to ascii
+        return Buffer.from(filtered, 'hex').toString().trim()
+    }
 }
 
-function deriveStellarPublicKeyFromBytes(issuer: Uint8Array) {
-    const buffer = Buffer.from(issuer.buffer)
+function deriveStellarPublicKeyFromHex(issuer: string) {
+    const buffer = Buffer.from(issuer.split('0x')[1], 'hex')
     return StrKey.encodeEd25519PublicKey(buffer)
 }
 
@@ -65,9 +81,9 @@ function beautifyCurrencyIdString(event: any) {
                 case 'AlphaNum4': {
                     currencyId =
                         'Stellar::AlphaNum4(' +
-                        rawAssetCodeToString(event.currencyId.value.code) +
+                        hexAssetCodeToString(event.currencyId.value.code) +
                         ',' +
-                        deriveStellarPublicKeyFromBytes(
+                        deriveStellarPublicKeyFromHex(
                             event.currencyId.value.issuer
                         ) +
                         ')'
@@ -76,9 +92,9 @@ function beautifyCurrencyIdString(event: any) {
                 case 'AlphaNum12': {
                     currencyId =
                         'Stellar::AlphaNum12(' +
-                        rawAssetCodeToString(event.currencyId.value.code) +
+                        hexAssetCodeToString(event.currencyId.value.code) +
                         ',' +
-                        deriveStellarPublicKeyFromBytes(
+                        deriveStellarPublicKeyFromHex(
                             event.currencyId.value.issuer
                         ) +
                         ')'
@@ -112,8 +128,10 @@ function beautifyCurrencyIdString(event: any) {
 
 export async function handleTokenDeposited(ctx: EventHandlerContext) {
     const transactionHash = ctx.event.extrinsic?.hash
+
     if (!transactionHash) return
     let event
+
     if (network === 'foucoco') {
         event = foucocoEvents.tokens.deposited.v1.decode(ctx.event)
     } else if (network === 'pendulum') {
@@ -171,8 +189,9 @@ export async function handleTokenDeposited(ctx: EventHandlerContext) {
     if (!pair) return
 
     const value = event.amount.toString()
-    const to = codec(config.prefix).encode(event.who)
+    const to = event.who
     let user = await ctx.store.get(User, to)
+
     if (!user) {
         user = new User({
             id: to,
@@ -184,6 +203,7 @@ export async function handleTokenDeposited(ctx: EventHandlerContext) {
     }
 
     let transaction = await getTransaction(ctx, transactionHash)
+
     if (!transaction) {
         transaction = new Transaction({
             id: transactionHash,
@@ -199,10 +219,12 @@ export async function handleTokenDeposited(ctx: EventHandlerContext) {
     pair.totalSupply = (
         await getPairStatusFromAssets(ctx, [asset0, asset1], false)
     )[1].toString()
+
     const { burns, mints } = transaction
     let burn: Burn
     if (burns.length > 0) {
         const currentBurn = await ctx.store.get(Burn, burns[burns.length - 1])
+
         if (currentBurn?.needsComplete) {
             burn = currentBurn
         } else {
@@ -241,6 +263,7 @@ export async function handleTokenDeposited(ctx: EventHandlerContext) {
         mints.pop()
         transaction.mints = mints
     }
+
     await ctx.store.save(burn)
     if (burn.needsComplete) {
         // TODO: Consider using .slice(0, -1).concat() to protect against
@@ -255,6 +278,7 @@ export async function handleTokenDeposited(ctx: EventHandlerContext) {
     await ctx.store.save(pair)
 
     const position = await updateLiquidityPosition(ctx, pair, user)
+
     position.liquidityTokenBalance =
         (await getTokenBalance(ctx, event.currencyId, event.who))?.toString() ??
         '0'
@@ -324,7 +348,7 @@ export async function handleTokenWithdrawn(ctx: EventHandlerContext) {
     if (!pair) return
 
     const value = event.amount.toString()
-    const to = codec(config.prefix).encode(event.who)
+    const to = event.who
     let user = await ctx.store.get(User, to)
     if (!user) {
         user = new User({
@@ -474,8 +498,8 @@ export async function handleTokenTransfer(ctx: EventHandlerContext) {
     const pair = await getPair(ctx, [asset0, asset1])
     if (!pair) return
 
-    const from = codec(config.prefix).encode(event.from)
-    const to = codec(config.prefix).encode(event.to)
+    const from = event.from
+    const to = event.to
 
     let userFrom = await ctx.store.get(User, from)
     if (!userFrom) {

@@ -97,7 +97,9 @@ export async function handleContractEvent(ctx: EventHandlerContext) {
     if (!event || !eventType) {
         return
     }
-
+    console.log('contract event')
+    console.log(eventType)
+    console.log(event.__kind)
     if (eventType === EventType.BackstopPoolEvent) {
         if (event.__kind == 'Burn') {
             await backstophandleBurn(ctx)

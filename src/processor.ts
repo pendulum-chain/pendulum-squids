@@ -171,6 +171,7 @@ processor.run(new TypeormDatabase(), async (ctx) => {
                         })
                         break
                     case 'Farming.FarmingPoolKilled':
+                        console.log('farming kill')
                         await handleFarmingPoolKilled({
                             ...ctx,
                             block: block.header,
@@ -236,6 +237,7 @@ processor.run(new TypeormDatabase(), async (ctx) => {
                         break
                     // contracts
                     case 'Contracts.ContractEmitted':
+                        console.log('handling contrat emited')
                         await handleContractEvent({
                             ...ctx,
                             block: block.header,

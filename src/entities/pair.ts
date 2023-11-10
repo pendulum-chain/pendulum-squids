@@ -34,6 +34,7 @@ export async function getPair(
     if (!pairAssetId) return undefined
 
     const pairAddress = addressFromAsset(pairAssetId)
+
     const token0 = await getOrCreateToken(ctx, assets[0])
     const token1 = await getOrCreateToken(ctx, assets[1])
     if (!token0 || !token1) return undefined

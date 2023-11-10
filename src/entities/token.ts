@@ -14,6 +14,7 @@ export async function getOrCreateToken(
     asset: AssetId
 ): Promise<Token | undefined> {
     const address = addressFromAsset(asset)
+
     let token = await ctx.store.get(Token, address)
 
     if (!token) {
@@ -25,6 +26,7 @@ export async function getOrCreateToken(
             ctx,
             zenlinkAssetIdToCurrencyId(asset)
         )
+
         token = new Token({
             id: address.toLowerCase(),
             name,

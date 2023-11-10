@@ -18,6 +18,7 @@ import {
     parseToTokenIndex,
 } from './token'
 import { config, network } from '../config'
+import { BlockHeader, ParentBlockHeader } from '@subsquid/substrate-processor'
 
 export function formatFarmingCreatedPoolEvent(ctx: EventHandlerContext) {
     let event
@@ -242,13 +243,11 @@ export function formatFarmingRetireLimitSetEvent(ctx: EventHandlerContext) {
 export async function getFamingPoolInfo(
     ctx: EventHandlerContext,
     pid: number,
-    block = {
-        hash: ctx.block.hash,
-    }
+    block: BlockHeader | ParentBlockHeader
 ) {
     let result
     if (network === 'foucoco') {
-        result = await foucocoStorage.farming.poolInfos.v1.get(ctx.block, pid)
+        result = await foucocoStorage.farming.poolInfos.v1.get(block, pid)
     } else if (network === 'pendulum') {
         // FIXME: Change foucocoStorage to pendulumStorage when the farming pallet is implemented on pendulum.
         result = await foucocoStorage.farming.poolInfos.v1.get(ctx.block, pid)
@@ -296,7 +295,7 @@ export async function updateFarmingPoolInfo(
     ctx: EventHandlerContext,
     pid: number
 ) {
-    const farmingPoolInfo = await getFamingPoolInfo(ctx, pid)
+    const farmingPoolInfo = await getFamingPoolInfo(ctx, pid, ctx.block)
     const farmingTokens = farmingPoolInfo?.tokensProportion.map(
         (item) => item[0]
     )!
@@ -542,9 +541,13 @@ export async function killFarmingPoolInfo(
     ctx: EventHandlerContext,
     pid: number
 ) {
-    const farmingPoolInfo = await getFamingPoolInfo(ctx, pid, {
-        hash: ctx.block.parentHash,
-    })
+    console.log('farming pool info')
+    const farmingPoolInfo = await getFamingPoolInfo(
+        ctx,
+        pid,
+        ctx.block.getParent()
+    )
+    console.log(farmingPoolInfo)
     const farmingTokens = farmingPoolInfo?.tokensProportion.map(
         (item: any) => item[0]
     )!

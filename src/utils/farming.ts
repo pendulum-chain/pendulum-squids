@@ -541,13 +541,11 @@ export async function killFarmingPoolInfo(
     ctx: EventHandlerContext,
     pid: number
 ) {
-    console.log('farming pool info')
     const farmingPoolInfo = await getFamingPoolInfo(
         ctx,
         pid,
         ctx.block.getParent()
     )
-    console.log(farmingPoolInfo)
     const farmingTokens = farmingPoolInfo?.tokensProportion.map(
         (item: any) => item[0]
     )!

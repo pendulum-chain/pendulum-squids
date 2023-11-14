@@ -189,7 +189,7 @@ export async function handleTokenDeposited(ctx: EventHandlerContext) {
     if (!pair) return
 
     const value = event.amount.toString()
-    const to = event.who
+    const to = codec(config.prefix).encode(event.who)
     let user = await ctx.store.get(User, to)
 
     if (!user) {
@@ -348,7 +348,7 @@ export async function handleTokenWithdrawn(ctx: EventHandlerContext) {
     if (!pair) return
 
     const value = event.amount.toString()
-    const to = event.who
+    const to = codec(config.prefix).encode(event.who)
     let user = await ctx.store.get(User, to)
     if (!user) {
         user = new User({

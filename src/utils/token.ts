@@ -168,8 +168,6 @@ export function currencyIdToAssetIndex(currency: CurrencyId): number {
                     tokenIndex = 0
                     break
                 case 'AlphaNum4':
-                    // TODO also a different representation (before was u8, now comes as string
-                    // but is it already hex represented?)
                     switch (u8a2s(hexToU8a(currency.value.code))) {
                         case 'USDC':
                             tokenIndex = 1
@@ -291,7 +289,6 @@ export async function getPairStatusFromAssets(
         if (!result) return [undefined, BigInt(0)]
 
         if (result.__kind === 'Trading') {
-            //TODO Maybe a problem
             pairAccount = codec(config.prefix).encode(result.value.pairAccount)
             pairAccounts.set(assetsId, pairAccount)
             return [pairAccount, result.value.totalSupply]

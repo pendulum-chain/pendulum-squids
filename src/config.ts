@@ -8,8 +8,8 @@ const pendulumConfig: ProcessorConfig = {
     chainName: 'pendulum',
     prefix: 'pendulum',
     dataSource: {
-        archive: lookupArchive('pendulum'),
-        chain: 'wss://rpc-pendulum.pendulumchain.tech',
+        archive: lookupArchive('pendulum', { release: 'ArrowSquid' }),
+        chain: 'wss://rpc-pendulum.prd.pendulumchain.tech/',
     },
 }
 
@@ -26,7 +26,7 @@ const foucocoConfig: ProcessorConfig = {
     chainName: 'foucoco',
     prefix: 'amplitude',
     dataSource: {
-        archive: 'https://v2.archive.subsquid.io/network/foucoco',
+        archive: lookupArchive('foucoco', { release: 'ArrowSquid' }),
         chain: 'wss://pencol-roa-00.pendulumchain.tech',
     },
 }

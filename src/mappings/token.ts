@@ -498,8 +498,8 @@ export async function handleTokenTransfer(ctx: EventHandlerContext) {
     const pair = await getPair(ctx, [asset0, asset1])
     if (!pair) return
 
-    const from = event.from
-    const to = event.to
+    const from = codec(config.prefix).encode(event.from)
+    const to = codec(config.prefix).encode(event.to)
 
     let userFrom = await ctx.store.get(User, from)
     if (!userFrom) {

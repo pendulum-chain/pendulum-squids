@@ -1,11 +1,13 @@
 manifestVersion: subsquid.io/v0.1
 name: foucoco-squid
-version: 6
+version: 8
 description: 'Foucoco Squid'
 build:
 deploy:
     addons:
         postgres:
+            config:
+                statement_timeout: 60000
     processor:
         env:
             NETWORK: 'foucoco'
@@ -25,3 +27,14 @@ deploy:
             - '--dumb-cache-max-age'
             - '1000'
             - '--subscriptions'
+scale:
+    dedicated: true
+    addons:
+        postgres:
+            storage: 1G
+            profile: small
+    processor:
+        profile: small
+    api:
+        profile: small
+        replicas: 1

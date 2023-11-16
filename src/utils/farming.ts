@@ -19,6 +19,7 @@ import {
 } from './token'
 import { config, network } from '../config'
 import { BlockHeader, ParentBlockHeader } from '@subsquid/substrate-processor'
+import { codec } from '@subsquid/ss58'
 
 export function formatFarmingCreatedPoolEvent(ctx: EventHandlerContext) {
     let event
@@ -271,21 +272,21 @@ export async function getFamingSharesAndWithdrawnRewards(
         result = await foucocoStorage.farming.sharesAndWithdrawnRewards.v1.get(
             ctx.block,
             pid,
-            user
+            codec(config.prefix).decode(user)
         )
     } else if (network === 'pendulum') {
         // FIXME: Change foucocoStorage to pendulumStorage when the farming pallet is implemented on pendulum.
         result = await foucocoStorage.farming.sharesAndWithdrawnRewards.v1.get(
             ctx.block,
             pid,
-            user
+            codec(config.prefix).decode(user)
         )
     } else {
         result =
             await amplitudeStorage.farming.sharesAndWithdrawnRewards.v10.get(
                 ctx.block,
                 pid,
-                user
+                codec(config.prefix).decode(user)
             )
     }
     return result

@@ -52,6 +52,10 @@
             "description": "Generate data access classes for an substrate metadata",
             "cmd": ["squid-substrate-typegen", "./typegen-pendulum.json"]
         },
+        "typegen:abi": {
+            "description": "Generate data access classes for an substrate metadata",
+            "cmd": ["node", "./generate-abi.js"]
+        },
         "process:foucoco": {
             "description": "Load .env and start the squid processor for Foucoco",
             "deps": ["build", "migration:apply"],

@@ -53,7 +53,7 @@
             "cmd": ["squid-substrate-typegen", "./typegen-pendulum.json"]
         },
         "typegen:abi": {
-            "description": "Generate data access classes for an substrate metadata",
+            "description": "Generate the abi files for all ink! .contract files",
             "cmd": ["node", "./generate-abi.js"]
         },
         "process:foucoco": {

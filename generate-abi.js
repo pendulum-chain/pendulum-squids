@@ -23,7 +23,7 @@ fs.readdir(directoryPath, (err, files) => {
                 if (stderr) {
                     console.error(`Error in command output: ${stderr}`)
                 }
-                console.log(`ABI files generated`)
+                console.log(`ABI file generated for ${fileNameWithoutExt}`)
             })
         }
     })

@@ -1,6 +1,6 @@
 import { ZERO_BD } from '../constants'
 import { Bundle, Factory, Pair } from '../model'
-import { EventHandlerContext } from '../types'
+import { EventHandlerContext } from '../processor'
 import { AssetId } from '../types/common'
 import { addressFromAsset, getPairAssetIdFromAssets } from '../utils/token'
 import { getOrCreateToken } from './token'
@@ -34,6 +34,7 @@ export async function getPair(
     if (!pairAssetId) return undefined
 
     const pairAddress = addressFromAsset(pairAssetId)
+
     const token0 = await getOrCreateToken(ctx, assets[0])
     const token1 = await getOrCreateToken(ctx, assets[1])
     if (!token0 || !token1) return undefined
@@ -51,7 +52,7 @@ export async function getPair(
             token0,
             token1,
             liquidityProviderCount: 0,
-            createdAtTimestamp: new Date(ctx.block.timestamp),
+            createdAtTimestamp: new Date(ctx.block.timestamp!),
             createdAtBlockNumber: BigInt(ctx.block.height),
             txCount: 0,
             reserve0: ZERO_BD.toString(),

@@ -1,6 +1,6 @@
 {
     "outDir": "src/types/amplitude",
-    "specVersions": "https://amplitude.archive.subsquid.io/graphql",
+    "specVersions": "https://v2.archive.subsquid.io/metadata/amplitude",
     "events": [
         "Balances.Transfer",
 

@@ -1,8 +1,12 @@
 import {
-    BatchContext,
-    BatchProcessorItem,
+    SubstrateBatchProcessorFields,
+    DataHandlerContext,
     SubstrateBatchProcessor,
+    Block,
+    BlockHeader,
+    Event,
 } from '@subsquid/substrate-processor'
+
 import { Store, TypeormDatabase } from '@subsquid/typeorm-store'
 import {
     handleFarmingCharged,
@@ -36,66 +40,90 @@ const DataSelection = { data: { event: true } } as const
 
 const processor = new SubstrateBatchProcessor()
     .setDataSource(config.dataSource)
+    .setFields({
+        event: {},
+        call: {
+            origin: true,
+            success: true,
+            error: true,
+        },
+        extrinsic: {
+            hash: true,
+            fee: true,
+            tip: true,
+        },
+        block: {
+            timestamp: true,
+        },
+    })
+    .addEvent({
+        name: [
+            // Zenlink
+            'ZenlinkProtocol.LiquidityAdded',
+            'ZenlinkProtocol.LiquidityRemoved',
+            'ZenlinkProtocol.AssetSwap',
+            // Farming
+            'Farming.FarmingPoolCreated',
+            'Farming.FarmingPoolReset',
+            'Farming.FarmingPoolClosed',
+            'Farming.FarmingPoolKilled',
+            'Farming.FarmingPoolEdited',
+            'Farming.Charged',
+            'Farming.Deposited',
+            'Farming.Withdrawn',
+            'Farming.Claimed',
+            'Farming.WithdrawClaimed',
+            'Farming.GaugeWithdrawn',
+            'Farming.AllForceGaugeClaimed',
+            'Farming.PartiallyForceGaugeClaimed',
+            'Farming.AllRetired',
+            'Farming.PartiallyRetired',
+            'Farming.RetireLimitSet',
+            'Balances.Transfer',
+            'DiaOracleModule.UpdatedPrices',
+            // Token transactions
+            'Tokens.Transfer',
+            'Tokens.Deposited',
+            'Tokens.Withdrawn',
+            'Tokens.BalanceSet',
+            // Contracts
+            'Contracts.ContractEmitted',
+        ],
+        call: true,
+        extrinsic: true,
+    })
 
-    // Zenlink
-    .addEvent('ZenlinkProtocol.LiquidityAdded', DataSelection)
-    .addEvent('ZenlinkProtocol.LiquidityRemoved', DataSelection)
-    .addEvent('ZenlinkProtocol.AssetSwap', DataSelection)
-    // Farming
-    .addEvent('Farming.FarmingPoolCreated', DataSelection)
-    .addEvent('Farming.FarmingPoolReset', DataSelection)
-    .addEvent('Farming.FarmingPoolClosed', DataSelection)
-    .addEvent('Farming.FarmingPoolKilled', DataSelection)
-    .addEvent('Farming.FarmingPoolEdited', DataSelection)
-    .addEvent('Farming.Charged', DataSelection)
-    .addEvent('Farming.Deposited', DataSelection)
-    .addEvent('Farming.Withdrawn', DataSelection)
-    .addEvent('Farming.Claimed', DataSelection)
-    .addEvent('Farming.WithdrawClaimed', DataSelection)
-    .addEvent('Farming.GaugeWithdrawn', DataSelection)
-    .addEvent('Farming.AllForceGaugeClaimed', DataSelection)
-    .addEvent('Farming.PartiallyForceGaugeClaimed', DataSelection)
-    .addEvent('Farming.AllRetired', DataSelection)
-    .addEvent('Farming.PartiallyRetired', DataSelection)
-    .addEvent('Farming.RetireLimitSet', DataSelection)
-
-    .addEvent('Balances.Transfer', DataSelection)
-
-    .addEvent('DiaOracleModule.UpdatedPrices', DataSelection)
-
-    .addEvent('Tokens.Transfer', DataSelection)
-    .addEvent('Tokens.Deposited', DataSelection)
-    .addEvent('Tokens.Withdrawn', DataSelection)
-    .addEvent('Tokens.BalanceSet', DataSelection)
-    .addEvent('Contracts.ContractEmitted', DataSelection)
-
-type Item = BatchProcessorItem<typeof processor>
-export type Ctx = BatchContext<Store, Item>
+type Fields = SubstrateBatchProcessorFields<typeof processor>
+type Ctx = DataHandlerContext<Store, Fields>
+export interface EventHandlerContext extends Ctx {
+    block: BlockHeader<Fields>
+    event: Event<Fields>
+}
 
 processor.run(new TypeormDatabase(), async (ctx) => {
     for (let block of ctx.blocks) {
-        for (let item of block.items) {
+        for (let item of block.events) {
             try {
                 switch (item.name) {
                     case 'Tokens.Deposited':
                         await handleTokenDeposited({
                             ...ctx,
                             block: block.header,
-                            event: item.event,
+                            event: item,
                         })
                         break
                     case 'Tokens.Withdrawn':
                         await handleTokenWithdrawn({
                             ...ctx,
                             block: block.header,
-                            event: item.event,
+                            event: item,
                         })
                         break
                     case 'Tokens.Transfer':
                         await handleTokenTransfer({
                             ...ctx,
                             block: block.header,
-                            event: item.event,
+                            event: item,
                         })
                         break
                     // zenlink
@@ -103,21 +131,21 @@ processor.run(new TypeormDatabase(), async (ctx) => {
                         await handleLiquidityAdded({
                             ...ctx,
                             block: block.header,
-                            event: item.event,
+                            event: item,
                         })
                         break
                     case 'ZenlinkProtocol.LiquidityRemoved':
                         await handleLiquidityRemoved({
                             ...ctx,
                             block: block.header,
-                            event: item.event,
+                            event: item,
                         })
                         break
                     case 'ZenlinkProtocol.AssetSwap':
                         await handleAssetSwap({
                             ...ctx,
                             block: block.header,
-                            event: item.event,
+                            event: item,
                         })
                         break
                     // farming
@@ -125,77 +153,77 @@ processor.run(new TypeormDatabase(), async (ctx) => {
                         await handleFarmingPoolCreated({
                             ...ctx,
                             block: block.header,
-                            event: item.event,
+                            event: item,
                         })
                         break
                     case 'Farming.FarmingPoolReset':
                         await handleFarmingPoolReset({
                             ...ctx,
                             block: block.header,
-                            event: item.event,
+                            event: item,
                         })
                         break
                     case 'Farming.FarmingPoolClosed':
                         await handleFarmingPoolClosed({
                             ...ctx,
                             block: block.header,
-                            event: item.event,
+                            event: item,
                         })
                         break
                     case 'Farming.FarmingPoolKilled':
                         await handleFarmingPoolKilled({
                             ...ctx,
                             block: block.header,
-                            event: item.event,
+                            event: item,
                         })
                         break
                     case 'Farming.FarmingPoolEdited':
                         await handleFarmingPoolEdited({
                             ...ctx,
                             block: block.header,
-                            event: item.event,
+                            event: item,
                         })
                         break
                     case 'Farming.Charged':
                         await handleFarmingCharged({
                             ...ctx,
                             block: block.header,
-                            event: item.event,
+                            event: item,
                         })
                         break
                     case 'Farming.Deposited':
                         await handleFarmingDeposited({
                             ...ctx,
                             block: block.header,
-                            event: item.event,
+                            event: item,
                         })
                         break
                     case 'Farming.Withdrawn':
                         await handleFarmingWithdrawn({
                             ...ctx,
                             block: block.header,
-                            event: item.event,
+                            event: item,
                         })
                         break
                     case 'Farming.Claimed':
                         await handleFarmingClaimed({
                             ...ctx,
                             block: block.header,
-                            event: item.event,
+                            event: item,
                         })
                         break
                     case 'Farming.WithdrawClaimed':
                         await handleFarmingWithdrawClaimed({
                             ...ctx,
                             block: block.header,
-                            event: item.event,
+                            event: item,
                         })
                         break
                     case 'Farming.GaugeWithdrawn':
                         await handleFarmingGaugeWithdrawn({
                             ...ctx,
                             block: block.header,
-                            event: item.event,
+                            event: item,
                         })
                         break
                     // balances
@@ -203,7 +231,7 @@ processor.run(new TypeormDatabase(), async (ctx) => {
                         await handleBalanceTransfer({
                             ...ctx,
                             block: block.header,
-                            event: item.event,
+                            event: item,
                         })
                         break
                     // contracts
@@ -211,7 +239,7 @@ processor.run(new TypeormDatabase(), async (ctx) => {
                         await handleContractEvent({
                             ...ctx,
                             block: block.header,
-                            event: item.event,
+                            event: item,
                         })
                         break
                     // price oracle
@@ -219,7 +247,7 @@ processor.run(new TypeormDatabase(), async (ctx) => {
                         await handleUpdatedPrices({
                             ...ctx,
                             block: block.header,
-                            event: item.event,
+                            event: item,
                         })
                         break
                     default:

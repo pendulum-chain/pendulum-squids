@@ -8,6 +8,7 @@ tmp/
 # Ignore TypeScript and Node.js files
 node_modules/
 *.js
+!generate-abi.js
 *.d.ts
 !db/migrations/*.js
 *.map

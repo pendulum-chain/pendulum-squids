@@ -1,6 +1,6 @@
 {
     "outDir": "src/types/pendulum",
-    "specVersions": "https://pendulum.archive.subsquid.io/graphql",
+    "specVersions": "https://v2.archive.subsquid.io/metadata/pendulum",
     "events": [
         "Balances.Transfer",
 

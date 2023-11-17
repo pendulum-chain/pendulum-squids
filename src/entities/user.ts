@@ -3,22 +3,17 @@ import { codec } from '@subsquid/ss58'
 import { config } from '../config'
 import { ZERO_BD } from '../constants'
 import { User } from '../model'
-import { EventHandlerContext } from '../types'
+import { EventHandlerContext } from '../processor'
 
 export async function getUser(
     ctx: EventHandlerContext,
-    who: string | Uint8Array
+    who: string
 ): Promise<User> {
-    let address = ''
-    if (isU8a(who)) {
-        address = codec(config.prefix).encode(who)
-    } else {
-        address = who
-    }
+    let address = codec(config.prefix).encode(who)
     let user = await ctx.store.get(User, address)
     if (!user) {
         user = new User({
-            id: address,
+            id: codec(config.prefix).encode(who),
             liquidityPositions: [],
             stableSwapLiquidityPositions: [],
             usdSwapped: ZERO_BD.toFixed(6),

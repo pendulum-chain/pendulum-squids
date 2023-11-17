@@ -1,7 +1,7 @@
 import { Big as BigDecimal } from 'big.js'
 import { ZERO_BD } from '../constants'
 import { LiquidityPosition, Pair, User } from '../model'
-import { EventHandlerContext } from '../types'
+import { EventHandlerContext } from '../processor'
 interface LiquidityPositionData {
     pair: Pair
     user: User
@@ -45,14 +45,14 @@ const BLOCK_RECORD = {
 export async function getTimePerBlock(ctx: EventHandlerContext) {
     if (BLOCK_RECORD.pre.blockHeight === 0) {
         BLOCK_RECORD.pre.blockHeight = ctx.block.height
-        BLOCK_RECORD.pre.timestamp = ctx.block.timestamp
+        BLOCK_RECORD.pre.timestamp = ctx.block.timestamp!
 
         BLOCK_RECORD.middle.blockHeight = ctx.block.height
-        BLOCK_RECORD.middle.timestamp = ctx.block.timestamp
+        BLOCK_RECORD.middle.timestamp = ctx.block.timestamp!
     }
 
     BLOCK_RECORD.cur.blockHeight = ctx.block.height
-    BLOCK_RECORD.cur.timestamp = ctx.block.timestamp
+    BLOCK_RECORD.cur.timestamp = ctx.block.timestamp!
 
     const blockDiff =
         BLOCK_RECORD.cur.blockHeight - BLOCK_RECORD.pre.blockHeight
@@ -65,7 +65,7 @@ export async function getTimePerBlock(ctx: EventHandlerContext) {
         BLOCK_RECORD.pre.timestamp = BLOCK_RECORD.middle.timestamp
 
         BLOCK_RECORD.middle.blockHeight = ctx.block.height
-        BLOCK_RECORD.middle.timestamp = ctx.block.timestamp
+        BLOCK_RECORD.middle.timestamp = ctx.block.timestamp!
     }
 
     const blocks = BLOCK_RECORD.cur.blockHeight - BLOCK_RECORD.pre.blockHeight

@@ -1,6 +1,6 @@
 import { TOKEN_METADATA_MAP, ZERO_BD } from '../constants'
 import { Token } from '../model'
-import { EventHandlerContext } from '../types'
+import { EventHandlerContext } from '../processor'
 import {
     addressFromAsset,
     getTotalIssuance,
@@ -14,6 +14,7 @@ export async function getOrCreateToken(
     asset: AssetId
 ): Promise<Token | undefined> {
     const address = addressFromAsset(asset)
+
     let token = await ctx.store.get(Token, address)
 
     if (!token) {
@@ -25,6 +26,7 @@ export async function getOrCreateToken(
             ctx,
             zenlinkAssetIdToCurrencyId(asset)
         )
+
         token = new Token({
             id: address.toLowerCase(),
             name,

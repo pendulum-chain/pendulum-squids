@@ -1,4 +1,4 @@
-import { Abi, encodeCall, decodeResult } from '@subsquid/ink-abi'
+import { Abi, Bytes, encodeCall, decodeResult } from '@subsquid/ink-abi'
 
 export const metadata = {
     contract: {
@@ -7,9 +7,9 @@ export const metadata = {
         version: '0.0.1',
     },
     source: {
-        compiler: 'solang 0.2.2',
-        hash: '0xc23059b5813334e0c17dfae3a524ae8b8dda5cdeedd8d2914decf62990e26b5b',
-        language: 'Solidity 0.2.2',
+        compiler: 'solang 0.3.2',
+        hash: '0x8d16a4bd1f3071e0fb0965b6e6ca421975da6269e77340d5f080f81f2cb54023',
+        language: 'Solidity 0.3.2',
     },
     spec: {
         constructors: [
@@ -18,18 +18,23 @@ export const metadata = {
                     {
                         label: '_asset',
                         type: {
-                            displayName: ['ink_env', 'types', 'AccountId'],
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
                             type: 2,
                         },
                     },
                     {
                         label: '_price',
                         type: {
-                            displayName: ['u256'],
+                            displayName: ['uint256'],
                             type: 3,
                         },
                     },
                 ],
+                default: false,
                 docs: [''],
                 label: 'new',
                 payable: false,
@@ -38,10 +43,37 @@ export const metadata = {
             },
         ],
         docs: [''],
+        environment: {
+            accountId: {
+                displayName: ['AccountId'],
+                type: 2,
+            },
+            balance: {
+                displayName: ['Balance'],
+                type: 4,
+            },
+            blockNumber: {
+                displayName: ['BlockNumber'],
+                type: 5,
+            },
+            chainExtension: {
+                displayName: [],
+                type: 0,
+            },
+            hash: {
+                displayName: ['Hash'],
+                type: 6,
+            },
+            maxEventTopics: 4,
+            timestamp: {
+                displayName: ['Timestamp'],
+                type: 5,
+            },
+        },
         events: [],
         lang_error: {
-            displayName: [],
-            type: 0,
+            displayName: ['SolidityError'],
+            type: 10,
         },
         messages: [
             {
@@ -49,24 +81,29 @@ export const metadata = {
                     {
                         label: '_asset',
                         type: {
-                            displayName: ['ink_env', 'types', 'AccountId'],
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
                             type: 2,
                         },
                     },
                     {
                         label: '_price',
                         type: {
-                            displayName: ['u256'],
+                            displayName: ['uint256'],
                             type: 3,
                         },
                     },
                 ],
+                default: false,
                 docs: [''],
                 label: 'updateCurrentPrices',
                 mutates: true,
                 payable: false,
                 returnType: {
-                    displayName: ['u256'],
+                    displayName: ['uint256'],
                     type: 3,
                 },
                 selector: '0xf97a7796',
@@ -76,40 +113,25 @@ export const metadata = {
                     {
                         label: '_asset',
                         type: {
-                            displayName: ['ink_env', 'types', 'AccountId'],
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
                             type: 2,
                         },
                     },
                 ],
+                default: false,
                 docs: [''],
                 label: 'getAssetPrice',
                 mutates: false,
                 payable: false,
                 returnType: {
-                    displayName: ['u256'],
+                    displayName: ['uint256'],
                     type: 3,
                 },
                 selector: '0xb3596f07',
-            },
-            {
-                args: [
-                    {
-                        label: '_asset',
-                        type: {
-                            displayName: ['ink_env', 'types', 'AccountId'],
-                            type: 2,
-                        },
-                    },
-                ],
-                docs: [''],
-                label: 'getAssetPriceReciprocal',
-                mutates: false,
-                payable: false,
-                returnType: {
-                    displayName: ['u256'],
-                    type: 3,
-                },
-                selector: '0x2d664ca2',
             },
         ],
     },
@@ -141,7 +163,7 @@ export const metadata = {
                 def: {
                     primitive: 'u8',
                 },
-                path: ['u8'],
+                path: ['uint8'],
             },
         },
         {
@@ -167,7 +189,7 @@ export const metadata = {
                         ],
                     },
                 },
-                path: ['ink_env', 'types', 'AccountId'],
+                path: ['ink_primitives', 'types', 'AccountId'],
             },
         },
         {
@@ -176,7 +198,109 @@ export const metadata = {
                 def: {
                     primitive: 'u256',
                 },
-                path: ['u256'],
+                path: ['uint256'],
+            },
+        },
+        {
+            id: 4,
+            type: {
+                def: {
+                    primitive: 'u128',
+                },
+                path: ['uint128'],
+            },
+        },
+        {
+            id: 5,
+            type: {
+                def: {
+                    primitive: 'u64',
+                },
+                path: ['uint64'],
+            },
+        },
+        {
+            id: 6,
+            type: {
+                def: {
+                    composite: {
+                        fields: [
+                            {
+                                type: 1,
+                            },
+                        ],
+                    },
+                },
+                path: ['ink_primitives', 'types', 'Hash'],
+            },
+        },
+        {
+            id: 7,
+            type: {
+                def: {
+                    primitive: 'str',
+                },
+                path: ['string'],
+            },
+        },
+        {
+            id: 8,
+            type: {
+                def: {
+                    composite: {
+                        fields: [
+                            {
+                                type: 7,
+                            },
+                        ],
+                    },
+                },
+                path: ['0x08c379a0'],
+            },
+        },
+        {
+            id: 9,
+            type: {
+                def: {
+                    composite: {
+                        fields: [
+                            {
+                                type: 3,
+                            },
+                        ],
+                    },
+                },
+                path: ['0x4e487b71'],
+            },
+        },
+        {
+            id: 10,
+            type: {
+                def: {
+                    variant: {
+                        variants: [
+                            {
+                                fields: [
+                                    {
+                                        type: 8,
+                                    },
+                                ],
+                                index: 0,
+                                name: 'Error',
+                            },
+                            {
+                                fields: [
+                                    {
+                                        type: 9,
+                                    },
+                                ],
+                                index: 1,
+                                name: 'Panic',
+                            },
+                        ],
+                    },
+                },
+                path: ['SolidityError'],
             },
         },
     ],
@@ -185,21 +309,21 @@ export const metadata = {
 
 const _abi = new Abi(metadata)
 
-export function decodeEvent(hex: string): Event {
-    return _abi.decodeEvent(hex)
+export function decodeEvent(bytes: Bytes): Event {
+    return _abi.decodeEvent(bytes)
 }
 
-export function decodeMessage(hex: string): Message {
-    return _abi.decodeMessage(hex)
+export function decodeMessage(bytes: Bytes): Message {
+    return _abi.decodeMessage(bytes)
 }
 
-export function decodeConstructor(hex: string): Constructor {
-    return _abi.decodeConstructor(hex)
+export function decodeConstructor(bytes: Bytes): Constructor {
+    return _abi.decodeConstructor(bytes)
 }
 
 export interface Chain {
-    client: {
-        call: <T = any>(method: string, params?: unknown[]) => Promise<T>
+    rpc: {
+        call<T = any>(method: string, params?: unknown[]): Promise<T>
     }
 }
 
@@ -210,22 +334,18 @@ export interface ChainContext {
 export class Contract {
     constructor(
         private ctx: ChainContext,
-        private address: string,
-        private blockHash?: string
+        private address: Bytes,
+        private blockHash?: Bytes
     ) {}
 
-    getAssetPrice(_asset: AccountId): Promise<u256> {
+    getAssetPrice(_asset: AccountId): Promise<uint256> {
         return this.stateCall('0xb3596f07', [_asset])
-    }
-
-    getAssetPriceReciprocal(_asset: AccountId): Promise<u256> {
-        return this.stateCall('0x2d664ca2', [_asset])
     }
 
     private async stateCall<T>(selector: string, args: any[]): Promise<T> {
         let input = _abi.encodeMessageInput(selector, args)
         let data = encodeCall(this.address, input)
-        let result = await this.ctx._chain.client.call('state_call', [
+        let result = await this.ctx._chain.rpc.call('state_call', [
             'ContractsApi_call',
             data,
             this.blockHash,
@@ -235,21 +355,22 @@ export class Contract {
     }
 }
 
-export type Event = never
+export type uint256 = bigint
 
-export type Message =
-    | Message_updateCurrentPrices
-    | Message_getAssetPrice
-    | Message_getAssetPriceReciprocal
+export type AccountId = Bytes
+
+export type Constructor = Constructor_new
 
 /**
  *
  */
-export interface Message_updateCurrentPrices {
-    __kind: 'updateCurrentPrices'
+export interface Constructor_new {
+    __kind: 'new'
     asset: AccountId
-    price: u256
+    price: uint256
 }
+
+export type Message = Message_getAssetPrice | Message_updateCurrentPrices
 
 /**
  *
@@ -262,25 +383,13 @@ export interface Message_getAssetPrice {
 /**
  *
  */
-export interface Message_getAssetPriceReciprocal {
-    __kind: 'getAssetPriceReciprocal'
+export interface Message_updateCurrentPrices {
+    __kind: 'updateCurrentPrices'
     asset: AccountId
+    price: uint256
 }
 
-export type Constructor = Constructor_new
-
-/**
- *
- */
-export interface Constructor_new {
-    __kind: 'new'
-    asset: AccountId
-    price: u256
-}
-
-export type AccountId = Uint8Array
-
-export type u256 = bigint
+export type Event = never
 
 export type Result<T, E> =
     | { __kind: 'Ok'; value: T }

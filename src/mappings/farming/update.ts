@@ -9,8 +9,9 @@ import {
     StakePosition,
     User,
 } from '../../model'
-import { EventHandlerContext } from '../../types'
+import { EventHandlerContext } from '../../processor'
 import { getFamingSharesAndWithdrawnRewards } from '../../utils/farming'
+const { hexToU8a } = require('@polkadot/util')
 
 export async function updateStakePosition(
     ctx: EventHandlerContext,
@@ -32,7 +33,7 @@ export async function updateStakePosition(
     const result = await getFamingSharesAndWithdrawnRewards(
         ctx,
         Number(farm.pid),
-        decode(user.id).bytes
+        user.id
     )
     position.liquidityStakedBalance = result?.share ?? 0n
     await ctx.store.save(position)
@@ -44,7 +45,7 @@ export async function updateSingleTokenLockHourData(
     singleTokenLock: SingleTokenLock
 ): Promise<SingleTokenLockHourData> {
     const { timestamp } = ctx.block
-    const hourIndex = parseInt((timestamp / 3600000).toString(), 10)
+    const hourIndex = parseInt((timestamp! / 3600000).toString(), 10)
     const hourStartUnix = Number(hourIndex) * 3600000
     const dayPairID = `${singleTokenLock.id as string}-${hourIndex}`
     let hourData = await ctx.store.get(SingleTokenLockHourData, dayPairID)
@@ -70,7 +71,7 @@ export async function updateSingleTokenLockDayData(
     singleTokenLock: SingleTokenLock
 ): Promise<SingleTokenLockDayData> {
     const { timestamp } = ctx.block
-    const dayID = parseInt((timestamp / 86400000).toString(), 10)
+    const dayID = parseInt((timestamp! / 86400000).toString(), 10)
     const dayStartTimestamp = Number(dayID) * 86400000
     const dayPairID = `${singleTokenLock.id as string}-${dayID}`
     let dayData = await ctx.store.get(SingleTokenLockDayData, dayPairID)

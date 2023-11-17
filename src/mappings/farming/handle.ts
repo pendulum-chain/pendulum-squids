@@ -1,4 +1,4 @@
-import { EventHandlerContext } from '../../types'
+import { EventHandlerContext } from '../../processor'
 import {
     formatFarmingAllForceGaugeClaimedEvent,
     formatFarmingAllRetiredEvent,

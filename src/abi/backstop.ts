@@ -1,4 +1,4 @@
-import { Abi, encodeCall, decodeResult } from '@subsquid/ink-abi'
+import { Abi, Bytes, encodeCall, decodeResult } from '@subsquid/ink-abi'
 
 export const metadata = {
     contract: {
@@ -1412,21 +1412,21 @@ export const metadata = {
 
 const _abi = new Abi(metadata)
 
-export function decodeEvent(hex: string): Event {
-    return _abi.decodeEvent(hex)
+export function decodeEvent(bytes: Bytes): Event {
+    return _abi.decodeEvent(bytes)
 }
 
-export function decodeMessage(hex: string): Message {
-    return _abi.decodeMessage(hex)
+export function decodeMessage(bytes: Bytes): Message {
+    return _abi.decodeMessage(bytes)
 }
 
-export function decodeConstructor(hex: string): Constructor {
-    return _abi.decodeConstructor(hex)
+export function decodeConstructor(bytes: Bytes): Constructor {
+    return _abi.decodeConstructor(bytes)
 }
 
 export interface Chain {
-    client: {
-        call: <T = any>(method: string, params?: unknown[]) => Promise<T>
+    rpc: {
+        call<T = any>(method: string, params?: unknown[]): Promise<T>
     }
 }
 
@@ -1437,8 +1437,8 @@ export interface ChainContext {
 export class Contract {
     constructor(
         private ctx: ChainContext,
-        private address: string,
-        private blockHash?: string
+        private address: Bytes,
+        private blockHash?: Bytes
     ) {}
 
     name(): Promise<string> {
@@ -1449,7 +1449,7 @@ export class Contract {
         return this.stateCall('0x95d89b41', [])
     }
 
-    decimals(): Promise<number> {
+    decimals(): Promise<u8> {
         return this.stateCall('0x313ce567', [])
     }
 
@@ -1465,7 +1465,7 @@ export class Contract {
         return this.stateCall('0xdd62ed3e', [owner, spender])
     }
 
-    paused(): Promise<boolean> {
+    paused(): Promise<bool> {
         return this.stateCall('0x5c975abb', [])
     }
 
@@ -1520,7 +1520,7 @@ export class Contract {
     private async stateCall<T>(selector: string, args: any[]): Promise<T> {
         let input = _abi.encodeMessageInput(selector, args)
         let data = encodeCall(this.address, input)
-        let result = await this.ctx._chain.client.call('state_call', [
+        let result = await this.ctx._chain.rpc.call('state_call', [
             'ContractsApi_call',
             data,
             this.blockHash,
@@ -1530,156 +1530,80 @@ export class Contract {
     }
 }
 
-export type Event =
-    | Event_Transfer
-    | Event_Approval
-    | Event_Paused
-    | Event_Unpaused
-    | Event_OwnershipTransferred
-    | Event_Mint
-    | Event_Burn
-    | Event_CoverSwapWithdrawal
-    | Event_WithdrawSwapLiquidity
+export type bool = boolean
 
-export interface Event_Transfer {
-    __kind: 'Transfer'
-    from: AccountId
-    to: AccountId
-    value: u256
-}
+export type AccountId = Bytes
 
-export interface Event_Approval {
-    __kind: 'Approval'
-    owner: AccountId
-    spender: AccountId
-    value: u256
-}
+export type u256 = bigint
 
-export interface Event_Paused {
-    __kind: 'Paused'
-    account: AccountId
-}
+export type u8 = number
 
-export interface Event_Unpaused {
-    __kind: 'Unpaused'
-    account: AccountId
-}
+export type Constructor = Constructor_new
 
-export interface Event_OwnershipTransferred {
-    __kind: 'OwnershipTransferred'
-    previousOwner: AccountId
-    newOwner: AccountId
-}
-
-export interface Event_Mint {
-    __kind: 'Mint'
-    sender: AccountId
-    poolSharesMinted: u256
-    amountPrincipleDeposited: u256
-}
-
-export interface Event_Burn {
-    __kind: 'Burn'
-    sender: AccountId
-    poolSharesBurned: u256
-    amountPrincipleWithdrawn: u256
-}
-
-export interface Event_CoverSwapWithdrawal {
-    __kind: 'CoverSwapWithdrawal'
-    owner: AccountId
-    swapPool: AccountId
-    amountSwapShares: u256
-    amountSwapTokens: u256
-    amountBackstopTokens: u256
-}
-
-export interface Event_WithdrawSwapLiquidity {
-    __kind: 'WithdrawSwapLiquidity'
-    owner: AccountId
-    swapPool: AccountId
-    amountSwapTokens: u256
-    amountBackstopTokens: u256
+/**
+ *
+ */
+export interface Constructor_new {
+    __kind: 'new'
+    router: AccountId
+    asset: AccountId
+    curve: AccountId
+    name: string
+    symbol: string
 }
 
 export type Message =
-    | Message_name
-    | Message_symbol
-    | Message_decimals
-    | Message_totalSupply
-    | Message_balanceOf
-    | Message_transfer
+    | Message_accumulatedSlippage
+    | Message_addSwapPool
     | Message_allowance
     | Message_approve
-    | Message_transferFrom
-    | Message_increaseAllowance
-    | Message_decreaseAllowance
-    | Message_paused
-    | Message_owner
-    | Message_renounceOwnership
-    | Message_transferOwnership
-    | Message_poolCap
     | Message_asset
-    | Message_sharesTargetWorth
-    | Message_router
-    | Message_slippageCurve
-    | Message_accumulatedSlippage
-    | Message_deposit
-    | Message_setPoolCap
-    | Message_withdraw
-    | Message_addSwapPool
-    | Message_setInsuranceFee
-    | Message_redeemSwapPoolShares
-    | Message_withdrawExcessSwapLiquidity
+    | Message_balanceOf
     | Message_coverage
+    | Message_decimals
+    | Message_decreaseAllowance
+    | Message_deposit
     | Message_getBackedPool
     | Message_getBackedPoolCount
     | Message_getInsuranceFee
     | Message_getTotalPoolWorth
+    | Message_increaseAllowance
+    | Message_name
+    | Message_owner
+    | Message_paused
+    | Message_poolCap
+    | Message_redeemSwapPoolShares
+    | Message_renounceOwnership
+    | Message_router
+    | Message_setInsuranceFee
+    | Message_setPoolCap
+    | Message_sharesTargetWorth
+    | Message_slippageCurve
+    | Message_symbol
+    | Message_totalSupply
+    | Message_transfer
+    | Message_transferFrom
+    | Message_transferOwnership
+    | Message_withdraw
+    | Message_withdrawExcessSwapLiquidity
 
 /**
  *
  */
-export interface Message_name {
-    __kind: 'name'
+export interface Message_accumulatedSlippage {
+    __kind: 'accumulatedSlippage'
 }
 
 /**
- *
- */
-export interface Message_symbol {
-    __kind: 'symbol'
-}
+ * Make this backstop pool cover another swap pool Beware: Adding a swap pool holding the same token as the backstop pool
+can easily cause undesirable conditions and must be secured (i.e. long time lock)!
 
-/**
- *
- */
-export interface Message_decimals {
-    __kind: 'decimals'
-}
 
-/**
- *
  */
-export interface Message_totalSupply {
-    __kind: 'totalSupply'
-}
-
-/**
- *
- */
-export interface Message_balanceOf {
-    __kind: 'balanceOf'
-    account: AccountId
-}
-
-/**
- *
- */
-export interface Message_transfer {
-    __kind: 'transfer'
-    to: AccountId
-    amount: u256
+export interface Message_addSwapPool {
+    __kind: 'addSwapPool'
+    swapPool: AccountId
+    insuranceFeeBps: u256
 }
 
 /**
@@ -1701,22 +1625,36 @@ export interface Message_approve {
 }
 
 /**
- *
+ * Returns the pooled token's address
+
+
  */
-export interface Message_transferFrom {
-    __kind: 'transferFrom'
-    from: AccountId
-    to: AccountId
-    amount: u256
+export interface Message_asset {
+    __kind: 'asset'
 }
 
 /**
  *
  */
-export interface Message_increaseAllowance {
-    __kind: 'increaseAllowance'
-    spender: AccountId
-    addedValue: u256
+export interface Message_balanceOf {
+    __kind: 'balanceOf'
+    account: AccountId
+}
+
+/**
+ * returns pool coverage ratio
+
+
+ */
+export interface Message_coverage {
+    __kind: 'coverage'
+}
+
+/**
+ *
+ */
+export interface Message_decimals {
+    __kind: 'decimals'
 }
 
 /**
@@ -1729,82 +1667,6 @@ export interface Message_decreaseAllowance {
 }
 
 /**
- *
- */
-export interface Message_paused {
-    __kind: 'paused'
-}
-
-/**
- *
- */
-export interface Message_owner {
-    __kind: 'owner'
-}
-
-/**
- *
- */
-export interface Message_renounceOwnership {
-    __kind: 'renounceOwnership'
-}
-
-/**
- *
- */
-export interface Message_transferOwnership {
-    __kind: 'transferOwnership'
-    newOwner: AccountId
-}
-
-/**
- *
- */
-export interface Message_poolCap {
-    __kind: 'poolCap'
-}
-
-/**
- * Returns the pooled token's address
-
-
- */
-export interface Message_asset {
-    __kind: 'asset'
-}
-
-/**
- * Returns the worth of an amount of pool shares (LP tokens) in underlying principle
-
-
- */
-export interface Message_sharesTargetWorth {
-    __kind: 'sharesTargetWorth'
-    shares: u256
-}
-
-/**
- *
- */
-export interface Message_router {
-    __kind: 'router'
-}
-
-/**
- *
- */
-export interface Message_slippageCurve {
-    __kind: 'slippageCurve'
-}
-
-/**
- *
- */
-export interface Message_accumulatedSlippage {
-    __kind: 'accumulatedSlippage'
-}
-
-/**
  * Deposits amount of tokens into pool Will change cov ratio of pool, will increase delta to 0
 
 
@@ -1812,84 +1674,6 @@ export interface Message_accumulatedSlippage {
 export interface Message_deposit {
     __kind: 'deposit'
     amount: u256
-}
-
-/**
- * Set new upper limit of pool reserves. Will disable deposits when reached. Can always set to an amount < current reserves to temporarily restrict deposits.
-
-
- */
-export interface Message_setPoolCap {
-    __kind: 'setPoolCap'
-    maxTokens: u256
-}
-
-/**
- * Withdraws liquidity amount of asset ensuring minimum amount required Slippage is applied (withdrawal fee)
-
-
- */
-export interface Message_withdraw {
-    __kind: 'withdraw'
-    shares: u256
-    minimumAmount: u256
-}
-
-/**
- * Make this backstop pool cover another swap pool Beware: Adding a swap pool holding the same token as the backstop pool
-can easily cause undesirable conditions and must be secured (i.e. long time lock)!
-
-
- */
-export interface Message_addSwapPool {
-    __kind: 'addSwapPool'
-    swapPool: AccountId
-    insuranceFeeBps: u256
-}
-
-/**
- * Change a swap pool's insurance withdrawal fee
-
-
- */
-export interface Message_setInsuranceFee {
-    __kind: 'setInsuranceFee'
-    swapPool: AccountId
-    insuranceFeeBps: u256
-}
-
-/**
- * withdraw from a swap pool using backstop liquidity without slippage only possible if swap pool's coverage ratio < 100%
-
-
- */
-export interface Message_redeemSwapPoolShares {
-    __kind: 'redeemSwapPoolShares'
-    swapPool: AccountId
-    shares: u256
-    minAmount: u256
-}
-
-/**
- * withdraw from backstop pool, but receive excess liquidity
-of a swap pool without slippage, instead of backstop liquidity
-
-
- */
-export interface Message_withdrawExcessSwapLiquidity {
-    __kind: 'withdrawExcessSwapLiquidity'
-    swapPool: AccountId
-    shares: u256
-    minAmount: u256
-}
-
-/**
- * returns pool coverage ratio
-
-
- */
-export interface Message_coverage {
-    __kind: 'coverage'
 }
 
 /**
@@ -1931,25 +1715,243 @@ export interface Message_getTotalPoolWorth {
     __kind: 'getTotalPoolWorth'
 }
 
-export type Constructor = Constructor_new
+/**
+ *
+ */
+export interface Message_increaseAllowance {
+    __kind: 'increaseAllowance'
+    spender: AccountId
+    addedValue: u256
+}
 
 /**
  *
  */
-export interface Constructor_new {
-    __kind: 'new'
-    router: AccountId
-    asset: AccountId
-    curve: AccountId
-    name: string
-    symbol: string
+export interface Message_name {
+    __kind: 'name'
 }
 
-// export type string = string
+/**
+ *
+ */
+export interface Message_owner {
+    __kind: 'owner'
+}
 
-export type u256 = bigint
+/**
+ *
+ */
+export interface Message_paused {
+    __kind: 'paused'
+}
 
-export type AccountId = Uint8Array
+/**
+ *
+ */
+export interface Message_poolCap {
+    __kind: 'poolCap'
+}
+
+/**
+ * withdraw from a swap pool using backstop liquidity without slippage only possible if swap pool's coverage ratio < 100%
+
+
+ */
+export interface Message_redeemSwapPoolShares {
+    __kind: 'redeemSwapPoolShares'
+    swapPool: AccountId
+    shares: u256
+    minAmount: u256
+}
+
+/**
+ *
+ */
+export interface Message_renounceOwnership {
+    __kind: 'renounceOwnership'
+}
+
+/**
+ *
+ */
+export interface Message_router {
+    __kind: 'router'
+}
+
+/**
+ * Change a swap pool's insurance withdrawal fee
+
+
+ */
+export interface Message_setInsuranceFee {
+    __kind: 'setInsuranceFee'
+    swapPool: AccountId
+    insuranceFeeBps: u256
+}
+
+/**
+ * Set new upper limit of pool reserves. Will disable deposits when reached. Can always set to an amount < current reserves to temporarily restrict deposits.
+
+
+ */
+export interface Message_setPoolCap {
+    __kind: 'setPoolCap'
+    maxTokens: u256
+}
+
+/**
+ * Returns the worth of an amount of pool shares (LP tokens) in underlying principle
+
+
+ */
+export interface Message_sharesTargetWorth {
+    __kind: 'sharesTargetWorth'
+    shares: u256
+}
+
+/**
+ *
+ */
+export interface Message_slippageCurve {
+    __kind: 'slippageCurve'
+}
+
+/**
+ *
+ */
+export interface Message_symbol {
+    __kind: 'symbol'
+}
+
+/**
+ *
+ */
+export interface Message_totalSupply {
+    __kind: 'totalSupply'
+}
+
+/**
+ *
+ */
+export interface Message_transfer {
+    __kind: 'transfer'
+    to: AccountId
+    amount: u256
+}
+
+/**
+ *
+ */
+export interface Message_transferFrom {
+    __kind: 'transferFrom'
+    from: AccountId
+    to: AccountId
+    amount: u256
+}
+
+/**
+ *
+ */
+export interface Message_transferOwnership {
+    __kind: 'transferOwnership'
+    newOwner: AccountId
+}
+
+/**
+ * Withdraws liquidity amount of asset ensuring minimum amount required Slippage is applied (withdrawal fee)
+
+
+ */
+export interface Message_withdraw {
+    __kind: 'withdraw'
+    shares: u256
+    minimumAmount: u256
+}
+
+/**
+ * withdraw from backstop pool, but receive excess liquidity
+of a swap pool without slippage, instead of backstop liquidity
+
+
+ */
+export interface Message_withdrawExcessSwapLiquidity {
+    __kind: 'withdrawExcessSwapLiquidity'
+    swapPool: AccountId
+    shares: u256
+    minAmount: u256
+}
+
+export type Event =
+    | Event_Approval
+    | Event_Burn
+    | Event_CoverSwapWithdrawal
+    | Event_Mint
+    | Event_OwnershipTransferred
+    | Event_Paused
+    | Event_Transfer
+    | Event_Unpaused
+    | Event_WithdrawSwapLiquidity
+
+export interface Event_Approval {
+    __kind: 'Approval'
+    owner: AccountId
+    spender: AccountId
+    value: u256
+}
+
+export interface Event_Burn {
+    __kind: 'Burn'
+    sender: AccountId
+    poolSharesBurned: u256
+    amountPrincipleWithdrawn: u256
+}
+
+export interface Event_CoverSwapWithdrawal {
+    __kind: 'CoverSwapWithdrawal'
+    owner: AccountId
+    swapPool: AccountId
+    amountSwapShares: u256
+    amountSwapTokens: u256
+    amountBackstopTokens: u256
+}
+
+export interface Event_Mint {
+    __kind: 'Mint'
+    sender: AccountId
+    poolSharesMinted: u256
+    amountPrincipleDeposited: u256
+}
+
+export interface Event_OwnershipTransferred {
+    __kind: 'OwnershipTransferred'
+    previousOwner: AccountId
+    newOwner: AccountId
+}
+
+export interface Event_Paused {
+    __kind: 'Paused'
+    account: AccountId
+}
+
+export interface Event_Transfer {
+    __kind: 'Transfer'
+    from: AccountId
+    to: AccountId
+    value: u256
+}
+
+export interface Event_Unpaused {
+    __kind: 'Unpaused'
+    account: AccountId
+}
+
+export interface Event_WithdrawSwapLiquidity {
+    __kind: 'WithdrawSwapLiquidity'
+    owner: AccountId
+    swapPool: AccountId
+    amountSwapTokens: u256
+    amountBackstopTokens: u256
+}
 
 export type Result<T, E> =
     | { __kind: 'Ok'; value: T }

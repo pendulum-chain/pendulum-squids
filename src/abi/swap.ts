@@ -1,4 +1,4 @@
-import { Abi, encodeCall, decodeResult } from '@subsquid/ink-abi'
+import { Abi, Bytes, encodeCall, decodeResult } from '@subsquid/ink-abi'
 
 export const metadata = {
     contract: {
@@ -9,9 +9,9 @@ export const metadata = {
         version: '0.0.1',
     },
     source: {
-        compiler: 'solang 0.2.2',
-        hash: '0x6842e797b0686ee14af4bc933d659814f92814d371d5f602e17b3a5d1c51ca47',
-        language: 'Solidity 0.2.2',
+        compiler: 'solang 0.3.2',
+        hash: '0x4878e478a0e56c4febd690a37624ba0fb4b0c0ea8b3e6594519a228b7113e4bb',
+        language: 'Solidity 0.3.2',
     },
     spec: {
         constructors: [
@@ -20,35 +20,55 @@ export const metadata = {
                     {
                         label: '_asset',
                         type: {
-                            displayName: ['ink_env', 'types', 'AccountId'],
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
                             type: 2,
                         },
                     },
                     {
                         label: '_slippageCurve',
                         type: {
-                            displayName: ['ink_env', 'types', 'AccountId'],
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
                             type: 2,
                         },
                     },
                     {
                         label: '_router',
                         type: {
-                            displayName: ['ink_env', 'types', 'AccountId'],
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
                             type: 2,
                         },
                     },
                     {
                         label: '_backstop',
                         type: {
-                            displayName: ['ink_env', 'types', 'AccountId'],
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
                             type: 2,
                         },
                     },
                     {
                         label: '_protocolTreasury',
                         type: {
-                            displayName: ['ink_env', 'types', 'AccountId'],
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
                             type: 2,
                         },
                     },
@@ -67,6 +87,7 @@ export const metadata = {
                         },
                     },
                 ],
+                default: false,
                 docs: [''],
                 label: 'new',
                 payable: false,
@@ -75,8 +96,35 @@ export const metadata = {
             },
         ],
         docs: [
-            'Swap pool contract. May or may not be covered by a backstop pool. Conceptionally, there are two ways to temporarily disable a pool:\nThe owner can either pause the pool, disabling deposits, swaps & backstop,\nor the owner can set the pool cap to zero which only prevents deposits.\nThe former is for security incidents, the latter for phasing out a pool.\n\n',
+            'Swap pool contract. May or may not be covered by a backstop pool. Conceptionally, there are two ways to temporarily disable a pool:\nThe owner can either pause the pool, disabling deposits, swaps & backstop,\nor the owner can set the pool cap to zero which only prevents deposits.\nThe former is for security incidents, the latter for phasing out a pool.',
         ],
+        environment: {
+            accountId: {
+                displayName: ['AccountId'],
+                type: 2,
+            },
+            balance: {
+                displayName: ['Balance'],
+                type: 13,
+            },
+            blockNumber: {
+                displayName: ['BlockNumber'],
+                type: 14,
+            },
+            chainExtension: {
+                displayName: [],
+                type: 0,
+            },
+            hash: {
+                displayName: ['Hash'],
+                type: 15,
+            },
+            maxEventTopics: 4,
+            timestamp: {
+                displayName: ['Timestamp'],
+                type: 14,
+            },
+        },
         events: [
             {
                 args: [
@@ -85,7 +133,11 @@ export const metadata = {
                         indexed: true,
                         label: 'from',
                         type: {
-                            displayName: ['ink_env', 'types', 'AccountId'],
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
                             type: 2,
                         },
                     },
@@ -94,7 +146,11 @@ export const metadata = {
                         indexed: true,
                         label: 'to',
                         type: {
-                            displayName: ['ink_env', 'types', 'AccountId'],
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
                             type: 2,
                         },
                     },
@@ -103,7 +159,7 @@ export const metadata = {
                         indexed: false,
                         label: 'value',
                         type: {
-                            displayName: ['u256'],
+                            displayName: ['uint256'],
                             type: 3,
                         },
                     },
@@ -118,7 +174,11 @@ export const metadata = {
                         indexed: true,
                         label: 'owner',
                         type: {
-                            displayName: ['ink_env', 'types', 'AccountId'],
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
                             type: 2,
                         },
                     },
@@ -127,7 +187,11 @@ export const metadata = {
                         indexed: true,
                         label: 'spender',
                         type: {
-                            displayName: ['ink_env', 'types', 'AccountId'],
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
                             type: 2,
                         },
                     },
@@ -136,7 +200,7 @@ export const metadata = {
                         indexed: false,
                         label: 'value',
                         type: {
-                            displayName: ['u256'],
+                            displayName: ['uint256'],
                             type: 3,
                         },
                     },
@@ -151,7 +215,11 @@ export const metadata = {
                         indexed: false,
                         label: 'account',
                         type: {
-                            displayName: ['ink_env', 'types', 'AccountId'],
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
                             type: 2,
                         },
                     },
@@ -166,7 +234,11 @@ export const metadata = {
                         indexed: false,
                         label: 'account',
                         type: {
-                            displayName: ['ink_env', 'types', 'AccountId'],
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
                             type: 2,
                         },
                     },
@@ -181,7 +253,11 @@ export const metadata = {
                         indexed: true,
                         label: 'previousOwner',
                         type: {
-                            displayName: ['ink_env', 'types', 'AccountId'],
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
                             type: 2,
                         },
                     },
@@ -190,7 +266,11 @@ export const metadata = {
                         indexed: true,
                         label: 'newOwner',
                         type: {
-                            displayName: ['ink_env', 'types', 'AccountId'],
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
                             type: 2,
                         },
                     },
@@ -205,7 +285,11 @@ export const metadata = {
                         indexed: true,
                         label: 'sender',
                         type: {
-                            displayName: ['ink_env', 'types', 'AccountId'],
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
                             type: 2,
                         },
                     },
@@ -214,7 +298,7 @@ export const metadata = {
                         indexed: false,
                         label: 'poolSharesMinted',
                         type: {
-                            displayName: ['u256'],
+                            displayName: ['uint256'],
                             type: 3,
                         },
                     },
@@ -223,12 +307,12 @@ export const metadata = {
                         indexed: false,
                         label: 'amountPrincipleDeposited',
                         type: {
-                            displayName: ['u256'],
+                            displayName: ['uint256'],
                             type: 3,
                         },
                     },
                 ],
-                docs: ['emitted on every deposit\n\n'],
+                docs: ['emitted on every deposit'],
                 label: 'Mint',
             },
             {
@@ -238,7 +322,11 @@ export const metadata = {
                         indexed: true,
                         label: 'sender',
                         type: {
-                            displayName: ['ink_env', 'types', 'AccountId'],
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
                             type: 2,
                         },
                     },
@@ -247,7 +335,7 @@ export const metadata = {
                         indexed: false,
                         label: 'poolSharesBurned',
                         type: {
-                            displayName: ['u256'],
+                            displayName: ['uint256'],
                             type: 3,
                         },
                     },
@@ -256,13 +344,13 @@ export const metadata = {
                         indexed: false,
                         label: 'amountPrincipleWithdrawn',
                         type: {
-                            displayName: ['u256'],
+                            displayName: ['uint256'],
                             type: 3,
                         },
                     },
                 ],
                 docs: [
-                    'emitted on every withdrawal special case withdrawal using backstop liquidiity: amountPrincipleWithdrawn = 0\n\n',
+                    'emitted on every withdrawal special case withdrawal using backstop liquidiity: amountPrincipleWithdrawn = 0',
                 ],
                 label: 'Burn',
             },
@@ -273,7 +361,11 @@ export const metadata = {
                         indexed: false,
                         label: 'recipient',
                         type: {
-                            displayName: ['ink_env', 'types', 'AccountId'],
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
                             type: 2,
                         },
                     },
@@ -282,13 +374,13 @@ export const metadata = {
                         indexed: false,
                         label: 'amountSwapTokens',
                         type: {
-                            displayName: ['u256'],
+                            displayName: ['uint256'],
                             type: 3,
                         },
                     },
                 ],
                 docs: [
-                    'emitted when a backstop pool LP withdraws liquidity from swap pool only possible if swap pool coverage ratio remains >= 100%\n\n',
+                    'emitted when a backstop pool LP withdraws liquidity from swap pool only possible if swap pool coverage ratio remains >= 100%',
                 ],
                 label: 'BackstopDrain',
             },
@@ -299,7 +391,7 @@ export const metadata = {
                         indexed: false,
                         label: 'lpFees',
                         type: {
-                            displayName: ['u256'],
+                            displayName: ['uint256'],
                             type: 3,
                         },
                     },
@@ -308,7 +400,7 @@ export const metadata = {
                         indexed: false,
                         label: 'backstopFees',
                         type: {
-                            displayName: ['u256'],
+                            displayName: ['uint256'],
                             type: 3,
                         },
                     },
@@ -317,24 +409,25 @@ export const metadata = {
                         indexed: false,
                         label: 'protocolFees',
                         type: {
-                            displayName: ['u256'],
+                            displayName: ['uint256'],
                             type: 3,
                         },
                     },
                 ],
                 docs: [
-                    'Tracks the exact amounts of individual fees paid during a swap\n\n',
+                    'Tracks the exact amounts of individual fees paid during a swap',
                 ],
                 label: 'ChargedSwapFees',
             },
         ],
         lang_error: {
-            displayName: [],
-            type: 0,
+            displayName: ['SolidityError'],
+            type: 18,
         },
         messages: [
             {
                 args: [],
+                default: false,
                 docs: [''],
                 label: 'name',
                 mutates: false,
@@ -347,6 +440,7 @@ export const metadata = {
             },
             {
                 args: [],
+                default: false,
                 docs: [''],
                 label: 'symbol',
                 mutates: false,
@@ -359,24 +453,26 @@ export const metadata = {
             },
             {
                 args: [],
+                default: false,
                 docs: [''],
                 label: 'decimals',
                 mutates: false,
                 payable: false,
                 returnType: {
-                    displayName: ['u8'],
+                    displayName: ['uint8'],
                     type: 0,
                 },
                 selector: '0x313ce567',
             },
             {
                 args: [],
+                default: false,
                 docs: [''],
                 label: 'totalSupply',
                 mutates: false,
                 payable: false,
                 returnType: {
-                    displayName: ['u256'],
+                    displayName: ['uint256'],
                     type: 3,
                 },
                 selector: '0x18160ddd',
@@ -386,17 +482,22 @@ export const metadata = {
                     {
                         label: 'account',
                         type: {
-                            displayName: ['ink_env', 'types', 'AccountId'],
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
                             type: 2,
                         },
                     },
                 ],
+                default: false,
                 docs: [''],
                 label: 'balanceOf',
                 mutates: false,
                 payable: false,
                 returnType: {
-                    displayName: ['u256'],
+                    displayName: ['uint256'],
                     type: 3,
                 },
                 selector: '0x70a08231',
@@ -406,18 +507,23 @@ export const metadata = {
                     {
                         label: 'to',
                         type: {
-                            displayName: ['ink_env', 'types', 'AccountId'],
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
                             type: 2,
                         },
                     },
                     {
                         label: 'amount',
                         type: {
-                            displayName: ['u256'],
+                            displayName: ['uint256'],
                             type: 3,
                         },
                     },
                 ],
+                default: false,
                 docs: [''],
                 label: 'transfer',
                 mutates: true,
@@ -433,24 +539,33 @@ export const metadata = {
                     {
                         label: 'owner',
                         type: {
-                            displayName: ['ink_env', 'types', 'AccountId'],
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
                             type: 2,
                         },
                     },
                     {
                         label: 'spender',
                         type: {
-                            displayName: ['ink_env', 'types', 'AccountId'],
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
                             type: 2,
                         },
                     },
                 ],
+                default: false,
                 docs: [''],
                 label: 'allowance',
                 mutates: false,
                 payable: false,
                 returnType: {
-                    displayName: ['u256'],
+                    displayName: ['uint256'],
                     type: 3,
                 },
                 selector: '0xdd62ed3e',
@@ -460,18 +575,23 @@ export const metadata = {
                     {
                         label: 'spender',
                         type: {
-                            displayName: ['ink_env', 'types', 'AccountId'],
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
                             type: 2,
                         },
                     },
                     {
                         label: 'amount',
                         type: {
-                            displayName: ['u256'],
+                            displayName: ['uint256'],
                             type: 3,
                         },
                     },
                 ],
+                default: false,
                 docs: [''],
                 label: 'approve',
                 mutates: true,
@@ -487,25 +607,34 @@ export const metadata = {
                     {
                         label: 'from',
                         type: {
-                            displayName: ['ink_env', 'types', 'AccountId'],
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
                             type: 2,
                         },
                     },
                     {
                         label: 'to',
                         type: {
-                            displayName: ['ink_env', 'types', 'AccountId'],
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
                             type: 2,
                         },
                     },
                     {
                         label: 'amount',
                         type: {
-                            displayName: ['u256'],
+                            displayName: ['uint256'],
                             type: 3,
                         },
                     },
                 ],
+                default: false,
                 docs: [''],
                 label: 'transferFrom',
                 mutates: true,
@@ -521,18 +650,23 @@ export const metadata = {
                     {
                         label: 'spender',
                         type: {
-                            displayName: ['ink_env', 'types', 'AccountId'],
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
                             type: 2,
                         },
                     },
                     {
                         label: 'addedValue',
                         type: {
-                            displayName: ['u256'],
+                            displayName: ['uint256'],
                             type: 3,
                         },
                     },
                 ],
+                default: false,
                 docs: [''],
                 label: 'increaseAllowance',
                 mutates: true,
@@ -548,18 +682,23 @@ export const metadata = {
                     {
                         label: 'spender',
                         type: {
-                            displayName: ['ink_env', 'types', 'AccountId'],
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
                             type: 2,
                         },
                     },
                     {
                         label: 'subtractedValue',
                         type: {
-                            displayName: ['u256'],
+                            displayName: ['uint256'],
                             type: 3,
                         },
                     },
                 ],
+                default: false,
                 docs: [''],
                 label: 'decreaseAllowance',
                 mutates: true,
@@ -572,6 +711,7 @@ export const metadata = {
             },
             {
                 args: [],
+                default: false,
                 docs: [''],
                 label: 'paused',
                 mutates: false,
@@ -584,18 +724,20 @@ export const metadata = {
             },
             {
                 args: [],
+                default: false,
                 docs: [''],
                 label: 'owner',
                 mutates: false,
                 payable: false,
                 returnType: {
-                    displayName: ['ink_env', 'types', 'AccountId'],
+                    displayName: ['ink_primitives', 'types', 'AccountId'],
                     type: 2,
                 },
                 selector: '0x8da5cb5b',
             },
             {
                 args: [],
+                default: false,
                 docs: [''],
                 label: 'renounceOwnership',
                 mutates: true,
@@ -608,11 +750,16 @@ export const metadata = {
                     {
                         label: 'newOwner',
                         type: {
-                            displayName: ['ink_env', 'types', 'AccountId'],
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
                             type: 2,
                         },
                     },
                 ],
+                default: false,
                 docs: [''],
                 label: 'transferOwnership',
                 mutates: true,
@@ -622,118 +769,104 @@ export const metadata = {
             },
             {
                 args: [],
+                default: false,
                 docs: [''],
                 label: 'poolCap',
                 mutates: false,
                 payable: false,
                 returnType: {
-                    displayName: ['u256'],
+                    displayName: ['uint256'],
                     type: 3,
                 },
                 selector: '0xb954dc57',
             },
             {
                 args: [],
-                docs: ["Returns the pooled token's address\n\n"],
+                default: false,
+                docs: ["Returns the pooled token's address"],
                 label: 'asset',
                 mutates: false,
                 payable: false,
                 returnType: {
-                    displayName: ['ink_env', 'types', 'AccountId'],
+                    displayName: ['ink_primitives', 'types', 'AccountId'],
                     type: 2,
                 },
                 selector: '0x38d52e0f',
             },
             {
-                args: [
-                    {
-                        label: '_shares',
-                        type: {
-                            displayName: ['u256'],
-                            type: 3,
-                        },
-                    },
-                ],
-                docs: [
-                    'Returns the worth of an amount of pool shares (LP tokens) in underlying principle\n\n',
-                ],
-                label: 'sharesTargetWorth',
-                mutates: false,
-                payable: false,
-                returnType: {
-                    displayName: ['u256'],
-                    type: 3,
-                },
-                selector: '0xcc045745',
-            },
-            {
                 args: [],
+                default: false,
                 docs: [''],
                 label: 'accumulatedSlippage',
                 mutates: false,
                 payable: false,
                 returnType: {
-                    displayName: ['u256'],
+                    displayName: ['uint256'],
                     type: 3,
                 },
                 selector: '0xe4182b09',
             },
             {
                 args: [],
+                default: false,
                 docs: [''],
                 label: 'insuranceWithdrawalTimelock',
                 mutates: false,
                 payable: false,
                 returnType: {
-                    displayName: ['u256'],
+                    displayName: ['uint256'],
                     type: 3,
                 },
                 selector: '0x0d3a7fd4',
             },
             {
                 args: [],
+                default: false,
                 docs: [''],
                 label: 'protocolTreasury',
                 mutates: false,
                 payable: false,
                 returnType: {
-                    displayName: ['ink_env', 'types', 'AccountId'],
+                    displayName: ['ink_primitives', 'types', 'AccountId'],
                     type: 2,
                 },
                 selector: '0x803db96d',
             },
             {
                 args: [],
+                default: false,
                 docs: [''],
                 label: 'backstop',
                 mutates: false,
                 payable: false,
                 returnType: {
-                    displayName: ['ink_env', 'types', 'AccountId'],
+                    displayName: ['ink_primitives', 'types', 'AccountId'],
                     type: 2,
                 },
                 selector: '0x7dea1817',
             },
             {
                 args: [],
+                default: false,
                 docs: [''],
                 label: 'router',
                 mutates: false,
                 payable: false,
                 returnType: {
-                    displayName: ['ink_env', 'types', 'AccountId'],
+                    displayName: ['ink_primitives', 'types', 'AccountId'],
                     type: 2,
                 },
                 selector: '0xf887ea40',
             },
             {
                 args: [],
+                default: false,
                 docs: [''],
                 label: 'slippageCurve',
                 mutates: false,
                 payable: false,
                 returnType: {
-                    displayName: ['ink_env', 'types', 'AccountId'],
+                    displayName: ['ink_primitives', 'types', 'AccountId'],
                     type: 2,
                 },
                 selector: '0xebe26b9e',
@@ -743,13 +876,14 @@ export const metadata = {
                     {
                         label: '_amount',
                         type: {
-                            displayName: ['u256'],
+                            displayName: ['uint256'],
                             type: 3,
                         },
                     },
                 ],
+                default: false,
                 docs: [
-                    'Deposits amount of tokens into pool Will change cov ratio of pool, will increase delta to 0\n\n',
+                    'Deposits amount of tokens into pool Will change cov ratio of pool, will increase delta to 0',
                 ],
                 label: 'deposit',
                 mutates: true,
@@ -765,13 +899,14 @@ export const metadata = {
                     {
                         label: '_durationInBlocks',
                         type: {
-                            displayName: ['u256'],
+                            displayName: ['uint256'],
                             type: 3,
                         },
                     },
                 ],
+                default: false,
                 docs: [
-                    'Set new insurance withdrawal time lock. Can only be called by the owner\n\n',
+                    'Set new insurance withdrawal time lock. Can only be called by the owner',
                 ],
                 label: 'setInsuranceWithdrawalTimelock',
                 mutates: true,
@@ -784,13 +919,14 @@ export const metadata = {
                     {
                         label: '_maxTokens',
                         type: {
-                            displayName: ['u256'],
+                            displayName: ['uint256'],
                             type: 3,
                         },
                     },
                 ],
+                default: false,
                 docs: [
-                    'Set new upper limit of pool reserves. Will disable deposits when reached. Can always set to an amount < current reserves to temporarily restrict deposits.\n\n',
+                    'Set new upper limit of pool reserves. Will disable deposits when reached. Can always set to an amount < current reserves to temporarily restrict deposits.',
                 ],
                 label: 'setPoolCap',
                 mutates: true,
@@ -803,27 +939,28 @@ export const metadata = {
                     {
                         label: '_lpFeeBps',
                         type: {
-                            displayName: ['u256'],
+                            displayName: ['uint256'],
                             type: 3,
                         },
                     },
                     {
                         label: '_backstopFeeBps',
                         type: {
-                            displayName: ['u256'],
+                            displayName: ['uint256'],
                             type: 3,
                         },
                     },
                     {
                         label: '_protocolFeeBps',
                         type: {
-                            displayName: ['u256'],
+                            displayName: ['uint256'],
                             type: 3,
                         },
                     },
                 ],
+                default: false,
                 docs: [
-                    'Set swap fees (applied when swapping funds out of the pool)\n\n',
+                    'Set swap fees (applied when swapping funds out of the pool)',
                 ],
                 label: 'setSwapFees',
                 mutates: true,
@@ -836,20 +973,21 @@ export const metadata = {
                     {
                         label: '_shares',
                         type: {
-                            displayName: ['u256'],
+                            displayName: ['uint256'],
                             type: 3,
                         },
                     },
                     {
                         label: '_minimumAmount',
                         type: {
-                            displayName: ['u256'],
+                            displayName: ['uint256'],
                             type: 3,
                         },
                     },
                 ],
+                default: false,
                 docs: [
-                    'Withdraws liquidity amount of asset ensuring minimum amount required\n\n',
+                    'Withdraws liquidity amount of asset ensuring minimum amount required',
                 ],
                 label: 'withdraw',
                 mutates: true,
@@ -865,26 +1003,31 @@ export const metadata = {
                     {
                         label: '_owner',
                         type: {
-                            displayName: ['ink_env', 'types', 'AccountId'],
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
                             type: 2,
                         },
                     },
                     {
                         label: '_shares',
                         type: {
-                            displayName: ['u256'],
+                            displayName: ['uint256'],
                             type: 3,
                         },
                     },
                 ],
+                default: false,
                 docs: [
-                    'Burns LP tokens of owner, will get compensated using backstop liquidity Can only be invoked by backstop pool, disabled when pool is paused\n\n',
+                    'Burns LP tokens of owner, will get compensated using backstop liquidity Can only be invoked by backstop pool, disabled when pool is paused',
                 ],
                 label: 'backstopBurn',
                 mutates: true,
                 payable: false,
                 returnType: {
-                    displayName: ['u256'],
+                    displayName: ['uint256'],
                     type: 3,
                 },
                 selector: '0xe45f37bd',
@@ -894,20 +1037,25 @@ export const metadata = {
                     {
                         label: '_amount',
                         type: {
-                            displayName: ['u256'],
+                            displayName: ['uint256'],
                             type: 3,
                         },
                     },
                     {
                         label: '_recipient',
                         type: {
-                            displayName: ['ink_env', 'types', 'AccountId'],
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
                             type: 2,
                         },
                     },
                 ],
+                default: false,
                 docs: [
-                    "For backstop pool to withdraw liquidity if swap pool's coverage ratio > 100% Can only be invoked by backstop pool\n\n",
+                    "For backstop pool to withdraw liquidity if swap pool's coverage ratio > 100% Can only be invoked by backstop pool",
                 ],
                 label: 'backstopDrain',
                 mutates: true,
@@ -920,19 +1068,20 @@ export const metadata = {
                     {
                         label: '_amount',
                         type: {
-                            displayName: ['u256'],
+                            displayName: ['uint256'],
                             type: 3,
                         },
                     },
                 ],
+                default: false,
                 docs: [
-                    'Get called by Router to deposit an amount of pool asset Can only be called by Router\n\n',
+                    'Get called by Router to deposit an amount of pool asset Can only be called by Router',
                 ],
                 label: 'swapIntoFromRouter',
                 mutates: true,
                 payable: false,
                 returnType: {
-                    displayName: ['u256'],
+                    displayName: ['uint256'],
                     type: 3,
                 },
                 selector: '0x4d8ea83f',
@@ -942,26 +1091,28 @@ export const metadata = {
                     {
                         label: '_amount',
                         type: {
-                            displayName: ['u256'],
+                            displayName: ['uint256'],
                             type: 3,
                         },
                     },
                 ],
+                default: false,
                 docs: [
-                    'get called by Router to withdraw amount of pool asset Can only be called by Router\n\n',
+                    'get called by Router to withdraw amount of pool asset Can only be called by Router',
                 ],
                 label: 'swapOutFromRouter',
                 mutates: true,
                 payable: false,
                 returnType: {
-                    displayName: ['u256'],
+                    displayName: ['uint256'],
                     type: 3,
                 },
                 selector: '0x5f79d44f',
             },
             {
                 args: [],
-                docs: ['Pause deposits and swaps\n\n'],
+                default: false,
+                docs: ['Pause deposits and swaps'],
                 label: 'pause',
                 mutates: true,
                 payable: false,
@@ -970,7 +1121,8 @@ export const metadata = {
             },
             {
                 args: [],
-                docs: ['Resume deposits and swaps\n\n'],
+                default: false,
+                docs: ['Resume deposits and swaps'],
                 label: 'unpause',
                 mutates: true,
                 payable: false,
@@ -979,7 +1131,8 @@ export const metadata = {
             },
             {
                 args: [],
-                docs: ['returns pool coverage ratio\n\n'],
+                default: false,
+                docs: ['returns pool coverage ratio'],
                 label: 'coverage',
                 mutates: false,
                 payable: false,
@@ -994,19 +1147,24 @@ export const metadata = {
                     {
                         label: '_liquidityProvider',
                         type: {
-                            displayName: ['ink_env', 'types', 'AccountId'],
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
                             type: 2,
                         },
                     },
                 ],
+                default: false,
                 docs: [
-                    'Return the earliest block no that insurance withdrawals are possible.\n\n',
+                    'Return the earliest block no that insurance withdrawals are possible.',
                 ],
                 label: 'insuranceWithdrawalUnlock',
                 mutates: false,
                 payable: false,
                 returnType: {
-                    displayName: ['u256'],
+                    displayName: ['uint256'],
                     type: 3,
                 },
                 selector: '0x5c6f4279',
@@ -1016,19 +1174,20 @@ export const metadata = {
                     {
                         label: '_amount',
                         type: {
-                            displayName: ['u256'],
+                            displayName: ['uint256'],
                             type: 3,
                         },
                     },
                 ],
+                default: false,
                 docs: [
-                    'Get a quote for the effective amount of tokens, incl. slippage and fees\n\n',
+                    'Get a quote for the effective amount of tokens, incl. slippage and fees',
                 ],
                 label: 'quoteSwapInto',
                 mutates: false,
                 payable: false,
                 returnType: {
-                    displayName: ['u256'],
+                    displayName: ['uint256'],
                     type: 3,
                 },
                 selector: '0x3c945248',
@@ -1038,26 +1197,51 @@ export const metadata = {
                     {
                         label: '_amount',
                         type: {
-                            displayName: ['u256'],
+                            displayName: ['uint256'],
                             type: 3,
                         },
                     },
                 ],
+                default: false,
                 docs: [
-                    'Get a quote for the effective amount of tokens, incl. slippage and fees\n\n',
+                    'Get a quote for the effective amount of tokens, incl. slippage and fees',
                 ],
                 label: 'quoteSwapOut',
                 mutates: false,
                 payable: false,
                 returnType: {
-                    displayName: ['u256'],
+                    displayName: ['uint256'],
                     type: 3,
                 },
                 selector: '0x8735c246',
             },
             {
+                args: [
+                    {
+                        label: '_shares',
+                        type: {
+                            displayName: ['uint256'],
+                            type: 3,
+                        },
+                    },
+                ],
+                default: false,
+                docs: [
+                    'Returns the worth of an amount of pool shares (LP tokens) in underlying principle',
+                ],
+                label: 'sharesTargetWorth',
+                mutates: false,
+                payable: false,
+                returnType: {
+                    displayName: ['uint256'],
+                    type: 3,
+                },
+                selector: '0xcc045745',
+            },
+            {
                 args: [],
-                docs: ['Return the configured swap fees for this pool\n\n'],
+                default: false,
+                docs: ['Return the configured swap fees for this pool'],
                 label: 'swapFees',
                 mutates: false,
                 payable: false,
@@ -1244,7 +1428,7 @@ export const metadata = {
                             root_key: '0x0000000a',
                         },
                     },
-                    name: 'totalLiabilities',
+                    name: 'accumulatedSlippage',
                 },
                 {
                     layout: {
@@ -1258,21 +1442,31 @@ export const metadata = {
                             root_key: '0x0000000b',
                         },
                     },
-                    name: 'accumulatedSlippage',
+                    name: 'insuranceWithdrawalTimelock',
                 },
                 {
                     layout: {
                         root: {
                             layout: {
-                                leaf: {
-                                    key: '0x0000000c',
-                                    ty: 3,
+                                struct: {
+                                    fields: [
+                                        {
+                                            layout: {
+                                                leaf: {
+                                                    key: '0x0000000c',
+                                                    ty: 1,
+                                                },
+                                            },
+                                            name: '',
+                                        },
+                                    ],
+                                    name: 'AccountId',
                                 },
                             },
                             root_key: '0x0000000c',
                         },
                     },
-                    name: 'insuranceWithdrawalTimelock',
+                    name: 'protocolTreasury',
                 },
                 {
                     layout: {
@@ -1296,7 +1490,7 @@ export const metadata = {
                             root_key: '0x0000000d',
                         },
                     },
-                    name: 'protocolTreasury',
+                    name: 'backstop',
                 },
                 {
                     layout: {
@@ -1320,7 +1514,7 @@ export const metadata = {
                             root_key: '0x0000000e',
                         },
                     },
-                    name: 'backstop',
+                    name: 'router',
                 },
                 {
                     layout: {
@@ -1344,30 +1538,6 @@ export const metadata = {
                             root_key: '0x0000000f',
                         },
                     },
-                    name: 'router',
-                },
-                {
-                    layout: {
-                        root: {
-                            layout: {
-                                struct: {
-                                    fields: [
-                                        {
-                                            layout: {
-                                                leaf: {
-                                                    key: '0x00000010',
-                                                    ty: 1,
-                                                },
-                                            },
-                                            name: '',
-                                        },
-                                    ],
-                                    name: 'AccountId',
-                                },
-                            },
-                            root_key: '0x00000010',
-                        },
-                    },
                     name: 'slippageCurve',
                 },
                 {
@@ -1375,11 +1545,11 @@ export const metadata = {
                         root: {
                             layout: {
                                 leaf: {
-                                    key: '0x00000011',
+                                    key: '0x00000010',
                                     ty: 3,
                                 },
                             },
-                            root_key: '0x00000011',
+                            root_key: '0x00000010',
                         },
                     },
                     name: 'latestDepositAtBlockNo',
@@ -1393,7 +1563,7 @@ export const metadata = {
                                         {
                                             layout: {
                                                 leaf: {
-                                                    key: '0x00000012',
+                                                    key: '0x00000011',
                                                     ty: 6,
                                                 },
                                             },
@@ -1402,7 +1572,7 @@ export const metadata = {
                                         {
                                             layout: {
                                                 leaf: {
-                                                    key: '0x00000012',
+                                                    key: '0x00000011',
                                                     ty: 6,
                                                 },
                                             },
@@ -1411,7 +1581,7 @@ export const metadata = {
                                         {
                                             layout: {
                                                 leaf: {
-                                                    key: '0x00000012',
+                                                    key: '0x00000011',
                                                     ty: 6,
                                                 },
                                             },
@@ -1421,10 +1591,24 @@ export const metadata = {
                                     name: 'SwapFees',
                                 },
                             },
-                            root_key: '0x00000012',
+                            root_key: '0x00000011',
                         },
                     },
                     name: 'swapFeeConfig',
+                },
+                {
+                    layout: {
+                        root: {
+                            layout: {
+                                leaf: {
+                                    key: '0x00000014',
+                                    ty: 3,
+                                },
+                            },
+                            root_key: '0x00000014',
+                        },
+                    },
+                    name: 'totalLiabilities',
                 },
             ],
             name: 'SwapPool',
@@ -1437,7 +1621,7 @@ export const metadata = {
                 def: {
                     primitive: 'u8',
                 },
-                path: ['u8'],
+                path: ['uint8'],
             },
         },
         {
@@ -1463,7 +1647,7 @@ export const metadata = {
                         ],
                     },
                 },
-                path: ['ink_env', 'types', 'AccountId'],
+                path: ['ink_primitives', 'types', 'AccountId'],
             },
         },
         {
@@ -1472,7 +1656,7 @@ export const metadata = {
                 def: {
                     primitive: 'u256',
                 },
-                path: ['u256'],
+                path: ['uint256'],
             },
         },
         {
@@ -1499,7 +1683,7 @@ export const metadata = {
                 def: {
                     primitive: 'u32',
                 },
-                path: ['u32'],
+                path: ['uint32'],
             },
         },
         {
@@ -1532,7 +1716,7 @@ export const metadata = {
                 def: {
                     primitive: 'i256',
                 },
-                path: ['i256'],
+                path: ['int256'],
             },
         },
         {
@@ -1571,27 +1755,120 @@ export const metadata = {
                 path: ['SwapPool', 'swapFees', 'return_type'],
             },
         },
+        {
+            id: 13,
+            type: {
+                def: {
+                    primitive: 'u128',
+                },
+                path: ['uint128'],
+            },
+        },
+        {
+            id: 14,
+            type: {
+                def: {
+                    primitive: 'u64',
+                },
+                path: ['uint64'],
+            },
+        },
+        {
+            id: 15,
+            type: {
+                def: {
+                    composite: {
+                        fields: [
+                            {
+                                type: 1,
+                            },
+                        ],
+                    },
+                },
+                path: ['ink_primitives', 'types', 'Hash'],
+            },
+        },
+        {
+            id: 16,
+            type: {
+                def: {
+                    composite: {
+                        fields: [
+                            {
+                                type: 5,
+                            },
+                        ],
+                    },
+                },
+                path: ['0x08c379a0'],
+            },
+        },
+        {
+            id: 17,
+            type: {
+                def: {
+                    composite: {
+                        fields: [
+                            {
+                                type: 3,
+                            },
+                        ],
+                    },
+                },
+                path: ['0x4e487b71'],
+            },
+        },
+        {
+            id: 18,
+            type: {
+                def: {
+                    variant: {
+                        variants: [
+                            {
+                                fields: [
+                                    {
+                                        type: 16,
+                                    },
+                                ],
+                                index: 0,
+                                name: 'Error',
+                            },
+                            {
+                                fields: [
+                                    {
+                                        type: 17,
+                                    },
+                                ],
+                                index: 1,
+                                name: 'Panic',
+                            },
+                        ],
+                    },
+                },
+                path: ['SolidityError'],
+            },
+        },
     ],
     version: '4',
 }
 
 const _abi = new Abi(metadata)
 
-export function decodeEvent(hex: string): Event {
-    return _abi.decodeEvent(hex)
+export function decodeEvent(bytes: Bytes): Event {
+    return _abi.decodeEvent(bytes)
 }
 
-export function decodeMessage(hex: string): Message {
-    return _abi.decodeMessage(hex)
+export function decodeMessage(bytes: Bytes): Message {
+    return _abi.decodeMessage(bytes)
 }
 
-export function decodeConstructor(hex: string): Constructor {
-    return _abi.decodeConstructor(hex)
+export function decodeConstructor(bytes: Bytes): Constructor {
+    return _abi.decodeConstructor(bytes)
 }
 
 export interface Chain {
-    client: {
-        call: <T = any>(method: string, params?: unknown[]) => Promise<T>
+    rpc: {
+        call<T = any>(method: string, params?: unknown[]): Promise<T>
     }
 }
 
@@ -1602,8 +1879,8 @@ export interface ChainContext {
 export class Contract {
     constructor(
         private ctx: ChainContext,
-        private address: string,
-        private blockHash?: string
+        private address: Bytes,
+        private blockHash?: Bytes
     ) {}
 
     name(): Promise<string> {
@@ -1614,23 +1891,23 @@ export class Contract {
         return this.stateCall('0x95d89b41', [])
     }
 
-    decimals(): Promise<number> {
+    decimals(): Promise<uint8> {
         return this.stateCall('0x313ce567', [])
     }
 
-    totalSupply(): Promise<u256> {
+    totalSupply(): Promise<uint256> {
         return this.stateCall('0x18160ddd', [])
     }
 
-    balanceOf(account: AccountId): Promise<u256> {
+    balanceOf(account: AccountId): Promise<uint256> {
         return this.stateCall('0x70a08231', [account])
     }
 
-    allowance(owner: AccountId, spender: AccountId): Promise<u256> {
+    allowance(owner: AccountId, spender: AccountId): Promise<uint256> {
         return this.stateCall('0xdd62ed3e', [owner, spender])
     }
 
-    paused(): Promise<boolean> {
+    paused(): Promise<bool> {
         return this.stateCall('0x5c975abb', [])
     }
 
@@ -1638,7 +1915,7 @@ export class Contract {
         return this.stateCall('0x8da5cb5b', [])
     }
 
-    poolCap(): Promise<u256> {
+    poolCap(): Promise<uint256> {
         return this.stateCall('0xb954dc57', [])
     }
 
@@ -1646,15 +1923,11 @@ export class Contract {
         return this.stateCall('0x38d52e0f', [])
     }
 
-    sharesTargetWorth(_shares: u256): Promise<u256> {
-        return this.stateCall('0xcc045745', [_shares])
-    }
-
-    accumulatedSlippage(): Promise<u256> {
+    accumulatedSlippage(): Promise<uint256> {
         return this.stateCall('0xe4182b09', [])
     }
 
-    insuranceWithdrawalTimelock(): Promise<u256> {
+    insuranceWithdrawalTimelock(): Promise<uint256> {
         return this.stateCall('0x0d3a7fd4', [])
     }
 
@@ -1674,30 +1947,34 @@ export class Contract {
         return this.stateCall('0xebe26b9e', [])
     }
 
-    coverage(): Promise<[u256, u256]> {
+    coverage(): Promise<[uint256, uint256]> {
         return this.stateCall('0xee8f6a0e', [])
     }
 
-    insuranceWithdrawalUnlock(_liquidityProvider: AccountId): Promise<u256> {
+    insuranceWithdrawalUnlock(_liquidityProvider: AccountId): Promise<uint256> {
         return this.stateCall('0x5c6f4279', [_liquidityProvider])
     }
 
-    quoteSwapInto(_amount: u256): Promise<u256> {
+    quoteSwapInto(_amount: uint256): Promise<uint256> {
         return this.stateCall('0x3c945248', [_amount])
     }
 
-    quoteSwapOut(_amount: u256): Promise<u256> {
+    quoteSwapOut(_amount: uint256): Promise<uint256> {
         return this.stateCall('0x8735c246', [_amount])
     }
 
-    swapFees(): Promise<[u256, u256, u256]> {
+    sharesTargetWorth(_shares: uint256): Promise<uint256> {
+        return this.stateCall('0xcc045745', [_shares])
+    }
+
+    swapFees(): Promise<[uint256, uint256, uint256]> {
         return this.stateCall('0xb9ccf21d', [])
     }
 
     private async stateCall<T>(selector: string, args: any[]): Promise<T> {
         let input = _abi.encodeMessageInput(selector, args)
         let data = encodeCall(this.address, input)
-        let result = await this.ctx._chain.client.call('state_call', [
+        let result = await this.ctx._chain.rpc.call('state_call', [
             'ContractsApi_call',
             data,
             this.blockHash,
@@ -1707,464 +1984,13 @@ export class Contract {
     }
 }
 
-export type Event =
-    | Event_Transfer
-    | Event_Approval
-    | Event_Paused
-    | Event_Unpaused
-    | Event_OwnershipTransferred
-    | Event_Mint
-    | Event_Burn
-    | Event_BackstopDrain
-    | Event_ChargedSwapFees
+export type bool = boolean
 
-export interface Event_Transfer {
-    __kind: 'Transfer'
-    from: AccountId
-    to: AccountId
-    value: u256
-}
+export type AccountId = Bytes
 
-export interface Event_Approval {
-    __kind: 'Approval'
-    owner: AccountId
-    spender: AccountId
-    value: u256
-}
+export type uint256 = bigint
 
-export interface Event_Paused {
-    __kind: 'Paused'
-    account: AccountId
-}
-
-export interface Event_Unpaused {
-    __kind: 'Unpaused'
-    account: AccountId
-}
-
-export interface Event_OwnershipTransferred {
-    __kind: 'OwnershipTransferred'
-    previousOwner: AccountId
-    newOwner: AccountId
-}
-
-export interface Event_Mint {
-    __kind: 'Mint'
-    sender: AccountId
-    poolSharesMinted: u256
-    amountPrincipleDeposited: u256
-}
-
-export interface Event_Burn {
-    __kind: 'Burn'
-    sender: AccountId
-    poolSharesBurned: u256
-    amountPrincipleWithdrawn: u256
-}
-
-export interface Event_BackstopDrain {
-    __kind: 'BackstopDrain'
-    recipient: AccountId
-    amountSwapTokens: u256
-}
-
-export interface Event_ChargedSwapFees {
-    __kind: 'ChargedSwapFees'
-    lpFees: u256
-    backstopFees: u256
-    protocolFees: u256
-}
-
-export type Message =
-    | Message_name
-    | Message_symbol
-    | Message_decimals
-    | Message_totalSupply
-    | Message_balanceOf
-    | Message_transfer
-    | Message_allowance
-    | Message_approve
-    | Message_transferFrom
-    | Message_increaseAllowance
-    | Message_decreaseAllowance
-    | Message_paused
-    | Message_owner
-    | Message_renounceOwnership
-    | Message_transferOwnership
-    | Message_poolCap
-    | Message_asset
-    | Message_sharesTargetWorth
-    | Message_accumulatedSlippage
-    | Message_insuranceWithdrawalTimelock
-    | Message_protocolTreasury
-    | Message_backstop
-    | Message_router
-    | Message_slippageCurve
-    | Message_deposit
-    | Message_setInsuranceWithdrawalTimelock
-    | Message_setPoolCap
-    | Message_setSwapFees
-    | Message_withdraw
-    | Message_backstopBurn
-    | Message_backstopDrain
-    | Message_swapIntoFromRouter
-    | Message_swapOutFromRouter
-    | Message_pause
-    | Message_unpause
-    | Message_coverage
-    | Message_insuranceWithdrawalUnlock
-    | Message_quoteSwapInto
-    | Message_quoteSwapOut
-    | Message_swapFees
-
-/**
- *
- */
-export interface Message_name {
-    __kind: 'name'
-}
-
-/**
- *
- */
-export interface Message_symbol {
-    __kind: 'symbol'
-}
-
-/**
- *
- */
-export interface Message_decimals {
-    __kind: 'decimals'
-}
-
-/**
- *
- */
-export interface Message_totalSupply {
-    __kind: 'totalSupply'
-}
-
-/**
- *
- */
-export interface Message_balanceOf {
-    __kind: 'balanceOf'
-    account: AccountId
-}
-
-/**
- *
- */
-export interface Message_transfer {
-    __kind: 'transfer'
-    to: AccountId
-    amount: u256
-}
-
-/**
- *
- */
-export interface Message_allowance {
-    __kind: 'allowance'
-    owner: AccountId
-    spender: AccountId
-}
-
-/**
- *
- */
-export interface Message_approve {
-    __kind: 'approve'
-    spender: AccountId
-    amount: u256
-}
-
-/**
- *
- */
-export interface Message_transferFrom {
-    __kind: 'transferFrom'
-    from: AccountId
-    to: AccountId
-    amount: u256
-}
-
-/**
- *
- */
-export interface Message_increaseAllowance {
-    __kind: 'increaseAllowance'
-    spender: AccountId
-    addedValue: u256
-}
-
-/**
- *
- */
-export interface Message_decreaseAllowance {
-    __kind: 'decreaseAllowance'
-    spender: AccountId
-    subtractedValue: u256
-}
-
-/**
- *
- */
-export interface Message_paused {
-    __kind: 'paused'
-}
-
-/**
- *
- */
-export interface Message_owner {
-    __kind: 'owner'
-}
-
-/**
- *
- */
-export interface Message_renounceOwnership {
-    __kind: 'renounceOwnership'
-}
-
-/**
- *
- */
-export interface Message_transferOwnership {
-    __kind: 'transferOwnership'
-    newOwner: AccountId
-}
-
-/**
- *
- */
-export interface Message_poolCap {
-    __kind: 'poolCap'
-}
-
-/**
- * Returns the pooled token's address
-
-
- */
-export interface Message_asset {
-    __kind: 'asset'
-}
-
-/**
- * Returns the worth of an amount of pool shares (LP tokens) in underlying principle
-
-
- */
-export interface Message_sharesTargetWorth {
-    __kind: 'sharesTargetWorth'
-    shares: u256
-}
-
-/**
- *
- */
-export interface Message_accumulatedSlippage {
-    __kind: 'accumulatedSlippage'
-}
-
-/**
- *
- */
-export interface Message_insuranceWithdrawalTimelock {
-    __kind: 'insuranceWithdrawalTimelock'
-}
-
-/**
- *
- */
-export interface Message_protocolTreasury {
-    __kind: 'protocolTreasury'
-}
-
-/**
- *
- */
-export interface Message_backstop {
-    __kind: 'backstop'
-}
-
-/**
- *
- */
-export interface Message_router {
-    __kind: 'router'
-}
-
-/**
- *
- */
-export interface Message_slippageCurve {
-    __kind: 'slippageCurve'
-}
-
-/**
- * Deposits amount of tokens into pool Will change cov ratio of pool, will increase delta to 0
-
-
- */
-export interface Message_deposit {
-    __kind: 'deposit'
-    amount: u256
-}
-
-/**
- * Set new insurance withdrawal time lock. Can only be called by the owner
-
-
- */
-export interface Message_setInsuranceWithdrawalTimelock {
-    __kind: 'setInsuranceWithdrawalTimelock'
-    durationInBlocks: u256
-}
-
-/**
- * Set new upper limit of pool reserves. Will disable deposits when reached. Can always set to an amount < current reserves to temporarily restrict deposits.
-
-
- */
-export interface Message_setPoolCap {
-    __kind: 'setPoolCap'
-    maxTokens: u256
-}
-
-/**
- * Set swap fees (applied when swapping funds out of the pool)
-
-
- */
-export interface Message_setSwapFees {
-    __kind: 'setSwapFees'
-    lpFeeBps: u256
-    backstopFeeBps: u256
-    protocolFeeBps: u256
-}
-
-/**
- * Withdraws liquidity amount of asset ensuring minimum amount required
-
-
- */
-export interface Message_withdraw {
-    __kind: 'withdraw'
-    shares: u256
-    minimumAmount: u256
-}
-
-/**
- * Burns LP tokens of owner, will get compensated using backstop liquidity Can only be invoked by backstop pool, disabled when pool is paused
-
-
- */
-export interface Message_backstopBurn {
-    __kind: 'backstopBurn'
-    owner: AccountId
-    shares: u256
-}
-
-/**
- * For backstop pool to withdraw liquidity if swap pool's coverage ratio > 100% Can only be invoked by backstop pool
-
-
- */
-export interface Message_backstopDrain {
-    __kind: 'backstopDrain'
-    amount: u256
-    recipient: AccountId
-}
-
-/**
- * Get called by Router to deposit an amount of pool asset Can only be called by Router
-
-
- */
-export interface Message_swapIntoFromRouter {
-    __kind: 'swapIntoFromRouter'
-    amount: u256
-}
-
-/**
- * get called by Router to withdraw amount of pool asset Can only be called by Router
-
-
- */
-export interface Message_swapOutFromRouter {
-    __kind: 'swapOutFromRouter'
-    amount: u256
-}
-
-/**
- * Pause deposits and swaps
-
-
- */
-export interface Message_pause {
-    __kind: 'pause'
-}
-
-/**
- * Resume deposits and swaps
-
-
- */
-export interface Message_unpause {
-    __kind: 'unpause'
-}
-
-/**
- * returns pool coverage ratio
-
-
- */
-export interface Message_coverage {
-    __kind: 'coverage'
-}
-
-/**
- * Return the earliest block no that insurance withdrawals are possible.
-
-
- */
-export interface Message_insuranceWithdrawalUnlock {
-    __kind: 'insuranceWithdrawalUnlock'
-    liquidityProvider: AccountId
-}
-
-/**
- * Get a quote for the effective amount of tokens, incl. slippage and fees
-
-
- */
-export interface Message_quoteSwapInto {
-    __kind: 'quoteSwapInto'
-    amount: u256
-}
-
-/**
- * Get a quote for the effective amount of tokens, incl. slippage and fees
-
-
- */
-export interface Message_quoteSwapOut {
-    __kind: 'quoteSwapOut'
-    amount: u256
-}
-
-/**
- * Return the configured swap fees for this pool
-
-
- */
-export interface Message_swapFees {
-    __kind: 'swapFees'
-}
+export type uint8 = number
 
 export type Constructor = Constructor_new
 
@@ -2182,11 +2008,428 @@ export interface Constructor_new {
     symbol: string
 }
 
-// export type string = string
+export type Message =
+    | Message_accumulatedSlippage
+    | Message_allowance
+    | Message_approve
+    | Message_asset
+    | Message_backstop
+    | Message_backstopBurn
+    | Message_backstopDrain
+    | Message_balanceOf
+    | Message_coverage
+    | Message_decimals
+    | Message_decreaseAllowance
+    | Message_deposit
+    | Message_increaseAllowance
+    | Message_insuranceWithdrawalTimelock
+    | Message_insuranceWithdrawalUnlock
+    | Message_name
+    | Message_owner
+    | Message_pause
+    | Message_paused
+    | Message_poolCap
+    | Message_protocolTreasury
+    | Message_quoteSwapInto
+    | Message_quoteSwapOut
+    | Message_renounceOwnership
+    | Message_router
+    | Message_setInsuranceWithdrawalTimelock
+    | Message_setPoolCap
+    | Message_setSwapFees
+    | Message_sharesTargetWorth
+    | Message_slippageCurve
+    | Message_swapFees
+    | Message_swapIntoFromRouter
+    | Message_swapOutFromRouter
+    | Message_symbol
+    | Message_totalSupply
+    | Message_transfer
+    | Message_transferFrom
+    | Message_transferOwnership
+    | Message_unpause
+    | Message_withdraw
 
-export type u256 = bigint
+/**
+ *
+ */
+export interface Message_accumulatedSlippage {
+    __kind: 'accumulatedSlippage'
+}
 
-export type AccountId = Uint8Array
+/**
+ *
+ */
+export interface Message_allowance {
+    __kind: 'allowance'
+    owner: AccountId
+    spender: AccountId
+}
+
+/**
+ *
+ */
+export interface Message_approve {
+    __kind: 'approve'
+    spender: AccountId
+    amount: uint256
+}
+
+/**
+ * Returns the pooled token's address
+ */
+export interface Message_asset {
+    __kind: 'asset'
+}
+
+/**
+ *
+ */
+export interface Message_backstop {
+    __kind: 'backstop'
+}
+
+/**
+ * Burns LP tokens of owner, will get compensated using backstop liquidity Can only be invoked by backstop pool, disabled when pool is paused
+ */
+export interface Message_backstopBurn {
+    __kind: 'backstopBurn'
+    owner: AccountId
+    shares: uint256
+}
+
+/**
+ * For backstop pool to withdraw liquidity if swap pool's coverage ratio > 100% Can only be invoked by backstop pool
+ */
+export interface Message_backstopDrain {
+    __kind: 'backstopDrain'
+    amount: uint256
+    recipient: AccountId
+}
+
+/**
+ *
+ */
+export interface Message_balanceOf {
+    __kind: 'balanceOf'
+    account: AccountId
+}
+
+/**
+ * returns pool coverage ratio
+ */
+export interface Message_coverage {
+    __kind: 'coverage'
+}
+
+/**
+ *
+ */
+export interface Message_decimals {
+    __kind: 'decimals'
+}
+
+/**
+ *
+ */
+export interface Message_decreaseAllowance {
+    __kind: 'decreaseAllowance'
+    spender: AccountId
+    subtractedValue: uint256
+}
+
+/**
+ * Deposits amount of tokens into pool Will change cov ratio of pool, will increase delta to 0
+ */
+export interface Message_deposit {
+    __kind: 'deposit'
+    amount: uint256
+}
+
+/**
+ *
+ */
+export interface Message_increaseAllowance {
+    __kind: 'increaseAllowance'
+    spender: AccountId
+    addedValue: uint256
+}
+
+/**
+ *
+ */
+export interface Message_insuranceWithdrawalTimelock {
+    __kind: 'insuranceWithdrawalTimelock'
+}
+
+/**
+ * Return the earliest block no that insurance withdrawals are possible.
+ */
+export interface Message_insuranceWithdrawalUnlock {
+    __kind: 'insuranceWithdrawalUnlock'
+    liquidityProvider: AccountId
+}
+
+/**
+ *
+ */
+export interface Message_name {
+    __kind: 'name'
+}
+
+/**
+ *
+ */
+export interface Message_owner {
+    __kind: 'owner'
+}
+
+/**
+ * Pause deposits and swaps
+ */
+export interface Message_pause {
+    __kind: 'pause'
+}
+
+/**
+ *
+ */
+export interface Message_paused {
+    __kind: 'paused'
+}
+
+/**
+ *
+ */
+export interface Message_poolCap {
+    __kind: 'poolCap'
+}
+
+/**
+ *
+ */
+export interface Message_protocolTreasury {
+    __kind: 'protocolTreasury'
+}
+
+/**
+ * Get a quote for the effective amount of tokens, incl. slippage and fees
+ */
+export interface Message_quoteSwapInto {
+    __kind: 'quoteSwapInto'
+    amount: uint256
+}
+
+/**
+ * Get a quote for the effective amount of tokens, incl. slippage and fees
+ */
+export interface Message_quoteSwapOut {
+    __kind: 'quoteSwapOut'
+    amount: uint256
+}
+
+/**
+ *
+ */
+export interface Message_renounceOwnership {
+    __kind: 'renounceOwnership'
+}
+
+/**
+ *
+ */
+export interface Message_router {
+    __kind: 'router'
+}
+
+/**
+ * Set new insurance withdrawal time lock. Can only be called by the owner
+ */
+export interface Message_setInsuranceWithdrawalTimelock {
+    __kind: 'setInsuranceWithdrawalTimelock'
+    durationInBlocks: uint256
+}
+
+/**
+ * Set new upper limit of pool reserves. Will disable deposits when reached. Can always set to an amount < current reserves to temporarily restrict deposits.
+ */
+export interface Message_setPoolCap {
+    __kind: 'setPoolCap'
+    maxTokens: uint256
+}
+
+/**
+ * Set swap fees (applied when swapping funds out of the pool)
+ */
+export interface Message_setSwapFees {
+    __kind: 'setSwapFees'
+    lpFeeBps: uint256
+    backstopFeeBps: uint256
+    protocolFeeBps: uint256
+}
+
+/**
+ * Returns the worth of an amount of pool shares (LP tokens) in underlying principle
+ */
+export interface Message_sharesTargetWorth {
+    __kind: 'sharesTargetWorth'
+    shares: uint256
+}
+
+/**
+ *
+ */
+export interface Message_slippageCurve {
+    __kind: 'slippageCurve'
+}
+
+/**
+ * Return the configured swap fees for this pool
+ */
+export interface Message_swapFees {
+    __kind: 'swapFees'
+}
+
+/**
+ * Get called by Router to deposit an amount of pool asset Can only be called by Router
+ */
+export interface Message_swapIntoFromRouter {
+    __kind: 'swapIntoFromRouter'
+    amount: uint256
+}
+
+/**
+ * get called by Router to withdraw amount of pool asset Can only be called by Router
+ */
+export interface Message_swapOutFromRouter {
+    __kind: 'swapOutFromRouter'
+    amount: uint256
+}
+
+/**
+ *
+ */
+export interface Message_symbol {
+    __kind: 'symbol'
+}
+
+/**
+ *
+ */
+export interface Message_totalSupply {
+    __kind: 'totalSupply'
+}
+
+/**
+ *
+ */
+export interface Message_transfer {
+    __kind: 'transfer'
+    to: AccountId
+    amount: uint256
+}
+
+/**
+ *
+ */
+export interface Message_transferFrom {
+    __kind: 'transferFrom'
+    from: AccountId
+    to: AccountId
+    amount: uint256
+}
+
+/**
+ *
+ */
+export interface Message_transferOwnership {
+    __kind: 'transferOwnership'
+    newOwner: AccountId
+}
+
+/**
+ * Resume deposits and swaps
+ */
+export interface Message_unpause {
+    __kind: 'unpause'
+}
+
+/**
+ * Withdraws liquidity amount of asset ensuring minimum amount required
+ */
+export interface Message_withdraw {
+    __kind: 'withdraw'
+    shares: uint256
+    minimumAmount: uint256
+}
+
+export type Event =
+    | Event_Approval
+    | Event_BackstopDrain
+    | Event_Burn
+    | Event_ChargedSwapFees
+    | Event_Mint
+    | Event_OwnershipTransferred
+    | Event_Paused
+    | Event_Transfer
+    | Event_Unpaused
+
+export interface Event_Approval {
+    __kind: 'Approval'
+    owner: AccountId
+    spender: AccountId
+    value: uint256
+}
+
+export interface Event_BackstopDrain {
+    __kind: 'BackstopDrain'
+    recipient: AccountId
+    amountSwapTokens: uint256
+}
+
+export interface Event_Burn {
+    __kind: 'Burn'
+    sender: AccountId
+    poolSharesBurned: uint256
+    amountPrincipleWithdrawn: uint256
+}
+
+export interface Event_ChargedSwapFees {
+    __kind: 'ChargedSwapFees'
+    lpFees: uint256
+    backstopFees: uint256
+    protocolFees: uint256
+}
+
+export interface Event_Mint {
+    __kind: 'Mint'
+    sender: AccountId
+    poolSharesMinted: uint256
+    amountPrincipleDeposited: uint256
+}
+
+export interface Event_OwnershipTransferred {
+    __kind: 'OwnershipTransferred'
+    previousOwner: AccountId
+    newOwner: AccountId
+}
+
+export interface Event_Paused {
+    __kind: 'Paused'
+    account: AccountId
+}
+
+export interface Event_Transfer {
+    __kind: 'Transfer'
+    from: AccountId
+    to: AccountId
+    value: uint256
+}
+
+export interface Event_Unpaused {
+    __kind: 'Unpaused'
+    account: AccountId
+}
 
 export type Result<T, E> =
     | { __kind: 'Ok'; value: T }

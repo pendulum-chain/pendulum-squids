@@ -150,7 +150,7 @@ run
 sqd typegen
 ```
 
-In our case, we have two typegen files: `typegen-amplitude.json` and `typegen-foucoco.json`. The previous command should be replaced by
+In our case, we have three typegen files: `typegen-amplitude.json`, `typegen-foucoco.json` and `typegen-pendulum.json`. The previous command should be replaced by
 
 ```shell
 sqd typegen:pendulum
@@ -167,6 +167,26 @@ Or
 ```shell
 sqd typegen:foucoco
 ```
+
+In order to generate the types for the contracts, we use the command
+
+```shell
+npx squid-ink-typegen --abi nabla-abi/{contract}.json --output src/abi/{contract}.ts
+```
+
+We must ensure that the contract's ABI is generated properly and added to the `nabla-abi`
+directory. It is possible to obtain the ABI upon compilation of the ink! contract.
+
+To generate the types for all the ABI's contained in `nabla-abi`, run:
+
+```shell
+sqd typegen:abi
+```
+
+Be sure to name the `.json` file with the ABI with the corresponding name desired in src/abi.
+
+NOTE: Eventually the generated ABI files may produce code which typescript may reject, for instance a missing function variable name, or a wrongly defined type.
+Please correct this manually if they appear, or use a different ABI.
 
 Now it is time to start with the database migration. First, we need to make sure that the database is at blank state:
 

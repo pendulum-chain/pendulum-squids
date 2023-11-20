@@ -111,17 +111,6 @@ export interface CallHandlerContext extends Ctx {
 
 processor.run(new TypeormDatabase(), async (ctx) => {
     for (let block of ctx.blocks) {
-        for (let call of block.calls) {
-            ctx.log.info(call, `Call:`)
-            switch (call.name) {
-                case 'System.remark':
-                    await handleSystemRemark({
-                        ...ctx,
-                        block: block.header,
-                        call: call,
-                    })
-            }
-        }
         for (let item of block.events) {
             try {
                 switch (item.name) {

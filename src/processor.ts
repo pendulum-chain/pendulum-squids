@@ -58,7 +58,7 @@ const processor = new SubstrateBatchProcessor()
         },
     })
     .addCall({
-        name: ['System.remark', 'Balances.Transfer', 'Tokens.Transfer'],
+        name: ['System.remark'],
         extrinsic: true,
     })
     .addEvent({

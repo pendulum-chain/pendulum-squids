@@ -5,6 +5,7 @@ import {
     Block,
     BlockHeader,
     Event,
+    Call,
 } from '@subsquid/substrate-processor'
 
 import { Store, TypeormDatabase } from '@subsquid/typeorm-store'
@@ -35,7 +36,7 @@ import {
 import { handleBalanceTransfer } from './mappings/balances'
 import { handleContractEvent } from './mappings/nabla'
 import { handleUpdatedPrices } from './mappings/prices'
-
+import { handleSystemRemark } from './mappings/remark'
 const DataSelection = { data: { event: true } } as const
 
 const processor = new SubstrateBatchProcessor()
@@ -55,6 +56,10 @@ const processor = new SubstrateBatchProcessor()
         block: {
             timestamp: true,
         },
+    })
+    .addCall({
+        name: ['System.remark', 'Balances.Transfer', 'Tokens.Transfer'],
+        extrinsic: true,
     })
     .addEvent({
         name: [
@@ -99,9 +104,24 @@ export interface EventHandlerContext extends Ctx {
     block: BlockHeader<Fields>
     event: Event<Fields>
 }
+export interface CallHandlerContext extends Ctx {
+    block: BlockHeader<Fields>
+    call: Call<Fields>
+}
 
 processor.run(new TypeormDatabase(), async (ctx) => {
     for (let block of ctx.blocks) {
+        for (let call of block.calls) {
+            ctx.log.info(call, `Call:`)
+            switch (call.name) {
+                case 'System.remark':
+                    await handleSystemRemark({
+                        ...ctx,
+                        block: block.header,
+                        call: call,
+                    })
+            }
+        }
         for (let item of block.events) {
             try {
                 switch (item.name) {
@@ -256,6 +276,23 @@ processor.run(new TypeormDatabase(), async (ctx) => {
             } catch (e) {
                 console.log(
                     `Error processing event '${item.name}'. Skipping due to error:`,
+                    e
+                )
+            }
+        }
+        for (let call of block.calls) {
+            try {
+                switch (call.name) {
+                    case 'System.remark':
+                        await handleSystemRemark({
+                            ...ctx,
+                            block: block.header,
+                            call: call,
+                        })
+                }
+            } catch (e) {
+                console.log(
+                    `Error processing call '${call.name}'. Skipping due to error:`,
                     e
                 )
             }

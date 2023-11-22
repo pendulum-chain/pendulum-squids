@@ -149,6 +149,9 @@ processor.run(new TypeormDatabase(), async (ctx) => {
             for (const call of calls.reverse()) {
                 await saveCall(ctx, call)
             }
+            for (const event of events) {
+                await saveEvent(ctx, event)
+            }
         } catch (e) {
             console.log(
                 `Error saving block details for block '${block.height}'.`,
@@ -305,7 +308,6 @@ processor.run(new TypeormDatabase(), async (ctx) => {
                         })
                         break
                     default:
-                        await saveEvent(ctx, event)
                         break
                 }
             } catch (e) {

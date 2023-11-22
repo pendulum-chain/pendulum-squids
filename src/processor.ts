@@ -149,6 +149,7 @@ processor.run(new TypeormDatabase(), async (ctx) => {
             for (const call of calls.reverse()) {
                 await saveCall(ctx, call)
             }
+
             for (const event of events) {
                 await saveEvent(ctx, event)
             }

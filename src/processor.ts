@@ -273,6 +273,8 @@ processor.run(new TypeormDatabase(), async (ctx) => {
             }
         }
 
+        // It's important to process the calls after the events, because for the system.remark call we need to have
+        // processed the token transfers first
         for (let call of block.calls) {
             try {
                 switch (call.name) {

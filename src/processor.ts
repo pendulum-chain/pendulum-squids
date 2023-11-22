@@ -154,146 +154,146 @@ processor.run(new TypeormDatabase(), async (ctx) => {
                     case 'Tokens.Deposited':
                         await handleTokenDeposited({
                             ...ctx,
-                            block: block,
-                            event: event,
+                            block,
+                            event,
                         })
                         break
                     case 'Tokens.Withdrawn':
                         await handleTokenWithdrawn({
                             ...ctx,
-                            block: block,
-                            event: event,
+                            block,
+                            event,
                         })
                         break
                     case 'Tokens.Transfer':
                         await handleTokenTransfer({
                             ...ctx,
-                            block: block,
-                            event: event,
+                            block,
+                            event,
                         })
                         break
                     // zenlink
                     case 'ZenlinkProtocol.LiquidityAdded':
                         await handleLiquidityAdded({
                             ...ctx,
-                            block: block,
-                            event: event,
+                            block,
+                            event,
                         })
                         break
                     case 'ZenlinkProtocol.LiquidityRemoved':
                         await handleLiquidityRemoved({
                             ...ctx,
-                            block: block,
-                            event: event,
+                            block,
+                            event,
                         })
                         break
                     case 'ZenlinkProtocol.AssetSwap':
                         await handleAssetSwap({
                             ...ctx,
-                            block: block,
-                            event: event,
+                            block,
+                            event,
                         })
                         break
                     // farming
                     case 'Farming.FarmingPoolCreated':
                         await handleFarmingPoolCreated({
                             ...ctx,
-                            block: block,
-                            event: event,
+                            block,
+                            event,
                         })
                         break
                     case 'Farming.FarmingPoolReset':
                         await handleFarmingPoolReset({
                             ...ctx,
-                            block: block,
-                            event: event,
+                            block,
+                            event,
                         })
                         break
                     case 'Farming.FarmingPoolClosed':
                         await handleFarmingPoolClosed({
                             ...ctx,
-                            block: block,
-                            event: event,
+                            block,
+                            event,
                         })
                         break
                     case 'Farming.FarmingPoolKilled':
                         await handleFarmingPoolKilled({
                             ...ctx,
-                            block: block,
-                            event: event,
+                            block,
+                            event,
                         })
                         break
                     case 'Farming.FarmingPoolEdited':
                         await handleFarmingPoolEdited({
                             ...ctx,
-                            block: block,
-                            event: event,
+                            block,
+                            event,
                         })
                         break
                     case 'Farming.Charged':
                         await handleFarmingCharged({
                             ...ctx,
-                            block: block,
-                            event: event,
+                            block,
+                            event,
                         })
                         break
                     case 'Farming.Deposited':
                         await handleFarmingDeposited({
                             ...ctx,
-                            block: block,
-                            event: event,
+                            block,
+                            event,
                         })
                         break
                     case 'Farming.Withdrawn':
                         await handleFarmingWithdrawn({
                             ...ctx,
-                            block: block,
-                            event: event,
+                            block,
+                            event,
                         })
                         break
                     case 'Farming.Claimed':
                         await handleFarmingClaimed({
                             ...ctx,
-                            block: block,
-                            event: event,
+                            block,
+                            event,
                         })
                         break
                     case 'Farming.WithdrawClaimed':
                         await handleFarmingWithdrawClaimed({
                             ...ctx,
-                            block: block,
-                            event: event,
+                            block,
+                            event,
                         })
                         break
                     case 'Farming.GaugeWithdrawn':
                         await handleFarmingGaugeWithdrawn({
                             ...ctx,
-                            block: block,
-                            event: event,
+                            block,
+                            event,
                         })
                         break
                     // balances
                     case 'Balances.Transfer':
                         await handleBalanceTransfer({
                             ...ctx,
-                            block: block,
-                            event: event,
+                            block,
+                            event,
                         })
                         break
                     // contracts
                     case 'Contracts.ContractEmitted':
                         await handleContractEvent({
                             ...ctx,
-                            block: block,
-                            event: event,
+                            block,
+                            event,
                         })
                         break
                     // price oracle
                     case 'DiaOracleModule.UpdatedPrices':
                         await handleUpdatedPrices({
                             ...ctx,
-                            block: block,
-                            event: event,
+                            block,
+                            event,
                         })
                         break
                     default:

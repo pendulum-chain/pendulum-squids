@@ -127,6 +127,7 @@ export type Extrinsic_ = Extrinsic<Fields>
 export type Block_ = Block<Fields>
 export type BlockHeader_ = BlockHeader<Fields>
 export type Ctx = DataHandlerContext<Store, Fields>
+
 export interface EventHandlerContext extends Ctx {
     block: BlockHeader<Fields>
     event: Event<Fields>
@@ -138,14 +139,21 @@ processor.run(new TypeormDatabase(), async (ctx) => {
             `block ${block.height}: extrinsics - ${extrinsics.length}, calls - ${calls.length}, events - ${events.length}`
         )
 
-        await saveBlock(ctx, block)
+        try {
+            await saveBlock(ctx, block)
 
-        for (const extrinsic of extrinsics) {
-            await saveExtrinsic(ctx, extrinsic)
-        }
+            for (const extrinsic of extrinsics) {
+                await saveExtrinsic(ctx, extrinsic)
+            }
 
-        for (const call of calls.reverse()) {
-            await saveCall(ctx, call)
+            for (const call of calls.reverse()) {
+                await saveCall(ctx, call)
+            }
+        } catch (e) {
+            console.log(
+                `Error saving block details for block '${block.height}'.`,
+                e
+            )
         }
 
         for (let event of events) {

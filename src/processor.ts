@@ -37,6 +37,7 @@ import { handleBalanceTransfer } from './mappings/balances'
 import { handleContractEvent } from './mappings/nabla'
 import { handleUpdatedPrices } from './mappings/prices'
 import { handleSystemRemark } from './mappings/remark'
+
 const DataSelection = { data: { event: true } } as const
 
 const processor = new SubstrateBatchProcessor()
@@ -100,10 +101,12 @@ const processor = new SubstrateBatchProcessor()
 
 type Fields = SubstrateBatchProcessorFields<typeof processor>
 type Ctx = DataHandlerContext<Store, Fields>
+
 export interface EventHandlerContext extends Ctx {
     block: BlockHeader<Fields>
     event: Event<Fields>
 }
+
 export interface CallHandlerContext extends Ctx {
     block: BlockHeader<Fields>
     call: Call<Fields>
@@ -269,10 +272,12 @@ processor.run(new TypeormDatabase(), async (ctx) => {
                 )
             }
         }
+
         for (let call of block.calls) {
             try {
                 switch (call.name) {
                     case 'System.remark':
+                        if (!call.success) continue
                         await handleSystemRemark({
                             ...ctx,
                             block: block.header,

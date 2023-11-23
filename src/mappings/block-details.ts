@@ -2,6 +2,7 @@ import { Ctx, BlockHeader_, Call_, Event_, Extrinsic_ } from '../processor'
 
 import { decodeHex } from '@subsquid/substrate-processor'
 import * as model from '../model'
+import { In } from 'typeorm/find-options/operator/In'
 
 export async function saveBlock(ctx: Ctx, block: BlockHeader_) {
     const entity = new model.Block({
@@ -23,6 +24,55 @@ export async function saveBlock(ctx: Ctx, block: BlockHeader_) {
     })
 
     await ctx.store.insert(entity)
+
+    // Prune block older than 7200 blocks
+    try {
+        const blockToPruneHeight = block.height - 7200
+        if (blockToPruneHeight >= 0) {
+            await pruneOldestBlock(ctx, blockToPruneHeight)
+        }
+    } catch (e) {
+        console.log(`Error pruning block `, e)
+    }
+}
+
+export async function pruneOldestBlock(ctx: Ctx, blockToPruneHeight: number) {
+    // Find the block that needs to be pruned
+    const blockToPrune = await ctx.store.findOneBy(model.Block, {
+        height: blockToPruneHeight,
+    })
+
+    if (blockToPrune) {
+        // Delete associated events
+        let eventsToPrune = await ctx.store.findBy(model.Event, {
+            block: { id: blockToPrune.id },
+        })
+        await ctx.store.remove(eventsToPrune)
+
+        // Nullify foreign key 'extrinsic' so that associated extrinsics can be deleted
+        let callsToUpdate = await ctx.store.findBy(model.Call, {
+            block: { id: blockToPrune.id },
+        })
+        for (const call of callsToUpdate) {
+            call.extrinsic = null
+        }
+        await ctx.store.save(callsToUpdate)
+
+        // Delete associated extrinsics
+        let extrinsicsToPrune = await ctx.store.findBy(model.Extrinsic, {
+            block: { id: blockToPrune.id },
+        })
+        await ctx.store.remove(extrinsicsToPrune)
+
+        // Delete associated calls
+        let callsToPrune = await ctx.store.findBy(model.Call, {
+            block: { id: blockToPrune.id },
+        })
+        await ctx.store.remove(callsToPrune)
+
+        // Finally, delete the block itself
+        await ctx.store.remove(model.Block, blockToPrune.id)
+    }
 }
 
 export async function saveExtrinsic(ctx: Ctx, extrinsic: Extrinsic_) {

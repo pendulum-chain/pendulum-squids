@@ -101,10 +101,12 @@ const processor = new SubstrateBatchProcessor()
 
 type Fields = SubstrateBatchProcessorFields<typeof processor>
 type Ctx = DataHandlerContext<Store, Fields>
+
 export interface EventHandlerContext extends Ctx {
     block: BlockHeader<Fields>
     event: Event<Fields>
 }
+
 export interface CallHandlerContext extends Ctx {
     block: BlockHeader<Fields>
     call: Call<Fields>

@@ -58,7 +58,7 @@ const processor = new SubstrateBatchProcessor()
         },
     })
     .addCall({
-        name: ['System.remark'],
+        name: ['System.remark', 'Utility.batch', 'Utility.batch_all'],
         extrinsic: true,
     })
     .addEvent({
@@ -93,7 +93,6 @@ const processor = new SubstrateBatchProcessor()
             'Tokens.BalanceSet',
             // Contracts
             'Contracts.ContractEmitted',
-            'Utility.BatchCompleted',
         ],
         call: true,
         extrinsic: true,
@@ -279,6 +278,13 @@ processor.run(new TypeormDatabase(), async (ctx) => {
             try {
                 switch (call.name) {
                     case 'Utility.batch':
+                        if (!call.success) continue
+                        await handleBatchWithRemark({
+                            ...ctx,
+                            block: block.header,
+                            call: call,
+                        })
+                    case 'Utility.batch_all':
                         if (!call.success) continue
                         await handleBatchWithRemark({
                             ...ctx,

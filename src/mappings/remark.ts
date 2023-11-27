@@ -15,6 +15,8 @@ export async function handleBatchWithRemark(ctx: CallHandlerContext) {
     }
     const calls = ctx.call.args.calls
     const kinds = calls.map((call: any) => call.__kind)
+    if (kinds.length != 2) return
+
     const remarkCall = calls.find((call: any) => call.__kind === 'System')
 
     let remarkRaw = remarkCall.value.remark

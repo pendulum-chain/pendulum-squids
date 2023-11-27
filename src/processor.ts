@@ -36,7 +36,7 @@ import {
 import { handleBalanceTransfer } from './mappings/balances'
 import { handleContractEvent } from './mappings/nabla'
 import { handleUpdatedPrices } from './mappings/prices'
-import { handleSystemRemark } from './mappings/remark'
+import { handleBatchWithRemark } from './mappings/remark'
 const DataSelection = { data: { event: true } } as const
 
 const processor = new SubstrateBatchProcessor()
@@ -93,6 +93,7 @@ const processor = new SubstrateBatchProcessor()
             'Tokens.BalanceSet',
             // Contracts
             'Contracts.ContractEmitted',
+            'Utility.BatchCompleted',
         ],
         call: true,
         extrinsic: true,
@@ -269,11 +270,15 @@ processor.run(new TypeormDatabase(), async (ctx) => {
                 )
             }
         }
+        // It's important to process the calls after the events,
+        // because for the system.remark call we need to have
+        // processed the token transfers first
         for (let call of block.calls) {
             try {
                 switch (call.name) {
-                    case 'System.remark':
-                        await handleSystemRemark({
+                    case 'Utility.batch':
+                        if (!call.success) continue
+                        await handleBatchWithRemark({
                             ...ctx,
                             block: block.header,
                             call: call,

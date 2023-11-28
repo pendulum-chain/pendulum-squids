@@ -6,6 +6,10 @@ import { TokenTransfer, Transfer } from '../model'
 import { Call } from '@subsquid/substrate-processor'
 
 export async function handleBatchWithRemark(ctx: CallHandlerContext) {
+    // ignore unsigned batch calls
+    if (ctx.call.origin.value.__kind != 'Signed') {
+        return
+    }
     let origin = codec(config.prefix).encode(ctx.call.origin.value.value)
 
     // filter out batch calls where there is one transfer and

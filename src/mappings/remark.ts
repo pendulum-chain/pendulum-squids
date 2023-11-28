@@ -8,7 +8,7 @@ import { Call } from '@subsquid/substrate-processor'
 export async function handleBatchWithRemark(ctx: CallHandlerContext) {
     let origin = codec(config.prefix).encode(ctx.call.origin.value.value)
 
-    // filter out batch calls where there one transfer and
+    // filter out batch calls where there is one transfer and
     // one remark only
     if (!hasSystemWithRemark(ctx.call)) {
         return
@@ -30,86 +30,84 @@ export async function handleBatchWithRemark(ctx: CallHandlerContext) {
         )
     }
 
-    // handle balances pallet transfer with remark
+    // handle balances pallet and Tokens pallet transfer with remark
     if (kinds.includes('Balances')) {
-        const balancesCall = calls.find(
-            (call: any) => call.__kind === 'Balances'
-        )
-
-        // extract dest if it is a transfer call
-        let destAddress
-        if (balancesCall.value.__kind === 'transfer') {
-            destAddress = codec(config.prefix).encode(
-                balancesCall.value.dest.value
-            )
-        } else {
-            return
-        }
-
-        let matchingBalanceTransfer = await ctx.store.findOne(Transfer, {
-            where: {
-                from: origin,
-                to: destAddress,
-                amount: balancesCall.value.amount,
-            },
-        })
-
-        if (!matchingBalanceTransfer) {
-            ctx.log.info(
-                `Error when finding the correct transfer for remark with id ${ctx.call.id}.`
-            )
-            return
-        }
-
-        matchingBalanceTransfer.remark = remark ? remark : remarkRaw
-        await ctx.store.save(matchingBalanceTransfer)
+        await processTransfer('Balances', calls, ctx, origin, remark, remarkRaw)
     } else if (kinds.includes('Tokens')) {
-        const tokensCall = calls.find((call: any) => call.__kind === 'Tokens')
-
-        let destAddress
-        if (tokensCall.value.__kind === 'transfer') {
-            destAddress = codec(config.prefix).encode(
-                tokensCall.value.dest.value
-            )
-        } else {
-            return
-        }
-
-        let matchingTokenTransfer = await ctx.store.findOne(TokenTransfer, {
-            where: {
-                from: origin,
-                to: destAddress,
-                amount: tokensCall.value.amount,
-            },
-        })
-
-        if (!matchingTokenTransfer) {
-            ctx.log.info(
-                `Error when finding the correct token transfer for remark with id ${ctx.call.id}.`
-            )
-            return
-        }
-
-        matchingTokenTransfer.remark = remark ? remark : remarkRaw
-        await ctx.store.save(matchingTokenTransfer)
+        await processTransfer('Tokens', calls, ctx, origin, remark, remarkRaw)
     } else {
-        // Ignore this case
+        // Ignore anything else
         return
     }
 }
 
 function hasSystemWithRemark(call: Call) {
+    let remarkCount = 0
     try {
         for (const inner_call of call.args.calls) {
-            if (inner_call.__kind === 'System') {
-                if (inner_call.value.__kind === 'remark') {
-                    return true
-                } else {
-                    return false
-                }
+            if (
+                inner_call.__kind === 'System' &&
+                inner_call.value.__kind === 'remark'
+            ) {
+                remarkCount++
             }
         }
     } catch {
         return false
     }
+
+    return remarkCount === 1
+}
+
+async function processTransfer(
+    kind: string,
+    calls: any[],
+    ctx: CallHandlerContext,
+    origin: string,
+    remark: string | null,
+    remarkRaw: string
+) {
+    const call = calls.find((c) => c.__kind === kind)
+
+    // Extract destination address
+    let destAddress
+    if (call.value.__kind === 'transfer') {
+        destAddress = codec(config.prefix).encode(call.value.dest.value)
+    } else {
+        return
+    }
+
+    // Find matching transfer
+    let matchingTransfer
+    if (kind === 'Balances') {
+        matchingTransfer = await ctx.store.findOne(Transfer, {
+            where: {
+                from: origin,
+                to: destAddress,
+                amount: call.value.amount,
+                blockNumber: ctx.block.height,
+            },
+        })
+    } else if (kind === 'Tokens') {
+        matchingTransfer = await ctx.store.findOne(TokenTransfer, {
+            where: {
+                from: origin,
+                to: destAddress,
+                amount: call.value.amount,
+                blockNumber: ctx.block.height,
+            },
+        })
+    }
+
+    if (!matchingTransfer) {
+        ctx.log.info(
+            `Error when finding the correct ${kind.toLowerCase()} transfer for remark with id ${
+                ctx.call.id
+            }.`
+        )
+        return
+    }
+
+    matchingTransfer.remark = remark ? remark : remarkRaw
+    await ctx.store.save(matchingTransfer)
 }

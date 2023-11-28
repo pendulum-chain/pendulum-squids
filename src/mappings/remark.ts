@@ -10,16 +10,15 @@ export async function handleBatchWithRemark(ctx: CallHandlerContext) {
 
     // filter out batch calls where there is one transfer and
     // one remark only
-    if (!hasSystemWithRemark(ctx.call)) {
+    let remarkCall = hasSystemWithRemark(ctx.call)
+    let transferCall = hasBalancesOrTokensTransfer(ctx.call)
+    if (!remarkCall || !transferCall) {
         return
     }
     const calls = ctx.call.args.calls
     const kinds = calls.map((call: any) => call.__kind)
-    if (kinds.length != 2) return
 
-    const remarkCall = calls.find((call: any) => call.__kind === 'System')
-
-    let remarkRaw = remarkCall.value.remark
+    let remarkRaw = remarkCall.remark
     let remark = null
     // Try decoding remark from hex
     try {
@@ -32,9 +31,23 @@ export async function handleBatchWithRemark(ctx: CallHandlerContext) {
 
     // handle balances pallet and Tokens pallet transfer with remark
     if (kinds.includes('Balances')) {
-        await processTransfer('Balances', calls, ctx, origin, remark, remarkRaw)
+        await processTransfer(
+            'Balances',
+            transferCall,
+            ctx,
+            origin,
+            remark,
+            remarkRaw
+        )
     } else if (kinds.includes('Tokens')) {
-        await processTransfer('Tokens', calls, ctx, origin, remark, remarkRaw)
+        await processTransfer(
+            'Tokens',
+            transferCall,
+            ctx,
+            origin,
+            remark,
+            remarkRaw
+        )
     } else {
         // Ignore anything else
         return
@@ -43,39 +56,63 @@ export async function handleBatchWithRemark(ctx: CallHandlerContext) {
 
 function hasSystemWithRemark(call: Call) {
     let remarkCount = 0
+    let match
     try {
         for (const inner_call of call.args.calls) {
             if (
                 inner_call.__kind === 'System' &&
                 inner_call.value.__kind === 'remark'
             ) {
+                match = inner_call.value
                 remarkCount++
             }
         }
     } catch {
         return false
     }
+    // it is okay to return the last match
+    // since we filter for only one found
+    if (remarkCount === 1) {
+        return match
+    }
+    return false
+}
 
-    return remarkCount === 1
+function hasBalancesOrTokensTransfer(call: Call) {
+    let transferCount = 0
+    let transfer
+    try {
+        for (const inner_call of call.args.calls) {
+            if (
+                (inner_call.__kind === 'Balances' ||
+                    inner_call.__kind === 'Tokens') &&
+                inner_call.value.__kind === 'transfer'
+            ) {
+                transferCount++
+                transfer = inner_call.value
+            }
+        }
+    } catch {
+        return false
+    }
+
+    if (transferCount === 1) {
+        return transfer
+    }
+    return false
 }
 
 async function processTransfer(
     kind: string,
-    calls: any[],
+    transferCall: any,
     ctx: CallHandlerContext,
     origin: string,
     remark: string | null,
     remarkRaw: string
 ) {
-    const call = calls.find((c) => c.__kind === kind)
-
     // Extract destination address
-    let destAddress
-    if (call.value.__kind === 'transfer') {
-        destAddress = codec(config.prefix).encode(call.value.dest.value)
-    } else {
-        return
-    }
+
+    let destAddress = codec(config.prefix).encode(transferCall.dest.value)
 
     // Find matching transfer
     let matchingTransfer
@@ -84,7 +121,7 @@ async function processTransfer(
             where: {
                 from: origin,
                 to: destAddress,
-                amount: call.value.amount,
+                amount: transferCall.amount,
                 blockNumber: ctx.block.height,
             },
         })
@@ -93,7 +130,7 @@ async function processTransfer(
             where: {
                 from: origin,
                 to: destAddress,
-                amount: call.value.amount,
+                amount: transferCall.amount,
                 blockNumber: ctx.block.height,
             },
         })

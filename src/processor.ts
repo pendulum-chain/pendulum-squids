@@ -23,7 +23,7 @@ import {
     handleFarmingWithdrawClaimed,
     handleFarmingWithdrawn,
 } from './mappings/farming/handle'
-import { config } from './config'
+import { blockRetention, config, maxHeightPromise } from './config'
 import {
     handleAssetSwap,
     handleLiquidityAdded,
@@ -133,29 +133,14 @@ export interface EventHandlerContext extends Ctx {
     event: Event<Fields>
 }
 
-// In case call to archive fails, this should make block.height >= maxHeight - blockRetention false
-let maxHeight = Number.MAX_SAFE_INTEGER
-
-// Fetch max height from the archive
-fetch(config.dataSource.archive + '/height')
-    .then((response) => response.json())
-    .then((data) => {
-        console.log('Max height:', data)
-        maxHeight = data
-    })
-    .catch((error) =>
-        console.error('Error getting block count from archive:', error)
-    )
-
-const blockRetention = process.env.BLOCK_RETENTION
-    ? parseInt(process.env.BLOCK_RETENTION, 10)
-    : 7200
-
 processor.run(new TypeormDatabase(), async (ctx) => {
     // True if the most recent block is present in this batch
     // Should always be true after syncing all blocks as each new batch will contain the last block
     // Used to skip processing of old blocks when syncing except for genesis block
     let isHead = ctx.isHead
+
+    // Fetch max height from the archive
+    let maxHeight = await maxHeightPromise
 
     for (let { header: block, calls, events, extrinsics } of ctx.blocks) {
         ctx.log.debug(

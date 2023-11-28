@@ -3,6 +3,9 @@ import { lookupArchive } from '@subsquid/archive-registry'
 export type Network = 'foucoco' | 'amplitude' | 'pendulum'
 export const network: Network =
     <'foucoco' | 'amplitude' | 'pendulum'>process.env.NETWORK || 'amplitude'
+export const blockRetention = process.env.BLOCK_RETENTION_NUMBER
+    ? parseInt(process.env.BLOCK_RETENTION_NUMBER, 10)
+    : 7200
 
 const pendulumConfig: ProcessorConfig = {
     chainName: 'pendulum',
@@ -39,3 +42,20 @@ export const config: ProcessorConfig =
         : pendulumConfig
 
 console.log('Using ProcessorConfig: ', config)
+
+/// Fetch max height from the archive and export it as a promise
+export const maxHeightPromise: Promise<number> = fetch(
+    config.dataSource.archive + '/height'
+)
+    .then((response) => response.json())
+    .then((data) => {
+        console.log('Max height:', data)
+        return data
+    })
+    .catch((error) => {
+        console.error(
+            'Error getting block count from archive, using default value instead:',
+            error
+        )
+        return Number.MAX_SAFE_INTEGER
+    })

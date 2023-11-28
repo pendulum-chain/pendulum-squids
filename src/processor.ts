@@ -133,6 +133,24 @@ export interface EventHandlerContext extends Ctx {
     event: Event<Fields>
 }
 
+// In case call to archive fails, this should make block.height >= maxHeight - blockRetention false
+let maxHeight = Number.MAX_SAFE_INTEGER
+
+// Fetch max height from the archive
+fetch(config.dataSource.archive + '/height')
+    .then((response) => response.json())
+    .then((data) => {
+        console.log('Max height:', data)
+        maxHeight = data
+    })
+    .catch((error) =>
+        console.error('Error getting block count from archive:', error)
+    )
+
+const blockRetention = process.env.BLOCK_RETENTION
+    ? parseInt(process.env.BLOCK_RETENTION, 10)
+    : 7200
+
 processor.run(new TypeormDatabase(), async (ctx) => {
     // True if the most recent block is present in this batch
     // Should always be true after syncing all blocks as each new batch will contain the last block
@@ -144,7 +162,7 @@ processor.run(new TypeormDatabase(), async (ctx) => {
             `block ${block.height}: extrinsics - ${extrinsics.length}, calls - ${calls.length}, events - ${events.length}`
         )
 
-        if (isHead) {
+        if (isHead || block.height >= maxHeight - blockRetention) {
             try {
                 await saveBlock(ctx, block)
 

@@ -25,14 +25,17 @@ export async function saveBlock(ctx: Ctx, block: BlockHeader_) {
 
     await ctx.store.insert(entity)
 
-    // Prune block older than 7200 blocks
-    try {
-        const blockToPruneHeight = block.height - 7200
-        if (blockToPruneHeight >= 0) {
+    // Prune block older than last 7200 blocks
+    const blockRetention = process.env.BLOCK_RETENTION
+        ? parseInt(process.env.BLOCK_RETENTION, 10)
+        : 7200
+    const blockToPruneHeight = block.height - blockRetention
+    if (blockToPruneHeight >= 0) {
+        try {
             await pruneOldestBlock(ctx, blockToPruneHeight)
+        } catch (e) {
+            console.log(`Error pruning block `, e)
         }
-    } catch (e) {
-        console.log(`Error pruning block `, e)
     }
 }
 

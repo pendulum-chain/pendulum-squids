@@ -31,7 +31,7 @@ scale:
     dedicated: true
     addons:
         postgres:
-            storage: 2G
+            storage: 1G
             profile: small
     processor:
         profile: small

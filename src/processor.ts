@@ -134,30 +134,37 @@ export interface EventHandlerContext extends Ctx {
 }
 
 processor.run(new TypeormDatabase(), async (ctx) => {
+    // True if the most recent block is present in this batch
+    // Should always be true after syncing all blocks as each new batch will contain the last block
+    // Used to skip processing of old blocks when syncing except for genesis block
+    let isHead = ctx.isHead
+
     for (let { header: block, calls, events, extrinsics } of ctx.blocks) {
         ctx.log.debug(
             `block ${block.height}: extrinsics - ${extrinsics.length}, calls - ${calls.length}, events - ${events.length}`
         )
 
-        try {
-            await saveBlock(ctx, block)
+        if (isHead) {
+            try {
+                await saveBlock(ctx, block)
 
-            for (const extrinsic of extrinsics) {
-                await saveExtrinsic(ctx, extrinsic)
-            }
+                for (const extrinsic of extrinsics) {
+                    await saveExtrinsic(ctx, extrinsic)
+                }
 
-            for (const call of calls.reverse()) {
-                await saveCall(ctx, call)
-            }
+                for (const call of calls.reverse()) {
+                    await saveCall(ctx, call)
+                }
 
-            for (const event of events) {
-                await saveEvent(ctx, event)
+                for (const event of events) {
+                    await saveEvent(ctx, event)
+                }
+            } catch (e) {
+                console.log(
+                    `Error saving block details for block '${block.height}'.`,
+                    e
+                )
             }
-        } catch (e) {
-            console.log(
-                `Error saving block details for block '${block.height}'.`,
-                e
-            )
         }
 
         for (let event of events) {

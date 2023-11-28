@@ -26,7 +26,7 @@ export async function saveBlock(ctx: Ctx, block: BlockHeader_) {
 
     await ctx.store.insert(entity)
 
-    // Prune block older than last BLOCK_RETENTION blocks
+    // Prune block older than last BLOCK_RETENTION_NUMBER blocks
     try {
         await pruneOldestBlock(ctx, block.height - blockRetention)
     } catch (e) {

@@ -140,7 +140,7 @@ processor.run(new TypeormDatabase(), async (ctx) => {
     let isHead = ctx.isHead
 
     // Fetch max height from the archive
-    let maxHeight = await maxHeightPromise
+    const maxHeight = await maxHeightPromise
 
     for (let { header: block, calls, events, extrinsics } of ctx.blocks) {
         ctx.log.debug(

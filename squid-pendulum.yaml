@@ -1,6 +1,6 @@
 manifestVersion: subsquid.io/v0.1
 name: pendulum-squid
-version: 9
+version: 11
 description: 'Pendulum Squid'
 build:
 deploy:

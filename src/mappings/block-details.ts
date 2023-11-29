@@ -3,7 +3,7 @@ import { Ctx, BlockHeader_, Call_, Event_, Extrinsic_ } from '../processor'
 import { decodeHex } from '@subsquid/substrate-processor'
 import * as model from '../model'
 import { In } from 'typeorm/find-options/operator/In'
-import { blockRetention } from '../config'
+import { blockRetentionNumber } from '../config'
 
 export async function saveBlock(ctx: Ctx, block: BlockHeader_) {
     const entity = new model.Block({
@@ -28,7 +28,7 @@ export async function saveBlock(ctx: Ctx, block: BlockHeader_) {
 
     // Prune block older than last BLOCK_RETENTION_NUMBER blocks
     try {
-        await pruneOldestBlock(ctx, block.height - blockRetention)
+        await pruneOldestBlock(ctx, block.height - blockRetentionNumber)
     } catch (e) {
         console.log(`Error pruning block `, e)
     }

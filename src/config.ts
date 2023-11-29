@@ -3,7 +3,7 @@ import { lookupArchive } from '@subsquid/archive-registry'
 export type Network = 'foucoco' | 'amplitude' | 'pendulum'
 export const network: Network =
     <'foucoco' | 'amplitude' | 'pendulum'>process.env.NETWORK || 'amplitude'
-export const blockRetention = process.env.BLOCK_RETENTION_NUMBER
+export const blockRetentionNumber = process.env.BLOCK_RETENTION_NUMBER
     ? parseInt(process.env.BLOCK_RETENTION_NUMBER, 10)
     : 7200
 
@@ -43,7 +43,7 @@ export const config: ProcessorConfig =
 
 console.log('Using ProcessorConfig: ', config)
 
-/// Fetch max height from the archive and export it as a promise
+// Fetch max height from the archive and export it as a promise
 export const maxHeightPromise: Promise<number> = fetch(
     config.dataSource.archive + '/height'
 )
@@ -54,8 +54,9 @@ export const maxHeightPromise: Promise<number> = fetch(
     })
     .catch((error) => {
         console.error(
-            'Error getting block count from archive, using default value instead:',
+            'Error getting block height from archive, using default value instead:',
             error
         )
+        // If archive is not available then returning this should ensure skipping saving blocks from archive
         return Number.MAX_SAFE_INTEGER
     })

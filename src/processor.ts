@@ -5,6 +5,8 @@ import {
     Block,
     BlockHeader,
     Event,
+    Call,
+    Extrinsic,
 } from '@subsquid/substrate-processor'
 
 import { Store, TypeormDatabase } from '@subsquid/typeorm-store'
@@ -21,7 +23,7 @@ import {
     handleFarmingWithdrawClaimed,
     handleFarmingWithdrawn,
 } from './mappings/farming/handle'
-import { config } from './config'
+import { blockRetentionNumber, config, maxHeightPromise } from './config'
 import {
     handleAssetSwap,
     handleLiquidityAdded,
@@ -35,26 +37,50 @@ import {
 import { handleBalanceTransfer } from './mappings/balances'
 import { handleContractEvent } from './mappings/nabla'
 import { handleUpdatedPrices } from './mappings/prices'
+import {
+    saveBlock,
+    saveCall,
+    saveEvent,
+    saveExtrinsic,
+} from './mappings/block-details'
 
 const DataSelection = { data: { event: true } } as const
 
 const processor = new SubstrateBatchProcessor()
     .setDataSource(config.dataSource)
     .setFields({
-        event: {},
+        block: {
+            timestamp: true,
+            digest: true,
+            extrinsicsRoot: true,
+            stateRoot: true,
+            validator: true,
+        },
         call: {
+            name: true,
+            args: true,
             origin: true,
             success: true,
             error: true,
         },
+        event: {
+            name: true,
+            args: true,
+            phase: true,
+        },
         extrinsic: {
             hash: true,
+            success: true,
+            error: true,
             fee: true,
+            signature: true,
             tip: true,
+            version: true,
         },
-        block: {
-            timestamp: true,
-        },
+    })
+    .addCall({
+        extrinsic: true,
+        stack: true,
     })
     .addEvent({
         name: [
@@ -92,162 +118,200 @@ const processor = new SubstrateBatchProcessor()
         call: true,
         extrinsic: true,
     })
+    .includeAllBlocks()
 
 type Fields = SubstrateBatchProcessorFields<typeof processor>
-type Ctx = DataHandlerContext<Store, Fields>
+export type Call_ = Call<Fields>
+export type Event_ = Event<Fields>
+export type Extrinsic_ = Extrinsic<Fields>
+export type Block_ = Block<Fields>
+export type BlockHeader_ = BlockHeader<Fields>
+export type Ctx = DataHandlerContext<Store, Fields>
+
 export interface EventHandlerContext extends Ctx {
     block: BlockHeader<Fields>
     event: Event<Fields>
 }
 
 processor.run(new TypeormDatabase(), async (ctx) => {
-    for (let block of ctx.blocks) {
-        for (let item of block.events) {
+    // Fetch max block height from the archive
+    const maxHeight = await maxHeightPromise
+
+    for (let { header: block, calls, events, extrinsics } of ctx.blocks) {
+        ctx.log.debug(
+            `block ${block.height}: extrinsics - ${extrinsics.length}, calls - ${calls.length}, events - ${events.length}`
+        )
+
+        // Block is saved only if it's in the most recent BLOCK_RETENTION_NUMBER blocks or newer
+        if (block.height >= maxHeight - blockRetentionNumber) {
             try {
-                switch (item.name) {
+                await saveBlock(ctx, block)
+
+                for (const extrinsic of extrinsics) {
+                    await saveExtrinsic(ctx, extrinsic)
+                }
+
+                for (const call of calls.reverse()) {
+                    await saveCall(ctx, call)
+                }
+
+                for (const event of events) {
+                    await saveEvent(ctx, event)
+                }
+            } catch (e) {
+                console.log(
+                    `Error saving block details for block '${block.height}'.`,
+                    e
+                )
+            }
+        }
+
+        for (let event of events) {
+            try {
+                switch (event.name) {
                     case 'Tokens.Deposited':
                         await handleTokenDeposited({
                             ...ctx,
-                            block: block.header,
-                            event: item,
+                            block,
+                            event,
                         })
                         break
                     case 'Tokens.Withdrawn':
                         await handleTokenWithdrawn({
                             ...ctx,
-                            block: block.header,
-                            event: item,
+                            block,
+                            event,
                         })
                         break
                     case 'Tokens.Transfer':
                         await handleTokenTransfer({
                             ...ctx,
-                            block: block.header,
-                            event: item,
+                            block,
+                            event,
                         })
                         break
                     // zenlink
                     case 'ZenlinkProtocol.LiquidityAdded':
                         await handleLiquidityAdded({
                             ...ctx,
-                            block: block.header,
-                            event: item,
+                            block,
+                            event,
                         })
                         break
                     case 'ZenlinkProtocol.LiquidityRemoved':
                         await handleLiquidityRemoved({
                             ...ctx,
-                            block: block.header,
-                            event: item,
+                            block,
+                            event,
                         })
                         break
                     case 'ZenlinkProtocol.AssetSwap':
                         await handleAssetSwap({
                             ...ctx,
-                            block: block.header,
-                            event: item,
+                            block,
+                            event,
                         })
                         break
                     // farming
                     case 'Farming.FarmingPoolCreated':
                         await handleFarmingPoolCreated({
                             ...ctx,
-                            block: block.header,
-                            event: item,
+                            block,
+                            event,
                         })
                         break
                     case 'Farming.FarmingPoolReset':
                         await handleFarmingPoolReset({
                             ...ctx,
-                            block: block.header,
-                            event: item,
+                            block,
+                            event,
                         })
                         break
                     case 'Farming.FarmingPoolClosed':
                         await handleFarmingPoolClosed({
                             ...ctx,
-                            block: block.header,
-                            event: item,
+                            block,
+                            event,
                         })
                         break
                     case 'Farming.FarmingPoolKilled':
                         await handleFarmingPoolKilled({
                             ...ctx,
-                            block: block.header,
-                            event: item,
+                            block,
+                            event,
                         })
                         break
                     case 'Farming.FarmingPoolEdited':
                         await handleFarmingPoolEdited({
                             ...ctx,
-                            block: block.header,
-                            event: item,
+                            block,
+                            event,
                         })
                         break
                     case 'Farming.Charged':
                         await handleFarmingCharged({
                             ...ctx,
-                            block: block.header,
-                            event: item,
+                            block,
+                            event,
                         })
                         break
                     case 'Farming.Deposited':
                         await handleFarmingDeposited({
                             ...ctx,
-                            block: block.header,
-                            event: item,
+                            block,
+                            event,
                         })
                         break
                     case 'Farming.Withdrawn':
                         await handleFarmingWithdrawn({
                             ...ctx,
-                            block: block.header,
-                            event: item,
+                            block,
+                            event,
                         })
                         break
                     case 'Farming.Claimed':
                         await handleFarmingClaimed({
                             ...ctx,
-                            block: block.header,
-                            event: item,
+                            block,
+                            event,
                         })
                         break
                     case 'Farming.WithdrawClaimed':
                         await handleFarmingWithdrawClaimed({
                             ...ctx,
-                            block: block.header,
-                            event: item,
+                            block,
+                            event,
                         })
                         break
                     case 'Farming.GaugeWithdrawn':
                         await handleFarmingGaugeWithdrawn({
                             ...ctx,
-                            block: block.header,
-                            event: item,
+                            block,
+                            event,
                         })
                         break
                     // balances
                     case 'Balances.Transfer':
                         await handleBalanceTransfer({
                             ...ctx,
-                            block: block.header,
-                            event: item,
+                            block,
+                            event,
                         })
                         break
                     // contracts
                     case 'Contracts.ContractEmitted':
                         await handleContractEvent({
                             ...ctx,
-                            block: block.header,
-                            event: item,
+                            block,
+                            event,
                         })
                         break
                     // price oracle
                     case 'DiaOracleModule.UpdatedPrices':
                         await handleUpdatedPrices({
                             ...ctx,
-                            block: block.header,
-                            event: item,
+                            block,
+                            event,
                         })
                         break
                     default:
@@ -255,7 +319,7 @@ processor.run(new TypeormDatabase(), async (ctx) => {
                 }
             } catch (e) {
                 console.log(
-                    `Error processing event '${item.name}'. Skipping due to error:`,
+                    `Error processing event '${event.name}'. Skipping due to error:`,
                     e
                 )
             }

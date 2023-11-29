@@ -44,19 +44,19 @@ export const config: ProcessorConfig =
 console.log('Using ProcessorConfig: ', config)
 
 // Fetch max height from the archive and export it as a promise
-export const maxHeightPromise: Promise<number> = fetch(
-    config.dataSource.archive + '/height'
-)
-    .then((response) => response.json())
-    .then((data) => {
-        console.log('Max height:', data)
-        return data
-    })
-    .catch((error) => {
-        console.error(
-            'Error getting block height from archive, using default value instead:',
-            error
-        )
-        // If archive is not available then returning this should ensure skipping saving blocks from archive
-        return Number.MAX_SAFE_INTEGER
-    })
+// export const maxHeightPromise: Promise<number> = fetch(
+//     config.dataSource.archive + '/height'
+// )
+//     .then((response) => response.json())
+//     .then((data) => {
+//         console.log('Max height:', data)
+//         return data
+//     })
+//     .catch((error) => {
+//         console.error(
+//             'Error getting block height from archive, using default value instead:',
+//             error
+//         )
+//         // If archive is not available then returning this should ensure skipping saving blocks from archive
+//         return Number.MAX_SAFE_INTEGER
+//     })

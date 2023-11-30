@@ -45,4 +45,7 @@ export class Transfer {
         nullable: false,
     })
     fee!: bigint
+
+    @Column_('text', { nullable: true })
+    remark!: string | undefined | null
 }

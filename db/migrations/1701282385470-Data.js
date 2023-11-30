@@ -1,5 +1,5 @@
-module.exports = class Data1700593749615 {
-    name = 'Data1700593749615'
+module.exports = class Data1701282385470 {
+    name = 'Data1701282385470'
 
     async up(db) {
         await db.query(
@@ -18,7 +18,7 @@ module.exports = class Data1700593749615 {
             `CREATE INDEX "IDX_f7c9bf3bae39fb0a75f12b87dd" ON "oracle_price" ("price") `
         )
         await db.query(
-            `CREATE TABLE "transfer" ("id" character varying NOT NULL, "block_number" integer NOT NULL, "timestamp" TIMESTAMP WITH TIME ZONE NOT NULL, "extrinsic_hash" text, "from" text NOT NULL, "to" text NOT NULL, "amount" numeric NOT NULL, "fee" numeric NOT NULL, CONSTRAINT "PK_fd9ddbdd49a17afcbe014401295" PRIMARY KEY ("id"))`
+            `CREATE TABLE "transfer" ("id" character varying NOT NULL, "block_number" integer NOT NULL, "timestamp" TIMESTAMP WITH TIME ZONE NOT NULL, "extrinsic_hash" text, "from" text NOT NULL, "to" text NOT NULL, "amount" numeric NOT NULL, "fee" numeric NOT NULL, "remark" text, CONSTRAINT "PK_fd9ddbdd49a17afcbe014401295" PRIMARY KEY ("id"))`
         )
         await db.query(
             `CREATE INDEX "IDX_d6624eacc30144ea97915fe846" ON "transfer" ("block_number") `
@@ -225,7 +225,7 @@ module.exports = class Data1700593749615 {
             `CREATE INDEX "IDX_0795adc3723792868094ec76c0" ON "zenlink_info" ("stable_swap_info_id") `
         )
         await db.query(
-            `CREATE TABLE "token_transfer" ("id" character varying NOT NULL, "block_number" integer NOT NULL, "timestamp" TIMESTAMP WITH TIME ZONE NOT NULL, "extrinsic_hash" text, "from" text NOT NULL, "to" text NOT NULL, "currency_id" text NOT NULL, "amount" numeric NOT NULL, CONSTRAINT "PK_77384b7f5874553f012eba9da41" PRIMARY KEY ("id"))`
+            `CREATE TABLE "token_transfer" ("id" character varying NOT NULL, "block_number" integer NOT NULL, "timestamp" TIMESTAMP WITH TIME ZONE NOT NULL, "extrinsic_hash" text, "from" text NOT NULL, "to" text NOT NULL, "currency_id" text NOT NULL, "amount" numeric NOT NULL, "remark" text, CONSTRAINT "PK_77384b7f5874553f012eba9da41" PRIMARY KEY ("id"))`
         )
         await db.query(
             `CREATE INDEX "IDX_b47f7192b72dd8436ef4e6d253" ON "token_transfer" ("block_number") `

@@ -42,4 +42,7 @@ export class TokenTransfer {
         nullable: false,
     })
     amount!: bigint
+
+    @Column_('text', { nullable: true })
+    remark!: string | undefined | null
 }

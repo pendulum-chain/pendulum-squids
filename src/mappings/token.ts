@@ -477,7 +477,7 @@ export async function handleTokenTransfer(ctx: EventHandlerContext) {
         currencyId: currencyId,
     })
 
-    ctx.store.save(tokenTransfer)
+    await ctx.store.save(tokenTransfer)
 
     if (event?.currencyId.__kind !== 'ZenlinkLPToken') return
 

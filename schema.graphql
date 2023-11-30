@@ -20,6 +20,7 @@ type Transfer @entity {
     to: String!
     amount: BigInt! @index
     fee: BigInt! # fee is calculated at the best effort and may be zero for some old extrinsics
+    remark: String
 }
 
 type ZenlinkInfo @entity {
@@ -274,6 +275,7 @@ type TokenTransfer @entity {
     to: String!
     currencyId: String!
     amount: BigInt! @index
+    remark: String
 }
 
 type TokenDeposit @entity {

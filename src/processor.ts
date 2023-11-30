@@ -24,6 +24,7 @@ import {
     handleFarmingWithdrawn,
 } from './mappings/farming/handle'
 import { blockRetentionNumber, config, maxHeightPromise } from './config'
+
 import {
     handleAssetSwap,
     handleLiquidityAdded,
@@ -37,6 +38,7 @@ import {
 import { handleBalanceTransfer } from './mappings/balances'
 import { handleContractEvent } from './mappings/nabla'
 import { handleUpdatedPrices } from './mappings/prices'
+import { handleBatchWithRemark } from './mappings/remark'
 import {
     saveBlock,
     saveCall,
@@ -79,6 +81,7 @@ const processor = new SubstrateBatchProcessor()
         },
     })
     .addCall({
+        name: ['System.remark', 'Utility.batch', 'Utility.batch_all'],
         extrinsic: true,
         stack: true,
     })
@@ -133,9 +136,14 @@ export interface EventHandlerContext extends Ctx {
     event: Event<Fields>
 }
 
+export interface CallHandlerContext extends Ctx {
+    block: BlockHeader<Fields>
+    call: Call<Fields>
+}
+
 processor.run(new TypeormDatabase(), async (ctx) => {
     // Fetch max block height from the archive
-    const maxHeight = await maxHeightPromise
+    let maxHeight = await maxHeightPromise
 
     for (let { header: block, calls, events, extrinsics } of ctx.blocks) {
         ctx.log.debug(
@@ -320,6 +328,34 @@ processor.run(new TypeormDatabase(), async (ctx) => {
             } catch (e) {
                 console.log(
                     `Error processing event '${event.name}'. Skipping due to error:`,
+                    e
+                )
+            }
+        }
+        // It's important to process the calls after the events,
+        // because for the system.remark call we need to have
+        // processed the token transfers first
+        for (let call of calls) {
+            try {
+                switch (call.name) {
+                    case 'Utility.batch':
+                        if (!call.success) continue
+                        await handleBatchWithRemark({
+                            ...ctx,
+                            block,
+                            call,
+                        })
+                    case 'Utility.batch_all':
+                        if (!call.success) continue
+                        await handleBatchWithRemark({
+                            ...ctx,
+                            block,
+                            call,
+                        })
+                }
+            } catch (e) {
+                console.log(
+                    `Error processing call '${call.name}'. Skipping due to error:`,
                     e
                 )
             }

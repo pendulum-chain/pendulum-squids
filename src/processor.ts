@@ -23,8 +23,8 @@ import {
     handleFarmingWithdrawClaimed,
     handleFarmingWithdrawn,
 } from './mappings/farming/handle'
-//import { blockRetentionNumber, config, maxHeightPromise } from './config'
-import { blockRetentionNumber, config } from './config'
+import { blockRetentionNumber, config, maxHeightPromise } from './config'
+
 import {
     handleAssetSwap,
     handleLiquidityAdded,
@@ -143,6 +143,7 @@ export interface CallHandlerContext extends Ctx {
 
 processor.run(new TypeormDatabase(), async (ctx) => {
     // Fetch max block height from the archive
+    let maxHeight = await maxHeightPromise
 
     for (let { header: block, calls, events, extrinsics } of ctx.blocks) {
         ctx.log.debug(
@@ -150,7 +151,7 @@ processor.run(new TypeormDatabase(), async (ctx) => {
         )
 
         // Block is saved only if it's in the most recent BLOCK_RETENTION_NUMBER blocks or newer
-        if (ctx.isHead) {
+        if (block.height >= maxHeight - blockRetentionNumber) {
             try {
                 await saveBlock(ctx, block)
 

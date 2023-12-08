@@ -2,6 +2,13 @@
 
 This repository contains the code for the subsquid indexers that we deploy for our three networks Pendulum, Amplitude, and Foucoco.
 
+The production deployments of our squids are available at:
+
+* https://squid.subsquid.io/pendulum-squid/graphql
+* https://squid.subsquid.io/amplitude-squid/graphql
+* https://squid.subsquid.io/foucoco-squid/graphql
+
+
 ## Prerequisites
 
 -   node 16.x

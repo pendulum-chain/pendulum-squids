@@ -2,11 +2,12 @@
 
 This repository contains the code for the subsquid indexers that we deploy for our three networks Pendulum, Amplitude, and Foucoco.
 
-Here are the subscription URLs for our production squids:
+The production deployments of our squids are available at:
 
-* "wss://squid.subsquid.io/foucoco-squid/graphql"
-* "wss://squid.subsquid.io/pendulum-squid/graphql"
-* "wss://squid.subsquid.io/amplitude-squid/graphql"
+* https://squid.subsquid.io/pendulum-squid/graphql
+* https://squid.subsquid.io/amplitude-squid/graphql
+* https://squid.subsquid.io/foucoco-squid/graphql
+
 
 ## Prerequisites
 

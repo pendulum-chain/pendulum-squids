@@ -89,10 +89,20 @@ export function formatFarmingPoolEditedEvent(ctx: EventHandlerContext) {
 export function formatFarmingChargedEvent(ctx: EventHandlerContext) {
     let event
     if (network === 'foucoco') {
-        event = foucocoEvents.farming.charged.v1.decode(ctx.event)
+        if (foucocoEvents.farming.charged.v1.is(ctx.event)) {
+            event = foucocoEvents.farming.charged.v1.decode(ctx.event)
+        }
+        if (foucocoEvents.farming.charged.v4.is(ctx.event)) {
+            event = foucocoEvents.farming.charged.v4.decode(ctx.event)
+        }
     } else if (network === 'pendulum') {
         // FIXME: Change foucocoEvents to pendulumEvents when the farming pallet is implemented on pendulum.
-        event = amplitudeEvents.farming.charged.v10.decode(ctx.event)
+        if (amplitudeEvents.farming.charged.v10.is(ctx.event)) {
+            event = amplitudeEvents.farming.charged.v10.decode(ctx.event)
+        }
+        if (amplitudeEvents.farming.charged.v12.is(ctx.event)) {
+            event = amplitudeEvents.farming.charged.v12.decode(ctx.event)
+        }
     } else {
         if (amplitudeEvents.farming.charged.v10.is(ctx.event)) {
             event = amplitudeEvents.farming.charged.v10.decode(ctx.event)
@@ -253,10 +263,20 @@ export async function getFamingPoolInfo(
 ) {
     let result
     if (network === 'foucoco') {
-        result = await foucocoStorage.farming.poolInfos.v1.get(block, pid)
+        if (foucocoStorage.farming.poolInfos.v1.is(ctx.block)) {
+            await foucocoStorage.farming.poolInfos.v1.get(block, pid)
+        }
+        if (foucocoStorage.farming.poolInfos.v4.is(ctx.block)) {
+            await foucocoStorage.farming.poolInfos.v4.get(block, pid)
+        }
     } else if (network === 'pendulum') {
         // FIXME: Change foucocoStorage to pendulumStorage when the farming pallet is implemented on pendulum.
-        result = await foucocoStorage.farming.poolInfos.v1.get(ctx.block, pid)
+        if (foucocoStorage.farming.poolInfos.v1.is(ctx.block)) {
+            await foucocoStorage.farming.poolInfos.v1.get(block, pid)
+        }
+        if (foucocoStorage.farming.poolInfos.v4.is(ctx.block)) {
+            await foucocoStorage.farming.poolInfos.v4.get(block, pid)
+        }
     } else {
         if (amplitudeStorage.farming.poolInfos.v10.is(ctx.block)) {
             result = await amplitudeStorage.farming.poolInfos.v10.get(
@@ -282,18 +302,40 @@ export async function getFamingSharesAndWithdrawnRewards(
     let result
 
     if (network === 'foucoco') {
-        result = await foucocoStorage.farming.sharesAndWithdrawnRewards.v1.get(
-            ctx.block,
-            pid,
-            codec(config.prefix).decode(user)
-        )
+        if (foucocoStorage.farming.sharesAndWithdrawnRewards.v1.is(ctx.block)) {
+            result =
+                await foucocoStorage.farming.sharesAndWithdrawnRewards.v1.get(
+                    ctx.block,
+                    pid,
+                    codec(config.prefix).decode(user)
+                )
+        }
+        if (foucocoStorage.farming.sharesAndWithdrawnRewards.v4.is(ctx.block)) {
+            result =
+                await foucocoStorage.farming.sharesAndWithdrawnRewards.v4.get(
+                    ctx.block,
+                    pid,
+                    codec(config.prefix).decode(user)
+                )
+        }
     } else if (network === 'pendulum') {
         // FIXME: Change foucocoStorage to pendulumStorage when the farming pallet is implemented on pendulum.
-        result = await foucocoStorage.farming.sharesAndWithdrawnRewards.v1.get(
-            ctx.block,
-            pid,
-            codec(config.prefix).decode(user)
-        )
+        if (foucocoStorage.farming.sharesAndWithdrawnRewards.v1.is(ctx.block)) {
+            result =
+                await foucocoStorage.farming.sharesAndWithdrawnRewards.v1.get(
+                    ctx.block,
+                    pid,
+                    codec(config.prefix).decode(user)
+                )
+        }
+        if (foucocoStorage.farming.sharesAndWithdrawnRewards.v4.is(ctx.block)) {
+            result =
+                await foucocoStorage.farming.sharesAndWithdrawnRewards.v4.get(
+                    ctx.block,
+                    pid,
+                    codec(config.prefix).decode(user)
+                )
+        }
     } else {
         if (
             amplitudeStorage.farming.sharesAndWithdrawnRewards.v10.is(ctx.block)

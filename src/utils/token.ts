@@ -343,11 +343,20 @@ export async function getTokenBalance(
         result = (await systemAccountStorage.get(ctx.block, account))?.data
     } else {
         if (network === 'foucoco') {
-            result = await foucocoStorage.tokens.accounts.v1.get(
-                ctx.block,
-                account,
-                assetId as any
-            )
+            if (foucocoStorage.tokens.accounts.v1.is(ctx.block)) {
+                result = await foucocoStorage.tokens.accounts.v1.get(
+                    ctx.block,
+                    account,
+                    assetId as any
+                )
+            }
+            if (foucocoStorage.tokens.accounts.v4.is(ctx.block)) {
+                result = await foucocoStorage.tokens.accounts.v4.get(
+                    ctx.block,
+                    account,
+                    assetId as any
+                )
+            }
         } else if (network === 'pendulum') {
             if (pendulumStorage.tokens.accounts.v1.is(ctx.block)) {
                 result = await pendulumStorage.tokens.accounts.v1.get(
@@ -416,10 +425,18 @@ export async function getTotalIssuance(
         result = await balanceIssuanceStorage.get(ctx.block)
     } else {
         if (network === 'foucoco') {
-            result = await foucocoStorage.tokens.totalIssuance.v1.get(
-                ctx.block,
-                assetId as any
-            )
+            if (foucocoStorage.tokens.totalIssuance.v1.is(ctx.block)) {
+                result = await foucocoStorage.tokens.totalIssuance.v1.get(
+                    ctx.block,
+                    assetId as any
+                )
+            }
+            if (foucocoStorage.tokens.totalIssuance.v4.is(ctx.block)) {
+                result = await foucocoStorage.tokens.totalIssuance.v4.get(
+                    ctx.block,
+                    assetId as any
+                )
+            }
         } else if (network === 'pendulum') {
             if (pendulumStorage.tokens.totalIssuance.v1.is(ctx.block)) {
                 result = await pendulumStorage.tokens.totalIssuance.v3.get(
@@ -486,11 +503,20 @@ export async function getTokenBurned(
         result = (await systemAccountStorage.get(ctx.block, account))!.data
     } else {
         if (network === 'foucoco') {
-            result = await foucocoStorage.tokens.accounts.v1.get(
-                ctx.block,
-                account,
-                assetId as any
-            )
+            if (foucocoStorage.tokens.accounts.v1.is(ctx.block)) {
+                result = await foucocoStorage.tokens.accounts.v1.get(
+                    ctx.block,
+                    account,
+                    assetId as any
+                )
+            }
+            if (foucocoStorage.tokens.accounts.v4.is(ctx.block)) {
+                result = await foucocoStorage.tokens.accounts.v4.get(
+                    ctx.block,
+                    account,
+                    assetId as any
+                )
+            }
         } else if (network === 'pendulum') {
             if (pendulumStorage.tokens.accounts.v1.is(ctx.block)) {
                 result = await pendulumStorage.tokens.accounts.v1.get(

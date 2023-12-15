@@ -145,6 +145,11 @@ processor.run(new TypeormDatabase(), async (ctx) => {
     // Fetch max block height from the archive
     let maxHeight = await maxHeightPromise
 
+    // Determine the tallest block in the batch
+    let tallestBlockHeight = Math.max(
+        ...ctx.blocks.map((block) => block.header.height)
+    )
+
     for (let { header: block, calls, events, extrinsics } of ctx.blocks) {
         ctx.log.debug(
             `block ${block.height}: extrinsics - ${extrinsics.length}, calls - ${calls.length}, events - ${events.length}`
@@ -316,11 +321,14 @@ processor.run(new TypeormDatabase(), async (ctx) => {
                         break
                     // price oracle
                     case 'DiaOracleModule.UpdatedPrices':
-                        await handleUpdatedPrices({
-                            ...ctx,
-                            block,
-                            event,
-                        })
+                        // Only processing these events if the current block is the 'head' of the chain
+                        if (ctx.isHead && block.height === tallestBlockHeight) {
+                            await handleUpdatedPrices({
+                                ...ctx,
+                                block,
+                                event,
+                            })
+                        }
                         break
                     default:
                         break

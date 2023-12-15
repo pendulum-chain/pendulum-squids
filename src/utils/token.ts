@@ -4,7 +4,7 @@ import {
     foucocoStorage,
     pendulumStorage,
 } from '../types/storage'
-import { AssetId, CurrencyId } from '../types/common'
+import { AssetId, CurrencyId, CurrencyIdV12 } from '../types/common'
 import { codec } from '@subsquid/ss58'
 import { config, network } from '../config'
 import { invert } from 'lodash'
@@ -16,11 +16,31 @@ export const currencyKeyMap: { [index: number]: string } = {
     3: 'ZenlinkLPToken',
 }
 
+function versionedCurrencyToCurrencyEnum(
+    currency: CurrencyId | CurrencyIdV12
+): CurrencyTypeEnum {
+    switch (currency.__kind) {
+        case 'Native':
+            return CurrencyTypeEnum.Native
+        case 'Stellar':
+            return CurrencyTypeEnum.Stellar
+        case 'XCM':
+            return CurrencyTypeEnum.XCM
+        case 'ZenlinkLPToken':
+            return CurrencyTypeEnum.ZenlinkLPToken
+        case 'Token':
+            // Handle the additional Token type
+            return CurrencyTypeEnum.Token
+        default:
+            throw new Error('Invalid currency type')
+    }
+}
 export enum CurrencyTypeEnum {
     Native = 0,
     XCM = 1,
     Stellar = 2,
     ZenlinkLPToken = 3,
+    Token = 4,
 }
 
 export enum CurrencyIndexEnum {
@@ -151,8 +171,10 @@ export function zenlinkAssetIdToCurrencyId(asset: AssetId): any {
 }
 
 // Adheres to derivations defined in [this](https://github.com/pendulum-chain/pendulum/blob/6f92a8d695a7a5ea23c769f03d5f3a621334094e/runtime/common/src/zenlink.rs#L63) function
-export function currencyIdToAssetIndex(currency: CurrencyId): number {
-    const tokenType = CurrencyTypeEnum[currency.__kind]
+export function currencyIdToAssetIndex(
+    currency: CurrencyId | CurrencyIdV12
+): number {
+    const tokenType = versionedCurrencyToCurrencyEnum(currency)
     let tokenIndex = 0
 
     switch (currency.__kind) {
@@ -188,6 +210,10 @@ export function currencyIdToAssetIndex(currency: CurrencyId): number {
                 (currency.value[2] << 32) +
                 (currency.value[3] << 40)
             break
+        // we should not care much about this case since
+        // Token variant is not yet supported in the zenlink implementation
+        case 'Token':
+            tokenIndex = Number(currency.value)
     }
 
     return parseToTokenIndex(tokenType, tokenIndex)
@@ -359,6 +385,13 @@ export async function getTokenBalance(
                     assetId as any
                 )
             }
+            if (amplitudeStorage.tokens.accounts.v12.is(ctx.block)) {
+                result = await amplitudeStorage.tokens.accounts.v12.get(
+                    ctx.block,
+                    account,
+                    assetId as any
+                )
+            }
         }
     }
 
@@ -415,6 +448,12 @@ export async function getTotalIssuance(
             }
             if (amplitudeStorage.tokens.totalIssuance.v10.is(ctx.block)) {
                 result = await amplitudeStorage.tokens.totalIssuance.v10.get(
+                    ctx.block,
+                    assetId as any
+                )
+            }
+            if (amplitudeStorage.tokens.totalIssuance.v12.is(ctx.block)) {
+                result = await amplitudeStorage.tokens.totalIssuance.v12.get(
                     ctx.block,
                     assetId as any
                 )
@@ -484,6 +523,13 @@ export async function getTokenBurned(
             }
             if (amplitudeStorage.tokens.accounts.v10.is(ctx.block)) {
                 result = await amplitudeStorage.tokens.accounts.v10.get(
+                    ctx.block,
+                    account,
+                    assetId as any
+                )
+            }
+            if (amplitudeStorage.tokens.accounts.v12.is(ctx.block)) {
+                result = await amplitudeStorage.tokens.accounts.v12.get(
                     ctx.block,
                     account,
                     assetId as any

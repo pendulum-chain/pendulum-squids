@@ -94,7 +94,12 @@ export function formatFarmingChargedEvent(ctx: EventHandlerContext) {
         // FIXME: Change foucocoEvents to pendulumEvents when the farming pallet is implemented on pendulum.
         event = amplitudeEvents.farming.charged.v10.decode(ctx.event)
     } else {
-        event = amplitudeEvents.farming.charged.v10.decode(ctx.event)
+        if (amplitudeEvents.farming.charged.v10.is(ctx.event)) {
+            event = amplitudeEvents.farming.charged.v10.decode(ctx.event)
+        }
+        if (amplitudeEvents.farming.charged.v12.is(ctx.event)) {
+            event = amplitudeEvents.farming.charged.v12.decode(ctx.event)
+        }
     }
     return event
 }
@@ -253,10 +258,18 @@ export async function getFamingPoolInfo(
         // FIXME: Change foucocoStorage to pendulumStorage when the farming pallet is implemented on pendulum.
         result = await foucocoStorage.farming.poolInfos.v1.get(ctx.block, pid)
     } else {
-        result = await amplitudeStorage.farming.poolInfos.v10.get(
-            ctx.block,
-            pid
-        )
+        if (amplitudeStorage.farming.poolInfos.v10.is(ctx.block)) {
+            result = await amplitudeStorage.farming.poolInfos.v10.get(
+                ctx.block,
+                pid
+            )
+        }
+        if (amplitudeStorage.farming.poolInfos.v12.is(ctx.block)) {
+            result = await amplitudeStorage.farming.poolInfos.v12.get(
+                ctx.block,
+                pid
+            )
+        }
     }
     return result
 }
@@ -282,12 +295,26 @@ export async function getFamingSharesAndWithdrawnRewards(
             codec(config.prefix).decode(user)
         )
     } else {
-        result =
-            await amplitudeStorage.farming.sharesAndWithdrawnRewards.v10.get(
-                ctx.block,
-                pid,
-                codec(config.prefix).decode(user)
-            )
+        if (
+            amplitudeStorage.farming.sharesAndWithdrawnRewards.v10.is(ctx.block)
+        ) {
+            result =
+                await amplitudeStorage.farming.sharesAndWithdrawnRewards.v10.get(
+                    ctx.block,
+                    pid,
+                    codec(config.prefix).decode(user)
+                )
+        }
+        if (
+            amplitudeStorage.farming.sharesAndWithdrawnRewards.v12.is(ctx.block)
+        ) {
+            result =
+                await amplitudeStorage.farming.sharesAndWithdrawnRewards.v12.get(
+                    ctx.block,
+                    pid,
+                    codec(config.prefix).decode(user)
+                )
+        }
     }
     return result
 }

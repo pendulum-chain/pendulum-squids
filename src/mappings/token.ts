@@ -151,6 +151,9 @@ export async function handleTokenDeposited(ctx: EventHandlerContext) {
         if (amplitudeEvents.tokens.deposited.v10.is(ctx.event)) {
             event = amplitudeEvents.tokens.deposited.v10.decode(ctx.event)
         }
+        if (amplitudeEvents.tokens.deposited.v12.is(ctx.event)) {
+            event = amplitudeEvents.tokens.deposited.v12.decode(ctx.event)
+        }
     }
 
     if (!event) return
@@ -310,6 +313,9 @@ export async function handleTokenWithdrawn(ctx: EventHandlerContext) {
         if (amplitudeEvents.tokens.withdrawn.v10.is(ctx.event)) {
             event = amplitudeEvents.tokens.withdrawn.v10.decode(ctx.event)
         }
+        if (amplitudeEvents.tokens.withdrawn.v12.is(ctx.event)) {
+            event = amplitudeEvents.tokens.withdrawn.v12.decode(ctx.event)
+        }
     }
 
     if (!event) return
@@ -459,6 +465,9 @@ export async function handleTokenTransfer(ctx: EventHandlerContext) {
         }
         if (amplitudeEvents.tokens.transfer.v10.is(ctx.event)) {
             event = amplitudeEvents.tokens.transfer.v10.decode(ctx.event)
+        }
+        if (amplitudeEvents.tokens.transfer.v12.is(ctx.event)) {
+            event = amplitudeEvents.tokens.transfer.v12.decode(ctx.event)
         }
     }
 

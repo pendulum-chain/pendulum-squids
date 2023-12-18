@@ -12,7 +12,6 @@ export async function handleUpdatedPrices(ctx: EventHandlerContext) {
             'updatedPrices',
             ctx
         )
-        console.log(event)
     } else if (network === 'pendulum') {
         event = pendulumEvents.diaOracleModule.updatedPrices.v3.decode(
             ctx.event

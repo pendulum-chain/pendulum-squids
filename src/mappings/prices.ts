@@ -3,10 +3,15 @@ import { foucocoEvents, amplitudeEvents, pendulumEvents } from '../types/events'
 import { network } from '../config'
 import { getOrCreateOraclePrice } from '../entities/oraclePrice'
 import { hexToString } from '@polkadot/util'
+import { decodeFoucocoEvent } from '../types/foucoco/eventsDecoder'
 export async function handleUpdatedPrices(ctx: EventHandlerContext) {
     let event
     if (network === 'foucoco') {
-        event = foucocoEvents.diaOracleModule.updatedPrices.v1.decode(ctx.event)
+        event = await decodeFoucocoEvent(
+            'diaOracleModule',
+            'updatedPrices',
+            ctx
+        )
     } else if (network === 'pendulum') {
         event = pendulumEvents.diaOracleModule.updatedPrices.v3.decode(
             ctx.event

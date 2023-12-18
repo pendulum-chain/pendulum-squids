@@ -133,7 +133,12 @@ export async function handleTokenDeposited(ctx: EventHandlerContext) {
     let event
 
     if (network === 'foucoco') {
-        event = foucocoEvents.tokens.deposited.v1.decode(ctx.event)
+        if (foucocoEvents.tokens.deposited.v1.is(ctx.event)) {
+            event = foucocoEvents.tokens.deposited.v1.decode(ctx.event)
+        }
+        if (foucocoEvents.tokens.deposited.v4.is(ctx.event)) {
+            event = foucocoEvents.tokens.deposited.v4.decode(ctx.event)
+        }
     } else if (network === 'pendulum') {
         if (pendulumEvents.tokens.deposited.v1.is(ctx.event)) {
             event = pendulumEvents.tokens.deposited.v1.decode(ctx.event)
@@ -150,6 +155,9 @@ export async function handleTokenDeposited(ctx: EventHandlerContext) {
         }
         if (amplitudeEvents.tokens.deposited.v10.is(ctx.event)) {
             event = amplitudeEvents.tokens.deposited.v10.decode(ctx.event)
+        }
+        if (amplitudeEvents.tokens.deposited.v12.is(ctx.event)) {
+            event = amplitudeEvents.tokens.deposited.v12.decode(ctx.event)
         }
     }
 
@@ -292,7 +300,12 @@ export async function handleTokenWithdrawn(ctx: EventHandlerContext) {
 
     let event
     if (network === 'foucoco') {
-        event = foucocoEvents.tokens.withdrawn.v1.decode(ctx.event)
+        if (foucocoEvents.tokens.withdrawn.v1.is(ctx.event)) {
+            event = foucocoEvents.tokens.withdrawn.v1.decode(ctx.event)
+        }
+        if (foucocoEvents.tokens.withdrawn.v4.is(ctx.event)) {
+            event = foucocoEvents.tokens.withdrawn.v4.decode(ctx.event)
+        }
     } else if (network === 'pendulum') {
         if (pendulumEvents.tokens.withdrawn.v1.is(ctx.event)) {
             event = pendulumEvents.tokens.withdrawn.v1.decode(ctx.event)
@@ -309,6 +322,9 @@ export async function handleTokenWithdrawn(ctx: EventHandlerContext) {
         }
         if (amplitudeEvents.tokens.withdrawn.v10.is(ctx.event)) {
             event = amplitudeEvents.tokens.withdrawn.v10.decode(ctx.event)
+        }
+        if (amplitudeEvents.tokens.withdrawn.v12.is(ctx.event)) {
+            event = amplitudeEvents.tokens.withdrawn.v12.decode(ctx.event)
         }
     }
 
@@ -442,7 +458,12 @@ export async function handleTokenWithdrawn(ctx: EventHandlerContext) {
 export async function handleTokenTransfer(ctx: EventHandlerContext) {
     let event
     if (network === 'foucoco') {
-        event = foucocoEvents.tokens.transfer.v1.decode(ctx.event)
+        if (foucocoEvents.tokens.transfer.v1.is(ctx.event)) {
+            event = foucocoEvents.tokens.transfer.v1.decode(ctx.event)
+        }
+        if (foucocoEvents.tokens.transfer.v4.is(ctx.event)) {
+            event = foucocoEvents.tokens.transfer.v4.decode(ctx.event)
+        }
     } else if (network === 'pendulum') {
         if (pendulumEvents.tokens.transfer.v1.is(ctx.event)) {
             event = pendulumEvents.tokens.transfer.v1.decode(ctx.event)
@@ -459,6 +480,9 @@ export async function handleTokenTransfer(ctx: EventHandlerContext) {
         }
         if (amplitudeEvents.tokens.transfer.v10.is(ctx.event)) {
             event = amplitudeEvents.tokens.transfer.v10.decode(ctx.event)
+        }
+        if (amplitudeEvents.tokens.transfer.v12.is(ctx.event)) {
+            event = amplitudeEvents.tokens.transfer.v12.decode(ctx.event)
         }
     }
 

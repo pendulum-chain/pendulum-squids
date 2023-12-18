@@ -10,6 +10,7 @@ import {
 import * as v3 from '../v3'
 import * as v8 from '../v8'
 import * as v10 from '../v10'
+import * as v12 from '../v12'
 
 export const transfer = {
     name: 'Tokens.Transfer',
@@ -46,6 +47,18 @@ export const transfer = {
             currencyId: v10.CurrencyId,
             from: v10.AccountId32,
             to: v10.AccountId32,
+            amount: sts.bigint(),
+        })
+    ),
+    /**
+     * Transfer succeeded.
+     */
+    v12: new EventType(
+        'Tokens.Transfer',
+        sts.struct({
+            currencyId: v12.CurrencyId,
+            from: v12.AccountId32,
+            to: v12.AccountId32,
             amount: sts.bigint(),
         })
     ),
@@ -89,6 +102,18 @@ export const balanceSet = {
             reserved: sts.bigint(),
         })
     ),
+    /**
+     * A balance was set by root.
+     */
+    v12: new EventType(
+        'Tokens.BalanceSet',
+        sts.struct({
+            currencyId: v12.CurrencyId,
+            who: v12.AccountId32,
+            free: sts.bigint(),
+            reserved: sts.bigint(),
+        })
+    ),
 }
 
 export const withdrawn = {
@@ -126,6 +151,17 @@ export const withdrawn = {
             amount: sts.bigint(),
         })
     ),
+    /**
+     * Some balances were withdrawn (e.g. pay for transaction fee)
+     */
+    v12: new EventType(
+        'Tokens.Withdrawn',
+        sts.struct({
+            currencyId: v12.CurrencyId,
+            who: v12.AccountId32,
+            amount: sts.bigint(),
+        })
+    ),
 }
 
 export const deposited = {
@@ -160,6 +196,17 @@ export const deposited = {
         sts.struct({
             currencyId: v10.CurrencyId,
             who: v10.AccountId32,
+            amount: sts.bigint(),
+        })
+    ),
+    /**
+     * Deposited some balance into an account
+     */
+    v12: new EventType(
+        'Tokens.Deposited',
+        sts.struct({
+            currencyId: v12.CurrencyId,
+            who: v12.AccountId32,
             amount: sts.bigint(),
         })
     ),

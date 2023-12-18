@@ -3,7 +3,6 @@ import { getFactory, getTransaction } from '../entities/utils'
 import { Big as BigDecimal } from 'big.js'
 import { Bundle, Burn, Mint, Pair, Swap, Transaction, User } from '../model'
 import { EventHandlerContext } from '../processor'
-import { amplitudeEvents, foucocoEvents, pendulumEvents } from '../types/events'
 import { convertTokenToDecimal } from '../utils/helpers'
 import { sortAssets } from '../utils/sort'
 import {
@@ -30,7 +29,7 @@ import {
     updateTokenDayData,
     updateZenlinkInfo,
 } from '../utils/updates'
-
+import { decodeEvent } from '../types'
 export async function handleLiquiditySync(
     ctx: EventHandlerContext,
     pair: Pair
@@ -163,20 +162,7 @@ export async function handleLiquidityAdded(ctx: EventHandlerContext) {
     const mint = await ctx.store.get(Mint, mints[mints.length - 1])
     if (!mint) return
 
-    let event
-    if (network === 'foucoco') {
-        event = foucocoEvents.zenlinkProtocol.liquidityAdded.v1.decode(
-            ctx.event
-        )
-    } else if (network == 'pendulum') {
-        event = pendulumEvents.zenlinkProtocol.liquidityAdded.v3.decode(
-            ctx.event
-        )
-    } else {
-        event = amplitudeEvents.zenlinkProtocol.liquidityAdded.v7.decode(
-            ctx.event
-        )
-    }
+    let event = decodeEvent(network, ctx, 'zenlinkProtocol', 'liquidityAdded')
 
     const [asset0, asset1] = sortAssets([event[1], event[2]])
 
@@ -239,20 +225,7 @@ export async function handleLiquidityRemoved(ctx: EventHandlerContext) {
     const burn = await ctx.store.get(Burn, burns[burns.length - 1])
     if (!burn) return
 
-    let event
-    if (network === 'foucoco') {
-        event = foucocoEvents.zenlinkProtocol.liquidityRemoved.v1.decode(
-            ctx.event
-        )
-    } else if (network == 'pendulum') {
-        event = pendulumEvents.zenlinkProtocol.liquidityRemoved.v3.decode(
-            ctx.event
-        )
-    } else {
-        event = amplitudeEvents.zenlinkProtocol.liquidityRemoved.v7.decode(
-            ctx.event
-        )
-    }
+    let event = decodeEvent(network, ctx, 'zenlinkProtocol', 'liquidityRemoved')
 
     const [asset0, asset1] = sortAssets([event[2], event[3]])
 
@@ -331,14 +304,8 @@ export async function handleAssetSwap(ctx: EventHandlerContext) {
     const txHash = ctx.event.extrinsic?.hash
     if (!txHash) return
 
-    let event
-    if (network === 'foucoco') {
-        event = foucocoEvents.zenlinkProtocol.assetSwap.v1.decode(ctx.event)
-    } else if (network == 'pendulum') {
-        event = pendulumEvents.zenlinkProtocol.assetSwap.v3.decode(ctx.event)
-    } else {
-        event = amplitudeEvents.zenlinkProtocol.assetSwap.v7.decode(ctx.event)
-    }
+    let event = decodeEvent(network, ctx, 'zenlinkProtocol', 'assetSwap')
+
     const path = event[2]
     const amounts = event[3]
     const sender = codec(config.prefix).encode(event[0])

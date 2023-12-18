@@ -21,9 +21,9 @@ import {
     Transaction,
     User,
 } from '../model'
-import { amplitudeEvents, foucocoEvents, pendulumEvents } from '../types/events'
 import { getPairStatusFromAssets, getTokenBalance } from '../utils/token'
 import { StrKey } from 'stellar-base'
+import { decodeEvent } from '../types'
 async function isCompleteMint(
     ctx: EventHandlerContext,
     mintId: string
@@ -130,36 +130,7 @@ export async function handleTokenDeposited(ctx: EventHandlerContext) {
     const transactionHash = ctx.event.extrinsic?.hash
 
     if (!transactionHash) return
-    let event
-
-    if (network === 'foucoco') {
-        if (foucocoEvents.tokens.deposited.v1.is(ctx.event)) {
-            event = foucocoEvents.tokens.deposited.v1.decode(ctx.event)
-        }
-        if (foucocoEvents.tokens.deposited.v4.is(ctx.event)) {
-            event = foucocoEvents.tokens.deposited.v4.decode(ctx.event)
-        }
-    } else if (network === 'pendulum') {
-        if (pendulumEvents.tokens.deposited.v1.is(ctx.event)) {
-            event = pendulumEvents.tokens.deposited.v1.decode(ctx.event)
-        }
-        if (pendulumEvents.tokens.deposited.v3.is(ctx.event)) {
-            event = pendulumEvents.tokens.deposited.v3.decode(ctx.event)
-        }
-    } else {
-        if (amplitudeEvents.tokens.deposited.v3.is(ctx.event)) {
-            event = amplitudeEvents.tokens.deposited.v3.decode(ctx.event)
-        }
-        if (amplitudeEvents.tokens.deposited.v8.is(ctx.event)) {
-            event = amplitudeEvents.tokens.deposited.v8.decode(ctx.event)
-        }
-        if (amplitudeEvents.tokens.deposited.v10.is(ctx.event)) {
-            event = amplitudeEvents.tokens.deposited.v10.decode(ctx.event)
-        }
-        if (amplitudeEvents.tokens.deposited.v12.is(ctx.event)) {
-            event = amplitudeEvents.tokens.deposited.v12.decode(ctx.event)
-        }
-    }
+    let event = decodeEvent(network, ctx, 'tokens', 'deposited')
 
     if (!event) return
 
@@ -298,35 +269,7 @@ export async function handleTokenWithdrawn(ctx: EventHandlerContext) {
     const transactionHash = ctx.event.extrinsic?.hash
     if (!transactionHash) return
 
-    let event
-    if (network === 'foucoco') {
-        if (foucocoEvents.tokens.withdrawn.v1.is(ctx.event)) {
-            event = foucocoEvents.tokens.withdrawn.v1.decode(ctx.event)
-        }
-        if (foucocoEvents.tokens.withdrawn.v4.is(ctx.event)) {
-            event = foucocoEvents.tokens.withdrawn.v4.decode(ctx.event)
-        }
-    } else if (network === 'pendulum') {
-        if (pendulumEvents.tokens.withdrawn.v1.is(ctx.event)) {
-            event = pendulumEvents.tokens.withdrawn.v1.decode(ctx.event)
-        }
-        if (pendulumEvents.tokens.withdrawn.v3.is(ctx.event)) {
-            event = pendulumEvents.tokens.withdrawn.v3.decode(ctx.event)
-        }
-    } else {
-        if (amplitudeEvents.tokens.withdrawn.v3.is(ctx.event)) {
-            event = amplitudeEvents.tokens.withdrawn.v3.decode(ctx.event)
-        }
-        if (amplitudeEvents.tokens.withdrawn.v8.is(ctx.event)) {
-            event = amplitudeEvents.tokens.withdrawn.v8.decode(ctx.event)
-        }
-        if (amplitudeEvents.tokens.withdrawn.v10.is(ctx.event)) {
-            event = amplitudeEvents.tokens.withdrawn.v10.decode(ctx.event)
-        }
-        if (amplitudeEvents.tokens.withdrawn.v12.is(ctx.event)) {
-            event = amplitudeEvents.tokens.withdrawn.v12.decode(ctx.event)
-        }
-    }
+    let event = decodeEvent(network, ctx, 'tokens', 'withdrawn')
 
     if (!event) return
 
@@ -456,35 +399,7 @@ export async function handleTokenWithdrawn(ctx: EventHandlerContext) {
 }
 
 export async function handleTokenTransfer(ctx: EventHandlerContext) {
-    let event
-    if (network === 'foucoco') {
-        if (foucocoEvents.tokens.transfer.v1.is(ctx.event)) {
-            event = foucocoEvents.tokens.transfer.v1.decode(ctx.event)
-        }
-        if (foucocoEvents.tokens.transfer.v4.is(ctx.event)) {
-            event = foucocoEvents.tokens.transfer.v4.decode(ctx.event)
-        }
-    } else if (network === 'pendulum') {
-        if (pendulumEvents.tokens.transfer.v1.is(ctx.event)) {
-            event = pendulumEvents.tokens.transfer.v1.decode(ctx.event)
-        }
-        if (pendulumEvents.tokens.transfer.v3.is(ctx.event)) {
-            event = pendulumEvents.tokens.transfer.v3.decode(ctx.event)
-        }
-    } else {
-        if (amplitudeEvents.tokens.transfer.v3.is(ctx.event)) {
-            event = amplitudeEvents.tokens.transfer.v3.decode(ctx.event)
-        }
-        if (amplitudeEvents.tokens.transfer.v8.is(ctx.event)) {
-            event = amplitudeEvents.tokens.transfer.v8.decode(ctx.event)
-        }
-        if (amplitudeEvents.tokens.transfer.v10.is(ctx.event)) {
-            event = amplitudeEvents.tokens.transfer.v10.decode(ctx.event)
-        }
-        if (amplitudeEvents.tokens.transfer.v12.is(ctx.event)) {
-            event = amplitudeEvents.tokens.transfer.v12.decode(ctx.event)
-        }
-    }
+    let event = decodeEvent(network, ctx, 'tokens', 'transfer')
 
     if (!event) return
 

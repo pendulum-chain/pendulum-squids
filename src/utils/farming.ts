@@ -100,7 +100,7 @@ export async function getFamingPoolInfo(
         'farming',
         'poolInfos'
     )
-    return versionedStorage.get(block, pid)
+    return await versionedStorage.get(block, pid)
 }
 
 export async function getFamingSharesAndWithdrawnRewards(
@@ -114,7 +114,7 @@ export async function getFamingSharesAndWithdrawnRewards(
         'farming',
         'sharesAndWithdrawnRewards'
     )
-    return versionedStorage.get(
+    return await versionedStorage.get(
         ctx.block,
         pid,
         codec(config.prefix).decode(user)

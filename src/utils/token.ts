@@ -291,7 +291,6 @@ export async function getPairStatusFromAssets(
             'pairStatuses'
         )
 
-        if (!versionStorage.is) return [undefined, BigInt(0)]
         const result = await versionStorage.get(ctx.block, assets)
 
         if (!result) return [undefined, BigInt(0)]
@@ -327,7 +326,7 @@ export async function getTokenBalance(
             'tokens',
             'accounts'
         )
-        result = versionedStorage.get(ctx.block, account, assetId as any)
+        result = await versionedStorage.get(ctx.block, account, assetId as any)
     }
 
     return result?.free
@@ -353,7 +352,7 @@ export async function getTotalIssuance(
             'tokens',
             'totalIssuance'
         )
-        result = versionedStorage.get(ctx.block, assetId as any)
+        result = await versionedStorage.get(ctx.block, assetId as any)
     }
 
     return result
@@ -383,7 +382,7 @@ export async function getTokenBurned(
             'tokens',
             'accounts'
         )
-        result = versionedStorage.get(ctx.block, assetId as any)
+        result = await versionedStorage.get(ctx.block, assetId as any)
     }
 
     return result?.free

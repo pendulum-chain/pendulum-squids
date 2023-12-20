@@ -8,8 +8,6 @@ import {
 import { handleLiquiditySync } from '../mappings/protocol'
 import { Bundle, Farm, Incentive, Pair, SingleTokenLock } from '../model'
 import { EventHandlerContext } from '../processor'
-import { foucocoEvents, amplitudeEvents } from '../types/events'
-import { amplitudeStorage, foucocoStorage } from '../types/storage'
 import { convertTokenToDecimal, getTimePerBlock } from './helpers'
 import { sortAssets } from './sort'
 import {
@@ -20,240 +18,75 @@ import {
 import { config, network } from '../config'
 import { BlockHeader, ParentBlockHeader } from '@subsquid/substrate-processor'
 import { codec } from '@subsquid/ss58'
+import { getVersionedStorage, decodeEvent } from '../types'
+import { v1 } from '../types/foucoco'
 
 export function formatFarmingCreatedPoolEvent(ctx: EventHandlerContext) {
-    let event
-    if (network === 'foucoco') {
-        event = foucocoEvents.farming.farmingPoolCreated.v1.decode(ctx.event)
-    } else if (network === 'pendulum') {
-        // FIXME: Change foucocoEvents to pendulumEvents when the farming pallet is implemented on pendulum.
-        event = foucocoEvents.farming.farmingPoolCreated.v1.decode(ctx.event)
-    } else {
-        event = amplitudeEvents.farming.farmingPoolCreated.v10.decode(ctx.event)
-    }
-    return event
+    return decodeEvent(network, ctx, 'farming', 'farmingPoolCreated')
 }
 
 export function formatFarmingPoolResetEvent(ctx: EventHandlerContext) {
-    let event
-    if (network === 'foucoco') {
-        event = foucocoEvents.farming.farmingPoolReset.v1.decode(ctx.event)
-    } else if (network === 'pendulum') {
-        // FIXME: Change foucocoEvents to pendulumEvents when the farming pallet is implemented on pendulum.
-        event = foucocoEvents.farming.farmingPoolReset.v1.decode(ctx.event)
-    } else {
-        event = amplitudeEvents.farming.farmingPoolReset.v10.decode(ctx.event)
-    }
-    return event
+    return decodeEvent(network, ctx, 'farming', 'farmingPoolReset')
 }
 
 export function formatFarmingPoolClosedEvent(ctx: EventHandlerContext) {
-    let event
-    if (network === 'foucoco') {
-        event = foucocoEvents.farming.farmingPoolClosed.v1.decode(ctx.event)
-    } else if (network === 'pendulum') {
-        // FIXME: Change foucocoEvents to pendulumEvents when the farming pallet is implemented on pendulum.
-        event = amplitudeEvents.farming.farmingPoolClosed.v10.decode(ctx.event)
-    } else {
-        event = amplitudeEvents.farming.farmingPoolClosed.v10.decode(ctx.event)
-    }
-    return event
+    return decodeEvent(network, ctx, 'farming', 'farmingPoolClosed')
 }
 
 export function formatFarmingPoolKilledEvent(ctx: EventHandlerContext) {
-    let event
-    if (network === 'foucoco') {
-        event = foucocoEvents.farming.farmingPoolKilled.v1.decode(ctx.event)
-    } else if (network === 'pendulum') {
-        // FIXME: Change foucocoEvents to pendulumEvents when the farming pallet is implemented on pendulum.
-        event = foucocoEvents.farming.farmingPoolKilled.v1.decode(ctx.event)
-    } else {
-        event = amplitudeEvents.farming.farmingPoolKilled.v10.decode(ctx.event)
-    }
-    return event
+    return decodeEvent(network, ctx, 'farming', 'farmingPoolKilled')
 }
 
 export function formatFarmingPoolEditedEvent(ctx: EventHandlerContext) {
-    let event
-    if (network === 'foucoco') {
-        event = foucocoEvents.farming.farmingPoolEdited.v1.decode(ctx.event)
-    } else if (network === 'pendulum') {
-        // FIXME: Change foucocoEvents to pendulumEvents when the farming pallet is implemented on pendulum.
-        event = foucocoEvents.farming.farmingPoolEdited.v1.decode(ctx.event)
-    } else {
-        event = amplitudeEvents.farming.farmingPoolEdited.v10.decode(ctx.event)
-    }
-    return event
+    return decodeEvent(network, ctx, 'farming', 'farmingPoolEdited')
 }
 
 export function formatFarmingChargedEvent(ctx: EventHandlerContext) {
-    let event
-    if (network === 'foucoco') {
-        if (foucocoEvents.farming.charged.v1.is(ctx.event)) {
-            event = foucocoEvents.farming.charged.v1.decode(ctx.event)
-        }
-        if (foucocoEvents.farming.charged.v4.is(ctx.event)) {
-            event = foucocoEvents.farming.charged.v4.decode(ctx.event)
-        }
-    } else if (network === 'pendulum') {
-        // FIXME: Change foucocoEvents to pendulumEvents when the farming pallet is implemented on pendulum.
-        if (amplitudeEvents.farming.charged.v10.is(ctx.event)) {
-            event = amplitudeEvents.farming.charged.v10.decode(ctx.event)
-        }
-        if (amplitudeEvents.farming.charged.v12.is(ctx.event)) {
-            event = amplitudeEvents.farming.charged.v12.decode(ctx.event)
-        }
-    } else {
-        if (amplitudeEvents.farming.charged.v10.is(ctx.event)) {
-            event = amplitudeEvents.farming.charged.v10.decode(ctx.event)
-        }
-        if (amplitudeEvents.farming.charged.v12.is(ctx.event)) {
-            event = amplitudeEvents.farming.charged.v12.decode(ctx.event)
-        }
-    }
-    return event
+    return decodeEvent(network, ctx, 'farming', 'charged')
 }
 
 export function formatFarmingDepositedEvent(ctx: EventHandlerContext) {
-    let event
-    if (network === 'foucoco') {
-        event = foucocoEvents.farming.deposited.v1.decode(ctx.event)
-    } else if (network === 'pendulum') {
-        // FIXME: Change foucocoEvents to pendulumEvents when the farming pallet is implemented on pendulum.
-        event = foucocoEvents.farming.deposited.v1.decode(ctx.event)
-    } else {
-        event = amplitudeEvents.farming.deposited.v10.decode(ctx.event)
-    }
-    return event
+    return decodeEvent(network, ctx, 'farming', 'deposited')
 }
 
 export function formatFarmingWithdrawnEvent(ctx: EventHandlerContext) {
-    let event
-    if (network === 'foucoco') {
-        event = foucocoEvents.farming.withdrawn.v1.decode(ctx.event)
-    } else if (network === 'pendulum') {
-        // FIXME: Change foucocoEvents to pendulumEvents when the farming pallet is implemented on pendulum.
-        event = foucocoEvents.farming.withdrawn.v1.decode(ctx.event)
-    } else {
-        event = amplitudeEvents.farming.withdrawn.v10.decode(ctx.event)
-    }
-    return event
+    return decodeEvent(network, ctx, 'farming', 'withdrawn')
 }
 
 export function formatFarmingClaimedEvent(ctx: EventHandlerContext) {
-    let event
-    if (network === 'foucoco') {
-        event = foucocoEvents.farming.claimed.v1.decode(ctx.event)
-    } else if (network === 'pendulum') {
-        // FIXME: Change foucocoEvents to pendulumEvents when the farming pallet is implemented on pendulum.
-        event = foucocoEvents.farming.claimed.v1.decode(ctx.event)
-    } else {
-        event = amplitudeEvents.farming.claimed.v10.decode(ctx.event)
-    }
-    return event
+    return decodeEvent(network, ctx, 'farming', 'claimed')
 }
 
 export function formatFarmingWithdrawClaimedEvent(ctx: EventHandlerContext) {
-    let event
-    if (network === 'foucoco') {
-        event = foucocoEvents.farming.withdrawClaimed.v1.decode(ctx.event)
-    } else if (network === 'pendulum') {
-        // FIXME: Change foucocoEvents to pendulumEvents when the farming pallet is implemented on pendulum.
-        event = foucocoEvents.farming.withdrawClaimed.v1.decode(ctx.event)
-    } else {
-        event = amplitudeEvents.farming.withdrawClaimed.v10.decode(ctx.event)
-    }
-    return event
+    return decodeEvent(network, ctx, 'farming', 'withdrawClaimed')
 }
 
 export function formatFarmingGaugeWithdrawnEvent(ctx: EventHandlerContext) {
-    let event
-    if (network === 'foucoco') {
-        event = foucocoEvents.farming.gaugeWithdrawn.v1.decode(ctx.event)
-    } else if (network === 'pendulum') {
-        // FIXME: Change foucocoEvents to pendulumEvents when the farming pallet is implemented on pendulum.
-        event = foucocoEvents.farming.gaugeWithdrawn.v1.decode(ctx.event)
-    } else {
-        event = amplitudeEvents.farming.gaugeWithdrawn.v10.decode(ctx.event)
-    }
-    return event
+    return decodeEvent(network, ctx, 'farming', 'gaugeWithdrawn')
 }
 
 export function formatFarmingAllForceGaugeClaimedEvent(
     ctx: EventHandlerContext
 ) {
-    let event
-    if (network === 'foucoco') {
-        event = foucocoEvents.farming.allForceGaugeClaimed.v1.decode(ctx.event)
-    } else if (network === 'pendulum') {
-        // FIXME: Change foucocoEvents to pendulumEvents when the farming pallet is implemented on pendulum.
-        event = foucocoEvents.farming.allForceGaugeClaimed.v1.decode(ctx.event)
-    } else {
-        event = amplitudeEvents.farming.allForceGaugeClaimed.v10.decode(
-            ctx.event
-        )
-    }
-    return event
+    return decodeEvent(network, ctx, 'farming', 'allForceGaugeClaimed')
 }
 
 export function formatFarmingPartiallyForceGaugeClaimedEvent(
     ctx: EventHandlerContext
 ) {
-    let event
-    if (network === 'foucoco') {
-        event = foucocoEvents.farming.partiallyForceGaugeClaimed.v1.decode(
-            ctx.event
-        )
-    } else if (network === 'pendulum') {
-        // FIXME: Change foucocoEvents to pendulumEvents when the farming pallet is implemented on pendulum.
-        event = foucocoEvents.farming.partiallyForceGaugeClaimed.v1.decode(
-            ctx.event
-        )
-    } else {
-        event = amplitudeEvents.farming.partiallyForceGaugeClaimed.v10.decode(
-            ctx.event
-        )
-    }
-    return event
+    return decodeEvent(network, ctx, 'farming', 'partiallyForceGaugeClaimed')
 }
 
 export function formatFarmingAllRetiredEvent(ctx: EventHandlerContext) {
-    let event
-    if (network === 'foucoco') {
-        event = foucocoEvents.farming.allRetired.v1.decode(ctx.event)
-    } else if (network === 'pendulum') {
-        // FIXME: Change foucocoEvents to pendulumEvents when the farming pallet is implemented on pendulum.
-        event = foucocoEvents.farming.allRetired.v1.decode(ctx.event)
-    } else {
-        event = amplitudeEvents.farming.allRetired.v10.decode(ctx.event)
-    }
-    return event
+    return decodeEvent(network, ctx, 'farming', 'allRetired')
 }
 
 export function formatFarmingPartiallyRetiredEvent(ctx: EventHandlerContext) {
-    let event
-    if (network === 'foucoco') {
-        event = foucocoEvents.farming.partiallyRetired.v1.decode(ctx.event)
-    } else if (network === 'pendulum') {
-        // FIXME: Change foucocoEvents to pendulumEvents when the farming pallet is implemented on pendulum.
-        event = foucocoEvents.farming.partiallyRetired.v1.decode(ctx.event)
-    } else {
-        event = amplitudeEvents.farming.partiallyRetired.v10.decode(ctx.event)
-    }
-    return event
+    return decodeEvent(network, ctx, 'farming', 'partiallyRetired')
 }
 
 export function formatFarmingRetireLimitSetEvent(ctx: EventHandlerContext) {
-    let event
-    if (network === 'foucoco') {
-        event = foucocoEvents.farming.retireLimitSet.v1.decode(ctx.event)
-    } else if (network === 'pendulum') {
-        // FIXME: Change foucocoEvents to pendulumEvents when the farming pallet is implemented on pendulum.
-        event = foucocoEvents.farming.retireLimitSet.v1.decode(ctx.event)
-    } else {
-        event = amplitudeEvents.farming.retireLimitSet.v10.decode(ctx.event)
-    }
-    return event
+    return decodeEvent(network, ctx, 'farming', 'retireLimitSet')
 }
 
 export async function getFamingPoolInfo(
@@ -261,37 +94,13 @@ export async function getFamingPoolInfo(
     pid: number,
     block: BlockHeader | ParentBlockHeader
 ) {
-    let result
-    if (network === 'foucoco') {
-        if (foucocoStorage.farming.poolInfos.v1.is(ctx.block)) {
-            await foucocoStorage.farming.poolInfos.v1.get(block, pid)
-        }
-        if (foucocoStorage.farming.poolInfos.v4.is(ctx.block)) {
-            await foucocoStorage.farming.poolInfos.v4.get(block, pid)
-        }
-    } else if (network === 'pendulum') {
-        // FIXME: Change foucocoStorage to pendulumStorage when the farming pallet is implemented on pendulum.
-        if (foucocoStorage.farming.poolInfos.v1.is(ctx.block)) {
-            await foucocoStorage.farming.poolInfos.v1.get(block, pid)
-        }
-        if (foucocoStorage.farming.poolInfos.v4.is(ctx.block)) {
-            await foucocoStorage.farming.poolInfos.v4.get(block, pid)
-        }
-    } else {
-        if (amplitudeStorage.farming.poolInfos.v10.is(ctx.block)) {
-            result = await amplitudeStorage.farming.poolInfos.v10.get(
-                ctx.block,
-                pid
-            )
-        }
-        if (amplitudeStorage.farming.poolInfos.v12.is(ctx.block)) {
-            result = await amplitudeStorage.farming.poolInfos.v12.get(
-                ctx.block,
-                pid
-            )
-        }
-    }
-    return result
+    let versionedStorage = await getVersionedStorage(
+        network,
+        ctx,
+        'farming',
+        'poolInfos'
+    )
+    return await versionedStorage.get(block, pid)
 }
 
 export async function getFamingSharesAndWithdrawnRewards(
@@ -299,66 +108,17 @@ export async function getFamingSharesAndWithdrawnRewards(
     pid: number,
     user: string
 ) {
-    let result
-
-    if (network === 'foucoco') {
-        if (foucocoStorage.farming.sharesAndWithdrawnRewards.v1.is(ctx.block)) {
-            result =
-                await foucocoStorage.farming.sharesAndWithdrawnRewards.v1.get(
-                    ctx.block,
-                    pid,
-                    codec(config.prefix).decode(user)
-                )
-        }
-        if (foucocoStorage.farming.sharesAndWithdrawnRewards.v4.is(ctx.block)) {
-            result =
-                await foucocoStorage.farming.sharesAndWithdrawnRewards.v4.get(
-                    ctx.block,
-                    pid,
-                    codec(config.prefix).decode(user)
-                )
-        }
-    } else if (network === 'pendulum') {
-        // FIXME: Change foucocoStorage to pendulumStorage when the farming pallet is implemented on pendulum.
-        if (foucocoStorage.farming.sharesAndWithdrawnRewards.v1.is(ctx.block)) {
-            result =
-                await foucocoStorage.farming.sharesAndWithdrawnRewards.v1.get(
-                    ctx.block,
-                    pid,
-                    codec(config.prefix).decode(user)
-                )
-        }
-        if (foucocoStorage.farming.sharesAndWithdrawnRewards.v4.is(ctx.block)) {
-            result =
-                await foucocoStorage.farming.sharesAndWithdrawnRewards.v4.get(
-                    ctx.block,
-                    pid,
-                    codec(config.prefix).decode(user)
-                )
-        }
-    } else {
-        if (
-            amplitudeStorage.farming.sharesAndWithdrawnRewards.v10.is(ctx.block)
-        ) {
-            result =
-                await amplitudeStorage.farming.sharesAndWithdrawnRewards.v10.get(
-                    ctx.block,
-                    pid,
-                    codec(config.prefix).decode(user)
-                )
-        }
-        if (
-            amplitudeStorage.farming.sharesAndWithdrawnRewards.v12.is(ctx.block)
-        ) {
-            result =
-                await amplitudeStorage.farming.sharesAndWithdrawnRewards.v12.get(
-                    ctx.block,
-                    pid,
-                    codec(config.prefix).decode(user)
-                )
-        }
-    }
-    return result
+    let versionedStorage = await getVersionedStorage(
+        network,
+        ctx,
+        'farming',
+        'sharesAndWithdrawnRewards'
+    )
+    return await versionedStorage.get(
+        ctx.block,
+        pid,
+        codec(config.prefix).decode(user)
+    )
 }
 
 export async function updateFarmingPoolInfo(
@@ -367,7 +127,7 @@ export async function updateFarmingPoolInfo(
 ) {
     const farmingPoolInfo = await getFamingPoolInfo(ctx, pid, ctx.block)
     const farmingTokens = farmingPoolInfo?.tokensProportion.map(
-        (item) => item[0]
+        (item: any) => item[0]
     )!
     const farmingToken = farmingTokens[0]
     const assetIdIndex = currencyIdToAssetIndex(farmingToken)
@@ -387,7 +147,7 @@ export async function updateFarmingPoolInfo(
     let stakeApr = '0'
 
     const basicRewardPerDay = await Promise.all(
-        farmingPoolInfo!.basicRewards.map(async (item) => {
+        farmingPoolInfo!.basicRewards.map(async (item: any) => {
             const assetIndex = currencyIdToAssetIndex(item[0])
             const token = await getOrCreateToken(ctx, {
                 chainId: CHAIN_ID,
@@ -409,7 +169,7 @@ export async function updateFarmingPoolInfo(
     )
 
     const basicRewardEthPerDay = await Promise.all(
-        farmingPoolInfo!.basicRewards.map(async (item) => {
+        farmingPoolInfo!.basicRewards.map(async (item: any) => {
             const assetIndex = currencyIdToAssetIndex(item[0])
             const token = await getOrCreateToken(ctx, {
                 chainId: CHAIN_ID,

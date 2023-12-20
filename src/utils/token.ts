@@ -1,14 +1,10 @@
 import { EventHandlerContext } from '../processor'
-import {
-    amplitudeStorage,
-    foucocoStorage,
-    pendulumStorage,
-} from '../types/storage'
 import { AssetId, CurrencyId, CurrencyIdV12 } from '../types/common'
 import { codec } from '@subsquid/ss58'
 import { config, network } from '../config'
 import { invert } from 'lodash'
 import { hexToU8a } from '@polkadot/util'
+import { getVersionedStorage } from '../types'
 export const currencyKeyMap: { [index: number]: string } = {
     0: 'Native',
     1: 'XCM',
@@ -257,20 +253,12 @@ export async function getPairAssetIdFromAssets(
     if (pairAssetIds.has(assetsId)) {
         pairAssetId = pairAssetIds.get(assetsId)
     } else {
-        const versionPairStorage = (() => {
-            let versionStorage
-            if (network === 'foucoco') {
-                versionStorage =
-                    foucocoStorage.zenlinkProtocol.liquidityPairs.v1
-            } else if (network === 'pendulum') {
-                versionStorage =
-                    pendulumStorage.zenlinkProtocol.liquidityPairs.v3
-            } else {
-                versionStorage =
-                    amplitudeStorage.zenlinkProtocol.liquidityPairs.v7
-            }
-            return versionStorage
-        })()
+        const versionPairStorage = await getVersionedStorage(
+            network,
+            ctx,
+            'zenlinkProtocol',
+            'liquidityPairs'
+        )
         if (!versionPairStorage.is) return undefined
         pairAssetId = await versionPairStorage.get(ctx.block, assets)
         if (pairAssetId) {
@@ -296,20 +284,13 @@ export async function getPairStatusFromAssets(
         pairAccount = pairAccounts.get(assetsId)
         return [pairAccount!, BigInt(0)]
     } else {
-        const versionStorage = (() => {
-            let versionStorage
-            if (network === 'foucoco') {
-                versionStorage = foucocoStorage.zenlinkProtocol.pairStatuses.v1
-            } else if (network === 'pendulum') {
-                versionStorage = pendulumStorage.zenlinkProtocol.pairStatuses.v3
-            } else {
-                versionStorage =
-                    amplitudeStorage.zenlinkProtocol.pairStatuses.v7
-            }
-            return versionStorage
-        })()
+        const versionStorage = await getVersionedStorage(
+            network,
+            ctx,
+            'zenlinkProtocol',
+            'pairStatuses'
+        )
 
-        if (!versionStorage.is) return [undefined, BigInt(0)]
         const result = await versionStorage.get(ctx.block, assets)
 
         if (!result) return [undefined, BigInt(0)]
@@ -331,77 +312,21 @@ export async function getTokenBalance(
 ) {
     let result
     if (assetId.__kind === 'Native') {
-        const systemAccountStorage = (() => {
-            if (network === 'foucoco') {
-                return foucocoStorage.system.account.v1
-            } else if (network === 'pendulum') {
-                return pendulumStorage.system.account.v1
-            } else {
-                return amplitudeStorage.system.account.v1
-            }
-        })()
+        const systemAccountStorage = await getVersionedStorage(
+            network,
+            ctx,
+            'system',
+            'account'
+        )
         result = (await systemAccountStorage.get(ctx.block, account))?.data
     } else {
-        if (network === 'foucoco') {
-            if (foucocoStorage.tokens.accounts.v1.is(ctx.block)) {
-                result = await foucocoStorage.tokens.accounts.v1.get(
-                    ctx.block,
-                    account,
-                    assetId as any
-                )
-            }
-            if (foucocoStorage.tokens.accounts.v4.is(ctx.block)) {
-                result = await foucocoStorage.tokens.accounts.v4.get(
-                    ctx.block,
-                    account,
-                    assetId as any
-                )
-            }
-        } else if (network === 'pendulum') {
-            if (pendulumStorage.tokens.accounts.v1.is(ctx.block)) {
-                result = await pendulumStorage.tokens.accounts.v1.get(
-                    ctx.block,
-                    account,
-                    assetId as any
-                )
-            }
-            if (pendulumStorage.tokens.accounts.v3.is(ctx.block)) {
-                result = await pendulumStorage.tokens.accounts.v3.get(
-                    ctx.block,
-                    account,
-                    assetId as any
-                )
-            }
-        } else {
-            if (amplitudeStorage.tokens.accounts.v3.is(ctx.block)) {
-                result = await amplitudeStorage.tokens.accounts.v3.get(
-                    ctx.block,
-                    account,
-                    assetId as any
-                )
-            }
-            if (amplitudeStorage.tokens.accounts.v8.is(ctx.block)) {
-                result = await amplitudeStorage.tokens.accounts.v8.get(
-                    ctx.block,
-                    account,
-                    assetId as any
-                )
-            }
-            if (amplitudeStorage.tokens.accounts.v10.is(ctx.block)) {
-                result = await amplitudeStorage.tokens.accounts.v10.get(
-                    ctx.block,
-                    account,
-                    assetId as any
-                )
-            }
-            if (amplitudeStorage.tokens.accounts.v12.is(ctx.block)) {
-                result = await amplitudeStorage.tokens.accounts.v12.get(
-                    ctx.block,
-                    account,
-                    assetId as any
-                )
-            }
-        }
+        let versionedStorage = await getVersionedStorage(
+            network,
+            ctx,
+            'tokens',
+            'accounts'
+        )
+        result = await versionedStorage.get(ctx.block, account, assetId as any)
     }
 
     return result?.free
@@ -413,69 +338,21 @@ export async function getTotalIssuance(
 ) {
     let result
     if (assetId.__kind === 'Native') {
-        const balanceIssuanceStorage = (() => {
-            if (network === 'foucoco') {
-                return foucocoStorage.balances.totalIssuance.v1
-            } else if (network === 'pendulum') {
-                return pendulumStorage.balances.totalIssuance.v1
-            } else {
-                return amplitudeStorage.balances.totalIssuance.v1
-            }
-        })()
+        const balanceIssuanceStorage = await getVersionedStorage(
+            network,
+            ctx,
+            'balances',
+            'totalIssuance'
+        )
         result = await balanceIssuanceStorage.get(ctx.block)
     } else {
-        if (network === 'foucoco') {
-            if (foucocoStorage.tokens.totalIssuance.v1.is(ctx.block)) {
-                result = await foucocoStorage.tokens.totalIssuance.v1.get(
-                    ctx.block,
-                    assetId as any
-                )
-            }
-            if (foucocoStorage.tokens.totalIssuance.v4.is(ctx.block)) {
-                result = await foucocoStorage.tokens.totalIssuance.v4.get(
-                    ctx.block,
-                    assetId as any
-                )
-            }
-        } else if (network === 'pendulum') {
-            if (pendulumStorage.tokens.totalIssuance.v1.is(ctx.block)) {
-                result = await pendulumStorage.tokens.totalIssuance.v3.get(
-                    ctx.block,
-                    assetId as any
-                )
-            }
-            if (pendulumStorage.tokens.totalIssuance.v3.is(ctx.block)) {
-                result = await pendulumStorage.tokens.totalIssuance.v3.get(
-                    ctx.block,
-                    assetId as any
-                )
-            }
-        } else {
-            if (amplitudeStorage.tokens.totalIssuance.v3.is(ctx.block)) {
-                result = await amplitudeStorage.tokens.totalIssuance.v3.get(
-                    ctx.block,
-                    assetId as any
-                )
-            }
-            if (amplitudeStorage.tokens.totalIssuance.v8.is(ctx.block)) {
-                result = await amplitudeStorage.tokens.totalIssuance.v8.get(
-                    ctx.block,
-                    assetId as any
-                )
-            }
-            if (amplitudeStorage.tokens.totalIssuance.v10.is(ctx.block)) {
-                result = await amplitudeStorage.tokens.totalIssuance.v10.get(
-                    ctx.block,
-                    assetId as any
-                )
-            }
-            if (amplitudeStorage.tokens.totalIssuance.v12.is(ctx.block)) {
-                result = await amplitudeStorage.tokens.totalIssuance.v12.get(
-                    ctx.block,
-                    assetId as any
-                )
-            }
-        }
+        let versionedStorage = await getVersionedStorage(
+            network,
+            ctx,
+            'tokens',
+            'totalIssuance'
+        )
+        result = await versionedStorage.get(ctx.block, assetId as any)
     }
 
     return result
@@ -491,77 +368,21 @@ export async function getTokenBurned(
     }
     let result
     if (assetId.__kind === 'Native') {
-        const systemAccountStorage = (() => {
-            if (network === 'foucoco') {
-                return foucocoStorage.system.account.v1
-            } else if (network === 'pendulum') {
-                return pendulumStorage.system.account.v1
-            } else {
-                return amplitudeStorage.system.account.v1
-            }
-        })()
+        const systemAccountStorage = await getVersionedStorage(
+            network,
+            ctx,
+            'system',
+            'account'
+        )
         result = (await systemAccountStorage.get(ctx.block, account))!.data
     } else {
-        if (network === 'foucoco') {
-            if (foucocoStorage.tokens.accounts.v1.is(ctx.block)) {
-                result = await foucocoStorage.tokens.accounts.v1.get(
-                    ctx.block,
-                    account,
-                    assetId as any
-                )
-            }
-            if (foucocoStorage.tokens.accounts.v4.is(ctx.block)) {
-                result = await foucocoStorage.tokens.accounts.v4.get(
-                    ctx.block,
-                    account,
-                    assetId as any
-                )
-            }
-        } else if (network === 'pendulum') {
-            if (pendulumStorage.tokens.accounts.v1.is(ctx.block)) {
-                result = await pendulumStorage.tokens.accounts.v1.get(
-                    ctx.block,
-                    account,
-                    assetId as any
-                )
-            }
-            if (pendulumStorage.tokens.accounts.v3.is(ctx.block)) {
-                result = await pendulumStorage.tokens.accounts.v3.get(
-                    ctx.block,
-                    account,
-                    assetId as any
-                )
-            }
-        } else {
-            if (amplitudeStorage.tokens.accounts.v3.is(ctx.block)) {
-                result = await amplitudeStorage.tokens.accounts.v3.get(
-                    ctx.block,
-                    account,
-                    assetId as any
-                )
-            }
-            if (amplitudeStorage.tokens.accounts.v8.is(ctx.block)) {
-                result = await amplitudeStorage.tokens.accounts.v8.get(
-                    ctx.block,
-                    account,
-                    assetId as any
-                )
-            }
-            if (amplitudeStorage.tokens.accounts.v10.is(ctx.block)) {
-                result = await amplitudeStorage.tokens.accounts.v10.get(
-                    ctx.block,
-                    account,
-                    assetId as any
-                )
-            }
-            if (amplitudeStorage.tokens.accounts.v12.is(ctx.block)) {
-                result = await amplitudeStorage.tokens.accounts.v12.get(
-                    ctx.block,
-                    account,
-                    assetId as any
-                )
-            }
-        }
+        let versionedStorage = await getVersionedStorage(
+            network,
+            ctx,
+            'tokens',
+            'accounts'
+        )
+        result = await versionedStorage.get(ctx.block, assetId as any)
     }
 
     return result?.free

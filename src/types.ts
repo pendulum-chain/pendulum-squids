@@ -65,7 +65,7 @@ export async function getVersionedStorage(
     if (versionedStorage) {
         return versionedStorage
     } else {
-        throw new Error('Storage for could not be found')
+        throw new Error(`Storage for ${network} could not be found`)
     }
 }
 

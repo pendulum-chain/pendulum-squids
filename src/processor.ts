@@ -146,7 +146,7 @@ processor.run(new TypeormDatabase(), async (ctx) => {
     let maxHeight = await maxHeightPromise
 
     // Determine the tallest block in the batch
-    let tallestBlockHeight = Math.max(
+    let latestBlockHeight = Math.max(
         ...ctx.blocks.map((block) => block.header.height)
     )
 
@@ -322,7 +322,7 @@ processor.run(new TypeormDatabase(), async (ctx) => {
                     // price oracle
                     case 'DiaOracleModule.UpdatedPrices':
                         // Only processing these events if the current block is the 'head' of the chain
-                        if (ctx.isHead && block.height === tallestBlockHeight) {
+                        if (ctx.isHead && block.height === latestBlockHeight) {
                             await handleUpdatedPrices({
                                 ...ctx,
                                 block,

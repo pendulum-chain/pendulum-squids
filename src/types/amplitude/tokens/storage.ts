@@ -10,6 +10,7 @@ import {
 import * as v3 from '../v3'
 import * as v8 from '../v8'
 import * as v10 from '../v10'
+import * as v12 from '../v12'
 
 export const totalIssuance = {
     /**
@@ -39,6 +40,15 @@ export const totalIssuance = {
         [v10.CurrencyId],
         sts.bigint()
     ) as TotalIssuanceV10,
+    /**
+     *  The total issuance of a token type.
+     */
+    v12: new StorageType(
+        'Tokens.TotalIssuance',
+        'Default',
+        [v12.CurrencyId],
+        sts.bigint()
+    ) as TotalIssuanceV12,
 }
 
 /**
@@ -151,6 +161,46 @@ export interface TotalIssuanceV10 {
     ): AsyncIterable<[k: v10.CurrencyId, v: bigint | undefined][]>
 }
 
+/**
+ *  The total issuance of a token type.
+ */
+export interface TotalIssuanceV12 {
+    is(block: RuntimeCtx): boolean
+    getDefault(block: Block): bigint
+    get(block: Block, key: v12.CurrencyId): Promise<bigint | undefined>
+    getMany(
+        block: Block,
+        keys: v12.CurrencyId[]
+    ): Promise<(bigint | undefined)[]>
+    getKeys(block: Block): Promise<v12.CurrencyId[]>
+    getKeys(block: Block, key: v12.CurrencyId): Promise<v12.CurrencyId[]>
+    getKeysPaged(
+        pageSize: number,
+        block: Block
+    ): AsyncIterable<v12.CurrencyId[]>
+    getKeysPaged(
+        pageSize: number,
+        block: Block,
+        key: v12.CurrencyId
+    ): AsyncIterable<v12.CurrencyId[]>
+    getPairs(
+        block: Block
+    ): Promise<[k: v12.CurrencyId, v: bigint | undefined][]>
+    getPairs(
+        block: Block,
+        key: v12.CurrencyId
+    ): Promise<[k: v12.CurrencyId, v: bigint | undefined][]>
+    getPairsPaged(
+        pageSize: number,
+        block: Block
+    ): AsyncIterable<[k: v12.CurrencyId, v: bigint | undefined][]>
+    getPairsPaged(
+        pageSize: number,
+        block: Block,
+        key: v12.CurrencyId
+    ): AsyncIterable<[k: v12.CurrencyId, v: bigint | undefined][]>
+}
+
 export const accounts = {
     /**
      *  The balance of a token type under an account.
@@ -194,6 +244,20 @@ export const accounts = {
         [v10.AccountId32, v10.CurrencyId],
         v10.Type_480
     ) as AccountsV10,
+    /**
+     *  The balance of a token type under an account.
+     *
+     *  NOTE: If the total is ever zero, decrease account ref account.
+     *
+     *  NOTE: This is only used in the case that this module is used to store
+     *  balances.
+     */
+    v12: new StorageType(
+        'Tokens.Accounts',
+        'Default',
+        [v12.AccountId32, v12.CurrencyId],
+        v12.Type_499
+    ) as AccountsV12,
 }
 
 /**
@@ -451,5 +515,91 @@ export interface AccountsV10 {
         key2: v10.CurrencyId
     ): AsyncIterable<
         [k: [v10.AccountId32, v10.CurrencyId], v: v10.Type_480 | undefined][]
+    >
+}
+
+/**
+ *  The balance of a token type under an account.
+ *
+ *  NOTE: If the total is ever zero, decrease account ref account.
+ *
+ *  NOTE: This is only used in the case that this module is used to store
+ *  balances.
+ */
+export interface AccountsV12 {
+    is(block: RuntimeCtx): boolean
+    getDefault(block: Block): v12.Type_499
+    get(
+        block: Block,
+        key1: v12.AccountId32,
+        key2: v12.CurrencyId
+    ): Promise<v12.Type_499 | undefined>
+    getMany(
+        block: Block,
+        keys: [v12.AccountId32, v12.CurrencyId][]
+    ): Promise<(v12.Type_499 | undefined)[]>
+    getKeys(block: Block): Promise<[v12.AccountId32, v12.CurrencyId][]>
+    getKeys(
+        block: Block,
+        key1: v12.AccountId32
+    ): Promise<[v12.AccountId32, v12.CurrencyId][]>
+    getKeys(
+        block: Block,
+        key1: v12.AccountId32,
+        key2: v12.CurrencyId
+    ): Promise<[v12.AccountId32, v12.CurrencyId][]>
+    getKeysPaged(
+        pageSize: number,
+        block: Block
+    ): AsyncIterable<[v12.AccountId32, v12.CurrencyId][]>
+    getKeysPaged(
+        pageSize: number,
+        block: Block,
+        key1: v12.AccountId32
+    ): AsyncIterable<[v12.AccountId32, v12.CurrencyId][]>
+    getKeysPaged(
+        pageSize: number,
+        block: Block,
+        key1: v12.AccountId32,
+        key2: v12.CurrencyId
+    ): AsyncIterable<[v12.AccountId32, v12.CurrencyId][]>
+    getPairs(
+        block: Block
+    ): Promise<
+        [k: [v12.AccountId32, v12.CurrencyId], v: v12.Type_499 | undefined][]
+    >
+    getPairs(
+        block: Block,
+        key1: v12.AccountId32
+    ): Promise<
+        [k: [v12.AccountId32, v12.CurrencyId], v: v12.Type_499 | undefined][]
+    >
+    getPairs(
+        block: Block,
+        key1: v12.AccountId32,
+        key2: v12.CurrencyId
+    ): Promise<
+        [k: [v12.AccountId32, v12.CurrencyId], v: v12.Type_499 | undefined][]
+    >
+    getPairsPaged(
+        pageSize: number,
+        block: Block
+    ): AsyncIterable<
+        [k: [v12.AccountId32, v12.CurrencyId], v: v12.Type_499 | undefined][]
+    >
+    getPairsPaged(
+        pageSize: number,
+        block: Block,
+        key1: v12.AccountId32
+    ): AsyncIterable<
+        [k: [v12.AccountId32, v12.CurrencyId], v: v12.Type_499 | undefined][]
+    >
+    getPairsPaged(
+        pageSize: number,
+        block: Block,
+        key1: v12.AccountId32,
+        key2: v12.CurrencyId
+    ): AsyncIterable<
+        [k: [v12.AccountId32, v12.CurrencyId], v: v12.Type_499 | undefined][]
     >
 }

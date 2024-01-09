@@ -8,6 +8,7 @@ import {
     RuntimeCtx,
 } from '../support'
 import * as v1 from '../v1'
+import * as v4 from '../v4'
 
 export const farmingPoolCreated = {
     name: 'Farming.FarmingPoolCreated',
@@ -68,6 +69,16 @@ export const charged = {
             pid: sts.number(),
             rewards: sts.array(() =>
                 sts.tuple(() => [v1.CurrencyId, sts.bigint()])
+            ),
+        })
+    ),
+    v4: new EventType(
+        'Farming.Charged',
+        sts.struct({
+            who: v4.AccountId32,
+            pid: sts.number(),
+            rewards: sts.array(() =>
+                sts.tuple(() => [v4.CurrencyId, sts.bigint()])
             ),
         })
     ),

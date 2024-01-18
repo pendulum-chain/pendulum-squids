@@ -316,11 +316,14 @@ processor.run(new TypeormDatabase(), async (ctx) => {
                         break
                     // price oracle
                     case 'DiaOracleModule.UpdatedPrices':
-                        await handleUpdatedPrices({
-                            ...ctx,
-                            block,
-                            event,
-                        })
+                        // Only processing these events if the current block is the 'head' of the chain
+                        if (ctx.isHead) {
+                            await handleUpdatedPrices({
+                                ...ctx,
+                                block,
+                                event,
+                            })
+                        }
                         break
                     default:
                         break

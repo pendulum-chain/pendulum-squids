@@ -1,6 +1,6 @@
 manifestVersion: subsquid.io/v0.1
 name: foucoco-squid
-version: 13
+version: 14
 description: 'Foucoco Squid'
 build:
 deploy:

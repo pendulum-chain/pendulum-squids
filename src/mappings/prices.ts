@@ -2,8 +2,20 @@ import { EventHandlerContext } from '../processor'
 import { network } from '../config'
 import { getOrCreateOraclePrice } from '../entities/oraclePrice'
 import { hexToString } from '@polkadot/util'
-import { decodeFoucocoEvent } from '../types/foucoco/eventsAndStorageSelector'
 import { decodeEvent } from '../types'
+import { parseFromCSV } from '../utils/ohlcv-parsers'
+
+const TIMEFRAME_INTERVAL_IN_MINUTES = 1
+const KrakenXlmUsd = parseFromCSV(
+    `ohlcv/XLMUSD_${TIMEFRAME_INTERVAL_IN_MINUTES}.csv`
+)
+const KrakenKsmUsd = parseFromCSV(
+    `ohlcv/KSMUSD_${TIMEFRAME_INTERVAL_IN_MINUTES}.csv`
+)
+const KrakenDotUsd = parseFromCSV(
+    `ohlcv/DOTUSD_${TIMEFRAME_INTERVAL_IN_MINUTES}.csv`
+)
+
 export async function handleUpdatedPrices(ctx: EventHandlerContext) {
     let event = await decodeEvent(
         network,

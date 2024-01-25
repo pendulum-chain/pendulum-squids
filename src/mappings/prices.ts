@@ -16,8 +16,10 @@ interface AnalysisResult {
     timestamp: number
 }
 
+type AnalysisMap = { [timestamp: number]: AnalysisResult }
+
 // Map of number to AnalysisResult
-const KsmUsdAnalysis: { [timestamp: number]: AnalysisResult } = {}
+const KsmUsdAnalysis: AnalysisMap = {}
 
 // const KrakenXlmUsd = parseFromCSV(
 //     `ohlcv/XLMUSD_${TIMEFRAME_INTERVAL_IN_MINUTES}.csv`
@@ -71,20 +73,13 @@ export async function handleUpdatedPrices(ctx: EventHandlerContext) {
                         `KSM price difference is ${priceDiffPercentage * 100}%`
                     )
                 }
-                console.log(
-                    'Comparing KSM price to Kraken price',
-                    krakenPrice,
-                    diaPrice,
-                    priceDiff,
-                    priceDiffPercentage,
-                    'at timestamp',
-                    timestamp
-                )
                 KsmUsdAnalysis[timestamp] = {
                     priceDiff,
                     priceDiffPercentage,
                     timestamp,
                 }
+
+                analyseResults(KsmUsdAnalysis)
             } catch (e) {
                 console.log('Error getting KSM price', e)
             }
@@ -92,4 +87,33 @@ export async function handleUpdatedPrices(ctx: EventHandlerContext) {
 
         await ctx.store.save(oraclePrice)
     }
+}
+
+function analyseResults(results: AnalysisMap) {
+    const timestamps = Object.keys(results)
+    const priceDiffs = timestamps.map((timestamp) => {
+        const result = results[Number(timestamp)]
+        return result.priceDiff
+    })
+    const averagePriceDiff =
+        priceDiffs.reduce((a, b) => a + b) / priceDiffs.length
+    console.log('Average price difference', averagePriceDiff)
+
+    const priceDiffPercentages = timestamps.map((timestamp) => {
+        const result = results[Number(timestamp)]
+        return result.priceDiffPercentage
+    })
+    const averagePriceDiffPercentage =
+        priceDiffPercentages.reduce((a, b) => a + b) /
+        priceDiffPercentages.length
+    console.log(
+        'Average price difference percentage',
+        averagePriceDiffPercentage
+    )
+
+    // Find outliers that have a price difference of more than 0.1%
+    const outliers = priceDiffPercentages.filter(
+        (percentage) => percentage > 0.1
+    )
+    console.log('Number of outliers', outliers.length)
 }

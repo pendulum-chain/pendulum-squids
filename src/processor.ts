@@ -11,7 +11,11 @@ import {
 
 import { Store, TypeormDatabase } from '@subsquid/typeorm-store'
 import { blockRetentionNumber, config, maxHeightPromise } from './config'
-import { handleUpdatedPrices } from './mappings/prices'
+import {
+    handleUpdatedPrices,
+    KsmRollingAverage,
+    KsmUsdAnalysis,
+} from './mappings/prices'
 import {
     saveBlock,
     saveCall,
@@ -81,6 +85,26 @@ export interface CallHandlerContext extends Ctx {
 processor.run(new TypeormDatabase(), async (ctx) => {
     // Fetch max block height from the archive
     let maxHeight = await maxHeightPromise
+
+    try {
+        // Analyze every batch
+        console.log('Number of KSM price results', KsmRollingAverage.size)
+        console.log('Average price diff percentage', KsmRollingAverage.average)
+        console.log(
+            'Number of outliers',
+            KsmRollingAverage.outlierCount,
+            'for threshold',
+            KsmRollingAverage.outlierThreshold
+        )
+        console.log(
+            `Highest price diff percentage ${KsmRollingAverage.maxValue}`
+        )
+        console.log(
+            `Lowest price diff percentage ${KsmRollingAverage.minValue}`
+        )
+    } catch (e) {
+        console.log('Error analyzing results', e)
+    }
 
     for (let { header: block, calls, events, extrinsics } of ctx.blocks) {
         ctx.log.debug(

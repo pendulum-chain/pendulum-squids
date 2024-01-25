@@ -12,9 +12,10 @@ import {
 import { Store, TypeormDatabase } from '@subsquid/typeorm-store'
 import { blockRetentionNumber, config, maxHeightPromise } from './config'
 import {
+    DotRollingAverage,
     handleUpdatedPrices,
     KsmRollingAverage,
-    KsmUsdAnalysis,
+    XlmRollingAverage,
 } from './mappings/prices'
 import {
     saveBlock,
@@ -88,20 +89,9 @@ processor.run(new TypeormDatabase(), async (ctx) => {
 
     try {
         // Analyze every batch
-        console.log('Number of KSM price results', KsmRollingAverage.size)
-        console.log('Average price diff percentage', KsmRollingAverage.average)
-        console.log(
-            'Number of outliers',
-            KsmRollingAverage.outlierCount,
-            'for threshold',
-            KsmRollingAverage.outlierThreshold
-        )
-        console.log(
-            `Highest price diff percentage ${KsmRollingAverage.maxValue}`
-        )
-        console.log(
-            `Lowest price diff percentage ${KsmRollingAverage.minValue}`
-        )
+        KsmRollingAverage.print()
+        XlmRollingAverage.print()
+        DotRollingAverage.print()
     } catch (e) {
         console.log('Error analyzing results', e)
     }

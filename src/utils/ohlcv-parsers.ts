@@ -1,7 +1,7 @@
 import { promises as fs } from 'fs'
 import { parse } from 'csv-parse'
 
-interface OHLCV {
+export interface OHLCV {
     time: number
     open: number
     high: number
@@ -61,17 +61,19 @@ export function getOHLCVAtTime(ohlcv: OHLCV[], timestampMs: number): OHLCV {
     return ohlcv[index]
 }
 
-/// ** Analysis **
-
+/// A class that calculates the rolling average of a series of numbers.
+/// It does not store the numbers, but only the sum and the size of the series
+/// because we don't want to store all the numbers in memory
 export class RollingAverage {
     size: number = 0
     private sum: number = 0
 
     outlierThreshold: number
-    outlierCount: number = 0
 
     maxValue: number = 0
     minValue: number = Number.MAX_SAFE_INTEGER
+
+    outliers: number[] = []
 
     constructor(outlierThreshold: number = 0.1) {
         this.outlierThreshold = outlierThreshold
@@ -79,6 +81,10 @@ export class RollingAverage {
 
     get average(): number {
         return this.sum / this.size
+    }
+
+    get outlierCount(): number {
+        return this.outliers.length
     }
 
     get outlierPercentage(): number {
@@ -97,66 +103,13 @@ export class RollingAverage {
         }
 
         if (value > this.outlierThreshold) {
-            this.outlierCount++
+            this.outliers.push(value)
         }
     }
-}
 
-export interface AnalysisResult {
-    priceDiff: number
-    priceDiffPercentage: number
-    timestamp: number
-}
-
-// Make sure we only have one AnalysisResult per timestamp
-type AnalysisMap = { [timestamp: number]: AnalysisResult }
-
-export class PriceAnalysis {
-    private results: AnalysisMap = {}
-    private name: string
-    private outlierThreshold: number
-
-    constructor(name: string, outlierThreshold: number = 0.001) {
-        this.name = name
-        this.outlierThreshold = outlierThreshold
-    }
-
-    addResult(result: AnalysisResult) {
-        this.results[result.timestamp] = result
-    }
-
-    analyseResults() {
-        const results = this.results
+    print() {
         console.log(
-            `Number of ${this.name} results`,
-            Object.keys(results).length
+            `RollingAverage: size: ${this.size}, sum: ${this.sum}, outlierCount: ${this.outlierCount}, maxValue: ${this.maxValue}, minValue: ${this.minValue}, average: ${this.average}, outlierPercentage: ${this.outlierPercentage}`
         )
-
-        const timestamps = Object.keys(results)
-        const priceDiffs = timestamps.map((timestamp) => {
-            const result = results[Number(timestamp)]
-            return result.priceDiff
-        })
-        const averagePriceDiff =
-            priceDiffs.reduce((a, b) => a + b) / priceDiffs.length
-        console.log('Average price difference', averagePriceDiff)
-
-        const priceDiffPercentages = timestamps.map((timestamp) => {
-            const result = results[Number(timestamp)]
-            return result.priceDiffPercentage
-        })
-        const averagePriceDiffPercentage =
-            priceDiffPercentages.reduce((a, b) => a + b) /
-            priceDiffPercentages.length
-        console.log(
-            'Average price difference percentage',
-            averagePriceDiffPercentage
-        )
-
-        // Find outliers that have a price difference of more than the threshold
-        const outliers = priceDiffPercentages.filter(
-            (percentage) => percentage > this.outlierThreshold
-        )
-        console.log('Number of outliers', outliers.length)
     }
 }

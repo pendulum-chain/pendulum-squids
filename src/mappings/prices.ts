@@ -2,7 +2,6 @@ import { EventHandlerContext } from '../processor'
 import { network } from '../config'
 import { getOrCreateOraclePrice } from '../entities/oraclePrice'
 import { hexToString } from '@polkadot/util'
-import { decodeFoucocoEvent } from '../types/foucoco/eventsAndStorageSelector'
 import { decodeEvent } from '../types'
 export async function handleUpdatedPrices(ctx: EventHandlerContext) {
     let event = await decodeEvent(

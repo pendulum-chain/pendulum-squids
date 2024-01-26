@@ -27,7 +27,7 @@ import {
     blockRetentionNumber,
     config,
     maxHeightPromise,
-    priceUpdatePeriod,
+    catchupPriceUpdatePeriod,
 } from './config'
 
 import {
@@ -324,7 +324,7 @@ processor.run(new TypeormDatabase(), async (ctx) => {
                         // Only processing these events once every CATCHUP_PRICE_UPDATE_PERIOD blocks or if the current block is the 'head' of the chain
                         // CATCHUP_PRICE_UPDATE_PERIOD is used so that we don't have to process these events for every block but still maintain a fairly accurate price history
                         if (
-                            block.height % priceUpdatePeriod === 0 ||
+                            block.height % catchupPriceUpdatePeriod === 0 ||
                             ctx.isHead
                         ) {
                             await handleUpdatedPrices({

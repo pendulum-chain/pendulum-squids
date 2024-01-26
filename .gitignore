@@ -1,6 +1,7 @@
 # Ignore output directories
 dist/
 build/
+builds/
 out/
 tmp/
 *.log

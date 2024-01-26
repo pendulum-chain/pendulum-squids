@@ -744,7 +744,7 @@ type Incentive @entity {
 type Router @entity {
     id: ID! # id can be the address of the router contract
     swapPools: [SwapPool!] @derivedFrom(field: "router")
-    backstopPools: [BackstopPool!] @derivedFrom(field: "router")
+    backstopPool: BackstopPool @derivedFrom(field: "router")
     paused: Boolean! # whether the router is paused
 }
 
@@ -760,18 +760,18 @@ type SwapPool @entity {
     router: Router! # link to the Router entity
     backstop: BackstopPool! # link to the BackstopPool entity
     token: NablaToken! # link to the Token entity
-    reserves: BigInt! # current balance of the pool
-    liabilities: BigInt! # total Liquidity Provider (LP) deposits
+    reserve: BigInt! # current usable balance of the pool
+    reserveWithSlippage: BigInt! # current actual balance of the pool
+    totalLiabilities: BigInt! # total Liquidity Provider (LP) deposits
     totalSupply: BigInt! # total supply of LP tokens
     paused: Boolean! # whether the swap pool is paused
 }
 
 type BackstopPool @entity {
     id: ID! # id can be the address of the backstop pool contract
-    router: Router! # link to the Router entity
+    router: Router! @unique # link to the Router entity
     token: NablaToken! # link to the NablaToken entity
     reserves: BigInt! # current balance of the pool
-    liabilities: BigInt! # total Liquidity Provider (LP) deposits
     totalSupply: BigInt! # total supply of LP tokens
     paused: Boolean! # whether the backstop pool is paused
 }

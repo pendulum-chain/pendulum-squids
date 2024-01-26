@@ -6,9 +6,9 @@
         "version": "0.0.1"
     },
     "source": {
-        "compiler": "solang 0.2.2",
-        "hash": "0xf10ab2e77c3a3e3927250ee6ba61e01338a509150723f4329e6dda3d9481eb2a",
-        "language": "Solidity 0.2.2"
+        "compiler": "solang 0.3.2",
+        "hash": "0x09e907520a2e0be46d0a350df95c431857cbf88f52094be242f15ae79e524f3c",
+        "language": "Solidity 0.3.2"
     },
     "spec": {
         "constructors": [
@@ -17,21 +17,22 @@
                     {
                         "label": "_router",
                         "type": {
-                            "displayName": ["ink_env", "types", "AccountId"],
+                            "displayName": [
+                                "ink_primitives",
+                                "types",
+                                "AccountId"
+                            ],
                             "type": 2
                         }
                     },
                     {
                         "label": "_asset",
                         "type": {
-                            "displayName": ["ink_env", "types", "AccountId"],
-                            "type": 2
-                        }
-                    },
-                    {
-                        "label": "_curve",
-                        "type": {
-                            "displayName": ["ink_env", "types", "AccountId"],
+                            "displayName": [
+                                "ink_primitives",
+                                "types",
+                                "AccountId"
+                            ],
                             "type": 2
                         }
                     },
@@ -50,16 +51,44 @@
                         }
                     }
                 ],
+                "default": false,
                 "docs": [""],
                 "label": "new",
                 "payable": false,
                 "returnType": null,
-                "selector": "0x3e6bb716"
+                "selector": "0xf01fa595"
             }
         ],
         "docs": [
-            "The backstop pool takes most of the risk of a set of swap pools\nbacked by it. Whenever a swap pool is low on reserves and a LPer\nwants to withdraw some liquidity, they can conduct an insurance\nwithdrawal (burn swap pool shares, reimbursed in backstop liquidity)\nto avoid paying a high slippage.\nThe backstop pool owns all excess liquidity in its swap pools,\nbut is also liable for potential liquidity gaps.\nIn return, the backstop pool receives a cut of the swap fees.\n\n"
+            "The backstop pool takes most of the risk of a set of swap pools\nbacked by it. Whenever a swap pool is low on reserves and a LPer\nwants to withdraw some liquidity, they can conduct an insurance\nwithdrawal (burn swap pool shares, reimbursed in backstop liquidity)\nto avoid paying a high slippage.\nThe backstop pool owns all excess liquidity in its swap pools,\nbut is also liable for potential liquidity gaps.\nIn return, the backstop pool receives a cut of the swap fees."
         ],
+        "environment": {
+            "accountId": {
+                "displayName": ["AccountId"],
+                "type": 2
+            },
+            "balance": {
+                "displayName": ["Balance"],
+                "type": 10
+            },
+            "blockNumber": {
+                "displayName": ["BlockNumber"],
+                "type": 11
+            },
+            "chainExtension": {
+                "displayName": [],
+                "type": 0
+            },
+            "hash": {
+                "displayName": ["Hash"],
+                "type": 12
+            },
+            "maxEventTopics": 4,
+            "timestamp": {
+                "displayName": ["Timestamp"],
+                "type": 11
+            }
+        },
         "events": [
             {
                 "args": [
@@ -68,7 +97,11 @@
                         "indexed": true,
                         "label": "from",
                         "type": {
-                            "displayName": ["ink_env", "types", "AccountId"],
+                            "displayName": [
+                                "ink_primitives",
+                                "types",
+                                "AccountId"
+                            ],
                             "type": 2
                         }
                     },
@@ -77,7 +110,11 @@
                         "indexed": true,
                         "label": "to",
                         "type": {
-                            "displayName": ["ink_env", "types", "AccountId"],
+                            "displayName": [
+                                "ink_primitives",
+                                "types",
+                                "AccountId"
+                            ],
                             "type": 2
                         }
                     },
@@ -86,7 +123,7 @@
                         "indexed": false,
                         "label": "value",
                         "type": {
-                            "displayName": ["u256"],
+                            "displayName": ["uint256"],
                             "type": 3
                         }
                     }
@@ -101,7 +138,11 @@
                         "indexed": true,
                         "label": "owner",
                         "type": {
-                            "displayName": ["ink_env", "types", "AccountId"],
+                            "displayName": [
+                                "ink_primitives",
+                                "types",
+                                "AccountId"
+                            ],
                             "type": 2
                         }
                     },
@@ -110,7 +151,11 @@
                         "indexed": true,
                         "label": "spender",
                         "type": {
-                            "displayName": ["ink_env", "types", "AccountId"],
+                            "displayName": [
+                                "ink_primitives",
+                                "types",
+                                "AccountId"
+                            ],
                             "type": 2
                         }
                     },
@@ -119,7 +164,7 @@
                         "indexed": false,
                         "label": "value",
                         "type": {
-                            "displayName": ["u256"],
+                            "displayName": ["uint256"],
                             "type": 3
                         }
                     }
@@ -134,7 +179,11 @@
                         "indexed": false,
                         "label": "account",
                         "type": {
-                            "displayName": ["ink_env", "types", "AccountId"],
+                            "displayName": [
+                                "ink_primitives",
+                                "types",
+                                "AccountId"
+                            ],
                             "type": 2
                         }
                     }
@@ -149,7 +198,11 @@
                         "indexed": false,
                         "label": "account",
                         "type": {
-                            "displayName": ["ink_env", "types", "AccountId"],
+                            "displayName": [
+                                "ink_primitives",
+                                "types",
+                                "AccountId"
+                            ],
                             "type": 2
                         }
                     }
@@ -164,7 +217,11 @@
                         "indexed": true,
                         "label": "previousOwner",
                         "type": {
-                            "displayName": ["ink_env", "types", "AccountId"],
+                            "displayName": [
+                                "ink_primitives",
+                                "types",
+                                "AccountId"
+                            ],
                             "type": 2
                         }
                     },
@@ -173,7 +230,11 @@
                         "indexed": true,
                         "label": "newOwner",
                         "type": {
-                            "displayName": ["ink_env", "types", "AccountId"],
+                            "displayName": [
+                                "ink_primitives",
+                                "types",
+                                "AccountId"
+                            ],
                             "type": 2
                         }
                     }
@@ -188,7 +249,11 @@
                         "indexed": true,
                         "label": "sender",
                         "type": {
-                            "displayName": ["ink_env", "types", "AccountId"],
+                            "displayName": [
+                                "ink_primitives",
+                                "types",
+                                "AccountId"
+                            ],
                             "type": 2
                         }
                     },
@@ -197,7 +262,7 @@
                         "indexed": false,
                         "label": "poolSharesMinted",
                         "type": {
-                            "displayName": ["u256"],
+                            "displayName": ["uint256"],
                             "type": 3
                         }
                     },
@@ -206,12 +271,12 @@
                         "indexed": false,
                         "label": "amountPrincipleDeposited",
                         "type": {
-                            "displayName": ["u256"],
+                            "displayName": ["uint256"],
                             "type": 3
                         }
                     }
                 ],
-                "docs": ["emitted on every deposit\n\n"],
+                "docs": ["emitted on every deposit"],
                 "label": "Mint"
             },
             {
@@ -221,7 +286,11 @@
                         "indexed": true,
                         "label": "sender",
                         "type": {
-                            "displayName": ["ink_env", "types", "AccountId"],
+                            "displayName": [
+                                "ink_primitives",
+                                "types",
+                                "AccountId"
+                            ],
                             "type": 2
                         }
                     },
@@ -230,7 +299,7 @@
                         "indexed": false,
                         "label": "poolSharesBurned",
                         "type": {
-                            "displayName": ["u256"],
+                            "displayName": ["uint256"],
                             "type": 3
                         }
                     },
@@ -239,13 +308,13 @@
                         "indexed": false,
                         "label": "amountPrincipleWithdrawn",
                         "type": {
-                            "displayName": ["u256"],
+                            "displayName": ["uint256"],
                             "type": 3
                         }
                     }
                 ],
                 "docs": [
-                    "emitted on every withdrawal special case withdrawal using swap liquidiity: amountPrincipleWithdrawn = 0\n\n"
+                    "emitted on every withdrawal special case withdrawal using swap liquidiity: amountPrincipleWithdrawn = 0"
                 ],
                 "label": "Burn"
             },
@@ -256,7 +325,11 @@
                         "indexed": true,
                         "label": "owner",
                         "type": {
-                            "displayName": ["ink_env", "types", "AccountId"],
+                            "displayName": [
+                                "ink_primitives",
+                                "types",
+                                "AccountId"
+                            ],
                             "type": 2
                         }
                     },
@@ -265,7 +338,11 @@
                         "indexed": false,
                         "label": "swapPool",
                         "type": {
-                            "displayName": ["ink_env", "types", "AccountId"],
+                            "displayName": [
+                                "ink_primitives",
+                                "types",
+                                "AccountId"
+                            ],
                             "type": 2
                         }
                     },
@@ -274,7 +351,7 @@
                         "indexed": false,
                         "label": "amountSwapShares",
                         "type": {
-                            "displayName": ["u256"],
+                            "displayName": ["uint256"],
                             "type": 3
                         }
                     },
@@ -283,7 +360,7 @@
                         "indexed": false,
                         "label": "amountSwapTokens",
                         "type": {
-                            "displayName": ["u256"],
+                            "displayName": ["uint256"],
                             "type": 3
                         }
                     },
@@ -292,13 +369,13 @@
                         "indexed": false,
                         "label": "amountBackstopTokens",
                         "type": {
-                            "displayName": ["u256"],
+                            "displayName": ["uint256"],
                             "type": 3
                         }
                     }
                 ],
                 "docs": [
-                    "emitted when a swap pool LP withdraws from backstop pool\n\n"
+                    "emitted when a swap pool LP withdraws from backstop pool"
                 ],
                 "label": "CoverSwapWithdrawal"
             },
@@ -309,7 +386,11 @@
                         "indexed": true,
                         "label": "owner",
                         "type": {
-                            "displayName": ["ink_env", "types", "AccountId"],
+                            "displayName": [
+                                "ink_primitives",
+                                "types",
+                                "AccountId"
+                            ],
                             "type": 2
                         }
                     },
@@ -318,7 +399,11 @@
                         "indexed": false,
                         "label": "swapPool",
                         "type": {
-                            "displayName": ["ink_env", "types", "AccountId"],
+                            "displayName": [
+                                "ink_primitives",
+                                "types",
+                                "AccountId"
+                            ],
                             "type": 2
                         }
                     },
@@ -327,7 +412,7 @@
                         "indexed": false,
                         "label": "amountSwapTokens",
                         "type": {
-                            "displayName": ["u256"],
+                            "displayName": ["uint256"],
                             "type": 3
                         }
                     },
@@ -336,24 +421,25 @@
                         "indexed": false,
                         "label": "amountBackstopTokens",
                         "type": {
-                            "displayName": ["u256"],
+                            "displayName": ["uint256"],
                             "type": 3
                         }
                     }
                 ],
                 "docs": [
-                    "emitted when a backstop pool LP withdraws liquidity from swap pool\n\n"
+                    "emitted when a backstop pool LP withdraws liquidity from swap pool"
                 ],
                 "label": "WithdrawSwapLiquidity"
             }
         ],
         "lang_error": {
-            "displayName": [],
-            "type": 0
+            "displayName": ["SolidityError"],
+            "type": 15
         },
         "messages": [
             {
                 "args": [],
+                "default": false,
                 "docs": [""],
                 "label": "name",
                 "mutates": false,
@@ -366,6 +452,7 @@
             },
             {
                 "args": [],
+                "default": false,
                 "docs": [""],
                 "label": "symbol",
                 "mutates": false,
@@ -378,24 +465,26 @@
             },
             {
                 "args": [],
+                "default": false,
                 "docs": [""],
                 "label": "decimals",
                 "mutates": false,
                 "payable": false,
                 "returnType": {
-                    "displayName": ["u8"],
+                    "displayName": ["uint8"],
                     "type": 0
                 },
                 "selector": "0x313ce567"
             },
             {
                 "args": [],
+                "default": false,
                 "docs": [""],
                 "label": "totalSupply",
                 "mutates": false,
                 "payable": false,
                 "returnType": {
-                    "displayName": ["u256"],
+                    "displayName": ["uint256"],
                     "type": 3
                 },
                 "selector": "0x18160ddd"
@@ -405,17 +494,22 @@
                     {
                         "label": "account",
                         "type": {
-                            "displayName": ["ink_env", "types", "AccountId"],
+                            "displayName": [
+                                "ink_primitives",
+                                "types",
+                                "AccountId"
+                            ],
                             "type": 2
                         }
                     }
                 ],
+                "default": false,
                 "docs": [""],
                 "label": "balanceOf",
                 "mutates": false,
                 "payable": false,
                 "returnType": {
-                    "displayName": ["u256"],
+                    "displayName": ["uint256"],
                     "type": 3
                 },
                 "selector": "0x70a08231"
@@ -425,18 +519,23 @@
                     {
                         "label": "to",
                         "type": {
-                            "displayName": ["ink_env", "types", "AccountId"],
+                            "displayName": [
+                                "ink_primitives",
+                                "types",
+                                "AccountId"
+                            ],
                             "type": 2
                         }
                     },
                     {
                         "label": "amount",
                         "type": {
-                            "displayName": ["u256"],
+                            "displayName": ["uint256"],
                             "type": 3
                         }
                     }
                 ],
+                "default": false,
                 "docs": [""],
                 "label": "transfer",
                 "mutates": true,
@@ -452,24 +551,33 @@
                     {
                         "label": "owner",
                         "type": {
-                            "displayName": ["ink_env", "types", "AccountId"],
+                            "displayName": [
+                                "ink_primitives",
+                                "types",
+                                "AccountId"
+                            ],
                             "type": 2
                         }
                     },
                     {
                         "label": "spender",
                         "type": {
-                            "displayName": ["ink_env", "types", "AccountId"],
+                            "displayName": [
+                                "ink_primitives",
+                                "types",
+                                "AccountId"
+                            ],
                             "type": 2
                         }
                     }
                 ],
+                "default": false,
                 "docs": [""],
                 "label": "allowance",
                 "mutates": false,
                 "payable": false,
                 "returnType": {
-                    "displayName": ["u256"],
+                    "displayName": ["uint256"],
                     "type": 3
                 },
                 "selector": "0xdd62ed3e"
@@ -479,18 +587,23 @@
                     {
                         "label": "spender",
                         "type": {
-                            "displayName": ["ink_env", "types", "AccountId"],
+                            "displayName": [
+                                "ink_primitives",
+                                "types",
+                                "AccountId"
+                            ],
                             "type": 2
                         }
                     },
                     {
                         "label": "amount",
                         "type": {
-                            "displayName": ["u256"],
+                            "displayName": ["uint256"],
                             "type": 3
                         }
                     }
                 ],
+                "default": false,
                 "docs": [""],
                 "label": "approve",
                 "mutates": true,
@@ -506,25 +619,34 @@
                     {
                         "label": "from",
                         "type": {
-                            "displayName": ["ink_env", "types", "AccountId"],
+                            "displayName": [
+                                "ink_primitives",
+                                "types",
+                                "AccountId"
+                            ],
                             "type": 2
                         }
                     },
                     {
                         "label": "to",
                         "type": {
-                            "displayName": ["ink_env", "types", "AccountId"],
+                            "displayName": [
+                                "ink_primitives",
+                                "types",
+                                "AccountId"
+                            ],
                             "type": 2
                         }
                     },
                     {
                         "label": "amount",
                         "type": {
-                            "displayName": ["u256"],
+                            "displayName": ["uint256"],
                             "type": 3
                         }
                     }
                 ],
+                "default": false,
                 "docs": [""],
                 "label": "transferFrom",
                 "mutates": true,
@@ -540,18 +662,23 @@
                     {
                         "label": "spender",
                         "type": {
-                            "displayName": ["ink_env", "types", "AccountId"],
+                            "displayName": [
+                                "ink_primitives",
+                                "types",
+                                "AccountId"
+                            ],
                             "type": 2
                         }
                     },
                     {
                         "label": "addedValue",
                         "type": {
-                            "displayName": ["u256"],
+                            "displayName": ["uint256"],
                             "type": 3
                         }
                     }
                 ],
+                "default": false,
                 "docs": [""],
                 "label": "increaseAllowance",
                 "mutates": true,
@@ -567,18 +694,23 @@
                     {
                         "label": "spender",
                         "type": {
-                            "displayName": ["ink_env", "types", "AccountId"],
+                            "displayName": [
+                                "ink_primitives",
+                                "types",
+                                "AccountId"
+                            ],
                             "type": 2
                         }
                     },
                     {
                         "label": "subtractedValue",
                         "type": {
-                            "displayName": ["u256"],
+                            "displayName": ["uint256"],
                             "type": 3
                         }
                     }
                 ],
+                "default": false,
                 "docs": [""],
                 "label": "decreaseAllowance",
                 "mutates": true,
@@ -591,6 +723,7 @@
             },
             {
                 "args": [],
+                "default": false,
                 "docs": [""],
                 "label": "paused",
                 "mutates": false,
@@ -603,18 +736,20 @@
             },
             {
                 "args": [],
+                "default": false,
                 "docs": [""],
                 "label": "owner",
                 "mutates": false,
                 "payable": false,
                 "returnType": {
-                    "displayName": ["ink_env", "types", "AccountId"],
+                    "displayName": ["ink_primitives", "types", "AccountId"],
                     "type": 2
                 },
                 "selector": "0x8da5cb5b"
             },
             {
                 "args": [],
+                "default": false,
                 "docs": [""],
                 "label": "renounceOwnership",
                 "mutates": true,
@@ -627,11 +762,16 @@
                     {
                         "label": "newOwner",
                         "type": {
-                            "displayName": ["ink_env", "types", "AccountId"],
+                            "displayName": [
+                                "ink_primitives",
+                                "types",
+                                "AccountId"
+                            ],
                             "type": 2
                         }
                     }
                 ],
+                "default": false,
                 "docs": [""],
                 "label": "transferOwnership",
                 "mutates": true,
@@ -641,98 +781,208 @@
             },
             {
                 "args": [],
+                "default": false,
                 "docs": [""],
                 "label": "poolCap",
                 "mutates": false,
                 "payable": false,
                 "returnType": {
-                    "displayName": ["u256"],
+                    "displayName": ["uint256"],
                     "type": 3
                 },
                 "selector": "0xb954dc57"
             },
             {
                 "args": [],
-                "docs": ["Returns the pooled token's address\n\n"],
+                "default": false,
+                "docs": ["Returns the pooled token's address"],
                 "label": "asset",
                 "mutates": false,
                 "payable": false,
                 "returnType": {
-                    "displayName": ["ink_env", "types", "AccountId"],
+                    "displayName": ["ink_primitives", "types", "AccountId"],
                     "type": 2
                 },
                 "selector": "0x38d52e0f"
             },
             {
-                "args": [
-                    {
-                        "label": "_shares",
-                        "type": {
-                            "displayName": ["u256"],
-                            "type": 3
-                        }
-                    }
-                ],
-                "docs": [
-                    "Returns the worth of an amount of pool shares (LP tokens) in underlying principle\n\n"
-                ],
-                "label": "sharesTargetWorth",
+                "args": [],
+                "default": false,
+                "docs": ["Returns the decimals of the pool asset"],
+                "label": "assetDecimals",
                 "mutates": false,
                 "payable": false,
                 "returnType": {
-                    "displayName": ["u256"],
-                    "type": 3
+                    "displayName": ["uint8"],
+                    "type": 0
                 },
-                "selector": "0xcc045745"
+                "selector": "0xc2d41601"
             },
             {
                 "args": [],
+                "default": false,
                 "docs": [""],
                 "label": "router",
                 "mutates": false,
                 "payable": false,
                 "returnType": {
-                    "displayName": ["ink_env", "types", "AccountId"],
+                    "displayName": ["ink_primitives", "types", "AccountId"],
                     "type": 2
                 },
                 "selector": "0xf887ea40"
             },
             {
-                "args": [],
-                "docs": [""],
-                "label": "slippageCurve",
-                "mutates": false,
-                "payable": false,
-                "returnType": {
-                    "displayName": ["ink_env", "types", "AccountId"],
-                    "type": 2
-                },
-                "selector": "0xebe26b9e"
-            },
-            {
-                "args": [],
-                "docs": [""],
-                "label": "accumulatedSlippage",
-                "mutates": false,
-                "payable": false,
-                "returnType": {
-                    "displayName": ["u256"],
-                    "type": 3
-                },
-                "selector": "0xe4182b09"
-            },
-            {
                 "args": [
                     {
-                        "label": "_amount",
+                        "label": "_maxTokens",
                         "type": {
-                            "displayName": ["u256"],
+                            "displayName": ["uint256"],
                             "type": 3
                         }
                     }
                 ],
+                "default": false,
                 "docs": [
-                    "Deposits amount of tokens into pool Will change cov ratio of pool, will increase delta to 0\n\n"
+                    "Set new upper limit of pool reserves. Will disable deposits when reached. Can always set to an amount < current reserves to temporarily restrict deposits."
+                ],
+                "label": "setPoolCap",
+                "mutates": true,
+                "payable": false,
+                "returnType": null,
+                "selector": "0xd835f535"
+            },
+            {
+                "args": [
+                    {
+                        "label": "_swapPool",
+                        "type": {
+                            "displayName": [
+                                "ink_primitives",
+                                "types",
+                                "AccountId"
+                            ],
+                            "type": 2
+                        }
+                    },
+                    {
+                        "label": "_insuranceFeeBps",
+                        "type": {
+                            "displayName": ["uint256"],
+                            "type": 3
+                        }
+                    }
+                ],
+                "default": false,
+                "docs": [
+                    "Make this backstop pool cover another swap pool Beware: Adding a swap pool holding the same token as the backstop pool\ncan easily cause undesirable conditions and must be secured (i.e. long time lock)!"
+                ],
+                "label": "addSwapPool",
+                "mutates": true,
+                "payable": false,
+                "returnType": null,
+                "selector": "0xabb26587"
+            },
+            {
+                "args": [
+                    {
+                        "label": "_swapPool",
+                        "type": {
+                            "displayName": [
+                                "ink_primitives",
+                                "types",
+                                "AccountId"
+                            ],
+                            "type": 2
+                        }
+                    },
+                    {
+                        "label": "_insuranceFeeBps",
+                        "type": {
+                            "displayName": ["uint256"],
+                            "type": 3
+                        }
+                    }
+                ],
+                "default": false,
+                "docs": ["Change a swap pool's insurance withdrawal fee"],
+                "label": "setInsuranceFee",
+                "mutates": true,
+                "payable": false,
+                "returnType": null,
+                "selector": "0xc6a78196"
+            },
+            {
+                "args": [
+                    {
+                        "label": "_index",
+                        "type": {
+                            "displayName": ["uint256"],
+                            "type": 3
+                        }
+                    }
+                ],
+                "default": false,
+                "docs": ["enumerate swap pools backed by this backstop pool"],
+                "label": "getBackedPool",
+                "mutates": false,
+                "payable": false,
+                "returnType": {
+                    "displayName": ["ink_primitives", "types", "AccountId"],
+                    "type": 2
+                },
+                "selector": "0xa04345f2"
+            },
+            {
+                "args": [],
+                "default": false,
+                "docs": ["get swap pool count backed by this backstop pool"],
+                "label": "getBackedPoolCount",
+                "mutates": false,
+                "payable": false,
+                "returnType": {
+                    "displayName": ["uint256"],
+                    "type": 3
+                },
+                "selector": "0x5fda8689"
+            },
+            {
+                "args": [
+                    {
+                        "label": "_swapPool",
+                        "type": {
+                            "displayName": [
+                                "ink_primitives",
+                                "types",
+                                "AccountId"
+                            ],
+                            "type": 2
+                        }
+                    }
+                ],
+                "default": false,
+                "docs": ["get insurance withdrawal fee for a given swap pool"],
+                "label": "getInsuranceFee",
+                "mutates": false,
+                "payable": false,
+                "returnType": {
+                    "displayName": ["uint256"],
+                    "type": 3
+                },
+                "selector": "0x504e0153"
+            },
+            {
+                "args": [
+                    {
+                        "label": "_depositAmount",
+                        "type": {
+                            "displayName": ["uint256"],
+                            "type": 3
+                        }
+                    }
+                ],
+                "default": false,
+                "docs": [
+                    "Deposits amount of tokens into pool Will change cov ratio of pool, will increase delta to 0"
                 ],
                 "label": "deposit",
                 "mutates": true,
@@ -746,41 +996,23 @@
             {
                 "args": [
                     {
-                        "label": "_maxTokens",
+                        "label": "_sharesToBurn",
                         "type": {
-                            "displayName": ["u256"],
-                            "type": 3
-                        }
-                    }
-                ],
-                "docs": [
-                    "Set new upper limit of pool reserves. Will disable deposits when reached. Can always set to an amount < current reserves to temporarily restrict deposits.\n\n"
-                ],
-                "label": "setPoolCap",
-                "mutates": true,
-                "payable": false,
-                "returnType": null,
-                "selector": "0xd835f535"
-            },
-            {
-                "args": [
-                    {
-                        "label": "_shares",
-                        "type": {
-                            "displayName": ["u256"],
+                            "displayName": ["uint256"],
                             "type": 3
                         }
                     },
                     {
                         "label": "_minimumAmount",
                         "type": {
-                            "displayName": ["u256"],
+                            "displayName": ["uint256"],
                             "type": 3
                         }
                     }
                 ],
+                "default": false,
                 "docs": [
-                    "Withdraws liquidity amount of asset ensuring minimum amount required Slippage is applied (withdrawal fee)\n\n"
+                    "Withdraws liquidity amount of asset ensuring minimum amount required Slippage is applied (withdrawal fee)"
                 ],
                 "label": "withdraw",
                 "mutates": true,
@@ -796,83 +1028,38 @@
                     {
                         "label": "_swapPool",
                         "type": {
-                            "displayName": ["ink_env", "types", "AccountId"],
-                            "type": 2
-                        }
-                    },
-                    {
-                        "label": "_insuranceFeeBps",
-                        "type": {
-                            "displayName": ["u256"],
-                            "type": 3
-                        }
-                    }
-                ],
-                "docs": [
-                    "Make this backstop pool cover another swap pool Beware: Adding a swap pool holding the same token as the backstop pool\ncan easily cause undesirable conditions and must be secured (i.e. long time lock)!\n\n"
-                ],
-                "label": "addSwapPool",
-                "mutates": true,
-                "payable": false,
-                "returnType": null,
-                "selector": "0xabb26587"
-            },
-            {
-                "args": [
-                    {
-                        "label": "_swapPool",
-                        "type": {
-                            "displayName": ["ink_env", "types", "AccountId"],
-                            "type": 2
-                        }
-                    },
-                    {
-                        "label": "_insuranceFeeBps",
-                        "type": {
-                            "displayName": ["u256"],
-                            "type": 3
-                        }
-                    }
-                ],
-                "docs": ["Change a swap pool's insurance withdrawal fee\n\n"],
-                "label": "setInsuranceFee",
-                "mutates": true,
-                "payable": false,
-                "returnType": null,
-                "selector": "0xc6a78196"
-            },
-            {
-                "args": [
-                    {
-                        "label": "_swapPool",
-                        "type": {
-                            "displayName": ["ink_env", "types", "AccountId"],
+                            "displayName": [
+                                "ink_primitives",
+                                "types",
+                                "AccountId"
+                            ],
                             "type": 2
                         }
                     },
                     {
                         "label": "_shares",
                         "type": {
-                            "displayName": ["u256"],
+                            "displayName": ["uint256"],
                             "type": 3
                         }
                     },
                     {
                         "label": "_minAmount",
                         "type": {
-                            "displayName": ["u256"],
+                            "displayName": ["uint256"],
                             "type": 3
                         }
                     }
                 ],
+                "default": false,
                 "docs": [
-                    "withdraw from a swap pool using backstop liquidity without slippage only possible if swap pool's coverage ratio < 100%\n\n"
+                    "withdraw from a swap pool using backstop liquidity without slippage only possible if swap pool's coverage ratio < 100%"
                 ],
                 "label": "redeemSwapPoolShares",
                 "mutates": true,
                 "payable": false,
                 "returnType": {
-                    "displayName": ["u256"],
+                    "displayName": ["uint256"],
                     "type": 3
                 },
                 "selector": "0x6e7e91fd"
@@ -882,120 +1069,79 @@
                     {
                         "label": "_swapPool",
                         "type": {
-                            "displayName": ["ink_env", "types", "AccountId"],
+                            "displayName": [
+                                "ink_primitives",
+                                "types",
+                                "AccountId"
+                            ],
                             "type": 2
                         }
                     },
                     {
                         "label": "_shares",
                         "type": {
-                            "displayName": ["u256"],
+                            "displayName": ["uint256"],
                             "type": 3
                         }
                     },
                     {
                         "label": "_minAmount",
                         "type": {
-                            "displayName": ["u256"],
+                            "displayName": ["uint256"],
                             "type": 3
                         }
                     }
                 ],
+                "default": false,
                 "docs": [
-                    "withdraw from backstop pool, but receive excess liquidity\nof a swap pool without slippage, instead of backstop liquidity\n\n"
+                    "withdraw from backstop pool, but receive excess liquidity\nof a swap pool without slippage, instead of backstop liquidity"
                 ],
                 "label": "withdrawExcessSwapLiquidity",
                 "mutates": true,
                 "payable": false,
                 "returnType": {
-                    "displayName": ["u256"],
+                    "displayName": ["uint256"],
                     "type": 3
                 },
                 "selector": "0xcaf8c105"
             },
             {
                 "args": [],
-                "docs": ["returns pool coverage ratio\n\n"],
-                "label": "coverage",
-                "mutates": false,
-                "payable": false,
-                "returnType": {
-                    "displayName": ["BackstopPool", "coverage", "return_type"],
-                    "type": 10
-                },
-                "selector": "0xee8f6a0e"
-            },
-            {
-                "args": [
-                    {
-                        "label": "_index",
-                        "type": {
-                            "displayName": ["u256"],
-                            "type": 3
-                        }
-                    }
-                ],
+                "default": false,
                 "docs": [
-                    "enumerate swap pools backed by this backstop pool\n\n"
-                ],
-                "label": "getBackedPool",
-                "mutates": false,
-                "payable": false,
-                "returnType": {
-                    "displayName": ["ink_env", "types", "AccountId"],
-                    "type": 2
-                },
-                "selector": "0xa04345f2"
-            },
-            {
-                "args": [],
-                "docs": [
-                    "get swap pool count backed by this backstop pool\n\n"
-                ],
-                "label": "getBackedPoolCount",
-                "mutates": false,
-                "payable": false,
-                "returnType": {
-                    "displayName": ["u256"],
-                    "type": 3
-                },
-                "selector": "0x5fda8689"
-            },
-            {
-                "args": [
-                    {
-                        "label": "_swapPool",
-                        "type": {
-                            "displayName": ["ink_env", "types", "AccountId"],
-                            "type": 2
-                        }
-                    }
-                ],
-                "docs": [
-                    "get insurance withdrawal fee for a given swap pool\n\n"
-                ],
-                "label": "getInsuranceFee",
-                "mutates": false,
-                "payable": false,
-                "returnType": {
-                    "displayName": ["u256"],
-                    "type": 3
-                },
-                "selector": "0x504e0153"
-            },
-            {
-                "args": [],
-                "docs": [
-                    "return worth of the whole backstop pool in `asset()`, incl. all\nswap pools' excess liquidity and the backstop pool's liabilities\n\n"
+                    "return worth of the whole backstop pool in `asset()`, incl. all\nswap pools' excess liquidity and the backstop pool's liabilities"
                 ],
                 "label": "getTotalPoolWorth",
                 "mutates": false,
                 "payable": false,
                 "returnType": {
-                    "displayName": ["u256"],
-                    "type": 3
+                    "displayName": ["int256"],
+                    "type": 7
                 },
                 "selector": "0x18ba24c4"
+            },
+            {
+                "args": [
+                    {
+                        "label": "_sharesToBurn",
+                        "type": {
+                            "displayName": ["uint256"],
+                            "type": 3
+                        }
+                    }
+                ],
+                "default": false,
+                "docs": [
+                    "Returns the worth of an amount of pool shares (LP tokens) in underlying principle"
+                ],
+                "label": "sharesTargetWorth",
+                "mutates": false,
+                "payable": false,
+                "returnType": {
+                    "displayName": ["uint256"],
+                    "type": 3
+                },
+                "selector": "0xcc045745"
             }
         ]
     },
@@ -1154,13 +1300,13 @@
                             "layout": {
                                 "leaf": {
                                     "key": "0x00000009",
-                                    "ty": 3
+                                    "ty": 0
                                 }
                             },
                             "root_key": "0x00000009"
                         }
                     },
-                    "name": "poolCap"
+                    "name": "poolAssetDecimals"
                 },
                 {
                     "layout": {
@@ -1174,21 +1320,7 @@
                             "root_key": "0x0000000a"
                         }
                     },
-                    "name": "totalLiabilities"
-                },
-                {
-                    "layout": {
-                        "root": {
-                            "layout": {
-                                "leaf": {
-                                    "key": "0x0000000b",
-                                    "ty": 3
-                                }
-                            },
-                            "root_key": "0x0000000b"
-                        }
-                    },
-                    "name": "poolAssetMantissa"
+                    "name": "poolCap"
                 },
                 {
                     "layout": {
@@ -1199,7 +1331,7 @@
                                         {
                                             "layout": {
                                                 "leaf": {
-                                                    "key": "0x0000000c",
+                                                    "key": "0x0000000b",
                                                     "ty": 1
                                                 }
                                             },
@@ -1209,7 +1341,7 @@
                                     "name": "AccountId"
                                 }
                             },
-                            "root_key": "0x0000000c"
+                            "root_key": "0x0000000b"
                         }
                     },
                     "name": "router"
@@ -1218,50 +1350,12 @@
                     "layout": {
                         "root": {
                             "layout": {
-                                "struct": {
-                                    "fields": [
-                                        {
-                                            "layout": {
-                                                "leaf": {
-                                                    "key": "0x0000000d",
-                                                    "ty": 1
-                                                }
-                                            },
-                                            "name": ""
-                                        }
-                                    ],
-                                    "name": "AccountId"
-                                }
-                            },
-                            "root_key": "0x0000000d"
-                        }
-                    },
-                    "name": "slippageCurve"
-                },
-                {
-                    "layout": {
-                        "root": {
-                            "layout": {
                                 "leaf": {
-                                    "key": "0x0000000e",
-                                    "ty": 3
-                                }
-                            },
-                            "root_key": "0x0000000e"
-                        }
-                    },
-                    "name": "accumulatedSlippage"
-                },
-                {
-                    "layout": {
-                        "root": {
-                            "layout": {
-                                "leaf": {
-                                    "key": "0x0000000f",
+                                    "key": "0x0000000c",
                                     "ty": 6
                                 }
                             },
-                            "root_key": "0x0000000f"
+                            "root_key": "0x0000000c"
                         }
                     },
                     "name": "swapPools"
@@ -1271,11 +1365,11 @@
                         "root": {
                             "layout": {
                                 "leaf": {
-                                    "key": "0x00000010",
+                                    "key": "0x0000000d",
                                     "ty": 3
                                 }
                             },
-                            "root_key": "0x00000010"
+                            "root_key": "0x0000000d"
                         }
                     },
                     "name": "swapPoolInsuranceFeeBps"
@@ -1285,11 +1379,11 @@
                         "root": {
                             "layout": {
                                 "leaf": {
-                                    "key": "0x00000011",
+                                    "key": "0x0000000e",
                                     "ty": 4
                                 }
                             },
-                            "root_key": "0x00000011"
+                            "root_key": "0x0000000e"
                         }
                     },
                     "name": "swapPoolCovered"
@@ -1305,7 +1399,7 @@
                 "def": {
                     "primitive": "u8"
                 },
-                "path": ["u8"]
+                "path": ["uint8"]
             }
         },
         {
@@ -1331,7 +1425,7 @@
                         ]
                     }
                 },
-                "path": ["ink_env", "types", "AccountId"]
+                "path": ["ink_primitives", "types", "AccountId"]
             }
         },
         {
@@ -1340,7 +1434,7 @@
                 "def": {
                     "primitive": "u256"
                 },
-                "path": ["u256"]
+                "path": ["uint256"]
             }
         },
         {
@@ -1377,7 +1471,7 @@
                 "def": {
                     "primitive": "i256"
                 },
-                "path": ["i256"]
+                "path": ["int256"]
             }
         },
         {
@@ -1402,9 +1496,93 @@
             "id": 10,
             "type": {
                 "def": {
-                    "tuple": [3, 3]
+                    "primitive": "u128"
                 },
-                "path": ["BackstopPool", "coverage", "return_type"]
+                "path": ["uint128"]
+            }
+        },
+        {
+            "id": 11,
+            "type": {
+                "def": {
+                    "primitive": "u64"
+                },
+                "path": ["uint64"]
+            }
+        },
+        {
+            "id": 12,
+            "type": {
+                "def": {
+                    "composite": {
+                        "fields": [
+                            {
+                                "type": 1
+                            }
+                        ]
+                    }
+                },
+                "path": ["ink_primitives", "types", "Hash"]
+            }
+        },
+        {
+            "id": 13,
+            "type": {
+                "def": {
+                    "composite": {
+                        "fields": [
+                            {
+                                "type": 5
+                            }
+                        ]
+                    }
+                },
+                "path": ["0x08c379a0"]
+            }
+        },
+        {
+            "id": 14,
+            "type": {
+                "def": {
+                    "composite": {
+                        "fields": [
+                            {
+                                "type": 3
+                            }
+                        ]
+                    }
+                },
+                "path": ["0x4e487b71"]
+            }
+        },
+        {
+            "id": 15,
+            "type": {
+                "def": {
+                    "variant": {
+                        "variants": [
+                            {
+                                "fields": [
+                                    {
+                                        "type": 13
+                                    }
+                                ],
+                                "index": 0,
+                                "name": "Error"
+                            },
+                            {
+                                "fields": [
+                                    {
+                                        "type": 14
+                                    }
+                                ],
+                                "index": 1,
+                                "name": "Panic"
+                            }
+                        ]
+                    }
+                },
+                "path": ["SolidityError"]
             }
         }
     ],

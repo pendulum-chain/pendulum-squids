@@ -6,7 +6,7 @@
     },
     "source": {
         "compiler": "solang 0.3.2",
-        "hash": "0x6e7bac057718ec67cf2b2995370248e5bfb03fc38a29127a51dbf4ccf12e08ca",
+        "hash": "0xc3a4799cb3feb885864b7bda2b7340893d52fc4f096024e42c5c59319e9cf4ed",
         "language": "Solidity 0.3.2"
     },
     "spec": {
@@ -295,7 +295,7 @@
             {
                 "args": [
                     {
-                        "label": "",
+                        "label": "assetId",
                         "type": {
                             "displayName": [
                                 "ink_primitives",
@@ -320,7 +320,7 @@
             {
                 "args": [
                     {
-                        "label": "",
+                        "label": "assetId",
                         "type": {
                             "displayName": [
                                 "ink_primitives",

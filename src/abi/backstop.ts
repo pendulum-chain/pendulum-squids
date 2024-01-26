@@ -9,9 +9,9 @@ export const metadata = {
         version: '0.0.1',
     },
     source: {
-        compiler: 'solang 0.2.2',
-        hash: '0xf10ab2e77c3a3e3927250ee6ba61e01338a509150723f4329e6dda3d9481eb2a',
-        language: 'Solidity 0.2.2',
+        compiler: 'solang 0.3.2',
+        hash: '0x09e907520a2e0be46d0a350df95c431857cbf88f52094be242f15ae79e524f3c',
+        language: 'Solidity 0.3.2',
     },
     spec: {
         constructors: [
@@ -20,21 +20,22 @@ export const metadata = {
                     {
                         label: '_router',
                         type: {
-                            displayName: ['ink_env', 'types', 'AccountId'],
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
                             type: 2,
                         },
                     },
                     {
                         label: '_asset',
                         type: {
-                            displayName: ['ink_env', 'types', 'AccountId'],
-                            type: 2,
-                        },
-                    },
-                    {
-                        label: '_curve',
-                        type: {
-                            displayName: ['ink_env', 'types', 'AccountId'],
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
                             type: 2,
                         },
                     },
@@ -53,16 +54,44 @@ export const metadata = {
                         },
                     },
                 ],
+                default: false,
                 docs: [''],
                 label: 'new',
                 payable: false,
                 returnType: null,
-                selector: '0x3e6bb716',
+                selector: '0xf01fa595',
             },
         ],
         docs: [
-            'The backstop pool takes most of the risk of a set of swap pools\nbacked by it. Whenever a swap pool is low on reserves and a LPer\nwants to withdraw some liquidity, they can conduct an insurance\nwithdrawal (burn swap pool shares, reimbursed in backstop liquidity)\nto avoid paying a high slippage.\nThe backstop pool owns all excess liquidity in its swap pools,\nbut is also liable for potential liquidity gaps.\nIn return, the backstop pool receives a cut of the swap fees.\n\n',
+            'The backstop pool takes most of the risk of a set of swap pools\nbacked by it. Whenever a swap pool is low on reserves and a LPer\nwants to withdraw some liquidity, they can conduct an insurance\nwithdrawal (burn swap pool shares, reimbursed in backstop liquidity)\nto avoid paying a high slippage.\nThe backstop pool owns all excess liquidity in its swap pools,\nbut is also liable for potential liquidity gaps.\nIn return, the backstop pool receives a cut of the swap fees.',
         ],
+        environment: {
+            accountId: {
+                displayName: ['AccountId'],
+                type: 2,
+            },
+            balance: {
+                displayName: ['Balance'],
+                type: 10,
+            },
+            blockNumber: {
+                displayName: ['BlockNumber'],
+                type: 11,
+            },
+            chainExtension: {
+                displayName: [],
+                type: 0,
+            },
+            hash: {
+                displayName: ['Hash'],
+                type: 12,
+            },
+            maxEventTopics: 4,
+            timestamp: {
+                displayName: ['Timestamp'],
+                type: 11,
+            },
+        },
         events: [
             {
                 args: [
@@ -71,7 +100,11 @@ export const metadata = {
                         indexed: true,
                         label: 'from',
                         type: {
-                            displayName: ['ink_env', 'types', 'AccountId'],
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
                             type: 2,
                         },
                     },
@@ -80,7 +113,11 @@ export const metadata = {
                         indexed: true,
                         label: 'to',
                         type: {
-                            displayName: ['ink_env', 'types', 'AccountId'],
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
                             type: 2,
                         },
                     },
@@ -89,7 +126,7 @@ export const metadata = {
                         indexed: false,
                         label: 'value',
                         type: {
-                            displayName: ['u256'],
+                            displayName: ['uint256'],
                             type: 3,
                         },
                     },
@@ -104,7 +141,11 @@ export const metadata = {
                         indexed: true,
                         label: 'owner',
                         type: {
-                            displayName: ['ink_env', 'types', 'AccountId'],
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
                             type: 2,
                         },
                     },
@@ -113,7 +154,11 @@ export const metadata = {
                         indexed: true,
                         label: 'spender',
                         type: {
-                            displayName: ['ink_env', 'types', 'AccountId'],
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
                             type: 2,
                         },
                     },
@@ -122,7 +167,7 @@ export const metadata = {
                         indexed: false,
                         label: 'value',
                         type: {
-                            displayName: ['u256'],
+                            displayName: ['uint256'],
                             type: 3,
                         },
                     },
@@ -137,7 +182,11 @@ export const metadata = {
                         indexed: false,
                         label: 'account',
                         type: {
-                            displayName: ['ink_env', 'types', 'AccountId'],
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
                             type: 2,
                         },
                     },
@@ -152,7 +201,11 @@ export const metadata = {
                         indexed: false,
                         label: 'account',
                         type: {
-                            displayName: ['ink_env', 'types', 'AccountId'],
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
                             type: 2,
                         },
                     },
@@ -167,7 +220,11 @@ export const metadata = {
                         indexed: true,
                         label: 'previousOwner',
                         type: {
-                            displayName: ['ink_env', 'types', 'AccountId'],
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
                             type: 2,
                         },
                     },
@@ -176,7 +233,11 @@ export const metadata = {
                         indexed: true,
                         label: 'newOwner',
                         type: {
-                            displayName: ['ink_env', 'types', 'AccountId'],
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
                             type: 2,
                         },
                     },
@@ -191,7 +252,11 @@ export const metadata = {
                         indexed: true,
                         label: 'sender',
                         type: {
-                            displayName: ['ink_env', 'types', 'AccountId'],
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
                             type: 2,
                         },
                     },
@@ -200,7 +265,7 @@ export const metadata = {
                         indexed: false,
                         label: 'poolSharesMinted',
                         type: {
-                            displayName: ['u256'],
+                            displayName: ['uint256'],
                             type: 3,
                         },
                     },
@@ -209,12 +274,12 @@ export const metadata = {
                         indexed: false,
                         label: 'amountPrincipleDeposited',
                         type: {
-                            displayName: ['u256'],
+                            displayName: ['uint256'],
                             type: 3,
                         },
                     },
                 ],
-                docs: ['emitted on every deposit\n\n'],
+                docs: ['emitted on every deposit'],
                 label: 'Mint',
             },
             {
@@ -224,7 +289,11 @@ export const metadata = {
                         indexed: true,
                         label: 'sender',
                         type: {
-                            displayName: ['ink_env', 'types', 'AccountId'],
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
                             type: 2,
                         },
                     },
@@ -233,7 +302,7 @@ export const metadata = {
                         indexed: false,
                         label: 'poolSharesBurned',
                         type: {
-                            displayName: ['u256'],
+                            displayName: ['uint256'],
                             type: 3,
                         },
                     },
@@ -242,13 +311,13 @@ export const metadata = {
                         indexed: false,
                         label: 'amountPrincipleWithdrawn',
                         type: {
-                            displayName: ['u256'],
+                            displayName: ['uint256'],
                             type: 3,
                         },
                     },
                 ],
                 docs: [
-                    'emitted on every withdrawal special case withdrawal using swap liquidiity: amountPrincipleWithdrawn = 0\n\n',
+                    'emitted on every withdrawal special case withdrawal using swap liquidiity: amountPrincipleWithdrawn = 0',
                 ],
                 label: 'Burn',
             },
@@ -259,7 +328,11 @@ export const metadata = {
                         indexed: true,
                         label: 'owner',
                         type: {
-                            displayName: ['ink_env', 'types', 'AccountId'],
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
                             type: 2,
                         },
                     },
@@ -268,7 +341,11 @@ export const metadata = {
                         indexed: false,
                         label: 'swapPool',
                         type: {
-                            displayName: ['ink_env', 'types', 'AccountId'],
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
                             type: 2,
                         },
                     },
@@ -277,7 +354,7 @@ export const metadata = {
                         indexed: false,
                         label: 'amountSwapShares',
                         type: {
-                            displayName: ['u256'],
+                            displayName: ['uint256'],
                             type: 3,
                         },
                     },
@@ -286,7 +363,7 @@ export const metadata = {
                         indexed: false,
                         label: 'amountSwapTokens',
                         type: {
-                            displayName: ['u256'],
+                            displayName: ['uint256'],
                             type: 3,
                         },
                     },
@@ -295,13 +372,13 @@ export const metadata = {
                         indexed: false,
                         label: 'amountBackstopTokens',
                         type: {
-                            displayName: ['u256'],
+                            displayName: ['uint256'],
                             type: 3,
                         },
                     },
                 ],
                 docs: [
-                    'emitted when a swap pool LP withdraws from backstop pool\n\n',
+                    'emitted when a swap pool LP withdraws from backstop pool',
                 ],
                 label: 'CoverSwapWithdrawal',
             },
@@ -312,7 +389,11 @@ export const metadata = {
                         indexed: true,
                         label: 'owner',
                         type: {
-                            displayName: ['ink_env', 'types', 'AccountId'],
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
                             type: 2,
                         },
                     },
@@ -321,7 +402,11 @@ export const metadata = {
                         indexed: false,
                         label: 'swapPool',
                         type: {
-                            displayName: ['ink_env', 'types', 'AccountId'],
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
                             type: 2,
                         },
                     },
@@ -330,7 +415,7 @@ export const metadata = {
                         indexed: false,
                         label: 'amountSwapTokens',
                         type: {
-                            displayName: ['u256'],
+                            displayName: ['uint256'],
                             type: 3,
                         },
                     },
@@ -339,24 +424,25 @@ export const metadata = {
                         indexed: false,
                         label: 'amountBackstopTokens',
                         type: {
-                            displayName: ['u256'],
+                            displayName: ['uint256'],
                             type: 3,
                         },
                     },
                 ],
                 docs: [
-                    'emitted when a backstop pool LP withdraws liquidity from swap pool\n\n',
+                    'emitted when a backstop pool LP withdraws liquidity from swap pool',
                 ],
                 label: 'WithdrawSwapLiquidity',
             },
         ],
         lang_error: {
-            displayName: [],
-            type: 0,
+            displayName: ['SolidityError'],
+            type: 15,
         },
         messages: [
             {
                 args: [],
+                default: false,
                 docs: [''],
                 label: 'name',
                 mutates: false,
@@ -369,6 +455,7 @@ export const metadata = {
             },
             {
                 args: [],
+                default: false,
                 docs: [''],
                 label: 'symbol',
                 mutates: false,
@@ -381,24 +468,26 @@ export const metadata = {
             },
             {
                 args: [],
+                default: false,
                 docs: [''],
                 label: 'decimals',
                 mutates: false,
                 payable: false,
                 returnType: {
-                    displayName: ['u8'],
+                    displayName: ['uint8'],
                     type: 0,
                 },
                 selector: '0x313ce567',
             },
             {
                 args: [],
+                default: false,
                 docs: [''],
                 label: 'totalSupply',
                 mutates: false,
                 payable: false,
                 returnType: {
-                    displayName: ['u256'],
+                    displayName: ['uint256'],
                     type: 3,
                 },
                 selector: '0x18160ddd',
@@ -408,17 +497,22 @@ export const metadata = {
                     {
                         label: 'account',
                         type: {
-                            displayName: ['ink_env', 'types', 'AccountId'],
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
                             type: 2,
                         },
                     },
                 ],
+                default: false,
                 docs: [''],
                 label: 'balanceOf',
                 mutates: false,
                 payable: false,
                 returnType: {
-                    displayName: ['u256'],
+                    displayName: ['uint256'],
                     type: 3,
                 },
                 selector: '0x70a08231',
@@ -428,18 +522,23 @@ export const metadata = {
                     {
                         label: 'to',
                         type: {
-                            displayName: ['ink_env', 'types', 'AccountId'],
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
                             type: 2,
                         },
                     },
                     {
                         label: 'amount',
                         type: {
-                            displayName: ['u256'],
+                            displayName: ['uint256'],
                             type: 3,
                         },
                     },
                 ],
+                default: false,
                 docs: [''],
                 label: 'transfer',
                 mutates: true,
@@ -455,24 +554,33 @@ export const metadata = {
                     {
                         label: 'owner',
                         type: {
-                            displayName: ['ink_env', 'types', 'AccountId'],
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
                             type: 2,
                         },
                     },
                     {
                         label: 'spender',
                         type: {
-                            displayName: ['ink_env', 'types', 'AccountId'],
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
                             type: 2,
                         },
                     },
                 ],
+                default: false,
                 docs: [''],
                 label: 'allowance',
                 mutates: false,
                 payable: false,
                 returnType: {
-                    displayName: ['u256'],
+                    displayName: ['uint256'],
                     type: 3,
                 },
                 selector: '0xdd62ed3e',
@@ -482,18 +590,23 @@ export const metadata = {
                     {
                         label: 'spender',
                         type: {
-                            displayName: ['ink_env', 'types', 'AccountId'],
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
                             type: 2,
                         },
                     },
                     {
                         label: 'amount',
                         type: {
-                            displayName: ['u256'],
+                            displayName: ['uint256'],
                             type: 3,
                         },
                     },
                 ],
+                default: false,
                 docs: [''],
                 label: 'approve',
                 mutates: true,
@@ -509,25 +622,34 @@ export const metadata = {
                     {
                         label: 'from',
                         type: {
-                            displayName: ['ink_env', 'types', 'AccountId'],
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
                             type: 2,
                         },
                     },
                     {
                         label: 'to',
                         type: {
-                            displayName: ['ink_env', 'types', 'AccountId'],
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
                             type: 2,
                         },
                     },
                     {
                         label: 'amount',
                         type: {
-                            displayName: ['u256'],
+                            displayName: ['uint256'],
                             type: 3,
                         },
                     },
                 ],
+                default: false,
                 docs: [''],
                 label: 'transferFrom',
                 mutates: true,
@@ -543,18 +665,23 @@ export const metadata = {
                     {
                         label: 'spender',
                         type: {
-                            displayName: ['ink_env', 'types', 'AccountId'],
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
                             type: 2,
                         },
                     },
                     {
                         label: 'addedValue',
                         type: {
-                            displayName: ['u256'],
+                            displayName: ['uint256'],
                             type: 3,
                         },
                     },
                 ],
+                default: false,
                 docs: [''],
                 label: 'increaseAllowance',
                 mutates: true,
@@ -570,18 +697,23 @@ export const metadata = {
                     {
                         label: 'spender',
                         type: {
-                            displayName: ['ink_env', 'types', 'AccountId'],
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
                             type: 2,
                         },
                     },
                     {
                         label: 'subtractedValue',
                         type: {
-                            displayName: ['u256'],
+                            displayName: ['uint256'],
                             type: 3,
                         },
                     },
                 ],
+                default: false,
                 docs: [''],
                 label: 'decreaseAllowance',
                 mutates: true,
@@ -594,6 +726,7 @@ export const metadata = {
             },
             {
                 args: [],
+                default: false,
                 docs: [''],
                 label: 'paused',
                 mutates: false,
@@ -606,18 +739,20 @@ export const metadata = {
             },
             {
                 args: [],
+                default: false,
                 docs: [''],
                 label: 'owner',
                 mutates: false,
                 payable: false,
                 returnType: {
-                    displayName: ['ink_env', 'types', 'AccountId'],
+                    displayName: ['ink_primitives', 'types', 'AccountId'],
                     type: 2,
                 },
                 selector: '0x8da5cb5b',
             },
             {
                 args: [],
+                default: false,
                 docs: [''],
                 label: 'renounceOwnership',
                 mutates: true,
@@ -630,11 +765,16 @@ export const metadata = {
                     {
                         label: 'newOwner',
                         type: {
-                            displayName: ['ink_env', 'types', 'AccountId'],
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
                             type: 2,
                         },
                     },
                 ],
+                default: false,
                 docs: [''],
                 label: 'transferOwnership',
                 mutates: true,
@@ -644,98 +784,208 @@ export const metadata = {
             },
             {
                 args: [],
+                default: false,
                 docs: [''],
                 label: 'poolCap',
                 mutates: false,
                 payable: false,
                 returnType: {
-                    displayName: ['u256'],
+                    displayName: ['uint256'],
                     type: 3,
                 },
                 selector: '0xb954dc57',
             },
             {
                 args: [],
-                docs: ["Returns the pooled token's address\n\n"],
+                default: false,
+                docs: ["Returns the pooled token's address"],
                 label: 'asset',
                 mutates: false,
                 payable: false,
                 returnType: {
-                    displayName: ['ink_env', 'types', 'AccountId'],
+                    displayName: ['ink_primitives', 'types', 'AccountId'],
                     type: 2,
                 },
                 selector: '0x38d52e0f',
             },
             {
-                args: [
-                    {
-                        label: '_shares',
-                        type: {
-                            displayName: ['u256'],
-                            type: 3,
-                        },
-                    },
-                ],
-                docs: [
-                    'Returns the worth of an amount of pool shares (LP tokens) in underlying principle\n\n',
-                ],
-                label: 'sharesTargetWorth',
+                args: [],
+                default: false,
+                docs: ['Returns the decimals of the pool asset'],
+                label: 'assetDecimals',
                 mutates: false,
                 payable: false,
                 returnType: {
-                    displayName: ['u256'],
-                    type: 3,
+                    displayName: ['uint8'],
+                    type: 0,
                 },
-                selector: '0xcc045745',
+                selector: '0xc2d41601',
             },
             {
                 args: [],
+                default: false,
                 docs: [''],
                 label: 'router',
                 mutates: false,
                 payable: false,
                 returnType: {
-                    displayName: ['ink_env', 'types', 'AccountId'],
+                    displayName: ['ink_primitives', 'types', 'AccountId'],
                     type: 2,
                 },
                 selector: '0xf887ea40',
             },
             {
-                args: [],
-                docs: [''],
-                label: 'slippageCurve',
-                mutates: false,
-                payable: false,
-                returnType: {
-                    displayName: ['ink_env', 'types', 'AccountId'],
-                    type: 2,
-                },
-                selector: '0xebe26b9e',
-            },
-            {
-                args: [],
-                docs: [''],
-                label: 'accumulatedSlippage',
-                mutates: false,
-                payable: false,
-                returnType: {
-                    displayName: ['u256'],
-                    type: 3,
-                },
-                selector: '0xe4182b09',
-            },
-            {
                 args: [
                     {
-                        label: '_amount',
+                        label: '_maxTokens',
                         type: {
-                            displayName: ['u256'],
+                            displayName: ['uint256'],
                             type: 3,
                         },
                     },
                 ],
+                default: false,
                 docs: [
-                    'Deposits amount of tokens into pool Will change cov ratio of pool, will increase delta to 0\n\n',
+                    'Set new upper limit of pool reserves. Will disable deposits when reached. Can always set to an amount < current reserves to temporarily restrict deposits.',
+                ],
+                label: 'setPoolCap',
+                mutates: true,
+                payable: false,
+                returnType: null,
+                selector: '0xd835f535',
+            },
+            {
+                args: [
+                    {
+                        label: '_swapPool',
+                        type: {
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
+                            type: 2,
+                        },
+                    },
+                    {
+                        label: '_insuranceFeeBps',
+                        type: {
+                            displayName: ['uint256'],
+                            type: 3,
+                        },
+                    },
+                ],
+                default: false,
+                docs: [
+                    'Make this backstop pool cover another swap pool Beware: Adding a swap pool holding the same token as the backstop pool\ncan easily cause undesirable conditions and must be secured (i.e. long time lock)!',
+                ],
+                label: 'addSwapPool',
+                mutates: true,
+                payable: false,
+                returnType: null,
+                selector: '0xabb26587',
+            },
+            {
+                args: [
+                    {
+                        label: '_swapPool',
+                        type: {
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
+                            type: 2,
+                        },
+                    },
+                    {
+                        label: '_insuranceFeeBps',
+                        type: {
+                            displayName: ['uint256'],
+                            type: 3,
+                        },
+                    },
+                ],
+                default: false,
+                docs: ["Change a swap pool's insurance withdrawal fee"],
+                label: 'setInsuranceFee',
+                mutates: true,
+                payable: false,
+                returnType: null,
+                selector: '0xc6a78196',
+            },
+            {
+                args: [
+                    {
+                        label: '_index',
+                        type: {
+                            displayName: ['uint256'],
+                            type: 3,
+                        },
+                    },
+                ],
+                default: false,
+                docs: ['enumerate swap pools backed by this backstop pool'],
+                label: 'getBackedPool',
+                mutates: false,
+                payable: false,
+                returnType: {
+                    displayName: ['ink_primitives', 'types', 'AccountId'],
+                    type: 2,
+                },
+                selector: '0xa04345f2',
+            },
+            {
+                args: [],
+                default: false,
+                docs: ['get swap pool count backed by this backstop pool'],
+                label: 'getBackedPoolCount',
+                mutates: false,
+                payable: false,
+                returnType: {
+                    displayName: ['uint256'],
+                    type: 3,
+                },
+                selector: '0x5fda8689',
+            },
+            {
+                args: [
+                    {
+                        label: '_swapPool',
+                        type: {
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
+                            type: 2,
+                        },
+                    },
+                ],
+                default: false,
+                docs: ['get insurance withdrawal fee for a given swap pool'],
+                label: 'getInsuranceFee',
+                mutates: false,
+                payable: false,
+                returnType: {
+                    displayName: ['uint256'],
+                    type: 3,
+                },
+                selector: '0x504e0153',
+            },
+            {
+                args: [
+                    {
+                        label: '_depositAmount',
+                        type: {
+                            displayName: ['uint256'],
+                            type: 3,
+                        },
+                    },
+                ],
+                default: false,
+                docs: [
+                    'Deposits amount of tokens into pool Will change cov ratio of pool, will increase delta to 0',
                 ],
                 label: 'deposit',
                 mutates: true,
@@ -749,41 +999,23 @@ export const metadata = {
             {
                 args: [
                     {
-                        label: '_maxTokens',
+                        label: '_sharesToBurn',
                         type: {
-                            displayName: ['u256'],
-                            type: 3,
-                        },
-                    },
-                ],
-                docs: [
-                    'Set new upper limit of pool reserves. Will disable deposits when reached. Can always set to an amount < current reserves to temporarily restrict deposits.\n\n',
-                ],
-                label: 'setPoolCap',
-                mutates: true,
-                payable: false,
-                returnType: null,
-                selector: '0xd835f535',
-            },
-            {
-                args: [
-                    {
-                        label: '_shares',
-                        type: {
-                            displayName: ['u256'],
+                            displayName: ['uint256'],
                             type: 3,
                         },
                     },
                     {
                         label: '_minimumAmount',
                         type: {
-                            displayName: ['u256'],
+                            displayName: ['uint256'],
                             type: 3,
                         },
                     },
                 ],
+                default: false,
                 docs: [
-                    'Withdraws liquidity amount of asset ensuring minimum amount required Slippage is applied (withdrawal fee)\n\n',
+                    'Withdraws liquidity amount of asset ensuring minimum amount required Slippage is applied (withdrawal fee)',
                 ],
                 label: 'withdraw',
                 mutates: true,
@@ -799,83 +1031,38 @@ export const metadata = {
                     {
                         label: '_swapPool',
                         type: {
-                            displayName: ['ink_env', 'types', 'AccountId'],
-                            type: 2,
-                        },
-                    },
-                    {
-                        label: '_insuranceFeeBps',
-                        type: {
-                            displayName: ['u256'],
-                            type: 3,
-                        },
-                    },
-                ],
-                docs: [
-                    'Make this backstop pool cover another swap pool Beware: Adding a swap pool holding the same token as the backstop pool\ncan easily cause undesirable conditions and must be secured (i.e. long time lock)!\n\n',
-                ],
-                label: 'addSwapPool',
-                mutates: true,
-                payable: false,
-                returnType: null,
-                selector: '0xabb26587',
-            },
-            {
-                args: [
-                    {
-                        label: '_swapPool',
-                        type: {
-                            displayName: ['ink_env', 'types', 'AccountId'],
-                            type: 2,
-                        },
-                    },
-                    {
-                        label: '_insuranceFeeBps',
-                        type: {
-                            displayName: ['u256'],
-                            type: 3,
-                        },
-                    },
-                ],
-                docs: ["Change a swap pool's insurance withdrawal fee\n\n"],
-                label: 'setInsuranceFee',
-                mutates: true,
-                payable: false,
-                returnType: null,
-                selector: '0xc6a78196',
-            },
-            {
-                args: [
-                    {
-                        label: '_swapPool',
-                        type: {
-                            displayName: ['ink_env', 'types', 'AccountId'],
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
                             type: 2,
                         },
                     },
                     {
                         label: '_shares',
                         type: {
-                            displayName: ['u256'],
+                            displayName: ['uint256'],
                             type: 3,
                         },
                     },
                     {
                         label: '_minAmount',
                         type: {
-                            displayName: ['u256'],
+                            displayName: ['uint256'],
                             type: 3,
                         },
                     },
                 ],
+                default: false,
                 docs: [
-                    "withdraw from a swap pool using backstop liquidity without slippage only possible if swap pool's coverage ratio < 100%\n\n",
+                    "withdraw from a swap pool using backstop liquidity without slippage only possible if swap pool's coverage ratio < 100%",
                 ],
                 label: 'redeemSwapPoolShares',
                 mutates: true,
                 payable: false,
                 returnType: {
-                    displayName: ['u256'],
+                    displayName: ['uint256'],
                     type: 3,
                 },
                 selector: '0x6e7e91fd',
@@ -885,116 +1072,79 @@ export const metadata = {
                     {
                         label: '_swapPool',
                         type: {
-                            displayName: ['ink_env', 'types', 'AccountId'],
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
                             type: 2,
                         },
                     },
                     {
                         label: '_shares',
                         type: {
-                            displayName: ['u256'],
+                            displayName: ['uint256'],
                             type: 3,
                         },
                     },
                     {
                         label: '_minAmount',
                         type: {
-                            displayName: ['u256'],
+                            displayName: ['uint256'],
                             type: 3,
                         },
                     },
                 ],
+                default: false,
                 docs: [
-                    'withdraw from backstop pool, but receive excess liquidity\nof a swap pool without slippage, instead of backstop liquidity\n\n',
+                    'withdraw from backstop pool, but receive excess liquidity\nof a swap pool without slippage, instead of backstop liquidity',
                 ],
                 label: 'withdrawExcessSwapLiquidity',
                 mutates: true,
                 payable: false,
                 returnType: {
-                    displayName: ['u256'],
+                    displayName: ['uint256'],
                     type: 3,
                 },
                 selector: '0xcaf8c105',
             },
             {
                 args: [],
-                docs: ['returns pool coverage ratio\n\n'],
-                label: 'coverage',
-                mutates: false,
-                payable: false,
-                returnType: {
-                    displayName: ['BackstopPool', 'coverage', 'return_type'],
-                    type: 10,
-                },
-                selector: '0xee8f6a0e',
-            },
-            {
-                args: [
-                    {
-                        label: '_index',
-                        type: {
-                            displayName: ['u256'],
-                            type: 3,
-                        },
-                    },
-                ],
-                docs: ['enumerate swap pools backed by this backstop pool\n\n'],
-                label: 'getBackedPool',
-                mutates: false,
-                payable: false,
-                returnType: {
-                    displayName: ['ink_env', 'types', 'AccountId'],
-                    type: 2,
-                },
-                selector: '0xa04345f2',
-            },
-            {
-                args: [],
-                docs: ['get swap pool count backed by this backstop pool\n\n'],
-                label: 'getBackedPoolCount',
-                mutates: false,
-                payable: false,
-                returnType: {
-                    displayName: ['u256'],
-                    type: 3,
-                },
-                selector: '0x5fda8689',
-            },
-            {
-                args: [
-                    {
-                        label: '_swapPool',
-                        type: {
-                            displayName: ['ink_env', 'types', 'AccountId'],
-                            type: 2,
-                        },
-                    },
-                ],
+                default: false,
                 docs: [
-                    'get insurance withdrawal fee for a given swap pool\n\n',
-                ],
-                label: 'getInsuranceFee',
-                mutates: false,
-                payable: false,
-                returnType: {
-                    displayName: ['u256'],
-                    type: 3,
-                },
-                selector: '0x504e0153',
-            },
-            {
-                args: [],
-                docs: [
-                    "return worth of the whole backstop pool in `asset()`, incl. all\nswap pools' excess liquidity and the backstop pool's liabilities\n\n",
+                    "return worth of the whole backstop pool in `asset()`, incl. all\nswap pools' excess liquidity and the backstop pool's liabilities",
                 ],
                 label: 'getTotalPoolWorth',
                 mutates: false,
                 payable: false,
                 returnType: {
-                    displayName: ['u256'],
-                    type: 3,
+                    displayName: ['int256'],
+                    type: 7,
                 },
                 selector: '0x18ba24c4',
+            },
+            {
+                args: [
+                    {
+                        label: '_sharesToBurn',
+                        type: {
+                            displayName: ['uint256'],
+                            type: 3,
+                        },
+                    },
+                ],
+                default: false,
+                docs: [
+                    'Returns the worth of an amount of pool shares (LP tokens) in underlying principle',
+                ],
+                label: 'sharesTargetWorth',
+                mutates: false,
+                payable: false,
+                returnType: {
+                    displayName: ['uint256'],
+                    type: 3,
+                },
+                selector: '0xcc045745',
             },
         ],
     },
@@ -1153,13 +1303,13 @@ export const metadata = {
                             layout: {
                                 leaf: {
                                     key: '0x00000009',
-                                    ty: 3,
+                                    ty: 0,
                                 },
                             },
                             root_key: '0x00000009',
                         },
                     },
-                    name: 'poolCap',
+                    name: 'poolAssetDecimals',
                 },
                 {
                     layout: {
@@ -1173,21 +1323,7 @@ export const metadata = {
                             root_key: '0x0000000a',
                         },
                     },
-                    name: 'totalLiabilities',
-                },
-                {
-                    layout: {
-                        root: {
-                            layout: {
-                                leaf: {
-                                    key: '0x0000000b',
-                                    ty: 3,
-                                },
-                            },
-                            root_key: '0x0000000b',
-                        },
-                    },
-                    name: 'poolAssetMantissa',
+                    name: 'poolCap',
                 },
                 {
                     layout: {
@@ -1198,7 +1334,7 @@ export const metadata = {
                                         {
                                             layout: {
                                                 leaf: {
-                                                    key: '0x0000000c',
+                                                    key: '0x0000000b',
                                                     ty: 1,
                                                 },
                                             },
@@ -1208,7 +1344,7 @@ export const metadata = {
                                     name: 'AccountId',
                                 },
                             },
-                            root_key: '0x0000000c',
+                            root_key: '0x0000000b',
                         },
                     },
                     name: 'router',
@@ -1217,50 +1353,12 @@ export const metadata = {
                     layout: {
                         root: {
                             layout: {
-                                struct: {
-                                    fields: [
-                                        {
-                                            layout: {
-                                                leaf: {
-                                                    key: '0x0000000d',
-                                                    ty: 1,
-                                                },
-                                            },
-                                            name: '',
-                                        },
-                                    ],
-                                    name: 'AccountId',
-                                },
-                            },
-                            root_key: '0x0000000d',
-                        },
-                    },
-                    name: 'slippageCurve',
-                },
-                {
-                    layout: {
-                        root: {
-                            layout: {
                                 leaf: {
-                                    key: '0x0000000e',
-                                    ty: 3,
-                                },
-                            },
-                            root_key: '0x0000000e',
-                        },
-                    },
-                    name: 'accumulatedSlippage',
-                },
-                {
-                    layout: {
-                        root: {
-                            layout: {
-                                leaf: {
-                                    key: '0x0000000f',
+                                    key: '0x0000000c',
                                     ty: 6,
                                 },
                             },
-                            root_key: '0x0000000f',
+                            root_key: '0x0000000c',
                         },
                     },
                     name: 'swapPools',
@@ -1270,11 +1368,11 @@ export const metadata = {
                         root: {
                             layout: {
                                 leaf: {
-                                    key: '0x00000010',
+                                    key: '0x0000000d',
                                     ty: 3,
                                 },
                             },
-                            root_key: '0x00000010',
+                            root_key: '0x0000000d',
                         },
                     },
                     name: 'swapPoolInsuranceFeeBps',
@@ -1284,11 +1382,11 @@ export const metadata = {
                         root: {
                             layout: {
                                 leaf: {
-                                    key: '0x00000011',
+                                    key: '0x0000000e',
                                     ty: 4,
                                 },
                             },
-                            root_key: '0x00000011',
+                            root_key: '0x0000000e',
                         },
                     },
                     name: 'swapPoolCovered',
@@ -1304,7 +1402,7 @@ export const metadata = {
                 def: {
                     primitive: 'u8',
                 },
-                path: ['u8'],
+                path: ['uint8'],
             },
         },
         {
@@ -1330,7 +1428,7 @@ export const metadata = {
                         ],
                     },
                 },
-                path: ['ink_env', 'types', 'AccountId'],
+                path: ['ink_primitives', 'types', 'AccountId'],
             },
         },
         {
@@ -1339,7 +1437,7 @@ export const metadata = {
                 def: {
                     primitive: 'u256',
                 },
-                path: ['u256'],
+                path: ['uint256'],
             },
         },
         {
@@ -1376,7 +1474,7 @@ export const metadata = {
                 def: {
                     primitive: 'i256',
                 },
-                path: ['i256'],
+                path: ['int256'],
             },
         },
         {
@@ -1401,9 +1499,93 @@ export const metadata = {
             id: 10,
             type: {
                 def: {
-                    tuple: [3, 3],
+                    primitive: 'u128',
                 },
-                path: ['BackstopPool', 'coverage', 'return_type'],
+                path: ['uint128'],
+            },
+        },
+        {
+            id: 11,
+            type: {
+                def: {
+                    primitive: 'u64',
+                },
+                path: ['uint64'],
+            },
+        },
+        {
+            id: 12,
+            type: {
+                def: {
+                    composite: {
+                        fields: [
+                            {
+                                type: 1,
+                            },
+                        ],
+                    },
+                },
+                path: ['ink_primitives', 'types', 'Hash'],
+            },
+        },
+        {
+            id: 13,
+            type: {
+                def: {
+                    composite: {
+                        fields: [
+                            {
+                                type: 5,
+                            },
+                        ],
+                    },
+                },
+                path: ['0x08c379a0'],
+            },
+        },
+        {
+            id: 14,
+            type: {
+                def: {
+                    composite: {
+                        fields: [
+                            {
+                                type: 3,
+                            },
+                        ],
+                    },
+                },
+                path: ['0x4e487b71'],
+            },
+        },
+        {
+            id: 15,
+            type: {
+                def: {
+                    variant: {
+                        variants: [
+                            {
+                                fields: [
+                                    {
+                                        type: 13,
+                                    },
+                                ],
+                                index: 0,
+                                name: 'Error',
+                            },
+                            {
+                                fields: [
+                                    {
+                                        type: 14,
+                                    },
+                                ],
+                                index: 1,
+                                name: 'Panic',
+                            },
+                        ],
+                    },
+                },
+                path: ['SolidityError'],
             },
         },
     ],
@@ -1449,19 +1631,19 @@ export class Contract {
         return this.stateCall('0x95d89b41', [])
     }
 
-    decimals(): Promise<u8> {
+    decimals(): Promise<uint8> {
         return this.stateCall('0x313ce567', [])
     }
 
-    totalSupply(): Promise<u256> {
+    totalSupply(): Promise<uint256> {
         return this.stateCall('0x18160ddd', [])
     }
 
-    balanceOf(account: AccountId): Promise<u256> {
+    balanceOf(account: AccountId): Promise<uint256> {
         return this.stateCall('0x70a08231', [account])
     }
 
-    allowance(owner: AccountId, spender: AccountId): Promise<u256> {
+    allowance(owner: AccountId, spender: AccountId): Promise<uint256> {
         return this.stateCall('0xdd62ed3e', [owner, spender])
     }
 
@@ -1473,7 +1655,7 @@ export class Contract {
         return this.stateCall('0x8da5cb5b', [])
     }
 
-    poolCap(): Promise<u256> {
+    poolCap(): Promise<uint256> {
         return this.stateCall('0xb954dc57', [])
     }
 
@@ -1481,40 +1663,32 @@ export class Contract {
         return this.stateCall('0x38d52e0f', [])
     }
 
-    sharesTargetWorth(_shares: u256): Promise<u256> {
-        return this.stateCall('0xcc045745', [_shares])
+    assetDecimals(): Promise<uint8> {
+        return this.stateCall('0xc2d41601', [])
     }
 
     router(): Promise<AccountId> {
         return this.stateCall('0xf887ea40', [])
     }
 
-    slippageCurve(): Promise<AccountId> {
-        return this.stateCall('0xebe26b9e', [])
-    }
-
-    accumulatedSlippage(): Promise<u256> {
-        return this.stateCall('0xe4182b09', [])
-    }
-
-    coverage(): Promise<[u256, u256]> {
-        return this.stateCall('0xee8f6a0e', [])
-    }
-
-    getBackedPool(_index: u256): Promise<AccountId> {
+    getBackedPool(_index: uint256): Promise<AccountId> {
         return this.stateCall('0xa04345f2', [_index])
     }
 
-    getBackedPoolCount(): Promise<u256> {
+    getBackedPoolCount(): Promise<uint256> {
         return this.stateCall('0x5fda8689', [])
     }
 
-    getInsuranceFee(_swapPool: AccountId): Promise<u256> {
+    getInsuranceFee(_swapPool: AccountId): Promise<uint256> {
         return this.stateCall('0x504e0153', [_swapPool])
     }
 
-    getTotalPoolWorth(): Promise<u256> {
+    getTotalPoolWorth(): Promise<int256> {
         return this.stateCall('0x18ba24c4', [])
+    }
+
+    sharesTargetWorth(_sharesToBurn: uint256): Promise<uint256> {
+        return this.stateCall('0xcc045745', [_sharesToBurn])
     }
 
     private async stateCall<T>(selector: string, args: any[]): Promise<T> {
@@ -1530,13 +1704,15 @@ export class Contract {
     }
 }
 
+export type int256 = bigint
+
 export type bool = boolean
 
 export type AccountId = Bytes
 
-export type u256 = bigint
+export type uint256 = bigint
 
-export type u8 = number
+export type uint8 = number
 
 export type Constructor = Constructor_new
 
@@ -1547,19 +1723,17 @@ export interface Constructor_new {
     __kind: 'new'
     router: AccountId
     asset: AccountId
-    curve: AccountId
     name: string
     symbol: string
 }
 
 export type Message =
-    | Message_accumulatedSlippage
     | Message_addSwapPool
     | Message_allowance
     | Message_approve
     | Message_asset
+    | Message_assetDecimals
     | Message_balanceOf
-    | Message_coverage
     | Message_decimals
     | Message_decreaseAllowance
     | Message_deposit
@@ -1578,7 +1752,6 @@ export type Message =
     | Message_setInsuranceFee
     | Message_setPoolCap
     | Message_sharesTargetWorth
-    | Message_slippageCurve
     | Message_symbol
     | Message_totalSupply
     | Message_transfer
@@ -1588,22 +1761,13 @@ export type Message =
     | Message_withdrawExcessSwapLiquidity
 
 /**
- *
- */
-export interface Message_accumulatedSlippage {
-    __kind: 'accumulatedSlippage'
-}
-
-/**
  * Make this backstop pool cover another swap pool Beware: Adding a swap pool holding the same token as the backstop pool
 can easily cause undesirable conditions and must be secured (i.e. long time lock)!
-
-
  */
 export interface Message_addSwapPool {
     __kind: 'addSwapPool'
     swapPool: AccountId
-    insuranceFeeBps: u256
+    insuranceFeeBps: uint256
 }
 
 /**
@@ -1621,16 +1785,21 @@ export interface Message_allowance {
 export interface Message_approve {
     __kind: 'approve'
     spender: AccountId
-    amount: u256
+    amount: uint256
 }
 
 /**
  * Returns the pooled token's address
-
-
  */
 export interface Message_asset {
     __kind: 'asset'
+}
+
+/**
+ * Returns the decimals of the pool asset
+ */
+export interface Message_assetDecimals {
+    __kind: 'assetDecimals'
 }
 
 /**
@@ -1639,15 +1808,6 @@ export interface Message_asset {
 export interface Message_balanceOf {
     __kind: 'balanceOf'
     account: AccountId
-}
-
-/**
- * returns pool coverage ratio
-
-
- */
-export interface Message_coverage {
-    __kind: 'coverage'
 }
 
 /**
@@ -1663,33 +1823,27 @@ export interface Message_decimals {
 export interface Message_decreaseAllowance {
     __kind: 'decreaseAllowance'
     spender: AccountId
-    subtractedValue: u256
+    subtractedValue: uint256
 }
 
 /**
  * Deposits amount of tokens into pool Will change cov ratio of pool, will increase delta to 0
-
-
  */
 export interface Message_deposit {
     __kind: 'deposit'
-    amount: u256
+    depositAmount: uint256
 }
 
 /**
  * enumerate swap pools backed by this backstop pool
-
-
  */
 export interface Message_getBackedPool {
     __kind: 'getBackedPool'
-    index: u256
+    index: uint256
 }
 
 /**
  * get swap pool count backed by this backstop pool
-
-
  */
 export interface Message_getBackedPoolCount {
     __kind: 'getBackedPoolCount'
@@ -1697,8 +1851,6 @@ export interface Message_getBackedPoolCount {
 
 /**
  * get insurance withdrawal fee for a given swap pool
-
-
  */
 export interface Message_getInsuranceFee {
     __kind: 'getInsuranceFee'
@@ -1708,8 +1860,6 @@ export interface Message_getInsuranceFee {
 /**
  * return worth of the whole backstop pool in `asset()`, incl. all
 swap pools' excess liquidity and the backstop pool's liabilities
-
-
  */
 export interface Message_getTotalPoolWorth {
     __kind: 'getTotalPoolWorth'
@@ -1721,7 +1871,7 @@ export interface Message_getTotalPoolWorth {
 export interface Message_increaseAllowance {
     __kind: 'increaseAllowance'
     spender: AccountId
-    addedValue: u256
+    addedValue: uint256
 }
 
 /**
@@ -1754,14 +1904,12 @@ export interface Message_poolCap {
 
 /**
  * withdraw from a swap pool using backstop liquidity without slippage only possible if swap pool's coverage ratio < 100%
-
-
  */
 export interface Message_redeemSwapPoolShares {
     __kind: 'redeemSwapPoolShares'
     swapPool: AccountId
-    shares: u256
-    minAmount: u256
+    shares: uint256
+    minAmount: uint256
 }
 
 /**
@@ -1780,40 +1928,27 @@ export interface Message_router {
 
 /**
  * Change a swap pool's insurance withdrawal fee
-
-
  */
 export interface Message_setInsuranceFee {
     __kind: 'setInsuranceFee'
     swapPool: AccountId
-    insuranceFeeBps: u256
+    insuranceFeeBps: uint256
 }
 
 /**
  * Set new upper limit of pool reserves. Will disable deposits when reached. Can always set to an amount < current reserves to temporarily restrict deposits.
-
-
  */
 export interface Message_setPoolCap {
     __kind: 'setPoolCap'
-    maxTokens: u256
+    maxTokens: uint256
 }
 
 /**
  * Returns the worth of an amount of pool shares (LP tokens) in underlying principle
-
-
  */
 export interface Message_sharesTargetWorth {
     __kind: 'sharesTargetWorth'
-    shares: u256
-}
-
-/**
- *
- */
-export interface Message_slippageCurve {
-    __kind: 'slippageCurve'
+    sharesToBurn: uint256
 }
 
 /**
@@ -1836,7 +1971,7 @@ export interface Message_totalSupply {
 export interface Message_transfer {
     __kind: 'transfer'
     to: AccountId
-    amount: u256
+    amount: uint256
 }
 
 /**
@@ -1846,7 +1981,7 @@ export interface Message_transferFrom {
     __kind: 'transferFrom'
     from: AccountId
     to: AccountId
-    amount: u256
+    amount: uint256
 }
 
 /**
@@ -1859,26 +1994,22 @@ export interface Message_transferOwnership {
 
 /**
  * Withdraws liquidity amount of asset ensuring minimum amount required Slippage is applied (withdrawal fee)
-
-
  */
 export interface Message_withdraw {
     __kind: 'withdraw'
-    shares: u256
-    minimumAmount: u256
+    sharesToBurn: uint256
+    minimumAmount: uint256
 }
 
 /**
  * withdraw from backstop pool, but receive excess liquidity
 of a swap pool without slippage, instead of backstop liquidity
-
-
  */
 export interface Message_withdrawExcessSwapLiquidity {
     __kind: 'withdrawExcessSwapLiquidity'
     swapPool: AccountId
-    shares: u256
-    minAmount: u256
+    shares: uint256
+    minAmount: uint256
 }
 
 export type Event =
@@ -1896,30 +2027,30 @@ export interface Event_Approval {
     __kind: 'Approval'
     owner: AccountId
     spender: AccountId
-    value: u256
+    value: uint256
 }
 
 export interface Event_Burn {
     __kind: 'Burn'
     sender: AccountId
-    poolSharesBurned: u256
-    amountPrincipleWithdrawn: u256
+    poolSharesBurned: uint256
+    amountPrincipleWithdrawn: uint256
 }
 
 export interface Event_CoverSwapWithdrawal {
     __kind: 'CoverSwapWithdrawal'
     owner: AccountId
     swapPool: AccountId
-    amountSwapShares: u256
-    amountSwapTokens: u256
-    amountBackstopTokens: u256
+    amountSwapShares: uint256
+    amountSwapTokens: uint256
+    amountBackstopTokens: uint256
 }
 
 export interface Event_Mint {
     __kind: 'Mint'
     sender: AccountId
-    poolSharesMinted: u256
-    amountPrincipleDeposited: u256
+    poolSharesMinted: uint256
+    amountPrincipleDeposited: uint256
 }
 
 export interface Event_OwnershipTransferred {
@@ -1937,7 +2068,7 @@ export interface Event_Transfer {
     __kind: 'Transfer'
     from: AccountId
     to: AccountId
-    value: u256
+    value: uint256
 }
 
 export interface Event_Unpaused {
@@ -1949,8 +2080,8 @@ export interface Event_WithdrawSwapLiquidity {
     __kind: 'WithdrawSwapLiquidity'
     owner: AccountId
     swapPool: AccountId
-    amountSwapTokens: u256
-    amountBackstopTokens: u256
+    amountSwapTokens: uint256
+    amountBackstopTokens: uint256
 }
 
 export type Result<T, E> =

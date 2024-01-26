@@ -8,7 +8,7 @@ export const metadata = {
     },
     source: {
         compiler: 'solang 0.3.2',
-        hash: '0x6e7bac057718ec67cf2b2995370248e5bfb03fc38a29127a51dbf4ccf12e08ca',
+        hash: '0xc3a4799cb3feb885864b7bda2b7340893d52fc4f096024e42c5c59319e9cf4ed',
         language: 'Solidity 0.3.2',
     },
     spec: {
@@ -297,7 +297,7 @@ export const metadata = {
             {
                 args: [
                     {
-                        label: '',
+                        label: 'assetId',
                         type: {
                             displayName: [
                                 'ink_primitives',
@@ -322,7 +322,7 @@ export const metadata = {
             {
                 args: [
                     {
-                        label: '',
+                        label: 'assetId',
                         type: {
                             displayName: [
                                 'ink_primitives',
@@ -845,12 +845,12 @@ export class Contract {
         return this.stateCall('0x8da5cb5b', [])
     }
 
-    poolByAsset(accountId: AccountId): Promise<AccountId> {
-        return this.stateCall('0x06de94d8', [])
+    poolByAsset(assetId: AccountId): Promise<AccountId> {
+        return this.stateCall('0x06de94d8', [assetId])
     }
 
-    oracleByAsset(accountId: AccountId): Promise<AccountId> {
-        return this.stateCall('0x38163032', [])
+    oracleByAsset(assetId: AccountId): Promise<AccountId> {
+        return this.stateCall('0x38163032', [assetId])
     }
 
     getAmountOut(
@@ -917,7 +917,7 @@ export interface Message_getAmountOut {
  */
 export interface Message_oracleByAsset {
     __kind: 'oracleByAsset'
-    accountId: AccountId
+    assetId: AccountId
 }
 
 /**
@@ -946,7 +946,7 @@ export interface Message_paused {
  */
 export interface Message_poolByAsset {
     __kind: 'poolByAsset'
-    accountId: AccountId
+    assetId: AccountId
 }
 
 /**

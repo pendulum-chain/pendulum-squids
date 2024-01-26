@@ -2,8 +2,10 @@ import {
     Entity as Entity_,
     Column as Column_,
     PrimaryColumn as PrimaryColumn_,
-    ManyToOne as ManyToOne_,
+    OneToOne as OneToOne_,
     Index as Index_,
+    JoinColumn as JoinColumn_,
+    ManyToOne as ManyToOne_,
 } from 'typeorm'
 import * as marshal from './marshal'
 import { Router } from './router.model'
@@ -18,8 +20,9 @@ export class BackstopPool {
     @PrimaryColumn_()
     id!: string
 
-    @Index_()
-    @ManyToOne_(() => Router, { nullable: true })
+    @Index_({ unique: true })
+    @OneToOne_(() => Router, { nullable: true })
+    @JoinColumn_()
     router!: Router
 
     @Index_()
@@ -31,12 +34,6 @@ export class BackstopPool {
         nullable: false,
     })
     reserves!: bigint
-
-    @Column_('numeric', {
-        transformer: marshal.bigintTransformer,
-        nullable: false,
-    })
-    liabilities!: bigint
 
     @Column_('numeric', {
         transformer: marshal.bigintTransformer,

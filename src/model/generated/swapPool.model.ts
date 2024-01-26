@@ -35,13 +35,19 @@ export class SwapPool {
         transformer: marshal.bigintTransformer,
         nullable: false,
     })
-    reserves!: bigint
+    reserve!: bigint
 
     @Column_('numeric', {
         transformer: marshal.bigintTransformer,
         nullable: false,
     })
-    liabilities!: bigint
+    reserveWithSlippage!: bigint
+
+    @Column_('numeric', {
+        transformer: marshal.bigintTransformer,
+        nullable: false,
+    })
+    totalLiabilities!: bigint
 
     @Column_('numeric', {
         transformer: marshal.bigintTransformer,

@@ -145,6 +145,12 @@ processor.run(new TypeormDatabase(), async (ctx) => {
     // Fetch max block height from the archive
     let maxHeight = await maxHeightPromise
 
+    console.log(
+        'new blocks',
+        ctx.blocks.length,
+        ctx.blocks.map((b) => b.header.height)
+    )
+
     for (let { header: block, calls, events, extrinsics } of ctx.blocks) {
         ctx.log.debug(
             `block ${block.height}: extrinsics - ${extrinsics.length}, calls - ${calls.length}, events - ${events.length}`

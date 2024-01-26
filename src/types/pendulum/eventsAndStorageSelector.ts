@@ -4,8 +4,8 @@ import * as pendulumStorage from './storage'
 import { StorageType } from './support'
 // Must keep up to date with the possible versions
 // of events and storage
-const pendulumEventVersions: string[] = ['v1', 'v3']
-const pendulumStorageVersions: string[] = ['v1', 'v3']
+const pendulumEventVersions: string[] = ['v1', 'v3', 'v9']
+const pendulumStorageVersions: string[] = ['v1', 'v3', 'v9']
 
 export function decodePendulumEvent(
     moduleName: string,

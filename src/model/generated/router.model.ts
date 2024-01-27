@@ -19,6 +19,9 @@ export class Router {
     @OneToMany_(() => SwapPool, (e) => e.router)
     swapPools!: SwapPool[]
 
+    @OneToMany_(() => BackstopPool, (e) => e.router)
+    backstopPool!: BackstopPool[]
+
     @Column_('bool', { nullable: false })
     paused!: boolean
 }

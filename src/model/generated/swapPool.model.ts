@@ -19,6 +19,12 @@ export class SwapPool {
     @PrimaryColumn_()
     id!: string
 
+    @Column_('text', { nullable: false })
+    name!: string
+
+    @Column_('text', { nullable: false })
+    symbol!: string
+
     @Index_()
     @ManyToOne_(() => Router, { nullable: true })
     router!: Router
@@ -57,4 +63,16 @@ export class SwapPool {
 
     @Column_('bool', { nullable: false })
     paused!: boolean
+
+    @Column_('numeric', {
+        transformer: marshal.bigintTransformer,
+        nullable: false,
+    })
+    apr!: bigint
+
+    @Column_('numeric', {
+        transformer: marshal.bigintTransformer,
+        nullable: true,
+    })
+    coveredIndex!: bigint | undefined | null
 }

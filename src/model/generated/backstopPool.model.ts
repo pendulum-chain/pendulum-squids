@@ -2,14 +2,14 @@ import {
     Entity as Entity_,
     Column as Column_,
     PrimaryColumn as PrimaryColumn_,
-    OneToOne as OneToOne_,
-    Index as Index_,
-    JoinColumn as JoinColumn_,
     ManyToOne as ManyToOne_,
+    Index as Index_,
+    OneToMany as OneToMany_,
 } from 'typeorm'
 import * as marshal from './marshal'
 import { Router } from './router.model'
 import { NablaToken } from './nablaToken.model'
+import { SwapPool } from './swapPool.model'
 
 @Entity_()
 export class BackstopPool {
@@ -20,9 +20,14 @@ export class BackstopPool {
     @PrimaryColumn_()
     id!: string
 
-    @Index_({ unique: true })
-    @OneToOne_(() => Router, { nullable: true })
-    @JoinColumn_()
+    @Column_('text', { nullable: false })
+    name!: string
+
+    @Column_('text', { nullable: false })
+    symbol!: string
+
+    @Index_()
+    @ManyToOne_(() => Router, { nullable: true })
     router!: Router
 
     @Index_()
@@ -43,4 +48,13 @@ export class BackstopPool {
 
     @Column_('bool', { nullable: false })
     paused!: boolean
+
+    @OneToMany_(() => SwapPool, (e) => e.backstop)
+    coveredSwapPools!: SwapPool[]
+
+    @Column_('numeric', {
+        transformer: marshal.bigintTransformer,
+        nullable: false,
+    })
+    apr!: bigint
 }

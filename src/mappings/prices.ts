@@ -16,13 +16,15 @@ const KrakenKsmUsd = readCSV(
 const KrakenXlmUsd = readCSV(
     `ohlcv/XLMUSD_${TIMEFRAME_INTERVAL_IN_MINUTES}.csv`
 )
-const KrakenDotUsd = readCSV(
-    `ohlcv/DOTUSD_${TIMEFRAME_INTERVAL_IN_MINUTES}.csv`
-)
+// We don't have the DOT price available on Pendulum because the DIA pallet was not configured yet
+// const KrakenDotUsd = readCSV(
+//     `ohlcv/DOTUSD_${TIMEFRAME_INTERVAL_IN_MINUTES}.csv`
+// )
 
-export const KsmRollingAverage = new RollingAverage(0.01)
-export const XlmRollingAverage = new RollingAverage(0.01)
-export const DotRollingAverage = new RollingAverage(0.01)
+export const KsmRollingAverage = new RollingAverage('KSM-USD', 0.01)
+export const XlmRollingAverage = new RollingAverage('XLM-USD', 0.01)
+
+// export const DotRollingAverage = new RollingAverage(0.01)
 
 async function handleAnalysisFor(
     ctx: EventHandlerContext,
@@ -30,7 +32,7 @@ async function handleAnalysisFor(
     dataSet: Promise<OHLCV[]>,
     rollingAverage: RollingAverage
 ) {
-    // We try to pick the timestamp reported by the block, because the timestamp might not be up-to-date
+    // We try to pick the timestamp reported by the block, because the timestamp in the coin info might not be up-to-date
     const timestamp =
         ctx.block.timestamp || Number(coinInfo.lastUpdateTimestamp)
 
@@ -82,13 +84,13 @@ export async function handleUpdatedPrices(ctx: EventHandlerContext) {
                 KrakenXlmUsd,
                 XlmRollingAverage
             )
-        } else if (blockchain === 'Polkadot' && symbol === 'DOT') {
-            await handleAnalysisFor(
-                ctx,
-                coinInfo,
-                KrakenDotUsd,
-                DotRollingAverage
-            )
+            // } else if (blockchain === 'Polkadot' && symbol === 'DOT') {
+            //     await handleAnalysisFor(
+            //         ctx,
+            //         coinInfo,
+            //         KrakenDotUsd,
+            //         DotRollingAverage
+            //     )
         }
     }
 }

@@ -67,6 +67,7 @@ export function getOHLCVAtTime(ohlcv: OHLCV[], timestampMs: number): OHLCV {
 export class RollingAverage {
     size: number = 0
     private sum: number = 0
+    name: string
 
     outlierThreshold: number
 
@@ -75,7 +76,8 @@ export class RollingAverage {
 
     outliers: number[] = []
 
-    constructor(outlierThreshold: number = 0.1) {
+    constructor(name: string, outlierThreshold: number = 0.1) {
+        this.name = name
         this.outlierThreshold = outlierThreshold
     }
 
@@ -108,8 +110,26 @@ export class RollingAverage {
     }
 
     print() {
+        const outlierDeviation = this.analyzeOutlierDeviation()
         console.log(
-            `RollingAverage: size: ${this.size}, sum: ${this.sum}, outlierCount: ${this.outlierCount}, maxValue: ${this.maxValue}, minValue: ${this.minValue}, average: ${this.average}, outlierPercentage: ${this.outlierPercentage}`
+            `RollingAverage of ${this.name}: size: ${this.size}, sum: ${this.sum}, outlierCount: ${this.outlierCount}, maxValue: ${this.maxValue}, minValue: ${this.minValue}, average: ${this.average}, outlierPercentage: ${this.outlierPercentage}, outlierDeviation: ${outlierDeviation}`
         )
+    }
+
+    // Analyze outliers
+    analyzeOutlierDeviation() {
+        const outliers = this.outliers
+
+        // Calculate the deviation from the average
+        const average = this.average
+        const deviations = outliers.map((value) => {
+            return Math.abs(value - average)
+        })
+
+        // Calculate the average deviation
+        const averageDeviation =
+            deviations.reduce((a, b) => a + b, 0) / deviations.length
+
+        return averageDeviation
     }
 }

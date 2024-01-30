@@ -12,7 +12,6 @@ import {
 import { Store, TypeormDatabase } from '@subsquid/typeorm-store'
 import { blockRetentionNumber, config, maxHeightPromise } from './config'
 import {
-    DotRollingAverage,
     handleUpdatedPrices,
     KsmRollingAverage,
     XlmRollingAverage,
@@ -91,7 +90,6 @@ processor.run(new TypeormDatabase(), async (ctx) => {
         // Analyze every batch
         KsmRollingAverage.print()
         XlmRollingAverage.print()
-        DotRollingAverage.print()
     } catch (e) {
         console.log('Error analyzing results', e)
     }

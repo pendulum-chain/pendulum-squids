@@ -23,7 +23,12 @@ import {
     handleFarmingWithdrawClaimed,
     handleFarmingWithdrawn,
 } from './mappings/farming/handle'
-import { blockRetentionNumber, config, maxHeightPromise } from './config'
+import {
+    blockRetentionNumber,
+    config,
+    maxHeightPromise,
+    catchupPriceUpdatePeriod,
+} from './config'
 
 import {
     handleAssetSwap,
@@ -316,8 +321,12 @@ processor.run(new TypeormDatabase(), async (ctx) => {
                         break
                     // price oracle
                     case 'DiaOracleModule.UpdatedPrices':
-                        // Only processing these events if the current block is the 'head' of the chain
-                        if (ctx.isHead) {
+                        // Only processing these events once every CATCHUP_PRICE_UPDATE_PERIOD blocks or if the current block is the 'head' of the chain
+                        // CATCHUP_PRICE_UPDATE_PERIOD is used so that we don't have to process these events for every block but still maintain a fairly accurate price history
+                        if (
+                            ctx.isHead ||
+                            block.height % catchupPriceUpdatePeriod === 0
+                        ) {
                             await handleUpdatedPrices({
                                 ...ctx,
                                 block,

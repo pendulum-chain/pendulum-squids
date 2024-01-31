@@ -2,8 +2,12 @@ import {
     Entity as Entity_,
     Column as Column_,
     PrimaryColumn as PrimaryColumn_,
+    ManyToOne as ManyToOne_,
+    Index as Index_,
 } from 'typeorm'
 import * as marshal from './marshal'
+import { SwapPool } from './swapPool.model'
+import { BackstopPool } from './backstopPool.model'
 
 @Entity_()
 export class NablaSwapFee {
@@ -18,7 +22,7 @@ export class NablaSwapFee {
         transformer: marshal.bigintTransformer,
         nullable: false,
     })
-    lpFee!: bigint
+    lpFees!: bigint
 
     @Column_('numeric', {
         transformer: marshal.bigintTransformer,
@@ -37,4 +41,12 @@ export class NablaSwapFee {
         nullable: false,
     })
     timestamp!: bigint
+
+    @Index_()
+    @ManyToOne_(() => SwapPool, { nullable: true })
+    swapPool!: SwapPool
+
+    @Index_()
+    @ManyToOne_(() => BackstopPool, { nullable: true })
+    backstopPool!: BackstopPool | undefined | null
 }

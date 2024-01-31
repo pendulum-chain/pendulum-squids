@@ -10,6 +10,7 @@ import * as marshal from './marshal'
 import { Router } from './router.model'
 import { NablaToken } from './nablaToken.model'
 import { SwapPool } from './swapPool.model'
+import { NablaSwapFee } from './nablaSwapFee.model'
 
 @Entity_()
 export class BackstopPool {
@@ -51,6 +52,9 @@ export class BackstopPool {
 
     @OneToMany_(() => SwapPool, (e) => e.backstop)
     coveredSwapPools!: SwapPool[]
+
+    @OneToMany_(() => NablaSwapFee, (e) => e.backstopPool)
+    feesHistory!: NablaSwapFee[]
 
     @Column_('numeric', {
         transformer: marshal.bigintTransformer,

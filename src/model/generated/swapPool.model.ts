@@ -4,11 +4,13 @@ import {
     PrimaryColumn as PrimaryColumn_,
     ManyToOne as ManyToOne_,
     Index as Index_,
+    OneToMany as OneToMany_,
 } from 'typeorm'
 import * as marshal from './marshal'
 import { Router } from './router.model'
 import { BackstopPool } from './backstopPool.model'
 import { NablaToken } from './nablaToken.model'
+import { NablaSwapFee } from './nablaSwapFee.model'
 
 @Entity_()
 export class SwapPool {
@@ -27,7 +29,7 @@ export class SwapPool {
 
     @Index_()
     @ManyToOne_(() => Router, { nullable: true })
-    router!: Router
+    router!: Router | undefined | null
 
     @Index_()
     @ManyToOne_(() => BackstopPool, { nullable: true })
@@ -63,6 +65,9 @@ export class SwapPool {
 
     @Column_('bool', { nullable: false })
     paused!: boolean
+
+    @OneToMany_(() => NablaSwapFee, (e) => e.swapPool)
+    feesHistory!: NablaSwapFee[]
 
     @Column_('numeric', {
         transformer: marshal.bigintTransformer,

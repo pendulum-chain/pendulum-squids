@@ -18,7 +18,10 @@ import {
 import { config, network } from '../config'
 import { BlockHeader, ParentBlockHeader } from '@subsquid/substrate-processor'
 import { codec } from '@subsquid/ss58'
-import { getVersionedStorage, decodeEvent } from '../eventsAndStorageSelector'
+import {
+    getVersionedStorage,
+    decodeEvent,
+} from '../types/eventsAndStorageSelector'
 import { v1 } from '../types/foucoco'
 
 export function formatFarmingCreatedPoolEvent(ctx: EventHandlerContext) {

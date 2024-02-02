@@ -1,30 +1,20 @@
-import { EventHandlerContext } from './processor'
-import * as foucocoEvents from './types/foucoco/events'
-import * as pendulumEvents from './types/pendulum/events'
-import * as amplitudeEvents from './types/amplitude/events'
+import { EventHandlerContext } from '../processor'
+import * as foucocoEvents from './foucoco/events'
+import * as pendulumEvents from './pendulum/events'
+import * as amplitudeEvents from './amplitude/events'
 
-import * as foucocoStorage from './types/foucoco/storage'
-import * as pendulumStorage from './types/pendulum/storage'
-import * as amplitudeStorage from './types/amplitude/storage'
+import * as foucocoStorage from './foucoco/storage'
+import * as pendulumStorage from './pendulum/storage'
+import * as amplitudeStorage from './amplitude/storage'
 
-import { StorageType as StorageTypeFoucoco } from './types/foucoco/support'
-import { StorageType as StorageTypePendulum } from './types/pendulum/support'
-import { StorageType as StorageTypeAmplitude } from './types/amplitude/support'
+import { StorageType as StorageTypeFoucoco } from './foucoco/support'
+import { StorageType as StorageTypePendulum } from './pendulum/support'
+import { StorageType as StorageTypeAmplitude } from './amplitude/support'
 // Must keep up to date with the possible versions
 // of events and storage
-const foucocoEventVersions: string[] = ['v1', 'v4']
-const foucocoStorageVersions: string[] = ['v1', 'v4']
-const pendulumEventVersions: string[] = ['v1', 'v3', 'v9', 'v10']
-const pendulumStorageVersions: string[] = ['v1', 'v3', 'v9', 'v10']
-const amplitudeEventVersions: string[] = ['v1', 'v3', 'v7', 'v8', 'v10', 'v12']
-const amplitudeStorageVersions: string[] = [
-    'v1',
-    'v3',
-    'v7',
-    'v8',
-    'v10',
-    'v12',
-]
+const foucocoVersions: string[] = ['v1', 'v4']
+const pendulumVersions: string[] = ['v1', 'v3', 'v9', 'v10']
+const amplitudeVersions: string[] = ['v1', 'v3', 'v7', 'v8', 'v10', 'v12']
 
 export function decodeEvent(
     network: string,
@@ -37,13 +27,17 @@ export function decodeEvent(
 
     if (network === 'foucoco') {
         networkEventsAny = foucocoEvents as { [key: string]: any }
-        eventVersions = foucocoEventVersions
+        eventVersions = foucocoVersions
     } else if (network === 'pendulum') {
         networkEventsAny = pendulumEvents as { [key: string]: any }
-        eventVersions = pendulumEventVersions
-    } else {
+        eventVersions = pendulumVersions
+    } else if (network === 'amplitude') {
         networkEventsAny = amplitudeEvents as { [key: string]: any }
-        eventVersions = amplitudeEventVersions
+        eventVersions = amplitudeVersions
+    } else {
+        throw new Error(
+            `Unable to decode events for network ${network}. Network is not supported.`
+        )
     }
 
     const eventModule = networkEventsAny[moduleName]
@@ -68,13 +62,17 @@ export async function getVersionedStorage(
     let storageVersions: string[]
     if (network === 'foucoco') {
         networkStorageAny = foucocoStorage as { [key: string]: any }
-        storageVersions = foucocoStorageVersions
+        storageVersions = foucocoVersions
     } else if (network === 'pendulum') {
         networkStorageAny = pendulumStorage as { [key: string]: any }
-        storageVersions = pendulumStorageVersions
-    } else {
+        storageVersions = pendulumVersions
+    } else if (network === 'amplitude') {
         networkStorageAny = amplitudeStorage as { [key: string]: any }
-        storageVersions = amplitudeStorageVersions
+        storageVersions = amplitudeVersions
+    } else {
+        throw new Error(
+            `Unable to find storage for network ${network}. Network is not supported.`
+        )
     }
 
     const storageModule = networkStorageAny[moduleName]

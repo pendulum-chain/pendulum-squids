@@ -23,7 +23,7 @@ import {
 } from '../model'
 import { getPairStatusFromAssets, getTokenBalance } from '../utils/token'
 import { StrKey } from 'stellar-base'
-import { decodeEvent } from '../types'
+import { decodeEvent } from '../eventsAndStorageSelector'
 async function isCompleteMint(
     ctx: EventHandlerContext,
     mintId: string

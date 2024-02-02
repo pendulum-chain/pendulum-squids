@@ -29,7 +29,7 @@ import {
     updateTokenDayData,
     updateZenlinkInfo,
 } from '../utils/updates'
-import { decodeEvent } from '../types'
+import { decodeEvent } from '../eventsAndStorageSelector'
 export async function handleLiquiditySync(
     ctx: EventHandlerContext,
     pair: Pair

@@ -29,6 +29,12 @@ export const TOKEN_METADATA_MAP: { [address: string]: TokenBase } = {
         blockchain: 'Kusama',
         decimals: 12,
     },
+    '2124-2-257': {
+        name: 'Tether USDT',
+        symbol: 'FIAT',
+        blockchain: 'USD-USD',
+        decimals: 12,
+    },
     '2124-2-512': {
         name: 'Stellar Native',
         blockchain: 'Stellar',
@@ -37,20 +43,44 @@ export const TOKEN_METADATA_MAP: { [address: string]: TokenBase } = {
     },
     '2124-2-513': {
         name: 'Stellar USDC',
-        blockchain: 'Stellar',
-        symbol: 'USDC',
+        blockchain: 'FIAT',
+        symbol: 'USD-USD',
         decimals: 12,
     },
     '2124-2-514': {
         name: 'Stellar TZS',
-        blockchain: 'Stellar',
-        symbol: 'TZS',
+        blockchain: 'FIAT',
+        symbol: 'TZS-USD',
         decimals: 12,
     },
     '2124-2-515': {
         name: 'Stellar BRL',
+        blockchain: 'FIAT',
+        symbol: 'BRL-USD',
+        decimals: 12,
+    },
+    '2094-0-0': {
+        name: 'PENDULUM',
+        blockchain: 'Pendulum',
+        symbol: 'PEN',
+        decimals: 12,
+    },
+    '2094-2-256': {
+        name: 'Polkadot',
+        symbol: 'DOT',
+        blockchain: 'Polkadot',
+        decimals: 10,
+    },
+    '2094-2-262': {
+        name: 'Moonbeam',
+        symbol: 'GLMR',
+        blockchain: 'Moonbeam',
+        decimals: 18,
+    },
+    '2094-2-512': {
+        name: 'Stellar Native',
         blockchain: 'Stellar',
-        symbol: 'BRL',
+        symbol: 'XLM',
         decimals: 12,
     },
 }

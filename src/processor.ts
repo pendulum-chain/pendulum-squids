@@ -156,28 +156,29 @@ processor.run(new TypeormDatabase(), async (ctx) => {
         )
 
         // Block is saved only if it's in the most recent BLOCK_RETENTION_NUMBER blocks or newer
-        if (block.height >= maxHeight - blockRetentionNumber) {
-            try {
-                await saveBlock(ctx, block)
+        //TODO testing
+        // if (block.height >= maxHeight - blockRetentionNumber) {
+        //     try {
+        //         await saveBlock(ctx, block)
 
-                for (const extrinsic of extrinsics) {
-                    await saveExtrinsic(ctx, extrinsic)
-                }
+        //         for (const extrinsic of extrinsics) {
+        //             await saveExtrinsic(ctx, extrinsic)
+        //         }
 
-                for (const call of calls.reverse()) {
-                    await saveCall(ctx, call)
-                }
+        //         for (const call of calls.reverse()) {
+        //             await saveCall(ctx, call)
+        //         }
 
-                for (const event of events) {
-                    await saveEvent(ctx, event)
-                }
-            } catch (e) {
-                console.log(
-                    `Error saving block details for block '${block.height}'.`,
-                    e
-                )
-            }
-        }
+        //         for (const event of events) {
+        //             await saveEvent(ctx, event)
+        //         }
+        //     } catch (e) {
+        //         console.log(
+        //             `Error saving block details for block '${block.height}'.`,
+        //             e
+        //         )
+        //     }
+        // }
 
         for (let event of events) {
             try {
@@ -196,13 +197,13 @@ processor.run(new TypeormDatabase(), async (ctx) => {
                             event,
                         })
                         break
-                    case 'Tokens.Transfer':
-                        await handleTokenTransfer({
-                            ...ctx,
-                            block,
-                            event,
-                        })
-                        break
+                    // case 'Tokens.Transfer':
+                    //     await handleTokenTransfer({
+                    //         ...ctx,
+                    //         block,
+                    //         event,
+                    //     })
+                    //     break
                     // zenlink
                     case 'ZenlinkProtocol.LiquidityAdded':
                         await handleLiquidityAdded({

@@ -13,6 +13,15 @@ export const KSM = '2124-2-256'
 export const WHITELIST: string[] = [
     '2124-0-0', // wnative
     '2124-2-256', // ksm
+    '2124-2-257', // usdt
+    '2124-2-512', // xlm
+    '2124-2-513', // usdc
+    '2124-2-514', // tzs
+    '2124-2-515', // brl
+    '2094-2-256', // dot
+    '2094-2-262', // glmr
+    '2094-2-512', // xlm
+    '2094-2-513', // usdc
 ]
 
 // minimum liquidity required to count towards tracked volume for pairs with small # of Lps

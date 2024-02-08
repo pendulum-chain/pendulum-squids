@@ -39,23 +39,6 @@ export enum CurrencyTypeEnum {
     Token = 4,
 }
 
-export enum CurrencyIndexEnum {
-    KSM = 0,
-    USDT = 1,
-    XLM = 256,
-}
-
-export const currencyTokenSymbolMap: { [index: number]: string } = {
-    // XCM assets
-    0: 'KSM',
-    1: 'USDT',
-
-    // Stellar assets
-    256: 'XLM',
-}
-
-export const invertedTokenSymbolMap = invert(currencyTokenSymbolMap)
-
 export function addressFromAsset({ chainId, assetIndex, assetType }: AssetId) {
     return `${chainId}-${assetType}-${assetIndex.toString()}`
 }

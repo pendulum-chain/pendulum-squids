@@ -10,11 +10,7 @@ import { Bundle, Farm, Incentive, Pair, SingleTokenLock } from '../model'
 import { EventHandlerContext } from '../processor'
 import { convertTokenToDecimal, getTimePerBlock } from './helpers'
 import { sortAssets } from './sort'
-import {
-    currencyIdToAssetIndex,
-    invertedTokenSymbolMap,
-    parseToTokenIndex,
-} from './token'
+import { currencyIdToAssetIndex, parseToTokenIndex } from './token'
 import { config, network } from '../config'
 import { BlockHeader, ParentBlockHeader } from '@subsquid/substrate-processor'
 import { codec } from '@subsquid/ss58'

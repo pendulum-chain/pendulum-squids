@@ -158,11 +158,10 @@ export async function handleLiquidityAdded(ctx: EventHandlerContext) {
     // safety check
     if (!transaction) return
     const { mints } = transaction
-    // if (!mints.length) return
 
-    //     const mint = await ctx.store.get(Mint, mints[mints.length - 1])
-    //    console.log('mint', mint)
-    //     if (!mint) return
+    if (!mints.length) return
+    const mint = await ctx.store.get(Mint, mints[mints.length - 1])
+    if (!mint) return
 
     let event = decodeEvent(network, ctx, 'zenlinkProtocol', 'liquidityAdded')
 
@@ -197,17 +196,17 @@ export async function handleLiquidityAdded(ctx: EventHandlerContext) {
     await ctx.store.save(pair)
     await ctx.store.save(factory)
 
-    // mint.sender = codec(config.prefix).encode(event[0])
-    // mint.amount0 = token0Amount.toFixed(6)
-    // mint.amount1 = token1Amount.toFixed(6)
-    // mint.logIndex = ctx.event.index
-    // mint.amountUSD = amountTotalUSD.toFixed(6)
-    // await ctx.store.save(mint)
+    mint.sender = codec(config.prefix).encode(event[0])
+    mint.amount0 = token0Amount.toFixed(6)
+    mint.amount1 = token1Amount.toFixed(6)
+    mint.logIndex = ctx.event.index
+    mint.amountUSD = amountTotalUSD.toFixed(6)
+    await ctx.store.save(mint)
 
-    // const user = (await ctx.store.get(User, mint.to))!
-    // // update the LP position
-    // const liquidityPosition = await updateLiquidityPosition(ctx, pair, user)
-    // await createLiquiditySnapShot(ctx, pair, liquidityPosition)
+    const user = (await ctx.store.get(User, mint.to))!
+    // update the LP position
+    const liquidityPosition = await updateLiquidityPosition(ctx, pair, user)
+    await createLiquiditySnapShot(ctx, pair, liquidityPosition)
 
     // update day entities
     await updatePairDayData(ctx, pair)

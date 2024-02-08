@@ -85,7 +85,20 @@ export const TOKEN_METADATA_MAP: { [address: string]: TokenBase } = {
     },
 }
 
-export const CHAIN_ID = 2124
+export function getChainIdFromNetwork(network: string): number {
+    if (network === 'amplitude') {
+        return AMPLITUDE_CHAIN_ID
+    } else if (network === 'pendulum') {
+        return PENDULUM_CHAIN_ID
+    } else if (network === 'foucoco') {
+        return AMPLITUDE_CHAIN_ID
+    } else {
+        throw new Error(`Network ${network} not supported`)
+    }
+}
+
+export const AMPLITUDE_CHAIN_ID = 2124
+export const PENDULUM_CHAIN_ID = 2094
 
 export const ZERO_BI = 0n
 export const ONE_BI = 1n

@@ -1,4 +1,4 @@
-import { CHAIN_ID } from '../constants'
+import { getChainIdFromNetwork } from '../constants'
 import { getPair } from '../entities/pair'
 import { getOrCreateToken } from '../entities/token'
 import {
@@ -153,7 +153,7 @@ export async function updateFarmingPoolInfo(
         farmingPoolInfo!.basicRewards.map(async (item: any) => {
             const assetIndex = currencyIdToAssetIndex(item[0])
             const token = await getOrCreateToken(ctx, {
-                chainId: CHAIN_ID,
+                chainId: getChainIdFromNetwork(network),
                 assetType: assetIndex === 0 ? 0 : 2,
                 assetIndex: BigInt(assetIndex),
             })
@@ -175,7 +175,7 @@ export async function updateFarmingPoolInfo(
         farmingPoolInfo!.basicRewards.map(async (item: any) => {
             const assetIndex = currencyIdToAssetIndex(item[0])
             const token = await getOrCreateToken(ctx, {
-                chainId: CHAIN_ID,
+                chainId: getChainIdFromNetwork(network),
                 assetType: assetIndex === 0 ? 0 : 2,
                 assetIndex: BigInt(assetIndex),
             })
@@ -217,12 +217,12 @@ export async function updateFarmingPoolInfo(
             Number(token1Symbol)
         )
         const _asset0 = {
-            chainId: CHAIN_ID,
+            chainId: getChainIdFromNetwork(network),
             assetType: token0Index === 0 ? 0 : 2,
             assetIndex: BigInt(token0Index),
         }
         const _asset1 = {
-            chainId: CHAIN_ID,
+            chainId: getChainIdFromNetwork(network),
             assetType: token1Index === 0 ? 0 : 2,
             assetIndex: BigInt(token1Index),
         }
@@ -270,7 +270,7 @@ export async function updateFarmingPoolInfo(
         rewardUSDRate = rewardUSDPerDay.toFixed(6)
 
         const token = await getOrCreateToken(ctx, {
-            chainId: CHAIN_ID,
+            chainId: getChainIdFromNetwork(network),
             assetType: assetIdIndex === 0 ? 0 : 2,
             assetIndex: BigInt(assetIdIndex),
         })
@@ -403,7 +403,7 @@ export async function killFarmingPoolInfo(
         farmingPoolInfo!.basicRewards.map(async (item: any) => {
             const assetIndex = currencyIdToAssetIndex(item[0])
             const token = await getOrCreateToken(ctx, {
-                chainId: CHAIN_ID,
+                chainId: getChainIdFromNetwork(network),
                 assetType: assetIndex === 0 ? 0 : 2,
                 assetIndex: BigInt(assetIndex),
             })
@@ -426,7 +426,7 @@ export async function killFarmingPoolInfo(
         farmingPoolInfo!.basicRewards.map(async (item: any) => {
             const assetIndex = currencyIdToAssetIndex(item[0])
             const token = await getOrCreateToken(ctx, {
-                chainId: CHAIN_ID,
+                chainId: getChainIdFromNetwork(network),
                 assetType: assetIndex === 0 ? 0 : 2,
                 assetIndex: BigInt(assetIndex),
             })
@@ -466,12 +466,12 @@ export async function killFarmingPoolInfo(
             Number(invertedTokenSymbolMap[token1Symbol.__kind])
         )
         const _asset0 = {
-            chainId: CHAIN_ID,
+            chainId: getChainIdFromNetwork(network),
             assetType: token0Index === 0 ? 0 : 2,
             assetIndex: BigInt(token0Index),
         }
         const _asset1 = {
-            chainId: CHAIN_ID,
+            chainId: getChainIdFromNetwork(network),
             assetType: token1Index === 0 ? 0 : 2,
             assetIndex: BigInt(token1Index),
         }
@@ -519,7 +519,7 @@ export async function killFarmingPoolInfo(
         rewardUSDRate = rewardUSDPerDay.toFixed(6)
 
         const token = await getOrCreateToken(ctx, {
-            chainId: CHAIN_ID,
+            chainId: getChainIdFromNetwork(network),
             assetType: assetIdIndex === 0 ? 0 : 2,
             assetIndex: BigInt(assetIdIndex),
         })

@@ -454,17 +454,11 @@ export async function killFarmingPoolInfo(
 
     let farmingData: Farm | undefined
 
-    if (farmingToken.__kind === 'LPToken') {
+    if (farmingToken.__kind === 'ZenlinkLPToken') {
         const [token0Symbol, token0Id, token1Symbol, token1Id] =
             farmingToken.value
-        const token0Index = parseToTokenIndex(
-            token0Id,
-            Number(invertedTokenSymbolMap[token0Symbol.__kind])
-        )
-        const token1Index = parseToTokenIndex(
-            token1Id,
-            Number(invertedTokenSymbolMap[token1Symbol.__kind])
-        )
+        const token0Index = parseToTokenIndex(token0Id, Number(token0Symbol))
+        const token1Index = parseToTokenIndex(token1Id, Number(token1Symbol))
         const _asset0 = {
             chainId: getChainIdFromNetwork(network),
             assetType: token0Index === 0 ? 0 : 2,

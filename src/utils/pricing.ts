@@ -6,9 +6,37 @@ import { Pair } from '../model'
 import { EventHandlerContext } from '../processor'
 import { assetIdFromAddress } from './token'
 import { getOrCreateOraclePrice } from '../entities/oraclePrice'
+import { network } from '../config'
 
-export const WNATIVE = '2124-0-0'
-export const KSM = '2124-2-256'
+export const WNATIVE_AMPLITUDE = '2124-0-0'
+export const WNATIVE_PENDULUM = '2094-0-0'
+
+function getNativeFromNetwork(network: string): string {
+    if (network === 'amplitude') {
+        return WNATIVE_AMPLITUDE
+    } else if (network === 'pendulum') {
+        return WNATIVE_PENDULUM
+    } else if (network === 'foucoco') {
+        return WNATIVE_AMPLITUDE
+    } else {
+        throw new Error(`Network ${network} not supported`)
+    }
+}
+
+export const RELAY_NATIVE_AMPLITUDE = '2124-2-256'
+export const RELAY_NATIVE_PENDULUM = '2094-2-256'
+
+function getRelayFromNetwork(network: string): string {
+    if (network === 'amplitude') {
+        return RELAY_NATIVE_AMPLITUDE
+    } else if (network === 'pendulum') {
+        return RELAY_NATIVE_PENDULUM
+    } else if (network === 'foucoco') {
+        return RELAY_NATIVE_AMPLITUDE
+    } else {
+        throw new Error(`Network ${network} not supported`)
+    }
+}
 
 export const WHITELIST: string[] = [
     '2124-0-0', // wnative
@@ -18,6 +46,7 @@ export const WHITELIST: string[] = [
     '2124-2-513', // usdc
     '2124-2-514', // tzs
     '2124-2-515', // brl
+    '2094-0-0', // wnative pendulum
     '2094-2-256', // dot
     '2094-2-262', // glmr
     '2094-2-512', // xlm
@@ -36,8 +65,8 @@ export async function getEthPriceInUSD(
     ctx: EventHandlerContext
 ): Promise<BigDecimal> {
     const wnativePair = await getPair(ctx, [
-        assetIdFromAddress(WNATIVE),
-        assetIdFromAddress(KSM),
+        assetIdFromAddress(getNativeFromNetwork(network)),
+        assetIdFromAddress(getRelayFromNetwork(network)),
     ])
 
     if (!wnativePair) {
@@ -53,7 +82,7 @@ export async function getEthPriceInUSD(
         10 ** ksmOraclePrice.decimals
     )
 
-    return wnativePair.token0.id === KSM
+    return wnativePair.token0.id === getRelayFromNetwork(network)
         ? BigDecimal(wnativePair.token0Price).mul(ksmPriceDecimal)
         : BigDecimal(wnativePair.token1Price).mul(ksmPriceDecimal)
 }
@@ -67,7 +96,7 @@ export async function findEthPerToken(
     tokenId: string
 ): Promise<BigDecimal> {
     // The basis of our prices is our native token, which we assign to have a price of 1 unit
-    if (tokenId === WNATIVE) {
+    if (tokenId === getNativeFromNetwork(network)) {
         return ONE_BD
     }
 

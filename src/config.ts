@@ -7,6 +7,9 @@ export const network = (process.env.NETWORK as Network) || 'amplitude'
 export const blockRetentionNumber = process.env.BLOCK_RETENTION_NUMBER
     ? parseInt(process.env.BLOCK_RETENTION_NUMBER, 10)
     : 7200
+export const catchupPriceUpdatePeriod = process.env.CATCHUP_PRICE_UPDATE_PERIOD
+    ? parseInt(process.env.CATCHUP_PRICE_UPDATE_PERIOD, 10)
+    : 100
 
 const pendulumConfig: ProcessorConfig = {
     chainName: 'pendulum',

@@ -29,27 +29,15 @@ export async function handleContractInstantiated(ctx: EventHandlerContext) {
 
     switch (contractCodeHash) {
         case backstopPoolAbi.metadata.source.hash:
-            console.log(
-                'New backstopPool created',
-                hexToSs58(contractHexAddress),
-                await createBackstopPool(ctx, contractHexAddress)
-            )
+            await createBackstopPool(ctx, contractHexAddress)
             break
 
         case routerAbi.metadata.source.hash:
-            console.log(
-                'New router created',
-                hexToSs58(contractHexAddress),
-                await createRouter(ctx, contractHexAddress)
-            )
+            await createRouter(ctx, contractHexAddress)
             break
 
         case swapPoolAbi.metadata.source.hash:
-            console.log(
-                'New swapPool created',
-                hexToSs58(contractHexAddress),
-                await createSwapPool(ctx, contractHexAddress)
-            )
+            await createSwapPool(ctx, contractHexAddress)
             break
     }
 }

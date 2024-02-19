@@ -19,8 +19,6 @@ export async function handleSwapPoolEvent(
 ) {
     const event = decodeEvent(ctx.event.args.data)
 
-    console.log('Process swapPool event', swapPool.id, event.__kind)
-
     switch (event.__kind) {
         case 'BackstopDrain':
             await handleBackstopDrain(ctx, swapPool)
@@ -61,8 +59,6 @@ export async function handleBackstopDrain(
     ctx: EventHandlerContext,
     swapPool: SwapPool
 ) {
-    console.log('handleBackstopDrain', swapPool)
-
     await updateSwapPoolCoverageAndSupply(ctx, swapPool)
     await ctx.store.save(swapPool)
 
@@ -162,12 +158,6 @@ async function filterSwapFeeHistory(
 
     for (const swapFee of feesHistory) {
         if (swapFee.timestamp < pastPeriodInSeconds) {
-            console.log(
-                'Remove swap fee',
-                swapFee.id,
-                swapFee.timestamp,
-                pastPeriodInSeconds
-            )
             await ctx.store.remove(swapFee)
         }
     }
@@ -233,13 +223,6 @@ export async function updateAprAfterSwap(
             totalBackstopFees,
             backstopTotalSupply,
             BigInt(backstopPoolLpTokenDecimals)
-        )
-        console.log(
-            'backstop apr',
-            backstop.apr,
-            totalBackstopFees,
-            backstopTotalSupply,
-            backstopPoolLpTokenDecimals
         )
         await ctx.store.save(backstop)
     }

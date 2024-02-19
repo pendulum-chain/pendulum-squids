@@ -16,10 +16,7 @@ export async function handleBackstopPoolEvent(
     ctx: EventHandlerContext,
     backstopPool: BackstopPool
 ) {
-    console.log('Raw backstopPool event', ctx.event.args.data)
     const event = decodeEvent(ctx.event.args.data)
-
-    console.log('Process backstopPool event', backstopPool.id, event.__kind)
 
     switch (event.__kind) {
         case 'Burn':
@@ -140,6 +137,4 @@ export async function updateBackstopCoverageAndSupply(
     backstopPool.reserves = await poolTokenContract.balanceOf(
         contractHexAddress
     )
-
-    console.log('Updated backstopPool', backstopPool)
 }

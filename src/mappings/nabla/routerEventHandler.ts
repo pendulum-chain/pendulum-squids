@@ -21,8 +21,6 @@ export async function handleRouterEvent(
 ) {
     const event = decodeEvent(ctx.event.args.data)
 
-    console.log('Process router event', router.id, event.__kind)
-
     switch (event.__kind) {
         case 'OwnershipTransferred':
             // This event will always be emitted on router creation
@@ -101,13 +99,11 @@ export async function handleSwapPoolRegistered(
     const swapPoolSs58Address = hexToSs58(event.pool)
     const swapPool = await getSwapPool(ctx, swapPoolSs58Address)
 
-    console.log('SwapPool', swapPool)
     if (swapPool === undefined) {
         // this is a non-standard or malicious swap pool, ignore
         return
     }
 
-    console.log('Token', swapPool.token)
     const token = await getOrCreateNablaToken(ctx, ss58ToHex(swapPool.token.id))
 
     const registeredSwapPool = await getSwapPoolsOfRouterForToken(

@@ -136,7 +136,6 @@ export async function createSwapPool(
     hexAddress: string
 ) {
     const ss58Address = hexToSs58(hexAddress)
-    console.log('createSwapPool', hexAddress, ss58Address)
     if (await getSwapPool(ctx, ss58Address)) {
         // Unexpected error: swap pool already exists at that address
         return
@@ -197,7 +196,6 @@ export async function createSwapFee(
     backstopPool: BackstopPool | undefined
 ): Promise<NablaSwapFee> {
     const swapFeeId = `${blockNumber}-${extrinsicIndex ?? ''}`
-    console.log('Create new swap fee', swapFeeId)
     const swapFee = new NablaSwapFee({
         id: swapFeeId,
         lpFees,

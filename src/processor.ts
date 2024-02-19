@@ -36,7 +36,6 @@ import {
     handleTokenWithdrawn,
 } from './mappings/token'
 import { handleBalanceTransfer } from './mappings/balances'
-import { handleContractEvent } from './mappings/nabla'
 import { handleUpdatedPrices } from './mappings/prices'
 import { handleBatchWithRemark } from './mappings/remark'
 import {
@@ -45,8 +44,12 @@ import {
     saveEvent,
     saveExtrinsic,
 } from './mappings/block-details'
+import {
+    handleContractEvent,
+    handleContractInstantiated,
+} from './mappings/nabla/handleEvent'
 
-const DataSelection = { data: { event: true } } as const
+Error.stackTraceLimit = 100
 
 const processor = new SubstrateBatchProcessor()
     .setDataSource(config.dataSource)
@@ -117,6 +120,7 @@ const processor = new SubstrateBatchProcessor()
             'Tokens.BalanceSet',
             // Contracts
             'Contracts.ContractEmitted',
+            'Contracts.Instantiated',
         ],
         call: true,
         extrinsic: true,
@@ -180,7 +184,10 @@ processor.run(new TypeormDatabase(), async (ctx) => {
             }
         }
 
+        // console.log('Process events', events.length)
+        let i = 1
         for (let event of events) {
+            // console.log(`Process event ${i++}/${events.length}`, event)
             try {
                 switch (event.name) {
                     case 'Tokens.Deposited':
@@ -320,6 +327,13 @@ processor.run(new TypeormDatabase(), async (ctx) => {
                             event,
                         })
                         break
+                    case 'Contracts.Instantiated':
+                        await handleContractInstantiated({
+                            ...ctx,
+                            block,
+                            event,
+                        })
+                        break
                     // price oracle
                     case 'DiaOracleModule.UpdatedPrices':
                         // Only processing these events if the current block is the 'head' of the chain
@@ -340,6 +354,7 @@ processor.run(new TypeormDatabase(), async (ctx) => {
                     e
                 )
             }
+            // console.log('Done processing event', event)
         }
         // It's important to process the calls after the events,
         // because for the system.remark call we need to have

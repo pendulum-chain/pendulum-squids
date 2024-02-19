@@ -10,7 +10,7 @@ export const metadata = {
     },
     source: {
         compiler: 'solang 0.3.2',
-        hash: '0x480a1345d46a94f8d4a41c5f443c00de2f6d784e8ae1ebc3ea8a8a585990872a',
+        hash: '0xc473b9f6f31f711534a19a44c15935f3e1ffe0f031cf98b3f5701111dc793f49',
         language: 'Solidity 0.3.2',
     },
     spec: {
@@ -455,19 +455,6 @@ export const metadata = {
                 args: [],
                 default: false,
                 docs: [''],
-                label: 'decimals',
-                mutates: false,
-                payable: false,
-                returnType: {
-                    displayName: ['uint8'],
-                    type: 0,
-                },
-                selector: '0x313ce567',
-            },
-            {
-                args: [],
-                default: false,
-                docs: [''],
                 label: 'totalSupply',
                 mutates: false,
                 payable: false,
@@ -809,6 +796,21 @@ export const metadata = {
             {
                 args: [],
                 default: false,
+                docs: [
+                    'Returns the decimals of the LP token of this pool\nThis is defined to have the same decimals as the pool token itself\nin order to greatly simplify calculations that involve pool token amounts\nand LP token amounts',
+                ],
+                label: 'decimals',
+                mutates: false,
+                payable: false,
+                returnType: {
+                    displayName: ['uint8'],
+                    type: 0,
+                },
+                selector: '0x313ce567',
+            },
+            {
+                args: [],
+                default: false,
                 docs: [''],
                 label: 'totalLiabilities',
                 mutates: false,
@@ -911,6 +913,19 @@ export const metadata = {
                 selector: '0xebe26b9e',
             },
             {
+                args: [],
+                default: false,
+                docs: [''],
+                label: 'maxCoverageRatioForSwapIn',
+                mutates: false,
+                payable: false,
+                returnType: {
+                    displayName: ['uint256'],
+                    type: 3,
+                },
+                selector: '0xb2f3447a',
+            },
+            {
                 args: [
                     {
                         label: '_durationInBlocks',
@@ -953,21 +968,41 @@ export const metadata = {
             {
                 args: [
                     {
-                        label: '_lpFeeBps',
+                        label: '_maxCoverageRatio',
+                        type: {
+                            displayName: ['uint256'],
+                            type: 3,
+                        },
+                    },
+                ],
+                default: false,
+                docs: [
+                    'Set new upper limit of pool coverage ratio (reserves / liabilities) for swap-in',
+                ],
+                label: 'setMaxCoverageRatioForSwapIn',
+                mutates: true,
+                payable: false,
+                returnType: null,
+                selector: '0x0668d07c',
+            },
+            {
+                args: [
+                    {
+                        label: '_lpFee',
                         type: {
                             displayName: ['uint256'],
                             type: 3,
                         },
                     },
                     {
-                        label: '_backstopFeeBps',
+                        label: '_backstopFee',
                         type: {
                             displayName: ['uint256'],
                             type: 3,
                         },
                     },
                     {
-                        label: '_protocolFeeBps',
+                        label: '_protocolFee',
                         type: {
                             displayName: ['uint256'],
                             type: 3,
@@ -1247,7 +1282,7 @@ export const metadata = {
                 args: [],
                 default: false,
                 docs: [
-                    'Computes the excess liquidity that forms that valuation of the backstop pool is defined as b + C - B - L where - b is reserve - C is the amount of pool tokens in the pool - B is reserveWithSlippage - L is totalLiabilities',
+                    'Computes the excess liquidity that forms that valuation of the backstop pool is defined as b + C - B - L where - b is reserve - C is the amount of `asset()` tokens in the pool - B is reserveWithSlippage - L is totalLiabilities The excess liquidity is a fixed point number using the decimals of this pool',
                 ],
                 label: 'getExcessLiquidity',
                 mutates: false,
@@ -1666,7 +1701,7 @@ export const metadata = {
                                                     ty: 6,
                                                 },
                                             },
-                                            name: 'lpFeeBps',
+                                            name: 'lpFee',
                                         },
                                         {
                                             layout: {
@@ -1675,7 +1710,7 @@ export const metadata = {
                                                     ty: 6,
                                                 },
                                             },
-                                            name: 'backstopFeeBps',
+                                            name: 'backstopFee',
                                         },
                                         {
                                             layout: {
@@ -1684,7 +1719,7 @@ export const metadata = {
                                                     ty: 6,
                                                 },
                                             },
-                                            name: 'protocolFeeBps',
+                                            name: 'protocolFee',
                                         },
                                     ],
                                     name: 'SwapFees',
@@ -1694,6 +1729,20 @@ export const metadata = {
                         },
                     },
                     name: 'swapFeeConfig',
+                },
+                {
+                    layout: {
+                        root: {
+                            layout: {
+                                leaf: {
+                                    key: '0x00000017',
+                                    ty: 3,
+                                },
+                            },
+                            root_key: '0x00000017',
+                        },
+                    },
+                    name: 'maxCoverageRatioForSwapIn',
                 },
             ],
             name: 'SwapPool',
@@ -1778,15 +1827,15 @@ export const metadata = {
                     composite: {
                         fields: [
                             {
-                                name: 'lpFeeBps',
+                                name: 'lpFee',
                                 type: 6,
                             },
                             {
-                                name: 'backstopFeeBps',
+                                name: 'backstopFee',
                                 type: 6,
                             },
                             {
-                                name: 'protocolFeeBps',
+                                name: 'protocolFee',
                                 type: 6,
                             },
                         ],
@@ -1976,10 +2025,6 @@ export class Contract {
         return this.stateCall('0x95d89b41', [])
     }
 
-    decimals(): Promise<uint8> {
-        return this.stateCall('0x313ce567', [])
-    }
-
     totalSupply(): Promise<uint256> {
         return this.stateCall('0x18160ddd', [])
     }
@@ -2012,6 +2057,10 @@ export class Contract {
         return this.stateCall('0xc2d41601', [])
     }
 
+    decimals(): Promise<uint8> {
+        return this.stateCall('0x313ce567', [])
+    }
+
     totalLiabilities(): Promise<uint256> {
         return this.stateCall('0xf73579a9', [])
     }
@@ -2042,6 +2091,10 @@ export class Contract {
 
     slippageCurve(): Promise<AccountId> {
         return this.stateCall('0xebe26b9e', [])
+    }
+
+    maxCoverageRatioForSwapIn(): Promise<uint256> {
+        return this.stateCall('0xb2f3447a', [])
     }
 
     swapFees(): Promise<return_type> {
@@ -2089,13 +2142,13 @@ export type int256 = bigint
 
 export type return_type = [uint256, uint256, uint256]
 
+export type uint8 = number
+
 export type bool = boolean
 
 export type AccountId = Bytes
 
 export type uint256 = bigint
-
-export type uint8 = number
 
 export type Constructor = Constructor_new
 
@@ -2130,6 +2183,7 @@ export type Message =
     | Message_increaseAllowance
     | Message_insuranceWithdrawalTimelock
     | Message_insuranceWithdrawalUnlock
+    | Message_maxCoverageRatioForSwapIn
     | Message_name
     | Message_owner
     | Message_pause
@@ -2143,6 +2197,7 @@ export type Message =
     | Message_reserveWithSlippage
     | Message_router
     | Message_setInsuranceWithdrawalTimelock
+    | Message_setMaxCoverageRatioForSwapIn
     | Message_setPoolCap
     | Message_setSwapFees
     | Message_sharesTargetWorth
@@ -2232,7 +2287,10 @@ export interface Message_coverage {
 }
 
 /**
- *
+ * Returns the decimals of the LP token of this pool
+This is defined to have the same decimals as the pool token itself
+in order to greatly simplify calculations that involve pool token amounts
+and LP token amounts
  */
 export interface Message_decimals {
     __kind: 'decimals'
@@ -2256,7 +2314,7 @@ export interface Message_deposit {
 }
 
 /**
- * Computes the excess liquidity that forms that valuation of the backstop pool is defined as b + C - B - L where - b is reserve - C is the amount of pool tokens in the pool - B is reserveWithSlippage - L is totalLiabilities
+ * Computes the excess liquidity that forms that valuation of the backstop pool is defined as b + C - B - L where - b is reserve - C is the amount of `asset()` tokens in the pool - B is reserveWithSlippage - L is totalLiabilities The excess liquidity is a fixed point number using the decimals of this pool
  */
 export interface Message_getExcessLiquidity {
     __kind: 'getExcessLiquidity'
@@ -2284,6 +2342,13 @@ export interface Message_insuranceWithdrawalTimelock {
 export interface Message_insuranceWithdrawalUnlock {
     __kind: 'insuranceWithdrawalUnlock'
     liquidityProvider: AccountId
+}
+
+/**
+ *
+ */
+export interface Message_maxCoverageRatioForSwapIn {
+    __kind: 'maxCoverageRatioForSwapIn'
 }
 
 /**
@@ -2381,6 +2446,14 @@ export interface Message_setInsuranceWithdrawalTimelock {
 }
 
 /**
+ * Set new upper limit of pool coverage ratio (reserves / liabilities) for swap-in
+ */
+export interface Message_setMaxCoverageRatioForSwapIn {
+    __kind: 'setMaxCoverageRatioForSwapIn'
+    maxCoverageRatio: uint256
+}
+
+/**
  * Set new upper limit of pool reserves. Will disable deposits when reached. Can always set to an amount < current reserves to temporarily restrict deposits.
  */
 export interface Message_setPoolCap {
@@ -2393,9 +2466,9 @@ export interface Message_setPoolCap {
  */
 export interface Message_setSwapFees {
     __kind: 'setSwapFees'
-    lpFeeBps: uint256
-    backstopFeeBps: uint256
-    protocolFeeBps: uint256
+    lpFee: uint256
+    backstopFee: uint256
+    protocolFee: uint256
 }
 
 /**

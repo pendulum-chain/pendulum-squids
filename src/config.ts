@@ -30,8 +30,9 @@ const foucocoConfig: ProcessorConfig = {
     chainName: 'foucoco',
     prefix: 'amplitude',
     dataSource: {
-        archive: lookupArchive('foucoco', { release: 'ArrowSquid' }),
-        chain: 'wss://pencol-roa-00.pendulumchain.tech',
+        archive: undefined, // lookupArchive('foucoco', { release: 'ArrowSquid' }),
+        chain: 'ws://127.0.0.1:9944',
+        //chain: 'wss://pencol-roa-00.pendulumchain.tech',
     },
 }
 
@@ -58,5 +59,5 @@ export const maxHeightPromise = axios
             'Error getting block height from archive, using default value instead:',
             error
         )
-        return Number.MAX_SAFE_INTEGER
+        return 0
     })

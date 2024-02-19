@@ -13,14 +13,11 @@ import {
     formatFarmingPoolEditedEvent,
     formatFarmingPoolKilledEvent,
     formatFarmingPoolResetEvent,
-    formatFarmingRetireLimitSetEvent,
     formatFarmingWithdrawClaimedEvent,
     formatFarmingWithdrawnEvent,
-    getFamingPoolInfo,
     killFarmingPoolInfo,
     updateFarmingPoolInfo,
 } from '../../utils/farming'
-import { getStakePosition } from '../../entities/farming'
 import { getUser } from '../../entities/user'
 import { Farm } from '../../model'
 import { updateStakePosition } from '../farming/update'

@@ -10,7 +10,7 @@ export const metadata = {
     },
     source: {
         compiler: 'solang 0.3.2',
-        hash: '0x09e907520a2e0be46d0a350df95c431857cbf88f52094be242f15ae79e524f3c',
+        hash: '0x026ff1b46ca6ae1d60aed9cea110e48ee635da3087675e463bc717a9c23ffbe1',
         language: 'Solidity 0.3.2',
     },
     spec: {
@@ -72,11 +72,11 @@ export const metadata = {
             },
             balance: {
                 displayName: ['Balance'],
-                type: 10,
+                type: 11,
             },
             blockNumber: {
                 displayName: ['BlockNumber'],
-                type: 11,
+                type: 12,
             },
             chainExtension: {
                 displayName: [],
@@ -84,12 +84,12 @@ export const metadata = {
             },
             hash: {
                 displayName: ['Hash'],
-                type: 12,
+                type: 13,
             },
             maxEventTopics: 4,
             timestamp: {
                 displayName: ['Timestamp'],
-                type: 11,
+                type: 12,
             },
         },
         events: [
@@ -437,7 +437,7 @@ export const metadata = {
         ],
         lang_error: {
             displayName: ['SolidityError'],
-            type: 15,
+            type: 16,
         },
         messages: [
             {
@@ -465,19 +465,6 @@ export const metadata = {
                     type: 5,
                 },
                 selector: '0x95d89b41',
-            },
-            {
-                args: [],
-                default: false,
-                docs: [''],
-                label: 'decimals',
-                mutates: false,
-                payable: false,
-                returnType: {
-                    displayName: ['uint8'],
-                    type: 0,
-                },
-                selector: '0x313ce567',
             },
             {
                 args: [],
@@ -824,6 +811,21 @@ export const metadata = {
             {
                 args: [],
                 default: false,
+                docs: [
+                    'Returns the decimals of the LP token of this pool\nThis is defined to have the same decimals as the pool token itself\nin order to greatly simplify calculations that involve pool token amounts\nand LP token amounts',
+                ],
+                label: 'decimals',
+                mutates: false,
+                payable: false,
+                returnType: {
+                    displayName: ['uint8'],
+                    type: 0,
+                },
+                selector: '0x313ce567',
+            },
+            {
+                args: [],
+                default: false,
                 docs: [''],
                 label: 'router',
                 mutates: false,
@@ -1112,7 +1114,7 @@ export const metadata = {
                 args: [],
                 default: false,
                 docs: [
-                    "return worth of the whole backstop pool in `asset()`, incl. all\nswap pools' excess liquidity and the backstop pool's liabilities",
+                    "return worth of the whole backstop pool in `asset()`, incl. all\nswap pools' excess liquidity and the backstop pool's liabilities\nthis is a fixed point number, using the backstop pool decimals",
                 ],
                 label: 'getTotalPoolWorth',
                 mutates: false,
@@ -1145,6 +1147,23 @@ export const metadata = {
                     type: 3,
                 },
                 selector: '0xcc045745',
+            },
+            {
+                args: [],
+                default: false,
+                docs: ['returns the backstop pool state'],
+                label: 'getPoolState',
+                mutates: false,
+                payable: false,
+                returnType: {
+                    displayName: [
+                        'BackstopPool',
+                        'getPoolState',
+                        'return_type',
+                    ],
+                    type: 10,
+                },
+                selector: '0x217ac237',
             },
         ],
     },
@@ -1499,13 +1518,22 @@ export const metadata = {
             id: 10,
             type: {
                 def: {
+                    tuple: [3, 7, 3],
+                },
+                path: ['BackstopPool', 'getPoolState', 'return_type'],
+            },
+        },
+        {
+            id: 11,
+            type: {
+                def: {
                     primitive: 'u128',
                 },
                 path: ['uint128'],
             },
         },
         {
-            id: 11,
+            id: 12,
             type: {
                 def: {
                     primitive: 'u64',
@@ -1514,7 +1542,7 @@ export const metadata = {
             },
         },
         {
-            id: 12,
+            id: 13,
             type: {
                 def: {
                     composite: {
@@ -1529,7 +1557,7 @@ export const metadata = {
             },
         },
         {
-            id: 13,
+            id: 14,
             type: {
                 def: {
                     composite: {
@@ -1544,7 +1572,7 @@ export const metadata = {
             },
         },
         {
-            id: 14,
+            id: 15,
             type: {
                 def: {
                     composite: {
@@ -1559,7 +1587,7 @@ export const metadata = {
             },
         },
         {
-            id: 15,
+            id: 16,
             type: {
                 def: {
                     variant: {
@@ -1567,7 +1595,7 @@ export const metadata = {
                             {
                                 fields: [
                                     {
-                                        type: 13,
+                                        type: 14,
                                     },
                                 ],
                                 index: 0,
@@ -1576,7 +1604,7 @@ export const metadata = {
                             {
                                 fields: [
                                     {
-                                        type: 14,
+                                        type: 15,
                                     },
                                 ],
                                 index: 1,
@@ -1631,10 +1659,6 @@ export class Contract {
         return this.stateCall('0x95d89b41', [])
     }
 
-    decimals(): Promise<uint8> {
-        return this.stateCall('0x313ce567', [])
-    }
-
     totalSupply(): Promise<uint256> {
         return this.stateCall('0x18160ddd', [])
     }
@@ -1667,6 +1691,10 @@ export class Contract {
         return this.stateCall('0xc2d41601', [])
     }
 
+    decimals(): Promise<uint8> {
+        return this.stateCall('0x313ce567', [])
+    }
+
     router(): Promise<AccountId> {
         return this.stateCall('0xf887ea40', [])
     }
@@ -1691,6 +1719,10 @@ export class Contract {
         return this.stateCall('0xcc045745', [_sharesToBurn])
     }
 
+    getPoolState(): Promise<[uint256, int256, uint256]> {
+        return this.stateCall('0x217ac237', [])
+    }
+
     private async stateCall<T>(selector: string, args: any[]): Promise<T> {
         let input = _abi.encodeMessageInput(selector, args)
         let data = encodeCall(this.address, input)
@@ -1706,13 +1738,13 @@ export class Contract {
 
 export type int256 = bigint
 
+export type uint8 = number
+
 export type bool = boolean
 
 export type AccountId = Bytes
 
 export type uint256 = bigint
-
-export type uint8 = number
 
 export type Constructor = Constructor_new
 
@@ -1740,6 +1772,7 @@ export type Message =
     | Message_getBackedPool
     | Message_getBackedPoolCount
     | Message_getInsuranceFee
+    | Message_getPoolState
     | Message_getTotalPoolWorth
     | Message_increaseAllowance
     | Message_name
@@ -1811,7 +1844,10 @@ export interface Message_balanceOf {
 }
 
 /**
- *
+ * Returns the decimals of the LP token of this pool
+This is defined to have the same decimals as the pool token itself
+in order to greatly simplify calculations that involve pool token amounts
+and LP token amounts
  */
 export interface Message_decimals {
     __kind: 'decimals'
@@ -1858,8 +1894,16 @@ export interface Message_getInsuranceFee {
 }
 
 /**
+ * returns the backstop pool state
+ */
+export interface Message_getPoolState {
+    __kind: 'getPoolState'
+}
+
+/**
  * return worth of the whole backstop pool in `asset()`, incl. all
 swap pools' excess liquidity and the backstop pool's liabilities
+this is a fixed point number, using the backstop pool decimals
  */
 export interface Message_getTotalPoolWorth {
     __kind: 'getTotalPoolWorth'

@@ -74,10 +74,4 @@ export class SwapPool {
         nullable: false,
     })
     apr!: bigint
-
-    @Column_('numeric', {
-        transformer: marshal.bigintTransformer,
-        nullable: true,
-    })
-    coveredIndex!: bigint | undefined | null
 }

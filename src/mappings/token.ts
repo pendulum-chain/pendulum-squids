@@ -146,7 +146,7 @@ export async function handleTokenDeposited(ctx: EventHandlerContext) {
         currencyId: currencyId,
     })
 
-    ctx.store.save(tokenDeposit)
+    await ctx.store.save(tokenDeposit)
 
     if (event?.currencyId.__kind !== 'ZenlinkLPToken') return
 
@@ -285,7 +285,7 @@ export async function handleTokenWithdrawn(ctx: EventHandlerContext) {
         currencyId: currencyId,
     })
 
-    ctx.store.save(tokenWithdrawn)
+    await ctx.store.save(tokenWithdrawn)
 
     if (event?.currencyId.__kind !== 'ZenlinkLPToken') return
 

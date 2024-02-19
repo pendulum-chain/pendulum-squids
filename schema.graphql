@@ -753,7 +753,6 @@ type NablaToken @entity {
     decimals: Int! # number of decimal places the token can be split into
     name: String! # name of the token
     symbol: String! # ticker symbol of the token
-    latestSwapPool: SwapPool # swap pool of the token used by the router
     swapPools: [SwapPool!]! @derivedFrom(field: "token")
 }
 
@@ -771,7 +770,6 @@ type SwapPool @entity {
     paused: Boolean! # whether the swap pool is paused
     feesHistory: [NablaSwapFee!]! @derivedFrom(field: "swapPool") # history of swap fees
     apr: BigInt! # annual percentage rate of the swap pool
-    coveredIndex: BigInt # index of swap pool covered by the backstop pool
 }
 
 type BackstopPool @entity {

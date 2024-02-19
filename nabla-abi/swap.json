@@ -7,7 +7,7 @@
     },
     "source": {
         "compiler": "solang 0.3.2",
-        "hash": "0x480a1345d46a94f8d4a41c5f443c00de2f6d784e8ae1ebc3ea8a8a585990872a",
+        "hash": "0xc473b9f6f31f711534a19a44c15935f3e1ffe0f031cf98b3f5701111dc793f49",
         "language": "Solidity 0.3.2"
     },
     "spec": {
@@ -452,19 +452,6 @@
                 "args": [],
                 "default": false,
                 "docs": [""],
-                "label": "decimals",
-                "mutates": false,
-                "payable": false,
-                "returnType": {
-                    "displayName": ["uint8"],
-                    "type": 0
-                },
-                "selector": "0x313ce567"
-            },
-            {
-                "args": [],
-                "default": false,
-                "docs": [""],
                 "label": "totalSupply",
                 "mutates": false,
                 "payable": false,
@@ -806,6 +793,21 @@
             {
                 "args": [],
                 "default": false,
+                "docs": [
+                    "Returns the decimals of the LP token of this pool\nThis is defined to have the same decimals as the pool token itself\nin order to greatly simplify calculations that involve pool token amounts\nand LP token amounts"
+                ],
+                "label": "decimals",
+                "mutates": false,
+                "payable": false,
+                "returnType": {
+                    "displayName": ["uint8"],
+                    "type": 0
+                },
+                "selector": "0x313ce567"
+            },
+            {
+                "args": [],
+                "default": false,
                 "docs": [""],
                 "label": "totalLiabilities",
                 "mutates": false,
@@ -908,6 +910,19 @@
                 "selector": "0xebe26b9e"
             },
             {
+                "args": [],
+                "default": false,
+                "docs": [""],
+                "label": "maxCoverageRatioForSwapIn",
+                "mutates": false,
+                "payable": false,
+                "returnType": {
+                    "displayName": ["uint256"],
+                    "type": 3
+                },
+                "selector": "0xb2f3447a"
+            },
+            {
                 "args": [
                     {
                         "label": "_durationInBlocks",
@@ -950,21 +965,41 @@
             {
                 "args": [
                     {
-                        "label": "_lpFeeBps",
+                        "label": "_maxCoverageRatio",
+                        "type": {
+                            "displayName": ["uint256"],
+                            "type": 3
+                        }
+                    }
+                ],
+                "default": false,
+                "docs": [
+                    "Set new upper limit of pool coverage ratio (reserves / liabilities) for swap-in"
+                ],
+                "label": "setMaxCoverageRatioForSwapIn",
+                "mutates": true,
+                "payable": false,
+                "returnType": null,
+                "selector": "0x0668d07c"
+            },
+            {
+                "args": [
+                    {
+                        "label": "_lpFee",
                         "type": {
                             "displayName": ["uint256"],
                             "type": 3
                         }
                     },
                     {
-                        "label": "_backstopFeeBps",
+                        "label": "_backstopFee",
                         "type": {
                             "displayName": ["uint256"],
                             "type": 3
                         }
                     },
                     {
-                        "label": "_protocolFeeBps",
+                        "label": "_protocolFee",
                         "type": {
                             "displayName": ["uint256"],
                             "type": 3
@@ -1244,7 +1279,7 @@
                 "args": [],
                 "default": false,
                 "docs": [
-                    "Computes the excess liquidity that forms that valuation of the backstop pool is defined as b + C - B - L where - b is reserve - C is the amount of pool tokens in the pool - B is reserveWithSlippage - L is totalLiabilities"
+                    "Computes the excess liquidity that forms that valuation of the backstop pool is defined as b + C - B - L where - b is reserve - C is the amount of `asset()` tokens in the pool - B is reserveWithSlippage - L is totalLiabilities The excess liquidity is a fixed point number using the decimals of this pool"
                 ],
                 "label": "getExcessLiquidity",
                 "mutates": false,
@@ -1663,7 +1698,7 @@
                                                     "ty": 6
                                                 }
                                             },
-                                            "name": "lpFeeBps"
+                                            "name": "lpFee"
                                         },
                                         {
                                             "layout": {
@@ -1672,7 +1707,7 @@
                                                     "ty": 6
                                                 }
                                             },
-                                            "name": "backstopFeeBps"
+                                            "name": "backstopFee"
                                         },
                                         {
                                             "layout": {
@@ -1681,7 +1716,7 @@
                                                     "ty": 6
                                                 }
                                             },
-                                            "name": "protocolFeeBps"
+                                            "name": "protocolFee"
                                         }
                                     ],
                                     "name": "SwapFees"
@@ -1691,6 +1726,20 @@
                         }
                     },
                     "name": "swapFeeConfig"
+                },
+                {
+                    "layout": {
+                        "root": {
+                            "layout": {
+                                "leaf": {
+                                    "key": "0x00000017",
+                                    "ty": 3
+                                }
+                            },
+                            "root_key": "0x00000017"
+                        }
+                    },
+                    "name": "maxCoverageRatioForSwapIn"
                 }
             ],
             "name": "SwapPool"
@@ -1775,15 +1824,15 @@
                     "composite": {
                         "fields": [
                             {
-                                "name": "lpFeeBps",
+                                "name": "lpFee",
                                 "type": 6
                             },
                             {
-                                "name": "backstopFeeBps",
+                                "name": "backstopFee",
                                 "type": 6
                             },
                             {
-                                "name": "protocolFeeBps",
+                                "name": "protocolFee",
                                 "type": 6
                             }
                         ]

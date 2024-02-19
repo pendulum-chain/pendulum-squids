@@ -6,7 +6,7 @@
     },
     "source": {
         "compiler": "solang 0.3.2",
-        "hash": "0xc3a4799cb3feb885864b7bda2b7340893d52fc4f096024e42c5c59319e9cf4ed",
+        "hash": "0xe2399cb35f8b6165c02038216d66719e2f91be30096c0324fc759c0826684bcc",
         "language": "Solidity 0.3.2"
     },
     "spec": {
@@ -124,6 +124,19 @@
                 "args": [
                     {
                         "docs": [],
+                        "indexed": true,
+                        "label": "sender",
+                        "type": {
+                            "displayName": [
+                                "ink_primitives",
+                                "types",
+                                "AccountId"
+                            ],
+                            "type": 2
+                        }
+                    },
+                    {
+                        "docs": [],
                         "indexed": false,
                         "label": "pool",
                         "type": {
@@ -151,6 +164,38 @@
                 ],
                 "docs": ["Emitted when a new pool is registered"],
                 "label": "SwapPoolRegistered"
+            },
+            {
+                "args": [
+                    {
+                        "docs": [],
+                        "indexed": true,
+                        "label": "sender",
+                        "type": {
+                            "displayName": [
+                                "ink_primitives",
+                                "types",
+                                "AccountId"
+                            ],
+                            "type": 2
+                        }
+                    },
+                    {
+                        "docs": [],
+                        "indexed": false,
+                        "label": "asset",
+                        "type": {
+                            "displayName": [
+                                "ink_primitives",
+                                "types",
+                                "AccountId"
+                            ],
+                            "type": 2
+                        }
+                    }
+                ],
+                "docs": ["Emitted when pool is unregistered"],
+                "label": "SwapPoolUnregistered"
             },
             {
                 "args": [
@@ -295,7 +340,7 @@
             {
                 "args": [
                     {
-                        "label": "assetId",
+                        "label": "asset",
                         "type": {
                             "displayName": [
                                 "ink_primitives",
@@ -320,7 +365,7 @@
             {
                 "args": [
                     {
-                        "label": "assetId",
+                        "label": "asset",
                         "type": {
                             "displayName": [
                                 "ink_primitives",
@@ -403,12 +448,40 @@
                     }
                 ],
                 "default": false,
-                "docs": ["Registers a newly created swap pool."],
+                "docs": ["Registers a newly created swap pool"],
                 "label": "registerPool",
                 "mutates": true,
                 "payable": false,
-                "returnType": null,
+                "returnType": {
+                    "displayName": ["bool"],
+                    "type": 4
+                },
                 "selector": "0x7286e5e5"
+            },
+            {
+                "args": [
+                    {
+                        "label": "_asset",
+                        "type": {
+                            "displayName": [
+                                "ink_primitives",
+                                "types",
+                                "AccountId"
+                            ],
+                            "type": 2
+                        }
+                    }
+                ],
+                "default": false,
+                "docs": ["Unregisters a swap pool"],
+                "label": "unregisterPool",
+                "mutates": true,
+                "payable": false,
+                "returnType": {
+                    "displayName": ["bool"],
+                    "type": 4
+                },
+                "selector": "0xada61cc3"
             },
             {
                 "args": [],

@@ -8,7 +8,7 @@ export const metadata = {
     },
     source: {
         compiler: 'solang 0.3.2',
-        hash: '0xc3a4799cb3feb885864b7bda2b7340893d52fc4f096024e42c5c59319e9cf4ed',
+        hash: '0xe2399cb35f8b6165c02038216d66719e2f91be30096c0324fc759c0826684bcc',
         language: 'Solidity 0.3.2',
     },
     spec: {
@@ -126,6 +126,19 @@ export const metadata = {
                 args: [
                     {
                         docs: [],
+                        indexed: true,
+                        label: 'sender',
+                        type: {
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
+                            type: 2,
+                        },
+                    },
+                    {
+                        docs: [],
                         indexed: false,
                         label: 'pool',
                         type: {
@@ -153,6 +166,38 @@ export const metadata = {
                 ],
                 docs: ['Emitted when a new pool is registered'],
                 label: 'SwapPoolRegistered',
+            },
+            {
+                args: [
+                    {
+                        docs: [],
+                        indexed: true,
+                        label: 'sender',
+                        type: {
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
+                            type: 2,
+                        },
+                    },
+                    {
+                        docs: [],
+                        indexed: false,
+                        label: 'asset',
+                        type: {
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
+                            type: 2,
+                        },
+                    },
+                ],
+                docs: ['Emitted when pool is unregistered'],
+                label: 'SwapPoolUnregistered',
             },
             {
                 args: [
@@ -297,7 +342,7 @@ export const metadata = {
             {
                 args: [
                     {
-                        label: 'assetId',
+                        label: 'asset',
                         type: {
                             displayName: [
                                 'ink_primitives',
@@ -322,7 +367,7 @@ export const metadata = {
             {
                 args: [
                     {
-                        label: 'assetId',
+                        label: 'asset',
                         type: {
                             displayName: [
                                 'ink_primitives',
@@ -405,12 +450,40 @@ export const metadata = {
                     },
                 ],
                 default: false,
-                docs: ['Registers a newly created swap pool.'],
+                docs: ['Registers a newly created swap pool'],
                 label: 'registerPool',
                 mutates: true,
                 payable: false,
-                returnType: null,
+                returnType: {
+                    displayName: ['bool'],
+                    type: 4,
+                },
                 selector: '0x7286e5e5',
+            },
+            {
+                args: [
+                    {
+                        label: '_asset',
+                        type: {
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
+                            type: 2,
+                        },
+                    },
+                ],
+                default: false,
+                docs: ['Unregisters a swap pool'],
+                label: 'unregisterPool',
+                mutates: true,
+                payable: false,
+                returnType: {
+                    displayName: ['bool'],
+                    type: 4,
+                },
+                selector: '0xada61cc3',
             },
             {
                 args: [],
@@ -845,12 +918,12 @@ export class Contract {
         return this.stateCall('0x8da5cb5b', [])
     }
 
-    poolByAsset(assetId: AccountId): Promise<AccountId> {
-        return this.stateCall('0x06de94d8', [assetId])
+    poolByAsset(asset: AccountId): Promise<AccountId> {
+        return this.stateCall('0x06de94d8', [asset])
     }
 
-    oracleByAsset(assetId: AccountId): Promise<AccountId> {
-        return this.stateCall('0x38163032', [assetId])
+    oracleByAsset(asset: AccountId): Promise<AccountId> {
+        return this.stateCall('0x38163032', [asset])
     }
 
     getAmountOut(
@@ -901,6 +974,7 @@ export type Message =
     | Message_swapExactTokensForTokens
     | Message_transferOwnership
     | Message_unpause
+    | Message_unregisterPool
 
 /**
  * Get a quote for how many `_toToken` tokens `_amountIn` many `tokenIn`
@@ -917,7 +991,7 @@ export interface Message_getAmountOut {
  */
 export interface Message_oracleByAsset {
     __kind: 'oracleByAsset'
-    assetId: AccountId
+    asset: AccountId
 }
 
 /**
@@ -946,11 +1020,11 @@ export interface Message_paused {
  */
 export interface Message_poolByAsset {
     __kind: 'poolByAsset'
-    assetId: AccountId
+    asset: AccountId
 }
 
 /**
- * Registers a newly created swap pool.
+ * Registers a newly created swap pool
  */
 export interface Message_registerPool {
     __kind: 'registerPool'
@@ -1002,11 +1076,20 @@ export interface Message_unpause {
     __kind: 'unpause'
 }
 
+/**
+ * Unregisters a swap pool
+ */
+export interface Message_unregisterPool {
+    __kind: 'unregisterPool'
+    asset: AccountId
+}
+
 export type Event =
     | Event_OwnershipTransferred
     | Event_Paused
     | Event_Swap
     | Event_SwapPoolRegistered
+    | Event_SwapPoolUnregistered
     | Event_Unpaused
 
 export interface Event_OwnershipTransferred {
@@ -1032,7 +1115,14 @@ export interface Event_Swap {
 
 export interface Event_SwapPoolRegistered {
     __kind: 'SwapPoolRegistered'
+    sender: AccountId
     pool: AccountId
+    asset: AccountId
+}
+
+export interface Event_SwapPoolUnregistered {
+    __kind: 'SwapPoolUnregistered'
+    sender: AccountId
     asset: AccountId
 }
 

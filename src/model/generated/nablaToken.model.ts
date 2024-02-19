@@ -2,8 +2,6 @@ import {
     Entity as Entity_,
     Column as Column_,
     PrimaryColumn as PrimaryColumn_,
-    ManyToOne as ManyToOne_,
-    Index as Index_,
     OneToMany as OneToMany_,
 } from 'typeorm'
 import { SwapPool } from './swapPool.model'
@@ -25,10 +23,6 @@ export class NablaToken {
 
     @Column_('text', { nullable: false })
     symbol!: string
-
-    @Index_()
-    @ManyToOne_(() => SwapPool, { nullable: true })
-    latestSwapPool!: SwapPool | undefined | null
 
     @OneToMany_(() => SwapPool, (e) => e.token)
     swapPools!: SwapPool[]

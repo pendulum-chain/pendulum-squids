@@ -60,10 +60,20 @@ export const MINIMUM_USD_THRESHOLD_NEW_PAIRS = new BigDecimal(1000)
 export const MINIMUM_LIQUIDITY_THRESHOLD_ETH = new BigDecimal(5)
 
 // This function is used to get the price of our native token in USD
-// We use the ratio of the ksm-native pair and the KSM price stored in the on-chain price oracle to derive the price.
 export async function getEthPriceInUSD(
     ctx: EventHandlerContext
 ): Promise<BigDecimal> {
+    if (network === 'pendulum') {
+        // On Pendulum, we use the price from the on-chain price oracle
+        const penOraclePrice = await getOrCreateOraclePrice(
+            ctx,
+            'Pendulum',
+            'PEN'
+        )
+        return penOraclePrice ? BigDecimal(penOraclePrice.price) : ZERO_BD
+    }
+
+    // On Amplitude, we use the ratio of the ksm-native pair and the KSM price stored in the on-chain price oracle to derive the price.
     const wnativePair = await getPair(ctx, [
         assetIdFromAddress(getNativeFromNetwork(network)),
         assetIdFromAddress(getRelayFromNetwork(network)),

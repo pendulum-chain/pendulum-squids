@@ -42,7 +42,7 @@ export async function getVersionedStorage(
     storageEntity: string
 ) {
     let versionedStorage
-    if (network === 'foucoco') {
+    if (network === 'foucoco' || network === 'local') {
         versionedStorage = await getFoucocoStorage(
             moduleName,
             storageEntity,
@@ -76,7 +76,7 @@ export function decodeEvent(
     eventName: string
 ) {
     let event
-    if (network === 'foucoco') {
+    if (network === 'foucoco' || network === 'local') {
         event = decodeFoucocoEvent(moduleName, eventName, ctx)
     } else if (network === 'pendulum') {
         event = decodePendulumEvent(moduleName, eventName, ctx)

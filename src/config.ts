@@ -1,9 +1,9 @@
 import { ProcessorConfig } from './types'
 import { lookupArchive } from '@subsquid/archive-registry'
 import axios from 'axios'
-export type Network = 'foucoco' | 'amplitude' | 'pendulum'
-export const network: Network =
-    <'foucoco' | 'amplitude' | 'pendulum'>process.env.NETWORK || 'amplitude'
+export type Network = 'foucoco' | 'amplitude' | 'pendulum' | 'local'
+export const network = (process.env.NETWORK as Network) || 'amplitude'
+
 export const blockRetentionNumber = process.env.BLOCK_RETENTION_NUMBER
     ? parseInt(process.env.BLOCK_RETENTION_NUMBER, 10)
     : 7200
@@ -30,14 +30,24 @@ const foucocoConfig: ProcessorConfig = {
     chainName: 'foucoco',
     prefix: 'amplitude',
     dataSource: {
-        archive: undefined, // lookupArchive('foucoco', { release: 'ArrowSquid' }),
+        archive: lookupArchive('foucoco', { release: 'ArrowSquid' }),
+        chain: 'wss://pencol-roa-00.pendulumchain.tech',
+    },
+}
+
+const localConfig: ProcessorConfig = {
+    chainName: 'local',
+    prefix: 'amplitude',
+    dataSource: {
+        archive: undefined,
         chain: 'ws://127.0.0.1:9944',
-        //chain: 'wss://pencol-roa-00.pendulumchain.tech',
     },
 }
 
 export const config: ProcessorConfig =
-    network === 'foucoco'
+    network === 'local'
+        ? localConfig
+        : network === 'foucoco'
         ? foucocoConfig
         : network === 'amplitude'
         ? amplitudeConfig
@@ -59,5 +69,5 @@ export const maxHeightPromise = axios
             'Error getting block height from archive, using default value instead:',
             error
         )
-        return 0
+        return network === 'local' ? 0 : Number.MAX_SAFE_INTEGER
     })

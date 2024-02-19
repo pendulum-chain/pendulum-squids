@@ -49,8 +49,6 @@ import {
     handleContractInstantiated,
 } from './mappings/nabla/handleEvent'
 
-Error.stackTraceLimit = 100
-
 const processor = new SubstrateBatchProcessor()
     .setDataSource(config.dataSource)
     .setFields({
@@ -149,12 +147,6 @@ processor.run(new TypeormDatabase(), async (ctx) => {
     // Fetch max block height from the archive
     let maxHeight = await maxHeightPromise
 
-    console.log(
-        'new blocks',
-        ctx.blocks.length,
-        ctx.blocks.map((b) => b.header.height)
-    )
-
     for (let { header: block, calls, events, extrinsics } of ctx.blocks) {
         ctx.log.debug(
             `block ${block.height}: extrinsics - ${extrinsics.length}, calls - ${calls.length}, events - ${events.length}`
@@ -184,10 +176,7 @@ processor.run(new TypeormDatabase(), async (ctx) => {
             }
         }
 
-        // console.log('Process events', events.length)
-        let i = 1
         for (let event of events) {
-            // console.log(`Process event ${i++}/${events.length}`, event)
             try {
                 switch (event.name) {
                     case 'Tokens.Deposited':
@@ -354,7 +343,6 @@ processor.run(new TypeormDatabase(), async (ctx) => {
                     e
                 )
             }
-            // console.log('Done processing event', event)
         }
         // It's important to process the calls after the events,
         // because for the system.remark call we need to have

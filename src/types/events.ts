@@ -5,7 +5,7 @@ import * as pendulumEvents from './pendulum/events'
 import { network } from '../config'
 
 const events =
-    network === 'foucoco'
+    network === 'foucoco' || network === 'local'
         ? foucocoEvents
         : network === 'amplitude'
         ? amplitudeEvents

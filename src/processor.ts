@@ -205,7 +205,7 @@ processor.run(new TypeormDatabase(), async (ctx) => {
                             event,
                         })
                         break
-                    // zenlink
+                    //zenlink
                     case 'ZenlinkProtocol.LiquidityAdded':
                         await handleLiquidityAdded({
                             ...ctx,

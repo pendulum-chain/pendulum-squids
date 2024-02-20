@@ -29,6 +29,12 @@ export const TOKEN_METADATA_MAP: { [address: string]: TokenBase } = {
         blockchain: 'Kusama',
         decimals: 12,
     },
+    '2124-2-257': {
+        name: 'Tether USDT',
+        symbol: 'FIAT',
+        blockchain: 'USD-USD',
+        decimals: 12,
+    },
     '2124-2-512': {
         name: 'Stellar Native',
         blockchain: 'Stellar',
@@ -37,25 +43,62 @@ export const TOKEN_METADATA_MAP: { [address: string]: TokenBase } = {
     },
     '2124-2-513': {
         name: 'Stellar USDC',
-        blockchain: 'Stellar',
-        symbol: 'USDC',
+        blockchain: 'FIAT',
+        symbol: 'USD-USD',
         decimals: 12,
     },
     '2124-2-514': {
         name: 'Stellar TZS',
-        blockchain: 'Stellar',
-        symbol: 'TZS',
+        blockchain: 'FIAT',
+        symbol: 'TZS-USD',
         decimals: 12,
     },
     '2124-2-515': {
         name: 'Stellar BRL',
+        blockchain: 'FIAT',
+        symbol: 'BRL-USD',
+        decimals: 12,
+    },
+    '2094-0-0': {
+        name: 'PENDULUM',
+        blockchain: 'Pendulum',
+        symbol: 'PEN',
+        decimals: 12,
+    },
+    '2094-2-256': {
+        name: 'Polkadot',
+        symbol: 'DOT',
+        blockchain: 'Polkadot',
+        decimals: 10,
+    },
+    '2094-2-262': {
+        name: 'Moonbeam',
+        symbol: 'GLMR',
+        blockchain: 'Moonbeam',
+        decimals: 18,
+    },
+    '2094-2-512': {
+        name: 'Stellar Native',
         blockchain: 'Stellar',
-        symbol: 'BRL',
+        symbol: 'XLM',
         decimals: 12,
     },
 }
 
-export const CHAIN_ID = 2124
+export function getChainIdFromNetwork(network: string): number {
+    if (network === 'amplitude') {
+        return AMPLITUDE_CHAIN_ID
+    } else if (network === 'pendulum') {
+        return PENDULUM_CHAIN_ID
+    } else if (network === 'foucoco') {
+        return AMPLITUDE_CHAIN_ID
+    } else {
+        throw new Error(`Network ${network} not supported`)
+    }
+}
+
+export const AMPLITUDE_CHAIN_ID = 2124
+export const PENDULUM_CHAIN_ID = 2094
 
 export const ZERO_BI = 0n
 export const ONE_BI = 1n

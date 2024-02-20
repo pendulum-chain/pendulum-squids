@@ -1,4 +1,4 @@
-import { CHAIN_ID } from '../constants'
+import { getChainIdFromNetwork } from '../constants'
 import { getPair } from '../entities/pair'
 import { getOrCreateToken } from '../entities/token'
 import {
@@ -10,11 +10,7 @@ import { Bundle, Farm, Incentive, Pair, SingleTokenLock } from '../model'
 import { EventHandlerContext } from '../processor'
 import { convertTokenToDecimal, getTimePerBlock } from './helpers'
 import { sortAssets } from './sort'
-import {
-    currencyIdToAssetIndex,
-    invertedTokenSymbolMap,
-    parseToTokenIndex,
-} from './token'
+import { currencyIdToAssetIndex, parseToTokenIndex } from './token'
 import { config, network } from '../config'
 import { BlockHeader, ParentBlockHeader } from '@subsquid/substrate-processor'
 import { codec } from '@subsquid/ss58'
@@ -153,7 +149,7 @@ export async function updateFarmingPoolInfo(
         farmingPoolInfo!.basicRewards.map(async (item: any) => {
             const assetIndex = currencyIdToAssetIndex(item[0])
             const token = await getOrCreateToken(ctx, {
-                chainId: CHAIN_ID,
+                chainId: getChainIdFromNetwork(network),
                 assetType: assetIndex === 0 ? 0 : 2,
                 assetIndex: BigInt(assetIndex),
             })
@@ -175,7 +171,7 @@ export async function updateFarmingPoolInfo(
         farmingPoolInfo!.basicRewards.map(async (item: any) => {
             const assetIndex = currencyIdToAssetIndex(item[0])
             const token = await getOrCreateToken(ctx, {
-                chainId: CHAIN_ID,
+                chainId: getChainIdFromNetwork(network),
                 assetType: assetIndex === 0 ? 0 : 2,
                 assetIndex: BigInt(assetIndex),
             })
@@ -205,24 +201,15 @@ export async function updateFarmingPoolInfo(
     if (farmingToken.__kind === 'ZenlinkLPToken') {
         const [token0Symbol, token0Id, token1Symbol, token1Id] =
             farmingToken.value
-        const token0Index = parseToTokenIndex(
-            token0Id,
-            // TODO think about this
-            // Number(invertedTokenSymbolMap[token0Symbol])
-            Number(token0Symbol)
-        )
-        const token1Index = parseToTokenIndex(
-            token1Id,
-            // Number(invertedTokenSymbolMap[token1Symbol])
-            Number(token1Symbol)
-        )
+        const token0Index = parseToTokenIndex(token0Id, Number(token0Symbol))
+        const token1Index = parseToTokenIndex(token1Id, Number(token1Symbol))
         const _asset0 = {
-            chainId: CHAIN_ID,
+            chainId: getChainIdFromNetwork(network),
             assetType: token0Index === 0 ? 0 : 2,
             assetIndex: BigInt(token0Index),
         }
         const _asset1 = {
-            chainId: CHAIN_ID,
+            chainId: getChainIdFromNetwork(network),
             assetType: token1Index === 0 ? 0 : 2,
             assetIndex: BigInt(token1Index),
         }
@@ -270,7 +257,7 @@ export async function updateFarmingPoolInfo(
         rewardUSDRate = rewardUSDPerDay.toFixed(6)
 
         const token = await getOrCreateToken(ctx, {
-            chainId: CHAIN_ID,
+            chainId: getChainIdFromNetwork(network),
             assetType: assetIdIndex === 0 ? 0 : 2,
             assetIndex: BigInt(assetIdIndex),
         })
@@ -403,7 +390,7 @@ export async function killFarmingPoolInfo(
         farmingPoolInfo!.basicRewards.map(async (item: any) => {
             const assetIndex = currencyIdToAssetIndex(item[0])
             const token = await getOrCreateToken(ctx, {
-                chainId: CHAIN_ID,
+                chainId: getChainIdFromNetwork(network),
                 assetType: assetIndex === 0 ? 0 : 2,
                 assetIndex: BigInt(assetIndex),
             })
@@ -426,7 +413,7 @@ export async function killFarmingPoolInfo(
         farmingPoolInfo!.basicRewards.map(async (item: any) => {
             const assetIndex = currencyIdToAssetIndex(item[0])
             const token = await getOrCreateToken(ctx, {
-                chainId: CHAIN_ID,
+                chainId: getChainIdFromNetwork(network),
                 assetType: assetIndex === 0 ? 0 : 2,
                 assetIndex: BigInt(assetIndex),
             })
@@ -454,24 +441,18 @@ export async function killFarmingPoolInfo(
 
     let farmingData: Farm | undefined
 
-    if (farmingToken.__kind === 'LPToken') {
+    if (farmingToken.__kind === 'ZenlinkLPToken') {
         const [token0Symbol, token0Id, token1Symbol, token1Id] =
             farmingToken.value
-        const token0Index = parseToTokenIndex(
-            token0Id,
-            Number(invertedTokenSymbolMap[token0Symbol.__kind])
-        )
-        const token1Index = parseToTokenIndex(
-            token1Id,
-            Number(invertedTokenSymbolMap[token1Symbol.__kind])
-        )
+        const token0Index = parseToTokenIndex(token0Id, Number(token0Symbol))
+        const token1Index = parseToTokenIndex(token1Id, Number(token1Symbol))
         const _asset0 = {
-            chainId: CHAIN_ID,
+            chainId: getChainIdFromNetwork(network),
             assetType: token0Index === 0 ? 0 : 2,
             assetIndex: BigInt(token0Index),
         }
         const _asset1 = {
-            chainId: CHAIN_ID,
+            chainId: getChainIdFromNetwork(network),
             assetType: token1Index === 0 ? 0 : 2,
             assetIndex: BigInt(token1Index),
         }
@@ -519,7 +500,7 @@ export async function killFarmingPoolInfo(
         rewardUSDRate = rewardUSDPerDay.toFixed(6)
 
         const token = await getOrCreateToken(ctx, {
-            chainId: CHAIN_ID,
+            chainId: getChainIdFromNetwork(network),
             assetType: assetIdIndex === 0 ? 0 : 2,
             assetIndex: BigInt(assetIdIndex),
         })

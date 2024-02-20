@@ -6,13 +6,51 @@ import { Pair } from '../model'
 import { EventHandlerContext } from '../processor'
 import { assetIdFromAddress } from './token'
 import { getOrCreateOraclePrice } from '../entities/oraclePrice'
+import { network } from '../config'
 
-export const WNATIVE = '2124-0-0'
-export const KSM = '2124-2-256'
+export const WNATIVE_AMPLITUDE = '2124-0-0'
+export const WNATIVE_PENDULUM = '2094-0-0'
+
+function getNativeFromNetwork(network: string): string {
+    if (network === 'amplitude') {
+        return WNATIVE_AMPLITUDE
+    } else if (network === 'pendulum') {
+        return WNATIVE_PENDULUM
+    } else if (network === 'foucoco') {
+        return WNATIVE_AMPLITUDE
+    } else {
+        throw new Error(`Network ${network} not supported`)
+    }
+}
+
+export const RELAY_NATIVE_AMPLITUDE = '2124-2-256'
+export const RELAY_NATIVE_PENDULUM = '2094-2-256'
+
+function getRelayFromNetwork(network: string): string {
+    if (network === 'amplitude') {
+        return RELAY_NATIVE_AMPLITUDE
+    } else if (network === 'pendulum') {
+        return RELAY_NATIVE_PENDULUM
+    } else if (network === 'foucoco') {
+        return RELAY_NATIVE_AMPLITUDE
+    } else {
+        throw new Error(`Network ${network} not supported`)
+    }
+}
 
 export const WHITELIST: string[] = [
     '2124-0-0', // wnative
     '2124-2-256', // ksm
+    '2124-2-257', // usdt
+    '2124-2-512', // xlm
+    '2124-2-513', // usdc
+    '2124-2-514', // tzs
+    '2124-2-515', // brl
+    '2094-0-0', // wnative pendulum
+    '2094-2-256', // dot
+    '2094-2-262', // glmr
+    '2094-2-512', // xlm
+    '2094-2-513', // usdc
 ]
 
 // minimum liquidity required to count towards tracked volume for pairs with small # of Lps
@@ -22,13 +60,23 @@ export const MINIMUM_USD_THRESHOLD_NEW_PAIRS = new BigDecimal(1000)
 export const MINIMUM_LIQUIDITY_THRESHOLD_ETH = new BigDecimal(5)
 
 // This function is used to get the price of our native token in USD
-// We use the ratio of the ksm-native pair and the KSM price stored in the on-chain price oracle to derive the price.
 export async function getEthPriceInUSD(
     ctx: EventHandlerContext
 ): Promise<BigDecimal> {
+    if (network === 'pendulum') {
+        // On Pendulum, we use the price from the on-chain price oracle
+        const penOraclePrice = await getOrCreateOraclePrice(
+            ctx,
+            'Pendulum',
+            'PEN'
+        )
+        return penOraclePrice ? BigDecimal(penOraclePrice.price) : ZERO_BD
+    }
+
+    // On Amplitude, we use the ratio of the ksm-native pair and the KSM price stored in the on-chain price oracle to derive the price.
     const wnativePair = await getPair(ctx, [
-        assetIdFromAddress(WNATIVE),
-        assetIdFromAddress(KSM),
+        assetIdFromAddress(getNativeFromNetwork(network)),
+        assetIdFromAddress(getRelayFromNetwork(network)),
     ])
 
     if (!wnativePair) {
@@ -44,7 +92,7 @@ export async function getEthPriceInUSD(
         10 ** ksmOraclePrice.decimals
     )
 
-    return wnativePair.token0.id === KSM
+    return wnativePair.token0.id === getRelayFromNetwork(network)
         ? BigDecimal(wnativePair.token0Price).mul(ksmPriceDecimal)
         : BigDecimal(wnativePair.token1Price).mul(ksmPriceDecimal)
 }
@@ -58,7 +106,7 @@ export async function findEthPerToken(
     tokenId: string
 ): Promise<BigDecimal> {
     // The basis of our prices is our native token, which we assign to have a price of 1 unit
-    if (tokenId === WNATIVE) {
+    if (tokenId === getNativeFromNetwork(network)) {
         return ONE_BD
     }
 

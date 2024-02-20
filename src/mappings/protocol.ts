@@ -158,6 +158,7 @@ export async function handleLiquidityAdded(ctx: EventHandlerContext) {
     // safety check
     if (!transaction) return
     const { mints } = transaction
+
     if (!mints.length) return
     const mint = await ctx.store.get(Mint, mints[mints.length - 1])
     if (!mint) return

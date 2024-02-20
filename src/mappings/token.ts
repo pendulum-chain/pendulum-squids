@@ -1,7 +1,7 @@
 import { codec } from '@subsquid/ss58'
 import { getPair } from '../entities/pair'
 import { getPosition, getTransaction } from '../entities/utils'
-import { CHAIN_ID, ZERO_BD } from '../constants'
+import { getChainIdFromNetwork, ZERO_BD } from '../constants'
 import { EventHandlerContext } from '../processor'
 import { config } from '../config'
 import { Big as BigDecimal } from 'big.js'
@@ -154,12 +154,12 @@ export async function handleTokenDeposited(ctx: EventHandlerContext) {
     let token0Index = (token0Type << 8) + token0Id
     let token1Index = (token1Type << 8) + token1Id
     const asset0 = {
-        chainId: CHAIN_ID,
+        chainId: getChainIdFromNetwork(network),
         assetType: token0Index === 0 ? 0 : 2,
         assetIndex: BigInt(token0Index),
     }
     const asset1 = {
-        chainId: CHAIN_ID,
+        chainId: getChainIdFromNetwork(network),
         assetType: token1Index === 0 ? 0 : 2,
         assetIndex: BigInt(token1Index),
     }
@@ -199,61 +199,25 @@ export async function handleTokenDeposited(ctx: EventHandlerContext) {
         await getPairStatusFromAssets(ctx, [asset0, asset1], false)
     )[1].toString()
 
-    const { burns, mints } = transaction
-    let burn: Burn
-    if (burns.length > 0) {
-        const currentBurn = await ctx.store.get(Burn, burns[burns.length - 1])
+    const { mints } = transaction
 
-        if (currentBurn?.needsComplete) {
-            burn = currentBurn
-        } else {
-            burn = new Burn({
-                id: `${transactionHash}-${burns.length}`,
-                transaction,
-                needsComplete: false,
-                pair,
-                liquidity: value,
-                timestamp: new Date(ctx.block.timestamp!),
-            })
-        }
-    } else {
-        burn = new Burn({
-            id: `${transactionHash}-${burns.length}`,
+    pair.totalSupply = (
+        await getPairStatusFromAssets(ctx, [asset0, asset1], false)
+    )[1].toString()
+    if (!mints.length || (await isCompleteMint(ctx, mints[mints.length - 1]))) {
+        const mint = new Mint({
+            id: `${transactionHash}-${mints.length}`,
             transaction,
-            needsComplete: false,
             pair,
+            to,
             liquidity: value,
             timestamp: new Date(ctx.block.timestamp!),
         })
+        await ctx.store.save(mint)
+        transaction.mints = mints.concat([mint.id])
+        await ctx.store.save(transaction)
     }
 
-    // if this logical burn included a fee mint, account for this
-    if (
-        mints.length !== 0 &&
-        !(await isCompleteMint(ctx, mints[mints.length - 1]))
-    ) {
-        const mint = await ctx.store.get(Mint, mints[mints.length - 1])
-        if (mint) {
-            burn.feeTo = mint.to
-            burn.feeLiquidity = mint.liquidity
-        }
-
-        await ctx.store.remove(Mint, mints[mints.length - 1])
-        mints.pop()
-        transaction.mints = mints
-    }
-
-    await ctx.store.save(burn)
-    if (burn.needsComplete) {
-        // TODO: Consider using .slice(0, -1).concat() to protect against
-        // unintended side effects for other code paths.
-        burns[burns.length - 1] = burn.id
-    } else {
-        burns.push(burn.id)
-    }
-    transaction.burns = burns
-
-    await ctx.store.save(transaction)
     await ctx.store.save(pair)
 
     const position = await updateLiquidityPosition(ctx, pair, user)
@@ -293,12 +257,12 @@ export async function handleTokenWithdrawn(ctx: EventHandlerContext) {
     let token0Index = (token0Type << 8) + token0Id
     let token1Index = (token1Type << 8) + token1Id
     const asset0 = {
-        chainId: CHAIN_ID,
+        chainId: getChainIdFromNetwork(network),
         assetType: token0Index === 0 ? 0 : 2,
         assetIndex: BigInt(token0Index),
     }
     const asset1 = {
-        chainId: CHAIN_ID,
+        chainId: getChainIdFromNetwork(network),
         assetType: token1Index === 0 ? 0 : 2,
         assetIndex: BigInt(token1Index),
     }
@@ -424,12 +388,12 @@ export async function handleTokenTransfer(ctx: EventHandlerContext) {
     let token0Index = (token0Type << 8) + token0Id
     let token1Index = (token1Type << 8) + token1Id
     const asset0 = {
-        chainId: CHAIN_ID,
+        chainId: getChainIdFromNetwork(network),
         assetType: token0Index === 0 ? 0 : 2,
         assetIndex: BigInt(token0Index),
     }
     const asset1 = {
-        chainId: CHAIN_ID,
+        chainId: getChainIdFromNetwork(network),
         assetType: token1Index === 0 ? 0 : 2,
         assetIndex: BigInt(token1Index),
     }

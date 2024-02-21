@@ -760,6 +760,7 @@ type SwapPool @entity {
     id: ID! # id can be the address of the swap pool contract
     name: String! # name of the swap pool LP token
     symbol: String! # ticker symbol of the swap pool LP token
+    lpTokenDecimals: Int! # the decimals of the LP token
     router: Router # link to the Router entity
     backstop: BackstopPool! # link to the BackstopPool entity
     token: NablaToken! # link to the Token entity
@@ -776,6 +777,7 @@ type BackstopPool @entity {
     id: ID! # id can be the address of the backstop pool contract
     name: String! # name of the backstop pool LP token
     symbol: String! # ticker symbol of the backstop pool LP token
+    lpTokenDecimals: Int! # the decimals of the LP token
     router: Router! # link to the Router entity
     token: NablaToken! # link to the NablaToken entity
     reserves: BigInt! # current balance of the pool

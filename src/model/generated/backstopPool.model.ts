@@ -27,6 +27,9 @@ export class BackstopPool {
     @Column_('text', { nullable: false })
     symbol!: string
 
+    @Column_('int4', { nullable: false })
+    lpTokenDecimals!: number
+
     @Index_()
     @ManyToOne_(() => Router, { nullable: true })
     router!: Router

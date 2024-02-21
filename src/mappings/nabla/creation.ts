@@ -85,6 +85,7 @@ export async function createBackstopPool(
         id: ss58Address,
         name: await contract.name(),
         symbol: await contract.symbol(),
+        lpTokenDecimals: await contract.decimals(),
         router: router,
         token: token,
         reserves: await tokenContract.balanceOf(hexAddress),
@@ -171,6 +172,7 @@ export async function createSwapPool(
         id: ss58Address,
         name: await contract.name(),
         symbol: await contract.symbol(),
+        lpTokenDecimals: await contract.decimals(),
         router: undefined, // only register router when owner adds this swap pool
         backstop: backstop,
         token: token,

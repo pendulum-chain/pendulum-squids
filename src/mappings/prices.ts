@@ -103,14 +103,18 @@ export async function handleUpdatedPrices(ctx: EventHandlerContext) {
         const symbol = hexToString(symbolEncoded.toString())
 
         // Check against the Kraken price
-        switch (symbol) {
-            case 'KSM':
-                await handleAnalysisFor(ctx, coinInfo, KrakenKsmUsd, symbol)
-            case 'XLM':
-                await handleAnalysisFor(ctx, coinInfo, KrakenXlmUsd, symbol)
-            case 'EUR':
-                await handleAnalysisFor(ctx, coinInfo, KrakenEurUsd, symbol)
-
+        if (blockchain === 'Kusama') {
+            switch (symbol) {
+                case 'KSM':
+                    await handleAnalysisFor(ctx, coinInfo, KrakenKsmUsd, symbol)
+                    break
+                case 'XLM':
+                    await handleAnalysisFor(ctx, coinInfo, KrakenXlmUsd, symbol)
+                    break
+                case 'EUR':
+                    await handleAnalysisFor(ctx, coinInfo, KrakenEurUsd, symbol)
+                    break
+            }
             // } else if (blockchain === 'Polkadot' && symbol === 'DOT') {
             //     await handleAnalysisFor(
             //         ctx,

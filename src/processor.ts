@@ -91,7 +91,7 @@ processor.run(new TypeormDatabase(), async (ctx) => {
         )
 
         // save the price analysis result when head is reache
-        if (block.height === 1146000 || block.height % 10000 === 0) {
+        if (block.height === 3435299 || block.height % 10000 === 0) {
             let jsonData = JSON.stringify(deviationObject)
             await fsPromises.writeFile('dev_amplitude.json', jsonData, 'utf8')
         }

@@ -8,6 +8,7 @@ import {
     readCSV,
     RollingAverage,
 } from '../utils/ohlcv-parsers'
+import * as fs from 'fs'
 
 const TIMEFRAME_INTERVAL_IN_MINUTES = 1
 const KrakenKsmUsd = readCSV(
@@ -16,37 +17,69 @@ const KrakenKsmUsd = readCSV(
 const KrakenXlmUsd = readCSV(
     `ohlcv/XLMUSD_${TIMEFRAME_INTERVAL_IN_MINUTES}.csv`
 )
+const KrakenEurUsd = readCSV(
+    `ohlcv/EURUSD_${TIMEFRAME_INTERVAL_IN_MINUTES}.csv`
+)
 // We don't have the DOT price available on Pendulum because the DIA pallet was not configured yet
 // const KrakenDotUsd = readCSV(
 //     `ohlcv/DOTUSD_${TIMEFRAME_INTERVAL_IN_MINUTES}.csv`
 // )
 
-export const KsmRollingAverage = new RollingAverage('KSM-USD', 0.01)
-export const XlmRollingAverage = new RollingAverage('XLM-USD', 0.01)
+interface PriceDeviation {
+    timestamp: number
+    deviation: number | null
+    high: number
+    low: number
+}
 
-// export const DotRollingAverage = new RollingAverage(0.01)
+export const deviationObject: { [key: string]: PriceDeviation[] } = {}
 
 async function handleAnalysisFor(
     ctx: EventHandlerContext,
     coinInfo: any,
     dataSet: Promise<OHLCV[]>,
-    rollingAverage: RollingAverage
+    symbol: string
 ) {
     // We try to pick the timestamp reported by the block, because the timestamp in the coin info might not be up-to-date
     const timestamp =
         ctx.block.timestamp || Number(coinInfo.lastUpdateTimestamp)
-
     try {
         const data = await dataSet
         const ohlcvAtTime = getOHLCVAtTime(data, timestamp)
-        const krakenPrice = ohlcvAtTime.close
-        let diaPrice = Number(coinInfo.price.toString())
-        // We downscale the price by 12 decimals
-        diaPrice = diaPrice / 10 ** 12
-        const priceDiff = Math.abs(krakenPrice - diaPrice)
-        // We calculate the percentage difference between the two prices
-        const priceDiffPercentage = priceDiff / krakenPrice
-        rollingAverage.add(priceDiffPercentage)
+
+        if (!ohlcvAtTime) {
+            console.log('No OHLCV data for', symbol, 'at', timestamp)
+            let deviation: PriceDeviation = {
+                timestamp,
+                deviation: null,
+                high: 0,
+                low: 0,
+            }
+            saveDeviation(deviation, symbol)
+        }
+
+        let diaPrice = Number(coinInfo.price.toString()) / 10 ** 12
+        if (diaPrice < ohlcvAtTime!.low) {
+            const price_deviation =
+                ((ohlcvAtTime!.low - diaPrice) / ohlcvAtTime!.low) * 100
+            let deviation: PriceDeviation = {
+                timestamp,
+                deviation: price_deviation,
+                high: ohlcvAtTime!.high,
+                low: ohlcvAtTime!.low,
+            }
+            saveDeviation(deviation, symbol)
+        } else if (diaPrice > ohlcvAtTime!.high) {
+            const price_deviation =
+                ((diaPrice - ohlcvAtTime!.high) / ohlcvAtTime!.high) * 100
+            let deviation: PriceDeviation = {
+                timestamp,
+                deviation: price_deviation,
+                high: ohlcvAtTime!.high,
+                low: ohlcvAtTime!.low,
+            }
+            saveDeviation(deviation, symbol)
+        }
     } catch (e) {
         console.log('Error analyzing price', e)
     }
@@ -70,20 +103,14 @@ export async function handleUpdatedPrices(ctx: EventHandlerContext) {
         const symbol = hexToString(symbolEncoded.toString())
 
         // Check against the Kraken price
-        if (blockchain === 'Kusama' && symbol === 'KSM') {
-            await handleAnalysisFor(
-                ctx,
-                coinInfo,
-                KrakenKsmUsd,
-                KsmRollingAverage
-            )
-        } else if (blockchain === 'Stellar' && symbol === 'XLM') {
-            await handleAnalysisFor(
-                ctx,
-                coinInfo,
-                KrakenXlmUsd,
-                XlmRollingAverage
-            )
+        switch (symbol) {
+            case 'KSM':
+                await handleAnalysisFor(ctx, coinInfo, KrakenKsmUsd, symbol)
+            case 'XLM':
+                await handleAnalysisFor(ctx, coinInfo, KrakenXlmUsd, symbol)
+            case 'EUR':
+                await handleAnalysisFor(ctx, coinInfo, KrakenEurUsd, symbol)
+
             // } else if (blockchain === 'Polkadot' && symbol === 'DOT') {
             //     await handleAnalysisFor(
             //         ctx,
@@ -92,5 +119,15 @@ export async function handleUpdatedPrices(ctx: EventHandlerContext) {
             //         DotRollingAverage
             //     )
         }
+    }
+}
+
+function saveDeviation(deviation: PriceDeviation, symbol: string): void {
+    if (!deviationObject[symbol]) {
+        let deviationsEmpty: PriceDeviation[] = []
+        deviationsEmpty.push(deviation)
+        deviationObject[symbol] = deviationsEmpty
+    } else {
+        deviationObject[symbol].push(deviation)
     }
 }

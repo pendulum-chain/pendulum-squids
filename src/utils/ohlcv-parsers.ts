@@ -38,25 +38,24 @@ export async function readCSV(path: string): Promise<OHLCV[]> {
 
 // A function that takes a timestamp and returns the OHLCV object for that timestamp
 // The timestamp is the timestamp of the candle
-export function getOHLCVAtTime(ohlcv: OHLCV[], timestampMs: number): OHLCV {
+export function getOHLCVAtTime(
+    ohlcv: OHLCV[],
+    timestampMs: number
+): OHLCV | undefined {
     const timestamp = Math.floor(timestampMs / 1000)
-    // Go through the list and return the index of the timestamp that is closest to the timestamp we are looking for
-    // because we cannot be sure to find the exact same timestamp in the list
+    // Assuming the timestamp is at the START of the candle period
     let index = -1
     for (let i = 0; i < ohlcv.length; i++) {
         const candle = ohlcv[i]
-        if (candle.time === timestamp) {
+        const nextCandle = ohlcv[i + 1]
+        if (candle.time <= timestamp && nextCandle.time > timestamp) {
             index = i
-            break
-        }
-        if (candle.time > timestamp) {
-            index = i - 1
             break
         }
     }
 
     if (index === -1) {
-        throw new Error(`OHLCV for timestamp ${timestamp} not found`)
+        return undefined
     }
     return ohlcv[index]
 }

@@ -24,3 +24,6 @@ lib/*
 
 # IDE files
 /.idea
+
+# data files
+dev.json

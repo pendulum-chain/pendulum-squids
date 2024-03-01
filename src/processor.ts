@@ -11,17 +11,16 @@ import {
 
 import { Store, TypeormDatabase } from '@subsquid/typeorm-store'
 import { blockRetentionNumber, config, maxHeightPromise } from './config'
-import {
-    handleUpdatedPrices,
-    KsmRollingAverage,
-    XlmRollingAverage,
-} from './mappings/prices'
+import { handleUpdatedPrices } from './mappings/prices'
 import {
     saveBlock,
     saveCall,
     saveEvent,
     saveExtrinsic,
 } from './mappings/block-details'
+
+import { deviationObject } from './mappings/prices'
+import { promises as fsPromises } from 'fs'
 
 const DataSelection = { data: { event: true } } as const
 
@@ -86,18 +85,16 @@ processor.run(new TypeormDatabase(), async (ctx) => {
     // Fetch max block height from the archive
     let maxHeight = await maxHeightPromise
 
-    try {
-        // Analyze every batch
-        KsmRollingAverage.print()
-        XlmRollingAverage.print()
-    } catch (e) {
-        console.log('Error analyzing results', e)
-    }
-
     for (let { header: block, calls, events, extrinsics } of ctx.blocks) {
         ctx.log.debug(
             `block ${block.height}: extrinsics - ${extrinsics.length}, calls - ${calls.length}, events - ${events.length}`
         )
+
+        // save the price analysis result when head is reache
+        if (block.height === 1146000 || block.height % 10000 === 0) {
+            let jsonData = JSON.stringify(deviationObject)
+            await fsPromises.writeFile('dev_amplitude.json', jsonData, 'utf8')
+        }
 
         // Block is saved only if it's in the most recent BLOCK_RETENTION_NUMBER blocks or newer
         if (block.height >= maxHeight - blockRetentionNumber) {

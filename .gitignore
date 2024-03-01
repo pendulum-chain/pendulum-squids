@@ -27,3 +27,4 @@ lib/*
 
 # data files
 dev.json
+dev_amplitude.json

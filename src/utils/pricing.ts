@@ -70,7 +70,12 @@ export async function getEthPriceInUSD(
             'Pendulum',
             'PEN'
         )
-        return penOraclePrice ? BigDecimal(penOraclePrice.price) : ZERO_BD
+        // Convert the price from raw to decimal
+        return penOraclePrice
+            ? BigDecimal(penOraclePrice.price).div(
+                  10 ** penOraclePrice.decimals
+              )
+            : ZERO_BD
     }
 
     // On Amplitude, we use the ratio of the ksm-native pair and the KSM price stored in the on-chain price oracle to derive the price.

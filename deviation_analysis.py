@@ -15,7 +15,7 @@ for currency, df in dfs.items():
     
     # Filter out rows where deviation is NaN or less than the threshold
     df_cleaned = df.dropna(subset=['deviation'])
-    df_cleaned = df_cleaned[df_cleaned['deviation'] > THRESHOLD]
+    #df_cleaned = df_cleaned[df_cleaned['deviation'] > THRESHOLD]
     
     cleaned_count = df_cleaned.shape[0]
     

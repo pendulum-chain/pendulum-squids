@@ -48,6 +48,10 @@ export function getOHLCVAtTime(
     for (let i = 0; i < ohlcv.length; i++) {
         const candle = ohlcv[i]
         const nextCandle = ohlcv[i + 1]
+        if (nextCandle === undefined) {
+            break
+        }
+
         if (candle.time <= timestamp && nextCandle.time > timestamp) {
             index = i
             break

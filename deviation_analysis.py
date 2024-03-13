@@ -3,6 +3,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import json
 
+THRESHOLD=0.1
+
 with open('dev_amplitude.json', 'r') as file:
     data = json.load(file)
 
@@ -11,7 +13,9 @@ dfs = {currency: pd.DataFrame(records) for currency, records in data.items()}
 for currency, df in dfs.items():
     original_count = df.shape[0]
     
+    # Filter out rows where deviation is NaN or less than the threshold
     df_cleaned = df.dropna(subset=['deviation'])
+    df_cleaned = df_cleaned[df_cleaned['deviation'] > THRESHOLD]
     
     cleaned_count = df_cleaned.shape[0]
     
@@ -34,9 +38,11 @@ for currency, df in dfs.items():
     # Metrics
     count = df_cleaned['deviation'].count()
     first_timestamp = df_cleaned['timestamp'].min()
-    last_timestamp = df_cleaned['timestamp'].min()
+    last_timestamp = df_cleaned['timestamp'].max()
     mean_deviation = df_cleaned['deviation'].mean()
     std_deviation = df_cleaned['deviation'].std()
+    deviations_above_threshold = df_cleaned[df_cleaned['deviation'] > 0.1]
+    percentage_above_threshold = (deviations_above_threshold.shape[0] / cleaned_count) * 100
 
     print(f"{currency} - Analysis from: {first_timestamp}")
     print(f"{currency} - Analysis to: {last_timestamp}")

@@ -20,6 +20,9 @@ const KrakenXlmUsd = readCSV(
 const KrakenEurUsd = readCSV(
     `ohlcv/EURUSD_${TIMEFRAME_INTERVAL_IN_MINUTES}.csv`
 )
+const KrakenAudUsd = readCSV(
+    `ohlcv/AUDUSD_${TIMEFRAME_INTERVAL_IN_MINUTES}.csv`
+)
 // We don't have the DOT price available on Pendulum because the DIA pallet was not configured yet
 // const KrakenDotUsd = readCSV(
 //     `ohlcv/DOTUSD_${TIMEFRAME_INTERVAL_IN_MINUTES}.csv`
@@ -28,8 +31,6 @@ const KrakenEurUsd = readCSV(
 interface PriceDeviation {
     timestamp: number
     deviation: number | null
-    high: number
-    low: number
 }
 
 export const deviationObject: { [key: string]: PriceDeviation[] } = {}
@@ -52,8 +53,6 @@ async function handleAnalysisFor(
             let deviation: PriceDeviation = {
                 timestamp,
                 deviation: null,
-                high: 0,
-                low: 0,
             }
             saveDeviation(deviation, symbol)
         }
@@ -65,8 +64,6 @@ async function handleAnalysisFor(
             let deviation: PriceDeviation = {
                 timestamp,
                 deviation: price_deviation,
-                high: ohlcvAtTime!.high,
-                low: ohlcvAtTime!.low,
             }
             saveDeviation(deviation, symbol)
         } else if (diaPrice > ohlcvAtTime!.high) {
@@ -75,8 +72,6 @@ async function handleAnalysisFor(
             let deviation: PriceDeviation = {
                 timestamp,
                 deviation: price_deviation,
-                high: ohlcvAtTime!.high,
-                low: ohlcvAtTime!.low,
             }
             saveDeviation(deviation, symbol)
         }
@@ -101,27 +96,20 @@ export async function handleUpdatedPrices(ctx: EventHandlerContext) {
 
         const blockchain = hexToString(blockchainEncoded.toString())
         const symbol = hexToString(symbolEncoded.toString())
-
         // Check against the Kraken price
-        if (blockchain === 'Kusama') {
-            switch (symbol) {
-                case 'KSM':
-                    await handleAnalysisFor(ctx, coinInfo, KrakenKsmUsd, symbol)
-                    break
-                case 'XLM':
-                    await handleAnalysisFor(ctx, coinInfo, KrakenXlmUsd, symbol)
-                    break
-                case 'EUR':
-                    await handleAnalysisFor(ctx, coinInfo, KrakenEurUsd, symbol)
-                    break
-            }
-            // } else if (blockchain === 'Polkadot' && symbol === 'DOT') {
-            //     await handleAnalysisFor(
-            //         ctx,
-            //         coinInfo,
-            //         KrakenDotUsd,
-            //         DotRollingAverage
-            //     )
+        switch (symbol) {
+            case 'KSM':
+                await handleAnalysisFor(ctx, coinInfo, KrakenKsmUsd, symbol)
+                break
+            case 'XLM':
+                await handleAnalysisFor(ctx, coinInfo, KrakenXlmUsd, symbol)
+                break
+            case 'EUR-USD':
+                await handleAnalysisFor(ctx, coinInfo, KrakenEurUsd, symbol)
+                break
+            case 'AUD-USD':
+                await handleAnalysisFor(ctx, coinInfo, KrakenAudUsd, symbol)
+                break
         }
     }
 }

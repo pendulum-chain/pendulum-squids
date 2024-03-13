@@ -56,6 +56,7 @@ const processor = new SubstrateBatchProcessor()
             version: true,
         },
     })
+    //.setBlockRange({from: 3000000})
     .addEvent({
         name: ['DiaOracleModule.UpdatedPrices'],
         call: true,

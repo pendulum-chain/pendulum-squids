@@ -1,6 +1,8 @@
 # In case we have access to the OHLCV data of two crypto/fiat pairs,
 # we can use this script to form the OHLCV data of the fiat pair we need
 
+## ASSUMPTION: The OHLCV data of the two pairs has the same length and the same timestamps,
+## which may not be the case. 
 
 import pandas as pd
 

@@ -309,7 +309,6 @@ export async function handleAssetSwap(ctx: EventHandlerContext) {
     if (!txHash) return
 
     let event = decodeEvent(network, ctx, 'zenlinkProtocol', 'assetSwap')
-    console.log(event)
     const path = event[2]
     const amounts = event[3]
     const sender = codec(config.prefix).encode(event[0])

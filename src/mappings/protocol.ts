@@ -11,6 +11,7 @@ import {
     getTokenBalance,
     getTokenBurned,
     zenlinkAssetIdToCurrencyId,
+    sortAndCheckIfSwitched,
 } from '../utils/token'
 import { ZERO_BD } from '../constants'
 import { codec } from '@subsquid/ss58'
@@ -39,7 +40,9 @@ export async function handleLiquiditySync(
     const { token0, token1 } = pair
     const asset0 = assetIdFromAddress(token0.id)
     const asset1 = assetIdFromAddress(token1.id)
-    const [pairAccount] = await getPairStatusFromAssets(ctx, [asset0, asset1])
+
+    let { sortedPairs, isSwitched } = sortAndCheckIfSwitched([asset0, asset1])
+    const [pairAccount] = await getPairStatusFromAssets(ctx, sortedPairs)
 
     if (!pairAccount) return
 
@@ -306,7 +309,7 @@ export async function handleAssetSwap(ctx: EventHandlerContext) {
     if (!txHash) return
 
     let event = decodeEvent(network, ctx, 'zenlinkProtocol', 'assetSwap')
-
+    console.log(event)
     const path = event[2]
     const amounts = event[3]
     const sender = codec(config.prefix).encode(event[0])
@@ -316,24 +319,46 @@ export async function handleAssetSwap(ctx: EventHandlerContext) {
         const asset0 = path[i - 1]
         const asset1 = path[i]
 
-        const pair = await getPair(ctx, [asset0, asset1])
+        let { sortedPairs, isSwitched } = sortAndCheckIfSwitched([
+            asset0,
+            asset1,
+        ])
+        const pair = await getPair(ctx, sortedPairs)
 
         if (!pair) return
         await handleLiquiditySync(ctx, pair)
         const factory = await getFactory(ctx)
+
         if (!pair || !factory) return
 
         const bundle = (await ctx.store.get(Bundle, '1'))!
 
-        const { token0, token1 } = pair
+        let { token0, token1 } = pair
 
-        const amount0In = convertTokenToDecimal(amounts[i - 1], token0.decimals)
-        const amount0Out = convertTokenToDecimal(0n, token0.decimals)
-        const amount0Total = amount0Out.plus(amount0In)
+        let amount0Total,
+            amount1Total,
+            amount0In,
+            amount1In,
+            amount0Out,
+            amount1Out = ZERO_BD
 
-        const amount1In = convertTokenToDecimal(0n, token1.decimals)
-        const amount1Out = convertTokenToDecimal(amounts[i], token1.decimals)
-        const amount1Total = amount1Out.plus(amount1In)
+        if (isSwitched) {
+            amount0In = convertTokenToDecimal(0n, token0.decimals)
+            amount0Out = convertTokenToDecimal(amounts[i], token0.decimals)
+            amount0Total = amount0Out.plus(amount0In)
+
+            amount1In = convertTokenToDecimal(amounts[i - 1], token1.decimals)
+            amount1Out = convertTokenToDecimal(0n, token1.decimals)
+            amount1Total = amount1Out.plus(amount1In)
+        } else {
+            amount0In = convertTokenToDecimal(amounts[i - 1], token0.decimals)
+            amount0Out = convertTokenToDecimal(0n, token0.decimals)
+            amount0Total = amount0Out.plus(amount0In)
+
+            amount1In = convertTokenToDecimal(0n, token1.decimals)
+            amount1Out = convertTokenToDecimal(amounts[i], token1.decimals)
+            amount1Total = amount1Out.plus(amount1In)
+        }
 
         // get total amounts of derived USD and ETH for tracking
         const derivedAmountETH = BigDecimal(token1.derivedETH)

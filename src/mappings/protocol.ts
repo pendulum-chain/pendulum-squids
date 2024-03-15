@@ -341,17 +341,20 @@ export async function handleAssetSwap(ctx: EventHandlerContext) {
 
         // We need to check if the order of assets in the pair was switched, so we can correctly assign the amounts
         const inputToken = await getOrCreateToken(ctx, inputAsset)
-        const [amount0, amount1] =
-            inputToken?.id === token0.id
-                ? [amounts[i - 1], amounts[i]]
-                : [amounts[i], amounts[i - 1]]
+        const isSwitched = !(inputToken?.id === token0.id)
 
-        amount0In = convertTokenToDecimal(amount0, token0.decimals)
-        amount0Out = convertTokenToDecimal(0n, token0.decimals)
+        // We need to check if the order of assets in the pair was switched, so we can correctly assign the amounts
+        const rawAmount0In = isSwitched ? 0n : amounts[i - 1]
+        const rawAmount1In = isSwitched ? amounts[i - 1] : 0n
+        const rawAmount0Out = isSwitched ? amounts[i] : 0n
+        const rawAmount1Out = isSwitched ? 0n : amounts[i]
+
+        amount0In = convertTokenToDecimal(rawAmount0In, token0.decimals)
+        amount0Out = convertTokenToDecimal(rawAmount0Out, token0.decimals)
         amount0Total = amount0Out.plus(amount0In)
 
-        amount1In = convertTokenToDecimal(0n, token1.decimals)
-        amount1Out = convertTokenToDecimal(amount1, token1.decimals)
+        amount1In = convertTokenToDecimal(rawAmount1In, token1.decimals)
+        amount1Out = convertTokenToDecimal(rawAmount1Out, token1.decimals)
         amount1Total = amount1Out.plus(amount1In)
 
         // get total amounts of derived USD and ETH for tracking

@@ -372,12 +372,12 @@ export async function getTokenBurned(
 }
 
 export function sortAndCheckIfSwitched(entries: [AssetId, AssetId]): {
-    sortedPairs: [AssetId, AssetId]
+    sortedPair: [AssetId, AssetId]
     isSwitched: boolean
 } {
     const originalEntries = [...entries]
 
-    const sortedPairs = entries.sort((a, b) => {
+    const sortedPair = entries.sort((a, b) => {
         if (a.assetType < b.assetType) return -1
         if (a.assetType > b.assetType) return 1
 
@@ -388,9 +388,9 @@ export function sortAndCheckIfSwitched(entries: [AssetId, AssetId]): {
     })
 
     // check if any order was switched by comparing the sorted array to the original
-    const isSwitched = !sortedPairs.every(
+    const isSwitched = !sortedPair.every(
         (item, index) => item === originalEntries[index]
     )
 
-    return { sortedPairs, isSwitched }
+    return { sortedPair, isSwitched }
 }

@@ -199,15 +199,15 @@ export async function handleTokenDeposited(ctx: EventHandlerContext) {
         await ctx.store.save(transaction)
     }
 
-    let { sortedPairs, isSwitched } = sortAndCheckIfSwitched([asset0, asset1])
+    let { sortedPair } = sortAndCheckIfSwitched([asset0, asset1])
     pair.totalSupply = (
-        await getPairStatusFromAssets(ctx, sortedPairs, false)
+        await getPairStatusFromAssets(ctx, sortedPair, false)
     )[1].toString()
 
     const { mints } = transaction
 
     pair.totalSupply = (
-        await getPairStatusFromAssets(ctx, sortedPairs, false)
+        await getPairStatusFromAssets(ctx, sortedPair, false)
     )[1].toString()
     if (!mints.length || (await isCompleteMint(ctx, mints[mints.length - 1]))) {
         const mint = new Mint({
@@ -301,9 +301,9 @@ export async function handleTokenWithdrawn(ctx: EventHandlerContext) {
         await ctx.store.save(transaction)
     }
 
-    let { sortedPairs, isSwitched } = sortAndCheckIfSwitched([asset0, asset1])
+    let { sortedPair, isSwitched } = sortAndCheckIfSwitched([asset0, asset1])
     pair.totalSupply = (
-        await getPairStatusFromAssets(ctx, sortedPairs, false)
+        await getPairStatusFromAssets(ctx, sortedPair, false)
     )[1].toString()
     const { burns, mints } = transaction
     let burn: Burn

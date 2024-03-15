@@ -24,6 +24,8 @@ import {
 import { getPairStatusFromAssets, getTokenBalance } from '../utils/token'
 import { StrKey } from 'stellar-base'
 import { decodeEvent } from '../types/eventsAndStorageSelector'
+import { sortAssets } from '../utils/sort'
+
 async function isCompleteMint(
     ctx: EventHandlerContext,
     mintId: string
@@ -39,6 +41,7 @@ function hexAssetCodeToString(code: string) {
 
     return code
 }
+
 function trimCode(code: string): string {
     if (code.startsWith('0x')) {
         // Filter out the null bytes
@@ -195,14 +198,15 @@ export async function handleTokenDeposited(ctx: EventHandlerContext) {
         await ctx.store.save(transaction)
     }
 
+    const sortedPair = sortAssets([asset0, asset1])
     pair.totalSupply = (
-        await getPairStatusFromAssets(ctx, [asset0, asset1], false)
+        await getPairStatusFromAssets(ctx, sortedPair, false)
     )[1].toString()
 
     const { mints } = transaction
 
     pair.totalSupply = (
-        await getPairStatusFromAssets(ctx, [asset0, asset1], false)
+        await getPairStatusFromAssets(ctx, sortedPair, false)
     )[1].toString()
     if (!mints.length || (await isCompleteMint(ctx, mints[mints.length - 1]))) {
         const mint = new Mint({
@@ -296,8 +300,9 @@ export async function handleTokenWithdrawn(ctx: EventHandlerContext) {
         await ctx.store.save(transaction)
     }
 
+    const sortedPair = sortAssets([asset0, asset1])
     pair.totalSupply = (
-        await getPairStatusFromAssets(ctx, [asset0, asset1], false)
+        await getPairStatusFromAssets(ctx, sortedPair, false)
     )[1].toString()
     const { burns, mints } = transaction
     let burn: Burn

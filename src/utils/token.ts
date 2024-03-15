@@ -5,6 +5,7 @@ import { config, network } from '../config'
 import { invert } from 'lodash'
 import { hexToU8a } from '@polkadot/util'
 import { getVersionedStorage } from '../types/eventsAndStorageSelector'
+
 export const currencyKeyMap: { [index: number]: string } = {
     0: 'Native',
     1: 'XCM',
@@ -31,6 +32,7 @@ function versionedCurrencyToCurrencyEnum(
             throw new Error('Invalid currency type')
     }
 }
+
 export enum CurrencyTypeEnum {
     Native = 0,
     XCM = 1,

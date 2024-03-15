@@ -31,6 +31,7 @@ import {
     updateZenlinkInfo,
 } from '../utils/updates'
 import { decodeEvent } from '../types/eventsAndStorageSelector'
+
 export async function handleLiquiditySync(
     ctx: EventHandlerContext,
     pair: Pair
@@ -41,8 +42,8 @@ export async function handleLiquiditySync(
     const asset0 = assetIdFromAddress(token0.id)
     const asset1 = assetIdFromAddress(token1.id)
 
-    let { sortedPairs, isSwitched } = sortAndCheckIfSwitched([asset0, asset1])
-    const [pairAccount] = await getPairStatusFromAssets(ctx, sortedPairs)
+    let { sortedPair } = sortAndCheckIfSwitched([asset0, asset1])
+    const [pairAccount] = await getPairStatusFromAssets(ctx, sortedPair)
 
     if (!pairAccount) return
 
@@ -318,11 +319,11 @@ export async function handleAssetSwap(ctx: EventHandlerContext) {
         const asset0 = path[i - 1]
         const asset1 = path[i]
 
-        let { sortedPairs, isSwitched } = sortAndCheckIfSwitched([
+        let { sortedPair, isSwitched } = sortAndCheckIfSwitched([
             asset0,
             asset1,
         ])
-        const pair = await getPair(ctx, sortedPairs)
+        const pair = await getPair(ctx, sortedPair)
 
         if (!pair) return
         await handleLiquiditySync(ctx, pair)
@@ -341,23 +342,19 @@ export async function handleAssetSwap(ctx: EventHandlerContext) {
             amount0Out,
             amount1Out = ZERO_BD
 
-        if (isSwitched) {
-            amount0In = convertTokenToDecimal(0n, token0.decimals)
-            amount0Out = convertTokenToDecimal(amounts[i], token0.decimals)
-            amount0Total = amount0Out.plus(amount0In)
+        // We need to check if the order of assets in the pair was switched, so we can correctly assign the amounts
+        const rawAmount0In = isSwitched ? 0n : amounts[i - 1]
+        const rawAmount1In = isSwitched ? amounts[i - 1] : 0n
+        const rawAmount0Out = isSwitched ? amounts[i] : 0n
+        const rawAmount1Out = isSwitched ? 0n : amounts[i]
 
-            amount1In = convertTokenToDecimal(amounts[i - 1], token1.decimals)
-            amount1Out = convertTokenToDecimal(0n, token1.decimals)
-            amount1Total = amount1Out.plus(amount1In)
-        } else {
-            amount0In = convertTokenToDecimal(amounts[i - 1], token0.decimals)
-            amount0Out = convertTokenToDecimal(0n, token0.decimals)
-            amount0Total = amount0Out.plus(amount0In)
+        amount0In = convertTokenToDecimal(rawAmount0In, token0.decimals)
+        amount0Out = convertTokenToDecimal(rawAmount0Out, token0.decimals)
+        amount0Total = amount0Out.plus(amount0In)
 
-            amount1In = convertTokenToDecimal(0n, token1.decimals)
-            amount1Out = convertTokenToDecimal(amounts[i], token1.decimals)
-            amount1Total = amount1Out.plus(amount1In)
-        }
+        amount1In = convertTokenToDecimal(rawAmount1In, token1.decimals)
+        amount1Out = convertTokenToDecimal(rawAmount1Out, token1.decimals)
+        amount1Total = amount1Out.plus(amount1In)
 
         // get total amounts of derived USD and ETH for tracking
         const derivedAmountETH = BigDecimal(token1.derivedETH)

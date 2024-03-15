@@ -5,6 +5,7 @@ import { config, network } from '../config'
 import { invert } from 'lodash'
 import { hexToU8a } from '@polkadot/util'
 import { getVersionedStorage } from '../types/eventsAndStorageSelector'
+
 export const currencyKeyMap: { [index: number]: string } = {
     0: 'Native',
     1: 'XCM',
@@ -31,6 +32,7 @@ function versionedCurrencyToCurrencyEnum(
             throw new Error('Invalid currency type')
     }
 }
+
 export enum CurrencyTypeEnum {
     Native = 0,
     XCM = 1,
@@ -369,28 +371,4 @@ export async function getTokenBurned(
     }
 
     return result?.free
-}
-
-export function sortAndCheckIfSwitched(entries: [AssetId, AssetId]): {
-    sortedPair: [AssetId, AssetId]
-    isSwitched: boolean
-} {
-    const originalEntries = [...entries]
-
-    const sortedPair = entries.sort((a, b) => {
-        if (a.assetType < b.assetType) return -1
-        if (a.assetType > b.assetType) return 1
-
-        if (a.assetIndex < b.assetIndex) return -1
-        if (a.assetIndex > b.assetIndex) return 1
-
-        return 0
-    })
-
-    // check if any order was switched by comparing the sorted array to the original
-    const isSwitched = !sortedPair.every(
-        (item, index) => item === originalEntries[index]
-    )
-
-    return { sortedPair, isSwitched }
 }

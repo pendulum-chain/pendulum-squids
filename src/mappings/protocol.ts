@@ -9,7 +9,6 @@ import {
     assetIdFromAddress,
     getPairStatusFromAssets,
     getTokenBalance,
-    getTokenBurned,
     zenlinkAssetIdToCurrencyId,
 } from '../utils/token'
 import { ZERO_BD } from '../constants'

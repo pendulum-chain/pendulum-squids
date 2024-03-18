@@ -2,8 +2,6 @@ import {
     SubstrateBatchProcessor,
     FieldSelection,
 } from '@subsquid/substrate-processor'
-import { Store } from '@subsquid/typeorm-store'
-import { EventHandlerContext } from './processor'
 
 export interface TokenBase {
     name: string

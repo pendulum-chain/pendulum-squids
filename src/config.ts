@@ -1,9 +1,9 @@
 import { ProcessorConfig } from './types'
 import { lookupArchive } from '@subsquid/archive-registry'
 import axios from 'axios'
-export type Network = 'foucoco' | 'amplitude' | 'pendulum'
-export const network: Network =
-    <'foucoco' | 'amplitude' | 'pendulum'>process.env.NETWORK || 'amplitude'
+export type Network = 'foucoco' | 'amplitude' | 'pendulum' | 'local'
+export const network = (process.env.NETWORK as Network) || 'amplitude'
+
 export const blockRetentionNumber = process.env.BLOCK_RETENTION_NUMBER
     ? parseInt(process.env.BLOCK_RETENTION_NUMBER, 10)
     : 7200
@@ -38,8 +38,19 @@ const foucocoConfig: ProcessorConfig = {
     },
 }
 
+const localConfig: ProcessorConfig = {
+    chainName: 'local',
+    prefix: 'amplitude',
+    dataSource: {
+        archive: undefined,
+        chain: 'ws://127.0.0.1:9944',
+    },
+}
+
 export const config: ProcessorConfig =
-    network === 'foucoco'
+    network === 'local'
+        ? localConfig
+        : network === 'foucoco'
         ? foucocoConfig
         : network === 'amplitude'
         ? amplitudeConfig
@@ -49,17 +60,20 @@ console.log('Using ProcessorConfig: ', config)
 
 // Fetch max height from the archive and export it as a promise
 
-export const maxHeightPromise = axios
-    .get(config.dataSource.archive + '/height')
-    .then((response) => {
-        const data = response.data
-        console.log('Max height:', data)
-        return data
-    })
-    .catch((error) => {
-        console.error(
-            'Error getting block height from archive, using default value instead:',
-            error
-        )
-        return Number.MAX_SAFE_INTEGER
-    })
+export const maxHeightPromise =
+    network === 'local'
+        ? Promise.resolve(0)
+        : axios
+              .get(config.dataSource.archive + '/height')
+              .then((response) => {
+                  const data = response.data
+                  console.log('Max height:', data)
+                  return data
+              })
+              .catch((error) => {
+                  console.error(
+                      'Error getting block height from archive, using default value instead:',
+                      error
+                  )
+                  return Number.MAX_SAFE_INTEGER
+              })

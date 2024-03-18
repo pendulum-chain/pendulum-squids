@@ -25,7 +25,7 @@ export function decodeEvent(
     let networkEventsAny
     let eventVersions: string[]
 
-    if (network === 'foucoco') {
+    if (network === 'foucoco' || network === 'local') {
         networkEventsAny = foucocoEvents as { [key: string]: any }
         eventVersions = foucocoVersions
     } else if (network === 'pendulum') {
@@ -60,7 +60,7 @@ export async function getVersionedStorage(
 ): Promise<StorageTypeFoucoco | StorageTypePendulum | StorageTypeAmplitude> {
     let networkStorageAny
     let storageVersions: string[]
-    if (network === 'foucoco') {
+    if (network === 'foucoco' || network === 'local') {
         networkStorageAny = foucocoStorage as { [key: string]: any }
         storageVersions = foucocoVersions
     } else if (network === 'pendulum') {

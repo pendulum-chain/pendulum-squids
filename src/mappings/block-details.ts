@@ -2,7 +2,6 @@ import { Ctx, BlockHeader_, Call_, Event_, Extrinsic_ } from '../processor'
 
 import { decodeHex } from '@subsquid/substrate-processor'
 import * as model from '../model'
-import { In } from 'typeorm/find-options/operator/In'
 import { blockRetentionNumber } from '../config'
 
 export async function saveBlock(ctx: Ctx, block: BlockHeader_) {

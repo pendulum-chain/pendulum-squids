@@ -5,7 +5,7 @@ import * as pendulumSupport from './pendulum/support'
 import { network } from '../config'
 
 const support =
-    network === 'foucoco'
+    network === 'foucoco' || network === 'local'
         ? foucocoSupport
         : network === 'amplitude'
         ? amplitudeSupport

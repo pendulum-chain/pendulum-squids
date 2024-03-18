@@ -56,6 +56,14 @@
             "description": "Generate the abi files for all ink! .contract files",
             "cmd": ["node", "./generate-abi.js"]
         },
+        "process:local": {
+            "description": "Load .env and start the squid processor for a locally deployed Foucoco",
+            "deps": ["build", "migration:apply"],
+            "cmd": ["node", "--require=dotenv/config", "lib/processor.js"],
+            "env": {
+                "NETWORK": "local"
+            }
+        },
         "process:foucoco": {
             "description": "Load .env and start the squid processor for Foucoco",
             "deps": ["build", "migration:apply"],

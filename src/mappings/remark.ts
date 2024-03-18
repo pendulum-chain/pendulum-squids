@@ -1,6 +1,5 @@
 import { codec } from '@subsquid/ss58'
 import { CallHandlerContext } from '../processor'
-import events from '../types/events'
 import { config } from '../config'
 import { TokenTransfer, Transfer } from '../model'
 import { Call } from '@subsquid/substrate-processor'

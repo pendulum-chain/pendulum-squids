@@ -153,7 +153,7 @@ export async function backstophandleBurn(ctx: EventHandlerContext) {
     const backstop = await getOrCreateBackstopPool(ctx, ctx.event.args.contract)
 
     await updateBackstopCoverageAndSupply(ctx, backstop)
-    ctx.store.save(backstop)
+    await ctx.store.save(backstop)
 }
 
 export async function backstopHandleCoverSwapWithdrawal(
@@ -166,15 +166,15 @@ export async function backstopHandleCoverSwapWithdrawal(
     updateBackstopCoverageAndSupply(ctx, backstop)
     updateSwapPoolCoverageAndSupply(ctx, pool)
 
-    ctx.store.save(backstop)
-    ctx.store.save(pool)
+    await ctx.store.save(backstop)
+    await ctx.store.save(pool)
 }
 
 export async function backstopHandleMint(ctx: EventHandlerContext) {
     const backstop = await getOrCreateBackstopPool(ctx, ctx.event.args.contract)
 
     updateBackstopCoverageAndSupply(ctx, backstop)
-    ctx.store.save(backstop)
+    await ctx.store.save(backstop)
 }
 
 export async function backstopHandleOwnershipTransferred(
@@ -182,26 +182,26 @@ export async function backstopHandleOwnershipTransferred(
 ) {
     // This event will always be emitted on pool creation
     const backstop = await getOrCreateBackstopPool(ctx, ctx.event.args.contract)
-    ctx.store.save(backstop)
+    await ctx.store.save(backstop)
 }
 
 export async function backstopHandlePaused(ctx: EventHandlerContext) {
     const backstop = await getOrCreateBackstopPool(ctx, ctx.event.args.contract)
 
     backstop.paused = true
-    ctx.store.save(backstop)
+    await ctx.store.save(backstop)
 }
 
 export async function backstopHandleTransfer(ctx: EventHandlerContext) {
     const backstop = await getOrCreateBackstopPool(ctx, ctx.event.args.contract)
-    ctx.store.save(backstop)
+    await ctx.store.save(backstop)
 }
 
 export async function backstopHandleUnpaused(ctx: EventHandlerContext) {
     const backstop = await getOrCreateBackstopPool(ctx, ctx.event.args.contract)
 
     backstop.paused = false
-    ctx.store.save(backstop)
+    await ctx.store.save(backstop)
 }
 
 export async function backstopHandleWithdrawSwapLiquidity(
@@ -213,8 +213,8 @@ export async function backstopHandleWithdrawSwapLiquidity(
     await updateBackstopCoverageAndSupply(ctx, backstop)
     await updateSwapPoolCoverageAndSupply(ctx, pool)
 
-    ctx.store.save(backstop)
-    ctx.store.save(pool)
+    await ctx.store.save(backstop)
+    await ctx.store.save(pool)
 }
 
 export async function swapHandleBackstopDrain(ctx: EventHandlerContext) {
@@ -224,15 +224,15 @@ export async function swapHandleBackstopDrain(ctx: EventHandlerContext) {
     await updateSwapPoolCoverageAndSupply(ctx, pool)
     await updateBackstopCoverageAndSupply(ctx, backstop)
 
-    ctx.store.save(pool)
-    ctx.store.save(backstop)
+    await ctx.store.save(pool)
+    await ctx.store.save(backstop)
 }
 
 export async function swapHandleBurn(ctx: EventHandlerContext) {
     const pool = await getOrCreateSwapPool(ctx, ctx.event.args.contract)
 
     await updateSwapPoolCoverageAndSupply(ctx, pool)
-    ctx.store.save(pool)
+    await ctx.store.save(pool)
 }
 
 export function swapHandleChargedSwapFees(ctx: EventHandlerContext) {
@@ -243,20 +243,20 @@ export async function swapHandleMint(ctx: EventHandlerContext) {
     const pool = await getOrCreateSwapPool(ctx, ctx.event.args.contract)
 
     await updateSwapPoolCoverageAndSupply(ctx, pool)
-    ctx.store.save(pool)
+    await ctx.store.save(pool)
 }
 
 export async function swapHandleOwnershipTransferred(ctx: EventHandlerContext) {
     // This event will always be emitted on pool creation
     const pool = await getOrCreateSwapPool(ctx, ctx.event.args.contract)
-    ctx.store.save(pool)
+    await ctx.store.save(pool)
 }
 
 export async function swapHandlePaused(ctx: EventHandlerContext) {
     const pool = await getOrCreateSwapPool(ctx, ctx.event.args.contract)
 
     pool.paused = true
-    ctx.store.save(pool)
+    await ctx.store.save(pool)
 }
 
 export async function swapHandleTransfer(ctx: EventHandlerContext) {}
@@ -265,7 +265,7 @@ export async function swapHandleUnpaused(ctx: EventHandlerContext) {
     const pool = await getOrCreateSwapPool(ctx, ctx.event.args.contract)
 
     pool.paused = false
-    ctx.store.save(pool)
+    await ctx.store.save(pool)
 }
 
 export async function routerHandleOwnershipTransferred(
@@ -273,21 +273,21 @@ export async function routerHandleOwnershipTransferred(
 ) {
     // This event will always be emitted on router creation
     const router = await getOrCreateRouter(ctx, ctx.event.args.contract)
-    ctx.store.save(router)
+    await ctx.store.save(router)
 }
 
 export async function routerHandlePaused(ctx: EventHandlerContext) {
     const router = await getOrCreateRouter(ctx, ctx.event.args.contract)
     // Set the 'paused' property to true
     router.paused = true
-    ctx.store.save(router)
+    await ctx.store.save(router)
 }
 
 export async function routerHandleUnpaused(ctx: EventHandlerContext) {
     const router = await getOrCreateRouter(ctx, ctx.event.args.contract)
     // Set the 'paused' property to false
     router.paused = false
-    ctx.store.save(router)
+    await ctx.store.save(router)
 }
 
 export async function routerHandleSwap(ctx: EventHandlerContext) {
@@ -345,7 +345,7 @@ export async function getOrCreateBackstopPool(
             liabilities: coverage[1],
             paused: false,
         })
-        ctx.store.save(backstop)
+        await ctx.store.save(backstop)
     }
     return backstop
 }
@@ -361,7 +361,7 @@ export async function getOrCreateRouter(
             id: address,
             paused: false,
         })
-        ctx.store.save(router)
+        await ctx.store.save(router)
     }
     return router
 }
@@ -380,7 +380,7 @@ export async function getOrCreateNablaToken(
             name: await contract.name(),
             symbol: await contract.symbol(),
         })
-        ctx.store.save(nablaToken)
+        await ctx.store.save(nablaToken)
     }
     return nablaToken
 }
@@ -410,7 +410,7 @@ export async function getOrCreateSwapPool(
             liabilities: coverage[1],
             paused: false,
         })
-        ctx.store.save(swapPool)
+        await ctx.store.save(swapPool)
     }
     return swapPool
 }

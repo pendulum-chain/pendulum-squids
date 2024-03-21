@@ -357,6 +357,7 @@ processor.run(new TypeormDatabase(), async (ctx) => {
                             block,
                             call,
                         })
+                        break
                     case 'Utility.batch_all':
                         if (!call.success) continue
                         await handleBatchWithRemark({
@@ -364,6 +365,7 @@ processor.run(new TypeormDatabase(), async (ctx) => {
                             block,
                             call,
                         })
+                        break
                 }
             } catch (e) {
                 console.log(

@@ -42,7 +42,7 @@ const BLOCK_RECORD = {
     },
 }
 
-export async function getTimePerBlock(ctx: EventHandlerContext) {
+export function getTimePerBlock(ctx: EventHandlerContext) {
     if (BLOCK_RECORD.pre.blockHeight === 0) {
         BLOCK_RECORD.pre.blockHeight = ctx.block.height
         BLOCK_RECORD.pre.timestamp = ctx.block.timestamp!

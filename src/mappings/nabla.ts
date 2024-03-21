@@ -42,7 +42,7 @@ async function isSwapPoolEvent(ctx: EventHandlerContext) {
     }
 }
 
-async function isRouterEvent(ctx: EventHandlerContext) {
+function isRouterEvent(ctx: EventHandlerContext) {
     try {
         const contract = new routerAbi.Contract(ctx, ctx.event.args.contract)
         return routerAbi.decodeEvent(ctx.event.args.data)
@@ -64,8 +64,11 @@ async function isBackstopPoolEvent(ctx: EventHandlerContext) {
     }
 }
 
-async function verifyEvent(verifier: Function, ctx: EventHandlerContext) {
-    return verifier(ctx)
+async function verifyEvent(
+    verifier: (ctx: any) => any,
+    ctx: EventHandlerContext
+) {
+    return await verifier(ctx)
 }
 
 // Iterates over all decoders and returns the first successfully decoded event
@@ -163,8 +166,8 @@ export async function backstopHandleCoverSwapWithdrawal(
     const backstop = await getOrCreateBackstopPool(ctx, ctx.event.args.contract)
     const pool = await getOrCreateSwapPool(ctx, event.swapPool)
 
-    updateBackstopCoverageAndSupply(ctx, backstop)
-    updateSwapPoolCoverageAndSupply(ctx, pool)
+    await updateBackstopCoverageAndSupply(ctx, backstop)
+    await updateSwapPoolCoverageAndSupply(ctx, pool)
 
     await ctx.store.save(backstop)
     await ctx.store.save(pool)
@@ -173,7 +176,7 @@ export async function backstopHandleCoverSwapWithdrawal(
 export async function backstopHandleMint(ctx: EventHandlerContext) {
     const backstop = await getOrCreateBackstopPool(ctx, ctx.event.args.contract)
 
-    updateBackstopCoverageAndSupply(ctx, backstop)
+    await updateBackstopCoverageAndSupply(ctx, backstop)
     await ctx.store.save(backstop)
 }
 

@@ -33,7 +33,16 @@ interface PriceDeviation {
     deviation: number | null
 }
 
-export const deviationObject: { [key: string]: PriceDeviation[] } = {}
+interface GeneralStatistics {
+    no_deviation_count: number
+}
+
+export const deviationObject: {
+    [key: string]: {
+        deviations: PriceDeviation[]
+        statistics: GeneralStatistics
+    }
+} = {}
 
 async function handleAnalysisFor(
     ctx: EventHandlerContext,
@@ -48,6 +57,9 @@ async function handleAnalysisFor(
         const data = await dataSet
         const ohlcvAtTime = getOHLCVAtTime(data, timestamp)
 
+        // either save the deviation (null representing no data)
+        // or make an entry to the count of blocks without deviation,
+        // for later accuracy calculation (we will assume 0 deviation for these blocks)
         if (!ohlcvAtTime) {
             console.log('No OHLCV data for', symbol, 'at', timestamp)
             let deviation: PriceDeviation = {
@@ -68,12 +80,14 @@ async function handleAnalysisFor(
             saveDeviation(deviation, symbol)
         } else if (diaPrice > ohlcvAtTime!.high) {
             const price_deviation =
-                ((diaPrice - ohlcvAtTime!.high) / diaPrice) * 100
+                ((diaPrice - ohlcvAtTime!.high) / ohlcvAtTime!.high) * 100
             let deviation: PriceDeviation = {
                 timestamp,
                 deviation: price_deviation,
             }
             saveDeviation(deviation, symbol)
+        } else {
+            saveNonDeviation(symbol)
         }
     } catch (e) {
         console.log('Error analyzing price', e)
@@ -114,12 +128,29 @@ export async function handleUpdatedPrices(ctx: EventHandlerContext) {
     }
 }
 
+function initializeSymbolEntry(symbol: string): void {
+    deviationObject[symbol] = {
+        deviations: [],
+        statistics: {
+            no_deviation_count: 0,
+        },
+    }
+}
+
 function saveDeviation(deviation: PriceDeviation, symbol: string): void {
     if (!deviationObject[symbol]) {
-        let deviationsEmpty: PriceDeviation[] = []
-        deviationsEmpty.push(deviation)
-        deviationObject[symbol] = deviationsEmpty
+        initializeSymbolEntry(symbol)
+        deviationObject[symbol].deviations.push(deviation)
     } else {
-        deviationObject[symbol].push(deviation)
+        deviationObject[symbol].deviations.push(deviation)
+    }
+}
+
+function saveNonDeviation(symbol: string): void {
+    if (!deviationObject[symbol]) {
+        initializeSymbolEntry(symbol)
+        deviationObject[symbol].statistics.no_deviation_count++
+    } else {
+        deviationObject[symbol].statistics.no_deviation_count++
     }
 }

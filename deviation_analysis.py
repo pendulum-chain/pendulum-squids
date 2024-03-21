@@ -8,19 +8,21 @@ THRESHOLD=0.1
 with open('dev_amplitude.json', 'r') as file:
     data = json.load(file)
 
-dfs = {currency: pd.DataFrame(records) for currency, records in data.items()}
+dfs = {currency: pd.DataFrame(records['deviations']) for currency, records in data.items()}
 
-for currency, df in dfs.items():
-    original_count = df.shape[0]
-    
-    # Filter out rows where deviation is NaN or less than the threshold
+for currency, records in data.items():
+    # get the dataframe corresponding to the deviation
+    df = dfs[currency]
+
+    # Filter out rows where deviation is NaN (null values)
     df_cleaned = df.dropna(subset=['deviation'])
-    #df_cleaned = df_cleaned[df_cleaned['deviation'] > THRESHOLD]
+    rows_removed = df.shape[0] - df_cleaned.shape[0]
     
-    cleaned_count = df_cleaned.shape[0]
-    
-    rows_removed = original_count - cleaned_count
-    
+    # form a new dataframe accounting for the blocks with no deviation
+    no_deviation_count = records['statistics']['no_deviation_count']
+    zero_deviation_rows = pd.DataFrame([{'deviation': 0, 'timestamp': None} for _ in range(no_deviation_count)])
+    all_records = pd.concat([df_cleaned, zero_deviation_rows], ignore_index=True)
+
     # Histogram
     plt.figure(figsize=(10, 6))
     df_cleaned['deviation'].plot(kind='hist', bins=100, title=f'Deviations Histogram for {currency}')
@@ -37,16 +39,34 @@ for currency, df in dfs.items():
 
     # Metrics
     count = df_cleaned['deviation'].count()
+    all_records_count = all_records['deviation'].count()
     first_timestamp = df_cleaned['timestamp'].min()
     last_timestamp = df_cleaned['timestamp'].max()
-    mean_deviation = df_cleaned['deviation'].mean()
-    std_deviation = df_cleaned['deviation'].std()
-    deviations_above_threshold = df_cleaned[df_cleaned['deviation'] > 0.1]
-    percentage_above_threshold = (deviations_above_threshold.shape[0] / cleaned_count) * 100
+    accuracy = (all_records_count - count/ all_records_count) 
+    mean_deviation = all_records['deviation'].mean()
+    mean_of_deviation = df_cleaned['deviation'].mean()
+    std_deviation_of_deviation = df_cleaned['deviation'].std()
 
     print(f"{currency} - Analysis from: {first_timestamp}")
     print(f"{currency} - Analysis to: {last_timestamp}")
     print(f"{currency} - Deviation events: {count}")
-    print(f"{currency} - Average Deviation: {mean_deviation:.2f}%")
-    print(f"{currency} - Standard Deviation of Deviations: {std_deviation:.2f}%")
+    print(f"{currency} - Total blocks: {all_records_count}")
+    print(f"{currency} - Accuracy: {accuracy}%")
+    print(f"{currency} - Mean Deviation: {mean_deviation:.2f}%")
+    print(f"{currency} - Mean Deviation of Deviations: {mean_of_deviation:.2f}%")
+    print(f"{currency} - Standard Deviation of Deviations: {std_deviation_of_deviation:.2f}%")
     print(f"{currency} - Null deviation rows removed (lack of data): {rows_removed}\n")
+
+    # mean of deviations over time.
+    df_cleaned['timestamp'] = pd.to_datetime(df_cleaned['timestamp'], unit='ms')  # Assuming Unix timestamp; adjust accordingly
+    df_cleaned = df_cleaned.set_index('timestamp')
+    # Resample to daily frequency and calculate mean deviation
+    daily_mean_deviation = df_cleaned['deviation'].resample('D').mean()
+
+    # Plotting
+    plt.figure(figsize=(10, 6))
+    daily_mean_deviation.plot(title=f'Mean Deviation Over Time for {currency}')
+    plt.xlabel('Time')
+    plt.ylabel('Mean Deviation (%)')
+    plt.show()
+

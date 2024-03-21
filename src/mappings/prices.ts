@@ -68,7 +68,7 @@ async function handleAnalysisFor(
             saveDeviation(deviation, symbol)
         } else if (diaPrice > ohlcvAtTime!.high) {
             const price_deviation =
-                ((diaPrice - ohlcvAtTime!.high) / ohlcvAtTime!.high) * 100
+                ((diaPrice - ohlcvAtTime!.high) / diaPrice) * 100
             let deviation: PriceDeviation = {
                 timestamp,
                 deviation: price_deviation,

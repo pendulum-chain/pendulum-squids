@@ -133,7 +133,7 @@ export async function handleTokenDeposited(ctx: EventHandlerContext) {
     const transactionHash = ctx.event.extrinsic?.hash
 
     if (!transactionHash) return
-    let event = decodeEvent(network, ctx, 'tokens', 'deposited')
+    const event = decodeEvent(network, ctx, 'tokens', 'deposited')
 
     if (!event) return
 
@@ -154,8 +154,8 @@ export async function handleTokenDeposited(ctx: EventHandlerContext) {
     if (event?.currencyId.__kind !== 'ZenlinkLPToken') return
 
     const [token0Id, token0Type, token1Id, token1Type] = event.currencyId.value
-    let token0Index = (token0Type << 8) + token0Id
-    let token1Index = (token1Type << 8) + token1Id
+    const token0Index = (token0Type << 8) + token0Id
+    const token1Index = (token1Type << 8) + token1Id
     const asset0 = {
         chainId: getChainIdFromNetwork(network),
         assetType: token0Index === 0 ? 0 : 2,
@@ -237,7 +237,7 @@ export async function handleTokenWithdrawn(ctx: EventHandlerContext) {
     const transactionHash = ctx.event.extrinsic?.hash
     if (!transactionHash) return
 
-    let event = decodeEvent(network, ctx, 'tokens', 'withdrawn')
+    const event = decodeEvent(network, ctx, 'tokens', 'withdrawn')
 
     if (!event) return
 
@@ -258,8 +258,8 @@ export async function handleTokenWithdrawn(ctx: EventHandlerContext) {
     if (event?.currencyId.__kind !== 'ZenlinkLPToken') return
 
     const [token0Id, token0Type, token1Id, token1Type] = event.currencyId.value
-    let token0Index = (token0Type << 8) + token0Id
-    let token1Index = (token1Type << 8) + token1Id
+    const token0Index = (token0Type << 8) + token0Id
+    const token1Index = (token1Type << 8) + token1Id
     const asset0 = {
         chainId: getChainIdFromNetwork(network),
         assetType: token0Index === 0 ? 0 : 2,
@@ -368,7 +368,7 @@ export async function handleTokenWithdrawn(ctx: EventHandlerContext) {
 }
 
 export async function handleTokenTransfer(ctx: EventHandlerContext) {
-    let event = decodeEvent(network, ctx, 'tokens', 'transfer')
+    const event = decodeEvent(network, ctx, 'tokens', 'transfer')
 
     if (!event) return
 
@@ -390,8 +390,8 @@ export async function handleTokenTransfer(ctx: EventHandlerContext) {
     if (event?.currencyId.__kind !== 'ZenlinkLPToken') return
 
     const [token0Id, token0Type, token1Id, token1Type] = event.currencyId.value
-    let token0Index = (token0Type << 8) + token0Id
-    let token1Index = (token1Type << 8) + token1Id
+    const token0Index = (token0Type << 8) + token0Id
+    const token1Index = (token1Type << 8) + token1Id
     const asset0 = {
         chainId: getChainIdFromNetwork(network),
         assetType: token0Index === 0 ? 0 : 2,

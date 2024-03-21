@@ -167,7 +167,7 @@ export async function handleLiquidityAdded(ctx: EventHandlerContext) {
     const mint = await ctx.store.get(Mint, mints[mints.length - 1])
     if (!mint) return
 
-    let event = decodeEvent(network, ctx, 'zenlinkProtocol', 'liquidityAdded')
+    const event = decodeEvent(network, ctx, 'zenlinkProtocol', 'liquidityAdded')
 
     const [asset0, asset1] = sortAssets([event[1], event[2]])
 
@@ -230,7 +230,12 @@ export async function handleLiquidityRemoved(ctx: EventHandlerContext) {
     const burn = await ctx.store.get(Burn, burns[burns.length - 1])
     if (!burn) return
 
-    let event = decodeEvent(network, ctx, 'zenlinkProtocol', 'liquidityRemoved')
+    const event = decodeEvent(
+        network,
+        ctx,
+        'zenlinkProtocol',
+        'liquidityRemoved'
+    )
 
     const [asset0, asset1] = sortAssets([event[2], event[3]])
 
@@ -309,7 +314,7 @@ export async function handleAssetSwap(ctx: EventHandlerContext) {
     const txHash = ctx.event.extrinsic?.hash
     if (!txHash) return
 
-    let event = decodeEvent(network, ctx, 'zenlinkProtocol', 'assetSwap')
+    const event = decodeEvent(network, ctx, 'zenlinkProtocol', 'assetSwap')
     const path = event[2]
     const amounts = event[3]
     const sender = codec(config.prefix).encode(event[0])
@@ -330,7 +335,7 @@ export async function handleAssetSwap(ctx: EventHandlerContext) {
 
         const bundle = (await ctx.store.get(Bundle, '1'))!
 
-        let { token0, token1 } = pair
+        const { token0, token1 } = pair
 
         let amount0Total,
             amount1Total,

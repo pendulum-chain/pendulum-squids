@@ -4,7 +4,7 @@ import { getOrCreateOraclePrice } from '../entities/oraclePrice'
 import { hexToString } from '@polkadot/util'
 import { decodeEvent } from '../types/eventsAndStorageSelector'
 export async function handleUpdatedPrices(ctx: EventHandlerContext) {
-    let event = await decodeEvent(
+    const event = await decodeEvent(
         network,
         ctx,
         'diaOracleModule',

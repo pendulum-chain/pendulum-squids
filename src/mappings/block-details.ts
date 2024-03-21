@@ -42,13 +42,13 @@ export async function pruneOldestBlock(ctx: Ctx, blockToPruneHeight: number) {
 
     if (blockToPrune) {
         // Delete associated events
-        let eventsToPrune = await ctx.store.findBy(model.Event, {
+        const eventsToPrune = await ctx.store.findBy(model.Event, {
             block: { id: blockToPrune.id },
         })
         await ctx.store.remove(eventsToPrune)
 
         // Nullify foreign key 'extrinsic' so that associated extrinsics can be deleted
-        let callsToUpdate = await ctx.store.findBy(model.Call, {
+        const callsToUpdate = await ctx.store.findBy(model.Call, {
             block: { id: blockToPrune.id },
         })
         for (const call of callsToUpdate) {
@@ -57,13 +57,13 @@ export async function pruneOldestBlock(ctx: Ctx, blockToPruneHeight: number) {
         await ctx.store.save(callsToUpdate)
 
         // Delete associated extrinsics
-        let extrinsicsToPrune = await ctx.store.findBy(model.Extrinsic, {
+        const extrinsicsToPrune = await ctx.store.findBy(model.Extrinsic, {
             block: { id: blockToPrune.id },
         })
         await ctx.store.remove(extrinsicsToPrune)
 
         // Delete associated calls
-        let callsToPrune = await ctx.store.findBy(model.Call, {
+        const callsToPrune = await ctx.store.findBy(model.Call, {
             block: { id: blockToPrune.id },
         })
         await ctx.store.remove(callsToPrune)

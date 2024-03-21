@@ -93,7 +93,7 @@ export async function getFamingPoolInfo(
     pid: number,
     block: BlockHeader | ParentBlockHeader
 ) {
-    let versionedStorage = await getVersionedStorage(
+    const versionedStorage = await getVersionedStorage(
         network,
         ctx,
         'farming',
@@ -107,7 +107,7 @@ export async function getFamingSharesAndWithdrawnRewards(
     pid: number,
     user: string
 ) {
-    let versionedStorage = await getVersionedStorage(
+    const versionedStorage = await getVersionedStorage(
         network,
         ctx,
         'farming',

@@ -7,8 +7,8 @@ import { config } from '../config'
 export async function handleBalanceTransfer(ctx: EventHandlerContext) {
     const event = events.balances.transfer.v1.decode(ctx.event)
 
-    let from = codec(config.prefix).encode(event.from)
-    let to = codec(config.prefix).encode(event.to)
+    const from = codec(config.prefix).encode(event.from)
+    const to = codec(config.prefix).encode(event.to)
 
     const transfer = new Transfer({
         id: ctx.event.id,

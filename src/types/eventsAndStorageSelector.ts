@@ -25,15 +25,16 @@ export function decodeEvent(
     let networkEventsAny
     let eventVersions: string[]
 
+    // Explcitily use foucoco events for all chains
     if (network === 'foucoco') {
         networkEventsAny = foucocoEvents as { [key: string]: any }
         eventVersions = foucocoVersions
     } else if (network === 'pendulum') {
-        networkEventsAny = pendulumEvents as { [key: string]: any }
-        eventVersions = pendulumVersions
+        networkEventsAny = foucocoEvents as { [key: string]: any }
+        eventVersions = foucocoVersions
     } else if (network === 'amplitude') {
-        networkEventsAny = amplitudeEvents as { [key: string]: any }
-        eventVersions = amplitudeVersions
+        networkEventsAny = foucocoEvents as { [key: string]: any }
+        eventVersions = foucocoVersions
     } else {
         throw new Error(
             `Unable to decode events for network ${network}. Network is not supported.`
@@ -60,15 +61,17 @@ export async function getVersionedStorage(
 ): Promise<StorageTypeFoucoco | StorageTypePendulum | StorageTypeAmplitude> {
     let networkStorageAny
     let storageVersions: string[]
+
+    // Explcitily use foucoco storage for all chains
     if (network === 'foucoco') {
         networkStorageAny = foucocoStorage as { [key: string]: any }
         storageVersions = foucocoVersions
     } else if (network === 'pendulum') {
-        networkStorageAny = pendulumStorage as { [key: string]: any }
-        storageVersions = pendulumVersions
+        networkStorageAny = foucocoStorage as { [key: string]: any }
+        storageVersions = foucocoVersions
     } else if (network === 'amplitude') {
-        networkStorageAny = amplitudeStorage as { [key: string]: any }
-        storageVersions = amplitudeVersions
+        networkStorageAny = foucocoStorage as { [key: string]: any }
+        storageVersions = foucocoVersions
     } else {
         throw new Error(
             `Unable to find storage for network ${network}. Network is not supported.`

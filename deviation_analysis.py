@@ -42,7 +42,7 @@ for currency, records in data.items():
     all_records_count = all_records['deviation'].count()
     first_timestamp = df_cleaned['timestamp'].min()
     last_timestamp = df_cleaned['timestamp'].max()
-    accuracy = (all_records_count - count/ all_records_count) 
+    accuracy = ((all_records_count - count) / all_records_count) 
     mean_deviation = all_records['deviation'].mean()
     mean_of_deviation = df_cleaned['deviation'].mean()
     std_deviation_of_deviation = df_cleaned['deviation'].std()
@@ -59,9 +59,22 @@ for currency, records in data.items():
 
     # mean of deviations over time.
     df_cleaned['timestamp'] = pd.to_datetime(df_cleaned['timestamp'], unit='ms')  # Assuming Unix timestamp; adjust accordingly
+    df['timestamp'] = pd.to_datetime(df['timestamp'], unit='ms')  # Assuming Unix timestamp; adjust accordingly
+
     df_cleaned = df_cleaned.set_index('timestamp')
+    df = df.set_index('timestamp')
     # Resample to daily frequency and calculate mean deviation
     daily_mean_deviation = df_cleaned['deviation'].resample('D').mean()
+    daily_deviation_count = df_cleaned['deviation'].resample('D').count()
+    plt.figure(figsize=(10, 6))
+    daily_deviation_count.plot(title=f'Daily deviation count {currency}')
+
+    # plot nan occurrencies per day
+    daily_nan_count = df['deviation'].isna().resample('D').sum()
+    # Plot daily NaN count
+    plt.figure(figsize=(10, 6))
+    daily_nan_count.plot(title=f'Daily NaN Count {currency}')
+    plt.show()
 
     # Plotting
     plt.figure(figsize=(10, 6))
@@ -69,4 +82,5 @@ for currency, records in data.items():
     plt.xlabel('Time')
     plt.ylabel('Mean Deviation (%)')
     plt.show()
+
 

@@ -1,6 +1,4 @@
-import { decode } from '@subsquid/ss58'
 import { getStakePosition } from '../../entities/farming'
-import { getPosition } from '../../entities/utils'
 import {
     Farm,
     SingleTokenLock,
@@ -11,7 +9,6 @@ import {
 } from '../../model'
 import { EventHandlerContext } from '../../processor'
 import { getFamingSharesAndWithdrawnRewards } from '../../utils/farming'
-const { hexToU8a } = require('@polkadot/util')
 
 export async function updateStakePosition(
     ctx: EventHandlerContext,

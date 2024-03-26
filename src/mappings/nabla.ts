@@ -42,7 +42,7 @@ async function isSwapPoolEvent(ctx: EventHandlerContext) {
     }
 }
 
-async function isRouterEvent(ctx: EventHandlerContext) {
+function isRouterEvent(ctx: EventHandlerContext) {
     try {
         const contract = new routerAbi.Contract(ctx, ctx.event.args.contract)
         return routerAbi.decodeEvent(ctx.event.args.data)
@@ -64,8 +64,11 @@ async function isBackstopPoolEvent(ctx: EventHandlerContext) {
     }
 }
 
-async function verifyEvent(verifier: Function, ctx: EventHandlerContext) {
-    return verifier(ctx)
+async function verifyEvent(
+    verifier: (ctx: any) => any,
+    ctx: EventHandlerContext
+) {
+    return await verifier(ctx)
 }
 
 // Iterates over all decoders and returns the first successfully decoded event
@@ -153,7 +156,7 @@ export async function backstophandleBurn(ctx: EventHandlerContext) {
     const backstop = await getOrCreateBackstopPool(ctx, ctx.event.args.contract)
 
     await updateBackstopCoverageAndSupply(ctx, backstop)
-    ctx.store.save(backstop)
+    await ctx.store.save(backstop)
 }
 
 export async function backstopHandleCoverSwapWithdrawal(
@@ -163,18 +166,18 @@ export async function backstopHandleCoverSwapWithdrawal(
     const backstop = await getOrCreateBackstopPool(ctx, ctx.event.args.contract)
     const pool = await getOrCreateSwapPool(ctx, event.swapPool)
 
-    updateBackstopCoverageAndSupply(ctx, backstop)
-    updateSwapPoolCoverageAndSupply(ctx, pool)
+    await updateBackstopCoverageAndSupply(ctx, backstop)
+    await updateSwapPoolCoverageAndSupply(ctx, pool)
 
-    ctx.store.save(backstop)
-    ctx.store.save(pool)
+    await ctx.store.save(backstop)
+    await ctx.store.save(pool)
 }
 
 export async function backstopHandleMint(ctx: EventHandlerContext) {
     const backstop = await getOrCreateBackstopPool(ctx, ctx.event.args.contract)
 
-    updateBackstopCoverageAndSupply(ctx, backstop)
-    ctx.store.save(backstop)
+    await updateBackstopCoverageAndSupply(ctx, backstop)
+    await ctx.store.save(backstop)
 }
 
 export async function backstopHandleOwnershipTransferred(
@@ -182,26 +185,26 @@ export async function backstopHandleOwnershipTransferred(
 ) {
     // This event will always be emitted on pool creation
     const backstop = await getOrCreateBackstopPool(ctx, ctx.event.args.contract)
-    ctx.store.save(backstop)
+    await ctx.store.save(backstop)
 }
 
 export async function backstopHandlePaused(ctx: EventHandlerContext) {
     const backstop = await getOrCreateBackstopPool(ctx, ctx.event.args.contract)
 
     backstop.paused = true
-    ctx.store.save(backstop)
+    await ctx.store.save(backstop)
 }
 
 export async function backstopHandleTransfer(ctx: EventHandlerContext) {
     const backstop = await getOrCreateBackstopPool(ctx, ctx.event.args.contract)
-    ctx.store.save(backstop)
+    await ctx.store.save(backstop)
 }
 
 export async function backstopHandleUnpaused(ctx: EventHandlerContext) {
     const backstop = await getOrCreateBackstopPool(ctx, ctx.event.args.contract)
 
     backstop.paused = false
-    ctx.store.save(backstop)
+    await ctx.store.save(backstop)
 }
 
 export async function backstopHandleWithdrawSwapLiquidity(
@@ -213,8 +216,8 @@ export async function backstopHandleWithdrawSwapLiquidity(
     await updateBackstopCoverageAndSupply(ctx, backstop)
     await updateSwapPoolCoverageAndSupply(ctx, pool)
 
-    ctx.store.save(backstop)
-    ctx.store.save(pool)
+    await ctx.store.save(backstop)
+    await ctx.store.save(pool)
 }
 
 export async function swapHandleBackstopDrain(ctx: EventHandlerContext) {
@@ -224,15 +227,15 @@ export async function swapHandleBackstopDrain(ctx: EventHandlerContext) {
     await updateSwapPoolCoverageAndSupply(ctx, pool)
     await updateBackstopCoverageAndSupply(ctx, backstop)
 
-    ctx.store.save(pool)
-    ctx.store.save(backstop)
+    await ctx.store.save(pool)
+    await ctx.store.save(backstop)
 }
 
 export async function swapHandleBurn(ctx: EventHandlerContext) {
     const pool = await getOrCreateSwapPool(ctx, ctx.event.args.contract)
 
     await updateSwapPoolCoverageAndSupply(ctx, pool)
-    ctx.store.save(pool)
+    await ctx.store.save(pool)
 }
 
 export function swapHandleChargedSwapFees(ctx: EventHandlerContext) {
@@ -243,20 +246,20 @@ export async function swapHandleMint(ctx: EventHandlerContext) {
     const pool = await getOrCreateSwapPool(ctx, ctx.event.args.contract)
 
     await updateSwapPoolCoverageAndSupply(ctx, pool)
-    ctx.store.save(pool)
+    await ctx.store.save(pool)
 }
 
 export async function swapHandleOwnershipTransferred(ctx: EventHandlerContext) {
     // This event will always be emitted on pool creation
     const pool = await getOrCreateSwapPool(ctx, ctx.event.args.contract)
-    ctx.store.save(pool)
+    await ctx.store.save(pool)
 }
 
 export async function swapHandlePaused(ctx: EventHandlerContext) {
     const pool = await getOrCreateSwapPool(ctx, ctx.event.args.contract)
 
     pool.paused = true
-    ctx.store.save(pool)
+    await ctx.store.save(pool)
 }
 
 export async function swapHandleTransfer(ctx: EventHandlerContext) {}
@@ -265,7 +268,7 @@ export async function swapHandleUnpaused(ctx: EventHandlerContext) {
     const pool = await getOrCreateSwapPool(ctx, ctx.event.args.contract)
 
     pool.paused = false
-    ctx.store.save(pool)
+    await ctx.store.save(pool)
 }
 
 export async function routerHandleOwnershipTransferred(
@@ -273,21 +276,21 @@ export async function routerHandleOwnershipTransferred(
 ) {
     // This event will always be emitted on router creation
     const router = await getOrCreateRouter(ctx, ctx.event.args.contract)
-    ctx.store.save(router)
+    await ctx.store.save(router)
 }
 
 export async function routerHandlePaused(ctx: EventHandlerContext) {
     const router = await getOrCreateRouter(ctx, ctx.event.args.contract)
     // Set the 'paused' property to true
     router.paused = true
-    ctx.store.save(router)
+    await ctx.store.save(router)
 }
 
 export async function routerHandleUnpaused(ctx: EventHandlerContext) {
     const router = await getOrCreateRouter(ctx, ctx.event.args.contract)
     // Set the 'paused' property to false
     router.paused = false
-    ctx.store.save(router)
+    await ctx.store.save(router)
 }
 
 export async function routerHandleSwap(ctx: EventHandlerContext) {
@@ -330,12 +333,12 @@ export async function getOrCreateBackstopPool(
     ctx: EventHandlerContext,
     hexAddress: string
 ) {
-    let address = codec(config.prefix).encode(hexAddress)
+    const address = codec(config.prefix).encode(hexAddress)
     let backstop = await ctx.store.get(BackstopPool, address)
     if (!backstop) {
         const contract = new backstopPoolAbi.Contract(ctx, hexAddress)
-        let router = await getOrCreateRouter(ctx, await contract.router())
-        let coverage = await contract.coverage()
+        const router = await getOrCreateRouter(ctx, await contract.router())
+        const coverage = await contract.coverage()
         backstop = new BackstopPool({
             id: address,
             router: router,
@@ -345,7 +348,7 @@ export async function getOrCreateBackstopPool(
             liabilities: coverage[1],
             paused: false,
         })
-        ctx.store.save(backstop)
+        await ctx.store.save(backstop)
     }
     return backstop
 }
@@ -354,14 +357,14 @@ export async function getOrCreateRouter(
     ctx: EventHandlerContext,
     hexAddress: string
 ) {
-    let address = codec(config.prefix).encode(hexAddress)
+    const address = codec(config.prefix).encode(hexAddress)
     let router = await ctx.store.get(Router, address)
     if (!router) {
         router = new Router({
             id: address,
             paused: false,
         })
-        ctx.store.save(router)
+        await ctx.store.save(router)
     }
     return router
 }
@@ -370,7 +373,7 @@ export async function getOrCreateNablaToken(
     ctx: EventHandlerContext,
     hexAddress: string
 ) {
-    let address = codec(config.prefix).encode(hexAddress)
+    const address = codec(config.prefix).encode(hexAddress)
     let nablaToken = await ctx.store.get(NablaToken, address)
     if (!nablaToken) {
         const contract = new erc20Abi.Contract(ctx, hexAddress)
@@ -380,7 +383,7 @@ export async function getOrCreateNablaToken(
             name: await contract.name(),
             symbol: await contract.symbol(),
         })
-        ctx.store.save(nablaToken)
+        await ctx.store.save(nablaToken)
     }
     return nablaToken
 }
@@ -389,17 +392,17 @@ export async function getOrCreateSwapPool(
     ctx: EventHandlerContext,
     hexAddress: string
 ) {
-    let address = codec(config.prefix).encode(hexAddress)
+    const address = codec(config.prefix).encode(hexAddress)
     let swapPool = await ctx.store.get(SwapPool, address)
     if (!swapPool) {
         const contract = new swapPoolAbi.Contract(ctx, hexAddress)
-        let router = await getOrCreateRouter(ctx, await contract.router())
-        let backstop = await getOrCreateBackstopPool(
+        const router = await getOrCreateRouter(ctx, await contract.router())
+        const backstop = await getOrCreateBackstopPool(
             ctx,
             await contract.backstop()
         )
-        let token = await getOrCreateNablaToken(ctx, await contract.asset())
-        let coverage = await contract.coverage()
+        const token = await getOrCreateNablaToken(ctx, await contract.asset())
+        const coverage = await contract.coverage()
         swapPool = new SwapPool({
             id: address,
             router: router,
@@ -410,7 +413,7 @@ export async function getOrCreateSwapPool(
             liabilities: coverage[1],
             paused: false,
         })
-        ctx.store.save(swapPool)
+        await ctx.store.save(swapPool)
     }
     return swapPool
 }

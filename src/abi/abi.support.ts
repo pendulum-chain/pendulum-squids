@@ -10,7 +10,7 @@ export class LogEvent<Args> {
     private fragment: ethers.EventFragment
 
     constructor(private abi: ethers.Interface, public readonly topic: string) {
-        let fragment = abi.getEvent(topic)
+        const fragment = abi.getEvent(topic)
         assert(fragment != null, 'Missing fragment')
         this.fragment = fragment
     }
@@ -31,7 +31,7 @@ export class Func<Args extends any[], FieldArgs, Result> {
         private abi: ethers.Interface,
         public readonly sighash: string
     ) {
-        let fragment = abi.getFunction(sighash)
+        const fragment = abi.getFunction(sighash)
         assert(fragment != null, 'Missing fragment')
         this.fragment = fragment
     }
@@ -65,7 +65,7 @@ export function isFunctionResultDecodingError(
     val: unknown
 ): val is Error & { data: string } {
     if (!(val instanceof Error)) return false
-    let err = val as any
+    const err = val as any
     return (
         err.code == 'CALL_EXCEPTION' &&
         typeof err.data == 'string' &&
@@ -122,8 +122,8 @@ export class ContractBase {
         func: Func<Args, FieldArgs, Result>,
         args: Args
     ): Promise<Result> {
-        let data = func.encode(args)
-        let result = await this._chain.client.call('eth_call', [
+        const data = func.encode(args)
+        const result = await this._chain.client.call('eth_call', [
             { to: this.address, data },
             '0x' + this.blockHeight.toString(16),
         ])

@@ -12,9 +12,17 @@ import { StorageType as StorageTypePendulum } from './pendulum/support'
 import { StorageType as StorageTypeAmplitude } from './amplitude/support'
 // Must keep up to date with the possible versions
 // of events and storage
-const foucocoVersions: string[] = ['v1', 'v4']
+const foucocoVersions: string[] = ['v1', 'v4', 'v13']
 const pendulumVersions: string[] = ['v1', 'v3', 'v9', 'v10']
-const amplitudeVersions: string[] = ['v1', 'v3', 'v7', 'v8', 'v10', 'v12']
+const amplitudeVersions: string[] = [
+    'v1',
+    'v3',
+    'v7',
+    'v8',
+    'v10',
+    'v12',
+    'v15',
+]
 
 export function decodeEvent(
     network: string,

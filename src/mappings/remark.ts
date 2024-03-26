@@ -10,19 +10,19 @@ export async function handleBatchWithRemark(ctx: CallHandlerContext) {
     if (ctx.call.origin.value.__kind != 'Signed') {
         return
     }
-    let origin = codec(config.prefix).encode(ctx.call.origin.value.value)
+    const origin = codec(config.prefix).encode(ctx.call.origin.value.value)
 
     // filter out batch calls where there is one transfer and
     // one remark only
-    let remarkCall = hasSystemWithRemark(ctx.call)
-    let transferCall = hasBalancesOrTokensTransfer(ctx.call)
+    const remarkCall = hasSystemWithRemark(ctx.call)
+    const transferCall = hasBalancesOrTokensTransfer(ctx.call)
     if (!remarkCall || !transferCall) {
         return
     }
     const calls = ctx.call.args.calls
     const kinds = calls.map((call: any) => call.__kind)
 
-    let remarkRaw = remarkCall.remark
+    const remarkRaw = remarkCall.remark
     let remark = null
     // Try decoding remark from hex
     try {
@@ -116,7 +116,7 @@ async function processTransfer(
 ) {
     // Extract destination address
 
-    let destAddress = codec(config.prefix).encode(transferCall.dest.value)
+    const destAddress = codec(config.prefix).encode(transferCall.dest.value)
 
     // Find matching transfer
     let matchingTransfer

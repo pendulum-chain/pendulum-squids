@@ -1,13 +1,13 @@
 # Pendulum Squids
 
-This repository contains the code for the subsquid indexers that we deploy for our three networks Pendulum, Amplitude, and Foucoco.
+This repository contains the code for the subsquid indexers that we deploy for our three networks Pendulum, Amplitude,
+and Foucoco.
 
 The production deployments of our squids are available at:
 
-* https://squid.subsquid.io/pendulum-squid/graphql
-* https://squid.subsquid.io/amplitude-squid/graphql
-* https://squid.subsquid.io/foucoco-squid/graphql
-
+-   https://squid.subsquid.io/pendulum-squid/graphql
+-   https://squid.subsquid.io/amplitude-squid/graphql
+-   https://squid.subsquid.io/foucoco-squid/graphql
 
 ## Prerequisites
 
@@ -52,9 +52,11 @@ sqd serve
 
 ### Organizations
 
-Squids within each Aquarium account are grouped into organizations. The first step to deploying a squid into an organization is to authenticate with the deployment key.
+Squids within each Aquarium account are grouped into organizations. The first step to deploying a squid into an
+organization is to authenticate with the deployment key.
 
-To do this, first register/login to [Aquarium](https://app.subsquid.io/) and follow the instructions to get your deployment key.
+To do this, first register/login to [Aquarium](https://app.subsquid.io/) and follow the instructions to get your
+deployment key.
 
 Note that in order to properly deploy the squids, you need to be part of the `pendulum` organization in subsquid.
 
@@ -136,9 +138,18 @@ sqd prod amplitude-squid@{version}
 sqd prod foucoco-squid@{version}
 ```
 
+#### Versioning
+
+The squid version is defined in the `squid.yaml` file.
+For each new version or bug fix, you should update the version number in the `squid.yaml` file and deploy the squid to
+the production environment.
+Even though a bug fix or feature might be specific to a specific network, it is recommended to keep the version number
+consistent across all networks.
+
 ## Development flow
 
-The first thing to do is to make changes in the schema of the squid and define entities that we would like to track. These changes are done in the `schema.graphql` file.
+The first thing to do is to make changes in the schema of the squid and define entities that we would like to track.
+These changes are done in the `schema.graphql` file.
 
 The files in `src/types/*` and `src/model/*` are auto-generated and should not be touched manually.
 You can generate the models with the following command:
@@ -157,7 +168,8 @@ run
 sqd typegen
 ```
 
-In our case, we have three typegen files: `typegen-amplitude.json`, `typegen-foucoco.json` and `typegen-pendulum.json`. The previous command should be replaced by
+In our case, we have three typegen files: `typegen-amplitude.json`, `typegen-foucoco.json` and `typegen-pendulum.json`.
+The previous command should be replaced by
 
 ```shell
 sqd typegen:pendulum
@@ -192,7 +204,8 @@ sqd typegen:abi
 
 Be sure to name the `.json` file with the ABI with the corresponding name desired in src/abi.
 
-NOTE: Eventually the generated ABI files may produce code which typescript may reject, for instance a missing function variable name, or a wrongly defined type.
+NOTE: Eventually the generated ABI files may produce code which typescript may reject, for instance a missing function
+variable name, or a wrongly defined type.
 Please correct this manually if they appear, or use a different ABI.
 
 Now it is time to start with the database migration. First, we need to make sure that the database is at blank state:
@@ -202,7 +215,8 @@ sqd down
 sqd up
 ```
 
-Then, we replace the old migrations with the new one. It is recommended to delete the old migration files before running this command.
+Then, we replace the old migrations with the new one. It is recommended to delete the old migration files before running
+this command.
 
 ```shell
 sqd migration:generate
@@ -214,7 +228,8 @@ Finally, we apply the migration.
 sqd migration:apply
 ```
 
-Now, to deploy the squid into an Aquarium organization, run the following command. This command is and example using the foucoco manifest.
+Now, to deploy the squid into an Aquarium organization, run the following command. This command is and example using the
+foucoco manifest.
 
 ```shell
 sqd deploy --org pendulum . -m squid-foucoco.yaml
@@ -222,7 +237,8 @@ sqd deploy --org pendulum . -m squid-foucoco.yaml
 
 ## Subscribe to specific events
 
-[Here](./scripts/subscribeTransfer.js) you can find a link to an example JavaScript snippet that can be used to subscribe to specific events.
+[Here](./scripts/subscribeTransfer.js) you can find a link to an example JavaScript snippet that can be used to
+subscribe to specific events.
 
 The first step is to create a new client:
 
@@ -269,9 +285,11 @@ client.subscribe(
 )
 ```
 
-In this example, we're simply logging the query result when new events are registered in the squid. You can choose to handle these events in a different way, for example, by automating processes based on specific events.
+In this example, we're simply logging the query result when new events are registered in the squid. You can choose to
+handle these events in a different way, for example, by automating processes based on specific events.
 
-As seen in the previous example, the query structure is similar to graphql queries that we use in the squid graphql endpoint. The only difference is that it is wrapped inside a subscription statement:
+As seen in the previous example, the query structure is similar to graphql queries that we use in the squid graphql
+endpoint. The only difference is that it is wrapped inside a subscription statement:
 
 ```
 subscription {
@@ -284,4 +302,5 @@ subscription {
     }
 ```
 
-You subscribe to multiple events in the same process by calling client.subscribe (Refer to the [example file](./scripts/subscribeTransfer.js) if you have any doubts about how it works).
+You subscribe to multiple events in the same process by calling client.subscribe (Refer to
+the [example file](./scripts/subscribeTransfer.js) if you have any doubts about how it works).

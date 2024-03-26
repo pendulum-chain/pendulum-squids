@@ -167,7 +167,7 @@ export async function handleLiquidityAdded(ctx: EventHandlerContext) {
     const mint = await ctx.store.get(Mint, mints[mints.length - 1])
     if (!mint) return
 
-    let event = decodeEvent(network, ctx, 'zenlinkProtocol', 'liquidityAdded')
+    const event = decodeEvent(network, ctx, 'zenlinkProtocol', 'liquidityAdded')
 
     const [asset0, asset1] = sortAssets([event[1], event[2]])
 
@@ -230,7 +230,12 @@ export async function handleLiquidityRemoved(ctx: EventHandlerContext) {
     const burn = await ctx.store.get(Burn, burns[burns.length - 1])
     if (!burn) return
 
-    let event = decodeEvent(network, ctx, 'zenlinkProtocol', 'liquidityRemoved')
+    const event = decodeEvent(
+        network,
+        ctx,
+        'zenlinkProtocol',
+        'liquidityRemoved'
+    )
 
     const [asset0, asset1] = sortAssets([event[2], event[3]])
 
@@ -309,7 +314,7 @@ export async function handleAssetSwap(ctx: EventHandlerContext) {
     const txHash = ctx.event.extrinsic?.hash
     if (!txHash) return
 
-    let event = decodeEvent(network, ctx, 'zenlinkProtocol', 'assetSwap')
+    const event = decodeEvent(network, ctx, 'zenlinkProtocol', 'assetSwap')
     const path = event[2]
     const amounts = event[3]
     const sender = codec(config.prefix).encode(event[0])
@@ -330,14 +335,7 @@ export async function handleAssetSwap(ctx: EventHandlerContext) {
 
         const bundle = (await ctx.store.get(Bundle, '1'))!
 
-        let { token0, token1 } = pair
-
-        let amount0Total,
-            amount1Total,
-            amount0In,
-            amount1In,
-            amount0Out,
-            amount1Out = ZERO_BD
+        const { token0, token1 } = pair
 
         // We need to check if the order of assets in the pair was switched, so we can correctly assign the amounts
         const inputToken = await getOrCreateToken(ctx, inputAsset)
@@ -349,13 +347,13 @@ export async function handleAssetSwap(ctx: EventHandlerContext) {
         const rawAmount0Out = isSwitched ? amounts[i] : 0n
         const rawAmount1Out = isSwitched ? 0n : amounts[i]
 
-        amount0In = convertTokenToDecimal(rawAmount0In, token0.decimals)
-        amount0Out = convertTokenToDecimal(rawAmount0Out, token0.decimals)
-        amount0Total = amount0Out.plus(amount0In)
+        const amount0In = convertTokenToDecimal(rawAmount0In, token0.decimals)
+        const amount0Out = convertTokenToDecimal(rawAmount0Out, token0.decimals)
+        const amount0Total = amount0Out.plus(amount0In)
 
-        amount1In = convertTokenToDecimal(rawAmount1In, token1.decimals)
-        amount1Out = convertTokenToDecimal(rawAmount1Out, token1.decimals)
-        amount1Total = amount1Out.plus(amount1In)
+        const amount1In = convertTokenToDecimal(rawAmount1In, token1.decimals)
+        const amount1Out = convertTokenToDecimal(rawAmount1Out, token1.decimals)
+        const amount1Total = amount1Out.plus(amount1In)
 
         // get total amounts of derived USD and ETH for tracking
         const derivedAmountETH = BigDecimal(token1.derivedETH)

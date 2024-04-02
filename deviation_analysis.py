@@ -51,7 +51,7 @@ for currency, records in data.items():
     print(f"{currency} - Analysis to: {last_timestamp}")
     print(f"{currency} - Deviation events: {count}")
     print(f"{currency} - Total blocks: {all_records_count}")
-    print(f"{currency} - Accuracy: {accuracy}%")
+    print(f"{currency} - Accuracy: {accuracy * 100}%")
     print(f"{currency} - Mean Deviation: {mean_deviation:.2f}%")
     print(f"{currency} - Mean Deviation of Deviations: {mean_of_deviation:.2f}%")
     print(f"{currency} - Standard Deviation of Deviations: {std_deviation_of_deviation:.2f}%")

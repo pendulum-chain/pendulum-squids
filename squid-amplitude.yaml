@@ -1,6 +1,6 @@
 manifestVersion: subsquid.io/v0.1
 name: amplitude-squid
-version: 19
+version: 20
 description: 'Amplitude Kusama Squid'
 build:
 deploy:

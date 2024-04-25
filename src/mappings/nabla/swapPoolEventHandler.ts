@@ -1,14 +1,19 @@
 import { EventHandlerContext } from '../../processor'
-import { createSwapFee, getBackstopPool, getSwapPool } from './creation'
+import {
+    ZERO_ADDRESS,
+    createSwapFee,
+    getBackstopPool,
+    getSwapPool,
+} from './creation'
 import { NablaSwapFee, SwapPool } from '../../model'
 import {
     decodeEvent,
     Contract as SwapPoolContract,
     Event_ChargedSwapFees,
+    Event_ProtocolTreasuryChanged,
 } from '../../abi/swap'
-import { Contract as Erc20Contract } from '../../abi/erc20'
 import { Contract as BackstopPoolContract } from '../../abi/backstop'
-import { ss58ToHex } from './addresses'
+import { hexToSs58, ss58ToHex } from './addresses'
 import { updateBackstopCoverageAndSupply } from './backstopPoolEventHandler'
 
 const SWAP_FEE_PRUNE_INTERVAL_MILLI_SECONDS = 7 * 24 * 60 * 60 * 1000
@@ -20,6 +25,10 @@ export async function handleSwapPoolEvent(
     const event = decodeEvent(ctx.event.args.data)
 
     switch (event.__kind) {
+        case 'Approval':
+            // No action required
+            break
+
         case 'BackstopDrain':
             await handleBackstopDrain(ctx, swapPool)
             break
@@ -43,6 +52,10 @@ export async function handleSwapPoolEvent(
 
         case 'Paused':
             await handlePaused(ctx, swapPool)
+            break
+
+        case 'ProtocolTreasuryChanged':
+            await handleProtocolTreasuryChanged(ctx, event, swapPool)
             break
 
         case 'Transfer':
@@ -108,6 +121,20 @@ export async function handlePaused(
     swapPool: SwapPool
 ) {
     swapPool.paused = true
+    await ctx.store.save(swapPool)
+}
+
+export async function handleProtocolTreasuryChanged(
+    ctx: EventHandlerContext,
+    event: Event_ProtocolTreasuryChanged,
+    swapPool: SwapPool
+) {
+    const protocolTreasurySs58Address =
+        event.newProtocolTreasury === ZERO_ADDRESS
+            ? null
+            : hexToSs58(event.newProtocolTreasury)
+
+    swapPool.protocolTreasuryAddress = protocolTreasurySs58Address
     await ctx.store.save(swapPool)
 }
 

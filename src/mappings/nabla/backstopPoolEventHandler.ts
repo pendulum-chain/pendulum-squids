@@ -6,6 +6,7 @@ import {
     Event_CoverSwapWithdrawal,
     Event_WithdrawSwapLiquidity,
     Contract as BackstopPoolContract,
+    Event_InsuranceFeeSet,
 } from '../../abi/backstop'
 import { Contract as Erc20Contract } from '../../abi/erc20'
 import { hexToSs58, ss58ToHex } from './addresses'
@@ -19,12 +20,20 @@ export async function handleBackstopPoolEvent(
     const event = decodeEvent(ctx.event.args.data)
 
     switch (event.__kind) {
+        case 'Approval':
+            // No action required
+            break
+
         case 'Burn':
             await handleBurn(ctx, backstopPool)
             break
 
         case 'CoverSwapWithdrawal':
             await handleCoverSwapWithdrawal(ctx, event, backstopPool)
+            break
+
+        case 'InsuranceFeeSet':
+            await handleInsuranceFeeSet(ctx, event, backstopPool)
             break
 
         case 'Mint':
@@ -38,6 +47,10 @@ export async function handleBackstopPoolEvent(
 
         case 'Paused':
             await handlePaused(ctx, backstopPool)
+            break
+
+        case 'SwapPoolAdded':
+            // No action required
             break
 
         case 'Transfer':
@@ -69,7 +82,7 @@ export async function handleCoverSwapWithdrawal(
 ) {
     const swapPoolSs58Address = hexToSs58(event.swapPool)
     const pool = await getSwapPool(ctx, swapPoolSs58Address)
-    if (pool === undefined) {
+    if (pool === undefined || pool.backstop.id !== backstopPool.id) {
         // this is a non-standard or malicious swap pool, ignore
         return
     }
@@ -79,6 +92,22 @@ export async function handleCoverSwapWithdrawal(
 
     await ctx.store.save(backstopPool)
     await ctx.store.save(pool)
+}
+
+export async function handleInsuranceFeeSet(
+    ctx: EventHandlerContext,
+    event: Event_InsuranceFeeSet,
+    backstopPool: BackstopPool
+) {
+    const swapPoolSs58Address = hexToSs58(event.swapPool)
+    const swapPool = await getSwapPool(ctx, swapPoolSs58Address)
+    if (swapPool === undefined || swapPool.backstop.id !== backstopPool.id) {
+        // this is a non-standard or malicious swap pool, ignore
+        return
+    }
+
+    swapPool.insuranceFeeBps = event.insuranceFeeBps
+    await ctx.store.save(swapPool)
 }
 
 export async function handleMint(
@@ -112,7 +141,7 @@ export async function handleWithdrawSwapLiquidity(
 ) {
     const swapPoolSs58Address = hexToSs58(event.swapPool)
     const pool = await getSwapPool(ctx, swapPoolSs58Address)
-    if (pool === undefined) {
+    if (pool === undefined || pool.backstop.id !== backstopPool.id) {
         // this is a non-standard or malicious swap pool, ignore
         return
     }

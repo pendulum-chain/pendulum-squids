@@ -147,6 +147,7 @@ export async function createSwapPool(
     const backstopPoolAddress = await contract.backstop()
     const routerAddress = await contract.router()
     const tokenAddress = await contract.asset()
+    const protocolTreasuryAddress = await contract.protocolTreasury()
 
     if (
         backstopPoolAddress === ZERO_ADDRESS ||
@@ -156,6 +157,10 @@ export async function createSwapPool(
         return undefined
     }
 
+    const protocolTreasurySs58Address =
+        protocolTreasuryAddress === ZERO_ADDRESS
+            ? null
+            : hexToSs58(protocolTreasuryAddress)
     const backstopPoolSs58Address = hexToSs58(backstopPoolAddress)
     const routerSs58Address = hexToSs58(routerAddress)
     const backstop = await getBackstopPool(ctx, backstopPoolSs58Address)
@@ -182,6 +187,8 @@ export async function createSwapPool(
         totalSupply: await contract.totalSupply(),
         paused: false,
         apr: 0n,
+        insuranceFeeBps: 0n,
+        protocolTreasuryAddress: protocolTreasurySs58Address,
     })
     await ctx.store.save(swapPool)
 }

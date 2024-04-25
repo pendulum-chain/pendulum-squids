@@ -77,4 +77,13 @@ export class SwapPool {
         nullable: false,
     })
     apr!: bigint
+
+    @Column_('numeric', {
+        transformer: marshal.bigintTransformer,
+        nullable: false,
+    })
+    insuranceFeeBps!: bigint
+
+    @Column_('text', { nullable: true })
+    protocolTreasuryAddress!: string | undefined | null
 }

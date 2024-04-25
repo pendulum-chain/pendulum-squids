@@ -1,5 +1,5 @@
-module.exports = class Data1714027551702 {
-    name = 'Data1714027551702'
+module.exports = class Data1714034652645 {
+    name = 'Data1714034652645'
 
     async up(db) {
         await db.query(
@@ -312,7 +312,7 @@ module.exports = class Data1714027551702 {
             `CREATE INDEX "IDX_8a7a25fa2d22ff634bd3041d81" ON "backstop_pool" ("token_id") `
         )
         await db.query(
-            `CREATE TABLE "swap_pool" ("id" character varying NOT NULL, "name" text NOT NULL, "symbol" text NOT NULL, "lp_token_decimals" integer NOT NULL, "reserve" numeric NOT NULL, "reserve_with_slippage" numeric NOT NULL, "total_liabilities" numeric NOT NULL, "total_supply" numeric NOT NULL, "paused" boolean NOT NULL, "apr" numeric NOT NULL, "router_id" character varying, "backstop_id" character varying, "token_id" character varying, CONSTRAINT "PK_e78e7b899d2e3327494e5fe975d" PRIMARY KEY ("id"))`
+            `CREATE TABLE "swap_pool" ("id" character varying NOT NULL, "name" text NOT NULL, "symbol" text NOT NULL, "lp_token_decimals" integer NOT NULL, "reserve" numeric NOT NULL, "reserve_with_slippage" numeric NOT NULL, "total_liabilities" numeric NOT NULL, "total_supply" numeric NOT NULL, "paused" boolean NOT NULL, "apr" numeric NOT NULL, "insurance_fee_bps" numeric NOT NULL, "protocol_treasury_address" text, "router_id" character varying, "backstop_id" character varying, "token_id" character varying, CONSTRAINT "PK_e78e7b899d2e3327494e5fe975d" PRIMARY KEY ("id"))`
         )
         await db.query(
             `CREATE INDEX "IDX_2f5409f002e18e4a6e2fddd858" ON "swap_pool" ("router_id") `

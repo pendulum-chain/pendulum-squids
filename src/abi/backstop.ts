@@ -10,7 +10,7 @@ export const metadata = {
     },
     source: {
         compiler: 'solang 0.3.2',
-        hash: '0x026ff1b46ca6ae1d60aed9cea110e48ee635da3087675e463bc717a9c23ffbe1',
+        hash: '0xe07d252b0830943a932a082d3b7a46249af166287420ec4cfbc49b3384e48b6c',
         language: 'Solidity 0.3.2',
     },
     spec: {
@@ -244,6 +244,81 @@ export const metadata = {
                 ],
                 docs: [''],
                 label: 'OwnershipTransferred',
+            },
+            {
+                args: [
+                    {
+                        docs: [],
+                        indexed: true,
+                        label: 'sender',
+                        type: {
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
+                            type: 2,
+                        },
+                    },
+                    {
+                        docs: [],
+                        indexed: false,
+                        label: 'swapPool',
+                        type: {
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
+                            type: 2,
+                        },
+                    },
+                ],
+                docs: [
+                    'emitted when a new swap pool is added to the backstop pool for coverage',
+                ],
+                label: 'SwapPoolAdded',
+            },
+            {
+                args: [
+                    {
+                        docs: [],
+                        indexed: true,
+                        label: 'sender',
+                        type: {
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
+                            type: 2,
+                        },
+                    },
+                    {
+                        docs: [],
+                        indexed: true,
+                        label: 'swapPool',
+                        type: {
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
+                            type: 2,
+                        },
+                    },
+                    {
+                        docs: [],
+                        indexed: false,
+                        label: 'insuranceFeeBps',
+                        type: {
+                            displayName: ['uint256'],
+                            type: 3,
+                        },
+                    },
+                ],
+                docs: ['emitted when the insurance fee is set for a swap pool'],
+                label: 'InsuranceFeeSet',
             },
             {
                 args: [
@@ -884,7 +959,10 @@ export const metadata = {
                 label: 'addSwapPool',
                 mutates: true,
                 payable: false,
-                returnType: null,
+                returnType: {
+                    displayName: ['bool'],
+                    type: 4,
+                },
                 selector: '0xabb26587',
             },
             {
@@ -913,7 +991,10 @@ export const metadata = {
                 label: 'setInsuranceFee',
                 mutates: true,
                 payable: false,
-                returnType: null,
+                returnType: {
+                    displayName: ['bool'],
+                    type: 4,
+                },
                 selector: '0xc6a78196',
             },
             {
@@ -2060,9 +2141,11 @@ export type Event =
     | Event_Approval
     | Event_Burn
     | Event_CoverSwapWithdrawal
+    | Event_InsuranceFeeSet
     | Event_Mint
     | Event_OwnershipTransferred
     | Event_Paused
+    | Event_SwapPoolAdded
     | Event_Transfer
     | Event_Unpaused
     | Event_WithdrawSwapLiquidity
@@ -2090,6 +2173,13 @@ export interface Event_CoverSwapWithdrawal {
     amountBackstopTokens: uint256
 }
 
+export interface Event_InsuranceFeeSet {
+    __kind: 'InsuranceFeeSet'
+    sender: AccountId
+    swapPool: AccountId
+    insuranceFeeBps: uint256
+}
+
 export interface Event_Mint {
     __kind: 'Mint'
     sender: AccountId
@@ -2106,6 +2196,12 @@ export interface Event_OwnershipTransferred {
 export interface Event_Paused {
     __kind: 'Paused'
     account: AccountId
+}
+
+export interface Event_SwapPoolAdded {
+    __kind: 'SwapPoolAdded'
+    sender: AccountId
+    swapPool: AccountId
 }
 
 export interface Event_Transfer {

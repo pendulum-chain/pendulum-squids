@@ -10,7 +10,7 @@ export const metadata = {
     },
     source: {
         compiler: 'solang 0.3.2',
-        hash: '0xc473b9f6f31f711534a19a44c15935f3e1ffe0f031cf98b3f5701111dc793f49',
+        hash: '0x42108ada7515f8f4ab3ed8cea31e4c3456c433ce52fecb9d3a2afb33c727ab94',
         language: 'Solidity 0.3.2',
     },
     spec: {
@@ -105,11 +105,11 @@ export const metadata = {
             },
             balance: {
                 displayName: ['Balance'],
-                type: 13,
+                type: 14,
             },
             blockNumber: {
                 displayName: ['BlockNumber'],
-                type: 14,
+                type: 15,
             },
             chainExtension: {
                 displayName: [],
@@ -117,12 +117,12 @@ export const metadata = {
             },
             hash: {
                 displayName: ['Hash'],
-                type: 15,
+                type: 16,
             },
             maxEventTopics: 4,
             timestamp: {
                 displayName: ['Timestamp'],
-                type: 14,
+                type: 15,
             },
         },
         events: [
@@ -296,6 +296,38 @@ export const metadata = {
                     {
                         docs: [],
                         indexed: false,
+                        label: 'newProtocolTreasury',
+                        type: {
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
+                            type: 2,
+                        },
+                    },
+                ],
+                docs: ['emitted when the protocol treasury address is changed'],
+                label: 'ProtocolTreasuryChanged',
+            },
+            {
+                args: [
+                    {
+                        docs: [],
+                        indexed: true,
+                        label: 'sender',
+                        type: {
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
+                            type: 2,
+                        },
+                    },
+                    {
+                        docs: [],
+                        indexed: false,
                         label: 'poolSharesMinted',
                         type: {
                             displayName: ['uint256'],
@@ -422,7 +454,7 @@ export const metadata = {
         ],
         lang_error: {
             displayName: ['SolidityError'],
-            type: 18,
+            type: 19,
         },
         messages: [
             {
@@ -864,6 +896,19 @@ export const metadata = {
                 args: [],
                 default: false,
                 docs: [''],
+                label: 'maxCoverageRatioForSwapIn',
+                mutates: false,
+                payable: false,
+                returnType: {
+                    displayName: ['uint256'],
+                    type: 3,
+                },
+                selector: '0xb2f3447a',
+            },
+            {
+                args: [],
+                default: false,
+                docs: [''],
                 label: 'protocolTreasury',
                 mutates: false,
                 payable: false,
@@ -911,19 +956,6 @@ export const metadata = {
                     type: 2,
                 },
                 selector: '0xebe26b9e',
-            },
-            {
-                args: [],
-                default: false,
-                docs: [''],
-                label: 'maxCoverageRatioForSwapIn',
-                mutates: false,
-                payable: false,
-                returnType: {
-                    displayName: ['uint256'],
-                    type: 3,
-                },
-                selector: '0xb2f3447a',
             },
             {
                 args: [
@@ -1035,6 +1067,31 @@ export const metadata = {
             {
                 args: [
                     {
+                        label: '_newProtocolTreasury',
+                        type: {
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
+                            type: 2,
+                        },
+                    },
+                ],
+                default: false,
+                docs: ['Set new treasury address'],
+                label: 'setProtocolTreasury',
+                mutates: true,
+                payable: false,
+                returnType: {
+                    displayName: ['bool'],
+                    type: 4,
+                },
+                selector: '0x0c5a61f8',
+            },
+            {
+                args: [
+                    {
                         label: '_depositAmount',
                         type: {
                             displayName: ['uint256'],
@@ -1054,6 +1111,29 @@ export const metadata = {
                     type: 10,
                 },
                 selector: '0xb6b55f25',
+            },
+            {
+                args: [
+                    {
+                        label: '_depositAmount',
+                        type: {
+                            displayName: ['uint256'],
+                            type: 3,
+                        },
+                    },
+                ],
+                default: false,
+                docs: [
+                    'Get a quote for the effective amount of tokens for a deposit',
+                ],
+                label: 'quoteDeposit',
+                mutates: false,
+                payable: false,
+                returnType: {
+                    displayName: ['uint256'],
+                    type: 3,
+                },
+                selector: '0xdb431f06',
             },
             {
                 args: [
@@ -1084,6 +1164,29 @@ export const metadata = {
                     type: 11,
                 },
                 selector: '0x441a3e70',
+            },
+            {
+                args: [
+                    {
+                        label: '_sharesToBurn',
+                        type: {
+                            displayName: ['uint256'],
+                            type: 3,
+                        },
+                    },
+                ],
+                default: false,
+                docs: [
+                    'Get a quote for the effective amount of tokens for a withdrawal',
+                ],
+                label: 'quoteWithdraw',
+                mutates: false,
+                payable: false,
+                returnType: {
+                    displayName: ['uint256'],
+                    type: 3,
+                },
+                selector: '0xec211840',
             },
             {
                 args: [
@@ -1152,6 +1255,29 @@ export const metadata = {
                     type: 3,
                 },
                 selector: '0xc2cb15de',
+            },
+            {
+                args: [
+                    {
+                        label: '_amount',
+                        type: {
+                            displayName: ['uint256'],
+                            type: 3,
+                        },
+                    },
+                ],
+                default: false,
+                docs: [
+                    'Get a quote for the effective amount of tokens for a backstop drain',
+                ],
+                label: 'quoteBackstopDrain',
+                mutates: false,
+                payable: false,
+                returnType: {
+                    displayName: ['uint256'],
+                    type: 3,
+                },
+                selector: '0xe237fb3d',
             },
             {
                 args: [
@@ -1240,8 +1366,8 @@ export const metadata = {
                 mutates: false,
                 payable: false,
                 returnType: {
-                    displayName: ['uint256'],
-                    type: 3,
+                    displayName: ['SwapPool', 'quoteSwapOut', 'return_type'],
+                    type: 12,
                 },
                 selector: '0x8735c246',
             },
@@ -1274,7 +1400,7 @@ export const metadata = {
                 payable: false,
                 returnType: {
                     displayName: ['SwapPool', 'coverage', 'return_type'],
-                    type: 12,
+                    type: 13,
                 },
                 selector: '0xee8f6a0e',
             },
@@ -1292,33 +1418,6 @@ export const metadata = {
                     type: 9,
                 },
                 selector: '0xace0f0d5',
-            },
-            {
-                args: [
-                    {
-                        label: '_liquidityProvider',
-                        type: {
-                            displayName: [
-                                'ink_primitives',
-                                'types',
-                                'AccountId',
-                            ],
-                            type: 2,
-                        },
-                    },
-                ],
-                default: false,
-                docs: [
-                    'Return the earliest block no that insurance withdrawals are possible.',
-                ],
-                label: 'insuranceWithdrawalUnlock',
-                mutates: false,
-                payable: false,
-                returnType: {
-                    displayName: ['uint256'],
-                    type: 3,
-                },
-                selector: '0x5c6f4279',
             },
             {
                 args: [
@@ -1582,25 +1681,15 @@ export const metadata = {
                     layout: {
                         root: {
                             layout: {
-                                struct: {
-                                    fields: [
-                                        {
-                                            layout: {
-                                                leaf: {
-                                                    key: '0x0000000f',
-                                                    ty: 1,
-                                                },
-                                            },
-                                            name: '',
-                                        },
-                                    ],
-                                    name: 'AccountId',
+                                leaf: {
+                                    key: '0x0000000f',
+                                    ty: 3,
                                 },
                             },
                             root_key: '0x0000000f',
                         },
                     },
-                    name: 'protocolTreasury',
+                    name: 'maxCoverageRatioForSwapIn',
                 },
                 {
                     layout: {
@@ -1624,66 +1713,18 @@ export const metadata = {
                             root_key: '0x00000010',
                         },
                     },
-                    name: 'backstop',
-                },
-                {
-                    layout: {
-                        root: {
-                            layout: {
-                                struct: {
-                                    fields: [
-                                        {
-                                            layout: {
-                                                leaf: {
-                                                    key: '0x00000011',
-                                                    ty: 1,
-                                                },
-                                            },
-                                            name: '',
-                                        },
-                                    ],
-                                    name: 'AccountId',
-                                },
-                            },
-                            root_key: '0x00000011',
-                        },
-                    },
-                    name: 'router',
-                },
-                {
-                    layout: {
-                        root: {
-                            layout: {
-                                struct: {
-                                    fields: [
-                                        {
-                                            layout: {
-                                                leaf: {
-                                                    key: '0x00000012',
-                                                    ty: 1,
-                                                },
-                                            },
-                                            name: '',
-                                        },
-                                    ],
-                                    name: 'AccountId',
-                                },
-                            },
-                            root_key: '0x00000012',
-                        },
-                    },
-                    name: 'slippageCurve',
+                    name: 'protocolTreasury',
                 },
                 {
                     layout: {
                         root: {
                             layout: {
                                 leaf: {
-                                    key: '0x00000013',
+                                    key: '0x00000011',
                                     ty: 3,
                                 },
                             },
-                            root_key: '0x00000013',
+                            root_key: '0x00000011',
                         },
                     },
                     name: 'latestDepositAtBlockNo',
@@ -1697,7 +1738,7 @@ export const metadata = {
                                         {
                                             layout: {
                                                 leaf: {
-                                                    key: '0x00000014',
+                                                    key: '0x00000012',
                                                     ty: 6,
                                                 },
                                             },
@@ -1706,7 +1747,7 @@ export const metadata = {
                                         {
                                             layout: {
                                                 leaf: {
-                                                    key: '0x00000014',
+                                                    key: '0x00000012',
                                                     ty: 6,
                                                 },
                                             },
@@ -1715,7 +1756,7 @@ export const metadata = {
                                         {
                                             layout: {
                                                 leaf: {
-                                                    key: '0x00000014',
+                                                    key: '0x00000012',
                                                     ty: 6,
                                                 },
                                             },
@@ -1725,7 +1766,7 @@ export const metadata = {
                                     name: 'SwapFees',
                                 },
                             },
-                            root_key: '0x00000014',
+                            root_key: '0x00000012',
                         },
                     },
                     name: 'swapFeeConfig',
@@ -1734,15 +1775,73 @@ export const metadata = {
                     layout: {
                         root: {
                             layout: {
-                                leaf: {
-                                    key: '0x00000017',
-                                    ty: 3,
+                                struct: {
+                                    fields: [
+                                        {
+                                            layout: {
+                                                leaf: {
+                                                    key: '0x00000015',
+                                                    ty: 1,
+                                                },
+                                            },
+                                            name: '',
+                                        },
+                                    ],
+                                    name: 'AccountId',
+                                },
+                            },
+                            root_key: '0x00000015',
+                        },
+                    },
+                    name: 'backstop',
+                },
+                {
+                    layout: {
+                        root: {
+                            layout: {
+                                struct: {
+                                    fields: [
+                                        {
+                                            layout: {
+                                                leaf: {
+                                                    key: '0x00000016',
+                                                    ty: 1,
+                                                },
+                                            },
+                                            name: '',
+                                        },
+                                    ],
+                                    name: 'AccountId',
+                                },
+                            },
+                            root_key: '0x00000016',
+                        },
+                    },
+                    name: 'router',
+                },
+                {
+                    layout: {
+                        root: {
+                            layout: {
+                                struct: {
+                                    fields: [
+                                        {
+                                            layout: {
+                                                leaf: {
+                                                    key: '0x00000017',
+                                                    ty: 1,
+                                                },
+                                            },
+                                            name: '',
+                                        },
+                                    ],
+                                    name: 'AccountId',
                                 },
                             },
                             root_key: '0x00000017',
                         },
                     },
-                    name: 'maxCoverageRatioForSwapIn',
+                    name: 'slippageCurve',
                 },
             ],
             name: 'SwapPool',
@@ -1884,13 +1983,22 @@ export const metadata = {
             id: 12,
             type: {
                 def: {
+                    tuple: [3, 3, 3, 3],
+                },
+                path: ['SwapPool', 'quoteSwapOut', 'return_type'],
+            },
+        },
+        {
+            id: 13,
+            type: {
+                def: {
                     tuple: [3, 3],
                 },
                 path: ['SwapPool', 'coverage', 'return_type'],
             },
         },
         {
-            id: 13,
+            id: 14,
             type: {
                 def: {
                     primitive: 'u128',
@@ -1899,7 +2007,7 @@ export const metadata = {
             },
         },
         {
-            id: 14,
+            id: 15,
             type: {
                 def: {
                     primitive: 'u64',
@@ -1908,7 +2016,7 @@ export const metadata = {
             },
         },
         {
-            id: 15,
+            id: 16,
             type: {
                 def: {
                     composite: {
@@ -1923,7 +2031,7 @@ export const metadata = {
             },
         },
         {
-            id: 16,
+            id: 17,
             type: {
                 def: {
                     composite: {
@@ -1938,7 +2046,7 @@ export const metadata = {
             },
         },
         {
-            id: 17,
+            id: 18,
             type: {
                 def: {
                     composite: {
@@ -1953,7 +2061,7 @@ export const metadata = {
             },
         },
         {
-            id: 18,
+            id: 19,
             type: {
                 def: {
                     variant: {
@@ -1961,7 +2069,7 @@ export const metadata = {
                             {
                                 fields: [
                                     {
-                                        type: 16,
+                                        type: 17,
                                     },
                                 ],
                                 index: 0,
@@ -1970,7 +2078,7 @@ export const metadata = {
                             {
                                 fields: [
                                     {
-                                        type: 17,
+                                        type: 18,
                                     },
                                 ],
                                 index: 1,
@@ -2077,6 +2185,10 @@ export class Contract {
         return this.stateCall('0x0d3a7fd4', [])
     }
 
+    maxCoverageRatioForSwapIn(): Promise<uint256> {
+        return this.stateCall('0xb2f3447a', [])
+    }
+
     protocolTreasury(): Promise<AccountId> {
         return this.stateCall('0x803db96d', [])
     }
@@ -2093,19 +2205,29 @@ export class Contract {
         return this.stateCall('0xebe26b9e', [])
     }
 
-    maxCoverageRatioForSwapIn(): Promise<uint256> {
-        return this.stateCall('0xb2f3447a', [])
-    }
-
     swapFees(): Promise<return_type> {
         return this.stateCall('0xb9ccf21d', [])
+    }
+
+    quoteDeposit(_depositAmount: uint256): Promise<uint256> {
+        return this.stateCall('0xdb431f06', [_depositAmount])
+    }
+
+    quoteWithdraw(_sharesToBurn: uint256): Promise<uint256> {
+        return this.stateCall('0xec211840', [_sharesToBurn])
+    }
+
+    quoteBackstopDrain(_amount: uint256): Promise<uint256> {
+        return this.stateCall('0xe237fb3d', [_amount])
     }
 
     quoteSwapInto(_amount: uint256): Promise<uint256> {
         return this.stateCall('0x3c945248', [_amount])
     }
 
-    quoteSwapOut(_amount: uint256): Promise<uint256> {
+    quoteSwapOut(
+        _amount: uint256
+    ): Promise<[uint256, uint256, uint256, uint256]> {
         return this.stateCall('0x8735c246', [_amount])
     }
 
@@ -2115,10 +2237,6 @@ export class Contract {
 
     getExcessLiquidity(): Promise<int256> {
         return this.stateCall('0xace0f0d5', [])
-    }
-
-    insuranceWithdrawalUnlock(_liquidityProvider: AccountId): Promise<uint256> {
-        return this.stateCall('0x5c6f4279', [_liquidityProvider])
     }
 
     sharesTargetWorth(_sharesToBurn: uint256): Promise<uint256> {
@@ -2182,7 +2300,6 @@ export type Message =
     | Message_getExcessLiquidity
     | Message_increaseAllowance
     | Message_insuranceWithdrawalTimelock
-    | Message_insuranceWithdrawalUnlock
     | Message_maxCoverageRatioForSwapIn
     | Message_name
     | Message_owner
@@ -2190,8 +2307,11 @@ export type Message =
     | Message_paused
     | Message_poolCap
     | Message_protocolTreasury
+    | Message_quoteBackstopDrain
+    | Message_quoteDeposit
     | Message_quoteSwapInto
     | Message_quoteSwapOut
+    | Message_quoteWithdraw
     | Message_renounceOwnership
     | Message_reserve
     | Message_reserveWithSlippage
@@ -2199,6 +2319,7 @@ export type Message =
     | Message_setInsuranceWithdrawalTimelock
     | Message_setMaxCoverageRatioForSwapIn
     | Message_setPoolCap
+    | Message_setProtocolTreasury
     | Message_setSwapFees
     | Message_sharesTargetWorth
     | Message_slippageCurve
@@ -2337,14 +2458,6 @@ export interface Message_insuranceWithdrawalTimelock {
 }
 
 /**
- * Return the earliest block no that insurance withdrawals are possible.
- */
-export interface Message_insuranceWithdrawalUnlock {
-    __kind: 'insuranceWithdrawalUnlock'
-    liquidityProvider: AccountId
-}
-
-/**
  *
  */
 export interface Message_maxCoverageRatioForSwapIn {
@@ -2394,6 +2507,22 @@ export interface Message_protocolTreasury {
 }
 
 /**
+ * Get a quote for the effective amount of tokens for a backstop drain
+ */
+export interface Message_quoteBackstopDrain {
+    __kind: 'quoteBackstopDrain'
+    amount: uint256
+}
+
+/**
+ * Get a quote for the effective amount of tokens for a deposit
+ */
+export interface Message_quoteDeposit {
+    __kind: 'quoteDeposit'
+    depositAmount: uint256
+}
+
+/**
  * Get a quote for the effective amount of tokens for a swap into
  */
 export interface Message_quoteSwapInto {
@@ -2407,6 +2536,14 @@ export interface Message_quoteSwapInto {
 export interface Message_quoteSwapOut {
     __kind: 'quoteSwapOut'
     amount: uint256
+}
+
+/**
+ * Get a quote for the effective amount of tokens for a withdrawal
+ */
+export interface Message_quoteWithdraw {
+    __kind: 'quoteWithdraw'
+    sharesToBurn: uint256
 }
 
 /**
@@ -2459,6 +2596,14 @@ export interface Message_setMaxCoverageRatioForSwapIn {
 export interface Message_setPoolCap {
     __kind: 'setPoolCap'
     maxTokens: uint256
+}
+
+/**
+ * Set new treasury address
+ */
+export interface Message_setProtocolTreasury {
+    __kind: 'setProtocolTreasury'
+    newProtocolTreasury: AccountId
 }
 
 /**
@@ -2581,6 +2726,7 @@ export type Event =
     | Event_Mint
     | Event_OwnershipTransferred
     | Event_Paused
+    | Event_ProtocolTreasuryChanged
     | Event_Transfer
     | Event_Unpaused
 
@@ -2627,6 +2773,12 @@ export interface Event_OwnershipTransferred {
 export interface Event_Paused {
     __kind: 'Paused'
     account: AccountId
+}
+
+export interface Event_ProtocolTreasuryChanged {
+    __kind: 'ProtocolTreasuryChanged'
+    sender: AccountId
+    newProtocolTreasury: AccountId
 }
 
 export interface Event_Transfer {

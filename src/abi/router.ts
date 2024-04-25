@@ -8,7 +8,7 @@ export const metadata = {
     },
     source: {
         compiler: 'solang 0.3.2',
-        hash: '0xe2399cb35f8b6165c02038216d66719e2f91be30096c0324fc759c0826684bcc',
+        hash: '0x1461e0f01fe866142df918dc0c65f8a185e5079d6a642da2b79436f6839db44e',
         language: 'Solidity 0.3.2',
     },
     spec: {
@@ -31,11 +31,11 @@ export const metadata = {
             },
             balance: {
                 displayName: ['Balance'],
-                type: 7,
+                type: 8,
             },
             blockNumber: {
                 displayName: ['BlockNumber'],
-                type: 8,
+                type: 9,
             },
             chainExtension: {
                 displayName: [],
@@ -43,12 +43,12 @@ export const metadata = {
             },
             hash: {
                 displayName: ['Hash'],
-                type: 9,
+                type: 10,
             },
             maxEventTopics: 4,
             timestamp: {
                 displayName: ['Timestamp'],
-                type: 8,
+                type: 9,
             },
         },
         events: [
@@ -278,7 +278,7 @@ export const metadata = {
         ],
         lang_error: {
             displayName: ['SolidityError'],
-            type: 13,
+            type: 14,
         },
         messages: [
             {
@@ -585,8 +585,8 @@ export const metadata = {
                 mutates: false,
                 payable: false,
                 returnType: {
-                    displayName: ['uint256'],
-                    type: 3,
+                    displayName: ['Router', 'getAmountOut', 'return_type'],
+                    type: 7,
                 },
                 selector: '0xb8239ebb',
             },
@@ -777,13 +777,22 @@ export const metadata = {
             id: 7,
             type: {
                 def: {
+                    tuple: [3, 3],
+                },
+                path: ['Router', 'getAmountOut', 'return_type'],
+            },
+        },
+        {
+            id: 8,
+            type: {
+                def: {
                     primitive: 'u128',
                 },
                 path: ['uint128'],
             },
         },
         {
-            id: 8,
+            id: 9,
             type: {
                 def: {
                     primitive: 'u64',
@@ -792,7 +801,7 @@ export const metadata = {
             },
         },
         {
-            id: 9,
+            id: 10,
             type: {
                 def: {
                     composite: {
@@ -807,7 +816,7 @@ export const metadata = {
             },
         },
         {
-            id: 10,
+            id: 11,
             type: {
                 def: {
                     primitive: 'str',
@@ -816,13 +825,13 @@ export const metadata = {
             },
         },
         {
-            id: 11,
+            id: 12,
             type: {
                 def: {
                     composite: {
                         fields: [
                             {
-                                type: 10,
+                                type: 11,
                             },
                         ],
                     },
@@ -831,7 +840,7 @@ export const metadata = {
             },
         },
         {
-            id: 12,
+            id: 13,
             type: {
                 def: {
                     composite: {
@@ -846,7 +855,7 @@ export const metadata = {
             },
         },
         {
-            id: 13,
+            id: 14,
             type: {
                 def: {
                     variant: {
@@ -854,7 +863,7 @@ export const metadata = {
                             {
                                 fields: [
                                     {
-                                        type: 11,
+                                        type: 12,
                                     },
                                 ],
                                 index: 0,
@@ -863,7 +872,7 @@ export const metadata = {
                             {
                                 fields: [
                                     {
-                                        type: 12,
+                                        type: 13,
                                     },
                                 ],
                                 index: 1,
@@ -929,7 +938,7 @@ export class Contract {
     getAmountOut(
         _amountIn: uint256,
         _tokenInOut: AccountId[]
-    ): Promise<uint256> {
+    ): Promise<return_type> {
         return this.stateCall('0xb8239ebb', [_amountIn, _tokenInOut])
     }
 
@@ -945,6 +954,8 @@ export class Contract {
         return _abi.decodeMessageOutput(selector, value)
     }
 }
+
+export type return_type = [uint256, uint256]
 
 export type uint256 = bigint
 

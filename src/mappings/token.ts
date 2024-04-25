@@ -24,6 +24,8 @@ import {
 import { getPairStatusFromAssets, getTokenBalance } from '../utils/token'
 import { StrKey } from 'stellar-base'
 import { decodeEvent } from '../types/eventsAndStorageSelector'
+import { sortAssets } from '../utils/sort'
+
 async function isCompleteMint(
     ctx: EventHandlerContext,
     mintId: string
@@ -39,6 +41,7 @@ function hexAssetCodeToString(code: string) {
 
     return code
 }
+
 function trimCode(code: string): string {
     if (code.startsWith('0x')) {
         // Filter out the null bytes
@@ -130,7 +133,7 @@ export async function handleTokenDeposited(ctx: EventHandlerContext) {
     const transactionHash = ctx.event.extrinsic?.hash
 
     if (!transactionHash) return
-    let event = decodeEvent(network, ctx, 'tokens', 'deposited')
+    const event = decodeEvent(network, ctx, 'tokens', 'deposited')
 
     if (!event) return
 
@@ -151,8 +154,8 @@ export async function handleTokenDeposited(ctx: EventHandlerContext) {
     if (event?.currencyId.__kind !== 'ZenlinkLPToken') return
 
     const [token0Id, token0Type, token1Id, token1Type] = event.currencyId.value
-    let token0Index = (token0Type << 8) + token0Id
-    let token1Index = (token1Type << 8) + token1Id
+    const token0Index = (token0Type << 8) + token0Id
+    const token1Index = (token1Type << 8) + token1Id
     const asset0 = {
         chainId: getChainIdFromNetwork(network),
         assetType: token0Index === 0 ? 0 : 2,
@@ -195,14 +198,15 @@ export async function handleTokenDeposited(ctx: EventHandlerContext) {
         await ctx.store.save(transaction)
     }
 
+    const sortedPair = sortAssets([asset0, asset1])
     pair.totalSupply = (
-        await getPairStatusFromAssets(ctx, [asset0, asset1], false)
+        await getPairStatusFromAssets(ctx, sortedPair, false)
     )[1].toString()
 
     const { mints } = transaction
 
     pair.totalSupply = (
-        await getPairStatusFromAssets(ctx, [asset0, asset1], false)
+        await getPairStatusFromAssets(ctx, sortedPair, false)
     )[1].toString()
     if (!mints.length || (await isCompleteMint(ctx, mints[mints.length - 1]))) {
         const mint = new Mint({
@@ -233,7 +237,7 @@ export async function handleTokenWithdrawn(ctx: EventHandlerContext) {
     const transactionHash = ctx.event.extrinsic?.hash
     if (!transactionHash) return
 
-    let event = decodeEvent(network, ctx, 'tokens', 'withdrawn')
+    const event = decodeEvent(network, ctx, 'tokens', 'withdrawn')
 
     if (!event) return
 
@@ -254,8 +258,8 @@ export async function handleTokenWithdrawn(ctx: EventHandlerContext) {
     if (event?.currencyId.__kind !== 'ZenlinkLPToken') return
 
     const [token0Id, token0Type, token1Id, token1Type] = event.currencyId.value
-    let token0Index = (token0Type << 8) + token0Id
-    let token1Index = (token1Type << 8) + token1Id
+    const token0Index = (token0Type << 8) + token0Id
+    const token1Index = (token1Type << 8) + token1Id
     const asset0 = {
         chainId: getChainIdFromNetwork(network),
         assetType: token0Index === 0 ? 0 : 2,
@@ -296,8 +300,9 @@ export async function handleTokenWithdrawn(ctx: EventHandlerContext) {
         await ctx.store.save(transaction)
     }
 
+    const sortedPair = sortAssets([asset0, asset1])
     pair.totalSupply = (
-        await getPairStatusFromAssets(ctx, [asset0, asset1], false)
+        await getPairStatusFromAssets(ctx, sortedPair, false)
     )[1].toString()
     const { burns, mints } = transaction
     let burn: Burn
@@ -363,7 +368,7 @@ export async function handleTokenWithdrawn(ctx: EventHandlerContext) {
 }
 
 export async function handleTokenTransfer(ctx: EventHandlerContext) {
-    let event = decodeEvent(network, ctx, 'tokens', 'transfer')
+    const event = decodeEvent(network, ctx, 'tokens', 'transfer')
 
     if (!event) return
 
@@ -385,8 +390,8 @@ export async function handleTokenTransfer(ctx: EventHandlerContext) {
     if (event?.currencyId.__kind !== 'ZenlinkLPToken') return
 
     const [token0Id, token0Type, token1Id, token1Type] = event.currencyId.value
-    let token0Index = (token0Type << 8) + token0Id
-    let token1Index = (token1Type << 8) + token1Id
+    const token0Index = (token0Type << 8) + token0Id
+    const token1Index = (token1Type << 8) + token1Id
     const asset0 = {
         chainId: getChainIdFromNetwork(network),
         assetType: token0Index === 0 ? 0 : 2,

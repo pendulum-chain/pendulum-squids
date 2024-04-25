@@ -1805,14 +1805,14 @@ export class Contract {
     }
 
     private async stateCall<T>(selector: string, args: any[]): Promise<T> {
-        let input = _abi.encodeMessageInput(selector, args)
-        let data = encodeCall(this.address, input)
-        let result = await this.ctx._chain.rpc.call('state_call', [
+        const input = _abi.encodeMessageInput(selector, args)
+        const data = encodeCall(this.address, input)
+        const result = await this.ctx._chain.rpc.call('state_call', [
             'ContractsApi_call',
             data,
             this.blockHash,
         ])
-        let value = decodeResult(result)
+        const value = decodeResult(result)
         return _abi.decodeMessageOutput(selector, value)
     }
 }

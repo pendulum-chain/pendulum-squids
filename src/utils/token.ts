@@ -5,6 +5,7 @@ import { config, network } from '../config'
 import { invert } from 'lodash'
 import { hexToU8a } from '@polkadot/util'
 import { getVersionedStorage } from '../types/eventsAndStorageSelector'
+
 export const currencyKeyMap: { [index: number]: string } = {
     0: 'Native',
     1: 'XCM',
@@ -31,6 +32,7 @@ function versionedCurrencyToCurrencyEnum(
             throw new Error('Invalid currency type')
     }
 }
+
 export enum CurrencyTypeEnum {
     Native = 0,
     XCM = 1,
@@ -80,7 +82,7 @@ export const TZS_CODE: Uint8Array = new Uint8Array([84, 90, 83, 0])
 export const BRL_CODE: Uint8Array = new Uint8Array([66, 82, 76, 0])
 
 function uint8ArrToHex(uintArray: Uint8Array): string {
-    let buffer = Buffer.from(uintArray)
+    const buffer = Buffer.from(uintArray)
     return '0x' + buffer.toString('hex')
 }
 
@@ -101,10 +103,10 @@ export function zenlinkAssetIdToCurrencyId(asset: AssetId): any {
             value: assetSymbolIndex,
         }
     } else if (tokenType == 'ZenlinkLPToken') {
-        let token0Id = assetIndex & (0x0000_0000_00ff_0000 >> 16)
-        let token0Type = assetIndex & (0x0000_0000_ff00_0000 >> 24)
-        let token1Id = assetIndex & (0x0000_00ff_0000_0000 >> 32)
-        let token1Type = assetIndex & (0x0000_ff00_0000_0000 >> 40)
+        const token0Id = assetIndex & (0x0000_0000_00ff_0000 >> 16)
+        const token0Type = assetIndex & (0x0000_0000_ff00_0000 >> 24)
+        const token1Id = assetIndex & (0x0000_00ff_0000_0000 >> 32)
+        const token1Type = assetIndex & (0x0000_ff00_0000_0000 >> 40)
         return {
             __kind: tokenType,
             value: [token0Id, token0Type, token1Id, token1Type],
@@ -257,7 +259,7 @@ export async function getPairStatusFromAssets(
     ctx: EventHandlerContext,
     assets: [AssetId, AssetId],
     onlyAccount = true
-): Promise<[string | undefined, BigInt]> {
+): Promise<[string | undefined, bigint]> {
     const [asset0, asset1] = assets
     const token0Address = addressFromAsset(asset0)
     const token1Address = addressFromAsset(asset1)
@@ -303,7 +305,7 @@ export async function getTokenBalance(
         )
         result = (await systemAccountStorage.get(ctx.block, account))?.data
     } else {
-        let versionedStorage = await getVersionedStorage(
+        const versionedStorage = await getVersionedStorage(
             network,
             ctx,
             'tokens',
@@ -329,7 +331,7 @@ export async function getTotalIssuance(
         )
         result = await balanceIssuanceStorage.get(ctx.block)
     } else {
-        let versionedStorage = await getVersionedStorage(
+        const versionedStorage = await getVersionedStorage(
             network,
             ctx,
             'tokens',
@@ -346,7 +348,7 @@ export async function getTokenBurned(
     assetId: CurrencyId,
     account: string
 ) {
-    let block = {
+    const block = {
         hash: ctx.block.parentHash,
     }
     let result
@@ -359,7 +361,7 @@ export async function getTokenBurned(
         )
         result = (await systemAccountStorage.get(ctx.block, account))!.data
     } else {
-        let versionedStorage = await getVersionedStorage(
+        const versionedStorage = await getVersionedStorage(
             network,
             ctx,
             'tokens',

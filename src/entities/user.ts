@@ -9,7 +9,7 @@ export async function getUser(
     ctx: EventHandlerContext,
     who: string
 ): Promise<User> {
-    let address = codec(config.prefix).encode(who)
+    const address = codec(config.prefix).encode(who)
     let user = await ctx.store.get(User, address)
     if (!user) {
         user = new User({

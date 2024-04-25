@@ -29,6 +29,8 @@ import {
     updateZenlinkInfo,
 } from '../utils/updates'
 import { decodeEvent } from '../types/eventsAndStorageSelector'
+import { getOrCreateToken } from '../entities/token'
+
 export async function handleLiquiditySync(
     ctx: EventHandlerContext,
     pair: Pair
@@ -38,7 +40,9 @@ export async function handleLiquiditySync(
     const { token0, token1 } = pair
     const asset0 = assetIdFromAddress(token0.id)
     const asset1 = assetIdFromAddress(token1.id)
-    const [pairAccount] = await getPairStatusFromAssets(ctx, [asset0, asset1])
+
+    const sortedPair = sortAssets([asset0, asset1])
+    const [pairAccount] = await getPairStatusFromAssets(ctx, sortedPair)
 
     if (!pairAccount) return
 
@@ -162,7 +166,7 @@ export async function handleLiquidityAdded(ctx: EventHandlerContext) {
     const mint = await ctx.store.get(Mint, mints[mints.length - 1])
     if (!mint) return
 
-    let event = decodeEvent(network, ctx, 'zenlinkProtocol', 'liquidityAdded')
+    const event = decodeEvent(network, ctx, 'zenlinkProtocol', 'liquidityAdded')
 
     const [asset0, asset1] = sortAssets([event[1], event[2]])
 
@@ -225,7 +229,12 @@ export async function handleLiquidityRemoved(ctx: EventHandlerContext) {
     const burn = await ctx.store.get(Burn, burns[burns.length - 1])
     if (!burn) return
 
-    let event = decodeEvent(network, ctx, 'zenlinkProtocol', 'liquidityRemoved')
+    const event = decodeEvent(
+        network,
+        ctx,
+        'zenlinkProtocol',
+        'liquidityRemoved'
+    )
 
     const [asset0, asset1] = sortAssets([event[2], event[3]])
 
@@ -304,34 +313,45 @@ export async function handleAssetSwap(ctx: EventHandlerContext) {
     const txHash = ctx.event.extrinsic?.hash
     if (!txHash) return
 
-    let event = decodeEvent(network, ctx, 'zenlinkProtocol', 'assetSwap')
-
+    const event = decodeEvent(network, ctx, 'zenlinkProtocol', 'assetSwap')
     const path = event[2]
     const amounts = event[3]
     const sender = codec(config.prefix).encode(event[0])
     const to = codec(config.prefix).encode(event[1])
 
     for (let i = 1; i < path.length; i++) {
-        const asset0 = path[i - 1]
-        const asset1 = path[i]
+        const inputAsset = path[i - 1]
+        const outputAsset = path[i]
+        const [asset0, asset1] = sortAssets([inputAsset, outputAsset])
 
         const pair = await getPair(ctx, [asset0, asset1])
 
         if (!pair) return
         await handleLiquiditySync(ctx, pair)
         const factory = await getFactory(ctx)
+
         if (!pair || !factory) return
 
         const bundle = (await ctx.store.get(Bundle, '1'))!
 
         const { token0, token1 } = pair
 
-        const amount0In = convertTokenToDecimal(amounts[i - 1], token0.decimals)
-        const amount0Out = convertTokenToDecimal(0n, token0.decimals)
+        // We need to check if the order of assets in the pair was switched, so we can correctly assign the amounts
+        const inputToken = await getOrCreateToken(ctx, inputAsset)
+        const isSwitched = !(inputToken?.id === token0.id)
+
+        // We need to check if the order of assets in the pair was switched, so we can correctly assign the amounts
+        const rawAmount0In = isSwitched ? 0n : amounts[i - 1]
+        const rawAmount1In = isSwitched ? amounts[i - 1] : 0n
+        const rawAmount0Out = isSwitched ? amounts[i] : 0n
+        const rawAmount1Out = isSwitched ? 0n : amounts[i]
+
+        const amount0In = convertTokenToDecimal(rawAmount0In, token0.decimals)
+        const amount0Out = convertTokenToDecimal(rawAmount0Out, token0.decimals)
         const amount0Total = amount0Out.plus(amount0In)
 
-        const amount1In = convertTokenToDecimal(0n, token1.decimals)
-        const amount1Out = convertTokenToDecimal(amounts[i], token1.decimals)
+        const amount1In = convertTokenToDecimal(rawAmount1In, token1.decimals)
+        const amount1Out = convertTokenToDecimal(rawAmount1Out, token1.decimals)
         const amount1Total = amount1Out.plus(amount1In)
 
         // get total amounts of derived USD and ETH for tracking

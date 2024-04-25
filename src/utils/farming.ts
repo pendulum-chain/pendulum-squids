@@ -93,7 +93,7 @@ export async function getFamingPoolInfo(
     pid: number,
     block: BlockHeader | ParentBlockHeader
 ) {
-    let versionedStorage = await getVersionedStorage(
+    const versionedStorage = await getVersionedStorage(
         network,
         ctx,
         'farming',
@@ -107,7 +107,7 @@ export async function getFamingSharesAndWithdrawnRewards(
     pid: number,
     user: string
 ) {
-    let versionedStorage = await getVersionedStorage(
+    const versionedStorage = await getVersionedStorage(
         network,
         ctx,
         'farming',
@@ -127,7 +127,7 @@ export async function updateFarmingPoolInfo(
     const farmingPoolInfo = await getFamingPoolInfo(ctx, pid, ctx.block)
     const farmingTokens = farmingPoolInfo?.tokensProportion.map(
         (item: any) => item[0]
-    )!
+    )
     const farmingToken = farmingTokens[0]
     const assetIdIndex = currencyIdToAssetIndex(farmingToken)
 
@@ -136,7 +136,7 @@ export async function updateFarmingPoolInfo(
     let stakeToken = assetIdIndex.toString()
     const liquidityStaked = farmingPoolInfo?.totalShares ?? 0n
 
-    const timePerBlock = await getTimePerBlock(ctx)
+    const timePerBlock = getTimePerBlock(ctx)
 
     const blocksPerDay = BigInt(((3600 * 1000 * 24) / timePerBlock).toFixed(0))
 
@@ -368,7 +368,7 @@ export async function killFarmingPoolInfo(
     )
     const farmingTokens = farmingPoolInfo?.tokensProportion.map(
         (item: any) => item[0]
-    )!
+    )
     const farmingToken = farmingTokens[0]
     const assetIdIndex = currencyIdToAssetIndex(farmingToken)
 
@@ -377,7 +377,7 @@ export async function killFarmingPoolInfo(
     let stakeToken = assetIdIndex.toString()
     const liquidityStaked = farmingPoolInfo?.totalShares ?? 0n
 
-    const timePerBlock = await getTimePerBlock(ctx)
+    const timePerBlock = getTimePerBlock(ctx)
 
     const blocksPerDay = BigInt(((3600 * 1000 * 24) / timePerBlock).toFixed(0))
 

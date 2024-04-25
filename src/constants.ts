@@ -4,6 +4,7 @@ import { Big as BigDecimal } from 'big.js'
 // These are defined such that the data can be used to access the data from the on-chain price oracle
 // The key is the blockchain-symbol pair, and the value is the Zenlink asset ID
 export const PRICE_ORACLE_KEYS_TO_ADDRESS: { [address: string]: string } = {
+    'Pendulum-PEN': '2094-0-0',
     // On Amplitude (capitalization matters)
     'Amplitude-AMPE': '2124-0-0',
     // On Foucoco (capitalization matters)

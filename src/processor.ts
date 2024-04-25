@@ -150,9 +150,9 @@ export interface CallHandlerContext extends Ctx {
 
 processor.run(new TypeormDatabase(), async (ctx) => {
     // Fetch max block height from the archive
-    let maxHeight = await maxHeightPromise
+    const maxHeight = await maxHeightPromise
 
-    for (let { header: block, calls, events, extrinsics } of ctx.blocks) {
+    for (const { header: block, calls, events, extrinsics } of ctx.blocks) {
         ctx.log.debug(
             `block ${block.height}: extrinsics - ${extrinsics.length}, calls - ${calls.length}, events - ${events.length}`
         )
@@ -181,7 +181,7 @@ processor.run(new TypeormDatabase(), async (ctx) => {
             }
         }
 
-        for (let event of events) {
+        for (const event of events) {
             try {
                 switch (event.name) {
                     case 'Tokens.Deposited':
@@ -356,7 +356,7 @@ processor.run(new TypeormDatabase(), async (ctx) => {
         // It's important to process the calls after the events,
         // because for the system.remark call we need to have
         // processed the token transfers first
-        for (let call of calls) {
+        for (const call of calls) {
             try {
                 switch (call.name) {
                     case 'Utility.batch':
@@ -366,6 +366,7 @@ processor.run(new TypeormDatabase(), async (ctx) => {
                             block,
                             call,
                         })
+                        break
                     case 'Utility.batch_all':
                         if (!call.success) continue
                         await handleBatchWithRemark({
@@ -373,6 +374,7 @@ processor.run(new TypeormDatabase(), async (ctx) => {
                             block,
                             call,
                         })
+                        break
                 }
             } catch (e) {
                 console.log(

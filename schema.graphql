@@ -791,13 +791,68 @@ type BackstopPool @entity {
 }
 
 type NablaSwapFee @entity {
-    id: ID! # id is address of the swap pool contract + timestamp
+    id: ID! # # calculated from blockNumber - extrinsicIndex
     lpFees: BigInt! # LP fee in `asset`
     backstopFees: BigInt! # backstop fee in `asset`
     protocolFees: BigInt! # protocol fee in `asset`
     timestamp: BigInt! # timestamp of the swap event
     swapPool: SwapPool! # link to the SwapPool entity
     backstopPool: BackstopPool # link to the BackstopPool entity
+}
+
+type NablaSwap @entity {
+    id: ID! # calculated from blockNumber - extrinsicIndex
+    timestamp: DateTime! # need this to pull recent txns for specific token or pair
+    # from router Swap event
+    sender: String!
+    amountIn: BigInt!
+    amountOut: BigInt!
+    tokenIn: String!
+    tokenOut: String!
+    to: String!
+
+    # this will bring backstop pool and swap pool info
+    swapFee: NablaSwapFee
+}
+
+type NablaBackstopLiquidityDeposit @entity {
+    id: ID! # calculated from blockNumber - extrinsicIndex
+    timestamp: DateTime!
+
+    # from backstop Mint event
+    sender: String!
+    poolSharesMinted: BigInt!
+    amountPrincipleDeposited: BigInt!
+}
+
+type NablaSwapLiquidityDeposit @entity {
+    id: ID! # calculated from blockNumber - extrinsicIndex
+    timestamp: DateTime!
+
+    # from swap Mint event
+    sender: String!
+    poolSharesMinted: BigInt!
+    amountPrincipleDeposited: BigInt!
+}
+
+type NablaBackstopLiquidityWithdrawal @entity {
+    id: ID! # calculated from blockNumber - extrinsicIndex
+    timestamp: DateTime!
+
+    # from backstop Burn event
+    sender: String!
+    poolSharesBurned: BigInt!
+    amountPrincipleWithdrawn: BigInt!
+}
+
+type NablaSwapLiquidityWithdrawal @entity {
+    id: ID! # calculated from blockNumber - extrinsicIndex
+    timestamp: DateTime!
+
+    # from swap Burn event
+    sender: String!
+    poolSharesBurned: BigInt!
+    amountPrincipleWithdrawn: BigInt!
 }
 
 type Block @entity {

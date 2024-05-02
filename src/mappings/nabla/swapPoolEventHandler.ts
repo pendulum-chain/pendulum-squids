@@ -1,6 +1,8 @@
 import { EventHandlerContext } from '../../processor'
 import {
     ZERO_ADDRESS,
+    createNablaSwapLiquidityDeposit,
+    createNablaSwapLiquidityWithdrawal,
     createSwapFee,
     getBackstopPool,
     getSwapPool,
@@ -11,6 +13,8 @@ import {
     Contract as SwapPoolContract,
     Event_ChargedSwapFees,
     Event_ProtocolTreasuryChanged,
+    Event_Mint,
+    Event_Burn,
 } from '../../abi/swap'
 import { Contract as BackstopPoolContract } from '../../abi/backstop'
 import { hexToSs58, ss58ToHex } from './addresses'
@@ -34,7 +38,7 @@ export async function handleSwapPoolEvent(
             break
 
         case 'Burn':
-            await handleBurn(ctx, swapPool)
+            await handleBurn(ctx, event, swapPool)
             break
 
         case 'ChargedSwapFees':
@@ -42,7 +46,7 @@ export async function handleSwapPoolEvent(
             break
 
         case 'Mint':
-            await handleMint(ctx, swapPool)
+            await handleMint(ctx, event, swapPool)
             break
 
         case 'OwnershipTransferred':
@@ -82,8 +86,22 @@ export async function handleBackstopDrain(
     }
 }
 
-export async function handleBurn(ctx: EventHandlerContext, swapPool: SwapPool) {
+export async function handleBurn(
+    ctx: EventHandlerContext,
+    event: Event_Burn,
+    swapPool: SwapPool
+) {
     await updateSwapPoolCoverageAndSupply(ctx, swapPool)
+    await createNablaSwapLiquidityWithdrawal(
+        ctx,
+        ctx.event.block.height,
+        ctx.event.extrinsicIndex,
+        ctx.event.block.timestamp,
+        event.sender,
+        event.poolSharesBurned,
+        event.amountPrincipleWithdrawn
+    )
+
     await ctx.store.save(swapPool)
 }
 
@@ -111,8 +129,22 @@ export async function handleChargedSwapFees(
     await updateAprAfterSwap(ctx, swapPool, swapFee)
 }
 
-export async function handleMint(ctx: EventHandlerContext, swapPool: SwapPool) {
+export async function handleMint(
+    ctx: EventHandlerContext,
+    event: Event_Mint,
+    swapPool: SwapPool
+) {
     await updateSwapPoolCoverageAndSupply(ctx, swapPool)
+    await createNablaSwapLiquidityDeposit(
+        ctx,
+        ctx.event.block.height,
+        ctx.event.extrinsicIndex,
+        ctx.event.block.timestamp,
+        event.sender,
+        event.poolSharesMinted,
+        event.amountPrincipleDeposited
+    )
+
     await ctx.store.save(swapPool)
 }
 

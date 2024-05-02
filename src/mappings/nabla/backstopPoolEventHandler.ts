@@ -7,10 +7,16 @@ import {
     Event_WithdrawSwapLiquidity,
     Contract as BackstopPoolContract,
     Event_InsuranceFeeSet,
+    Event_Burn,
+    Event_Mint,
 } from '../../abi/backstop'
 import { Contract as Erc20Contract } from '../../abi/erc20'
 import { hexToSs58, ss58ToHex } from './addresses'
-import { getSwapPool } from './creation'
+import {
+    createNablaBackstopLiquidityDeposit,
+    createNablaSwapLiquidityWithdrawal,
+    getSwapPool,
+} from './creation'
 import { updateSwapPoolCoverageAndSupply } from './swapPoolEventHandler'
 
 export async function handleBackstopPoolEvent(
@@ -25,7 +31,7 @@ export async function handleBackstopPoolEvent(
             break
 
         case 'Burn':
-            await handleBurn(ctx, backstopPool)
+            await handleBurn(ctx, event, backstopPool)
             break
 
         case 'CoverSwapWithdrawal':
@@ -37,7 +43,7 @@ export async function handleBackstopPoolEvent(
             break
 
         case 'Mint':
-            await handleMint(ctx, backstopPool)
+            await handleMint(ctx, event, backstopPool)
             break
 
         case 'OwnershipTransferred':
@@ -69,8 +75,18 @@ export async function handleBackstopPoolEvent(
 
 export async function handleBurn(
     ctx: EventHandlerContext,
+    event: Event_Burn,
     backstopPool: BackstopPool
 ) {
+    await createNablaSwapLiquidityWithdrawal(
+        ctx,
+        ctx.event.block.height,
+        ctx.event.extrinsicIndex,
+        ctx.event.block.timestamp,
+        event.sender,
+        event.poolSharesBurned,
+        event.amountPrincipleWithdrawn
+    )
     await updateBackstopCoverageAndSupply(ctx, backstopPool)
     await ctx.store.save(backstopPool)
 }
@@ -112,9 +128,19 @@ export async function handleInsuranceFeeSet(
 
 export async function handleMint(
     ctx: EventHandlerContext,
+    event: Event_Mint,
     backstopPool: BackstopPool
 ) {
     await updateBackstopCoverageAndSupply(ctx, backstopPool)
+    await createNablaBackstopLiquidityDeposit(
+        ctx,
+        ctx.event.block.height,
+        ctx.event.extrinsicIndex,
+        ctx.event.block.timestamp,
+        event.sender,
+        event.poolSharesMinted,
+        event.amountPrincipleDeposited
+    )
     await ctx.store.save(backstopPool)
 }
 

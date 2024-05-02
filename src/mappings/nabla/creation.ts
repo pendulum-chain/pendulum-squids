@@ -246,7 +246,7 @@ export async function createNablaSwap(
     tokenIn: string,
     tokenOut: string,
     to: string,
-    swapFee: NablaSwapFee
+    swapFee: NablaSwapFee | undefined
 ): Promise<NablaSwap> {
     const nablaSwapId = `${blockNumber}-${extrinsicIndex ?? ''}`
     const nablaSwap = new NablaSwap({

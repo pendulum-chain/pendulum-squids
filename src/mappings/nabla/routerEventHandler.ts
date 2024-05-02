@@ -98,11 +98,6 @@ export async function handleSwap(
         ctx.event.extrinsicIndex
     )
 
-    if (swapFee === undefined) {
-        // Swap fee should always exist
-        return
-    }
-
     await createNablaSwap(
         ctx,
         ctx.event.block.height,

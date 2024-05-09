@@ -159,7 +159,7 @@ export async function updateSwapPoolCoverageAndSupply(
     swapPool.reserveWithSlippage = await contract.reserveWithSlippage()
 }
 
-async function updateAndPruneSwapFeeHistory(
+async function pruneSwapFeeHistory(
     ctx: EventHandlerContext,
     swapPoolWithFeeHistory: SwapPool,
     newSwapFee: NablaSwapFee
@@ -167,11 +167,6 @@ async function updateAndPruneSwapFeeHistory(
     // Prune fee events older than 7 days
     const sevenDaysAgo =
         newSwapFee.timestamp - BigInt(SWAP_FEE_PRUNE_INTERVAL_MILLI_SECONDS)
-
-    /*
-     * Swap Pool fees history
-     */
-    // Add the swapFee to the pool's fee history
     const poolFeesHistory = swapPoolWithFeeHistory.feesHistory
     await filterSwapFeeHistory(ctx, poolFeesHistory, sevenDaysAgo)
 }
@@ -181,8 +176,6 @@ async function filterSwapFeeHistory(
     feesHistory: NablaSwapFee[],
     pastPeriodInSeconds: bigint
 ) {
-    const filteredFeeHistory: string[] = []
-
     for (const swapFee of feesHistory) {
         if (swapFee.timestamp < pastPeriodInSeconds) {
             await ctx.store.remove(swapFee)
@@ -196,7 +189,7 @@ export async function updateAprAfterSwap(
     newSwapFee: NablaSwapFee
 ): Promise<void> {
     // Update the fee history (swapFee, backstopFee)
-    await updateAndPruneSwapFeeHistory(ctx, swapPoolWithFeeHistory, newSwapFee)
+    await pruneSwapFeeHistory(ctx, swapPoolWithFeeHistory, newSwapFee)
     const updatedSwapPool = (await getSwapPool(
         ctx,
         swapPoolWithFeeHistory.id,
@@ -255,6 +248,11 @@ export async function updateAprAfterSwap(
     }
 }
 
+/// This function takes
+///  - some total fee generated within 7 days and
+///  - some amount of token (totalSupply)
+/// It then extrapolates the total fee generated in a year
+/// (assuming the same rate) per token of the total supply
 function calculateApr(
     totalFees: bigint,
     totalSupply: bigint,

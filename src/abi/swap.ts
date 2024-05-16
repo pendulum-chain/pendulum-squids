@@ -9,9 +9,9 @@ export const metadata = {
         version: '0.0.1',
     },
     source: {
-        compiler: 'solang 0.3.3',
-        hash: '0x25ef3d2e4bf9ddc56ac00c3e1a81acfbcf61028c1db20558c4c12f0a6fb34507',
-        language: 'Solidity 0.3.3',
+        compiler: 'solang 0.3.2',
+        hash: '0x42108ada7515f8f4ab3ed8cea31e4c3456c433ce52fecb9d3a2afb33c727ab94',
+        language: 'Solidity 0.3.2',
     },
     spec: {
         constructors: [

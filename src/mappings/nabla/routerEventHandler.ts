@@ -104,7 +104,7 @@ export async function handleSwapPoolRegistered(
         return
     }
 
-    const token = await getOrCreateNablaToken(ctx, ss58ToHex(swapPool.token.id))
+    await getOrCreateNablaToken(ctx, ss58ToHex(swapPool.token.id))
 
     const registeredSwapPool = await getSwapPoolsOfRouterForToken(
         ctx,

@@ -1,8 +1,23 @@
 import { ProcessorConfig } from './types'
 import { lookupArchive } from '@subsquid/archive-registry'
 import axios from 'axios'
-export type Network = 'foucoco' | 'amplitude' | 'pendulum' | 'local'
-export const network = (process.env.NETWORK as Network) || 'amplitude'
+
+export type Network = 'foucoco' | 'amplitude' | 'pendulum'
+function determineNetwork(): Network {
+    switch (process.env.NETWORK) {
+        case 'foucoco':
+        case 'local':
+            return 'foucoco'
+        case 'pendulum':
+            return 'pendulum'
+        case 'amplitude':
+        default:
+            return 'amplitude'
+    }
+}
+
+export const network = determineNetwork()
+export const isLocalExecution = process.env.NETWORK === 'local'
 
 export const blockRetentionNumber = process.env.BLOCK_RETENTION_NUMBER
     ? parseInt(process.env.BLOCK_RETENTION_NUMBER, 10)
@@ -48,10 +63,10 @@ const localConfig: ProcessorConfig = {
 }
 
 export const config: ProcessorConfig =
-    network === 'local'
-        ? localConfig
-        : network === 'foucoco'
-        ? foucocoConfig
+    network === 'foucoco'
+        ? isLocalExecution
+            ? localConfig
+            : foucocoConfig
         : network === 'amplitude'
         ? amplitudeConfig
         : pendulumConfig
@@ -60,20 +75,19 @@ console.log('Using ProcessorConfig: ', config)
 
 // Fetch max height from the archive and export it as a promise
 
-export const maxHeightPromise =
-    network === 'local'
-        ? Promise.resolve(0)
-        : axios
-              .get(config.dataSource.archive + '/height')
-              .then((response) => {
-                  const data = response.data
-                  console.log('Max height:', data)
-                  return data
-              })
-              .catch((error) => {
-                  console.error(
-                      'Error getting block height from archive, using default value instead:',
-                      error
-                  )
-                  return Number.MAX_SAFE_INTEGER
-              })
+export const maxHeightPromise = isLocalExecution
+    ? Promise.resolve(0)
+    : axios
+          .get(config.dataSource.archive + '/height')
+          .then((response) => {
+              const data = response.data
+              console.log('Max height:', data)
+              return data
+          })
+          .catch((error) => {
+              console.error(
+                  'Error getting block height from archive, using default value instead:',
+                  error
+              )
+              return Number.MAX_SAFE_INTEGER
+          })

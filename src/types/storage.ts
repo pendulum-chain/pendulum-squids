@@ -4,7 +4,7 @@ import * as pendulumStorage from './pendulum/storage'
 import { network } from '../config'
 
 const storage =
-    network === 'foucoco' || network === 'local'
+    network === 'foucoco'
         ? foucocoStorage
         : network === 'amplitude'
         ? amplitudeStorage

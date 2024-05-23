@@ -5,9 +5,9 @@
         "version": "0.0.1"
     },
     "source": {
-        "compiler": "solang 0.3.3",
-        "hash": "0xc2ab6f62a37392bf78cd94965557e3609d035b91a9c7b3c55d6584f63bead278",
-        "language": "Solidity 0.3.3"
+        "compiler": "solang 0.3.2",
+        "hash": "0xfd052826432f969b18f912400fc92fbb97ed4122dd6fa1ee3828bfc81b93e316",
+        "language": "Solidity 0.3.2"
     },
     "spec": {
         "constructors": [

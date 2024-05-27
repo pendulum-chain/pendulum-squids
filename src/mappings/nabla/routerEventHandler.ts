@@ -115,6 +115,9 @@ export async function handleSwapPoolRegistered(
     if (registeredSwapPool) {
         if (registeredSwapPool.id === swapPool.id) {
             // this swap pool is already registered, no action required
+            console.log(
+                `handleSwapPoolRegistered: swap pool already registered at ${swapPool.id}`
+            )
             return
         }
 

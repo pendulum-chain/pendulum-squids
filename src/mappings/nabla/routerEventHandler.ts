@@ -126,7 +126,7 @@ export async function handleSwapPoolRegistered(
         return
     }
 
-    const token = await getOrCreateNablaToken(ctx, ss58ToHex(swapPool.token.id))
+    await getOrCreateNablaToken(ctx, ss58ToHex(swapPool.token.id))
 
     const registeredSwapPool = await getSwapPoolsOfRouterForToken(
         ctx,
@@ -137,6 +137,9 @@ export async function handleSwapPoolRegistered(
     if (registeredSwapPool) {
         if (registeredSwapPool.id === swapPool.id) {
             // this swap pool is already registered, no action required
+            console.log(
+                `handleSwapPoolRegistered: swap pool already registered at ${swapPool.id}`
+            )
             return
         }
 

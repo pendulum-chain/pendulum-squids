@@ -78,6 +78,9 @@ export async function createBackstopPool(
     const ss58Address = hexToSs58(hexAddress)
     if (await getBackstopPool(ctx, ss58Address)) {
         // Unexpected error: backstop pool already exists at that address
+        console.log(
+            `createBackstopPool: backstop pool already exists at ${ss58Address}`
+        )
         return
     }
 
@@ -120,6 +123,7 @@ export async function createRouter(
     const ss58Address = hexToSs58(hexAddress)
     if (await getRouter(ctx, ss58Address)) {
         // Unexpected error: router already exists at that address
+        console.log(`createRouter: router already exists at ${ss58Address}`)
         return
     }
 
@@ -156,6 +160,9 @@ export async function createSwapPool(
     const ss58Address = hexToSs58(hexAddress)
     if (await getSwapPool(ctx, ss58Address)) {
         // Unexpected error: swap pool already exists at that address
+        console.log(
+            `createSwapPool: swap pool already exists at ${ss58Address}`
+        )
         return
     }
 

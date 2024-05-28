@@ -1,5 +1,5 @@
-module.exports = class Data1714664455673 {
-    name = 'Data1714664455673'
+module.exports = class Data1716895273695 {
+    name = 'Data1716895273695'
 
     async up(db) {
         await db.query(
@@ -327,22 +327,28 @@ module.exports = class Data1714664455673 {
             `CREATE TABLE "router" ("id" character varying NOT NULL, "paused" boolean NOT NULL, CONSTRAINT "PK_510c864aa88ac8eb3a306789801" PRIMARY KEY ("id"))`
         )
         await db.query(
-            `CREATE TABLE "nabla_swap" ("id" character varying NOT NULL, "timestamp" TIMESTAMP WITH TIME ZONE NOT NULL, "sender" text NOT NULL, "amount_in" numeric NOT NULL, "amount_out" numeric NOT NULL, "token_in" text NOT NULL, "token_out" text NOT NULL, "to" text NOT NULL, "swap_fee_id" character varying, CONSTRAINT "PK_6274610b518e1a9e61b1c6f03bb" PRIMARY KEY ("id"))`
+            `CREATE TABLE "nabla_swap" ("id" character varying NOT NULL, "timestamp" TIMESTAMP WITH TIME ZONE NOT NULL, "sender" text NOT NULL, "amount_in" numeric NOT NULL, "amount_out" numeric NOT NULL, "to" text NOT NULL, "token_in_id" character varying, "token_out_id" character varying, "swap_fee_id" character varying, CONSTRAINT "PK_6274610b518e1a9e61b1c6f03bb" PRIMARY KEY ("id"))`
+        )
+        await db.query(
+            `CREATE INDEX "IDX_78ad17aaf8e256aada35d50c95" ON "nabla_swap" ("token_in_id") `
+        )
+        await db.query(
+            `CREATE INDEX "IDX_3ddf0d667a8f06da7f6ab50004" ON "nabla_swap" ("token_out_id") `
         )
         await db.query(
             `CREATE INDEX "IDX_dd24afed240ad46290bfcf0603" ON "nabla_swap" ("swap_fee_id") `
         )
         await db.query(
-            `CREATE TABLE "nabla_backstop_liquidity_deposit" ("id" character varying NOT NULL, "timestamp" TIMESTAMP WITH TIME ZONE NOT NULL, "sender" text NOT NULL, "pool_shares_minted" numeric NOT NULL, "amount_principle_deposited" numeric NOT NULL, CONSTRAINT "PK_6a7b952f6ac801d591360e47743" PRIMARY KEY ("id"))`
+            `CREATE TABLE "nabla_backstop_liquidity_deposit" ("id" character varying NOT NULL, "timestamp" TIMESTAMP WITH TIME ZONE NOT NULL, "sender" text NOT NULL, "pool_shares_minted" numeric NOT NULL, "amount_pool_tokens_deposited" numeric NOT NULL, CONSTRAINT "PK_6a7b952f6ac801d591360e47743" PRIMARY KEY ("id"))`
         )
         await db.query(
-            `CREATE TABLE "nabla_swap_liquidity_deposit" ("id" character varying NOT NULL, "timestamp" TIMESTAMP WITH TIME ZONE NOT NULL, "sender" text NOT NULL, "pool_shares_minted" numeric NOT NULL, "amount_principle_deposited" numeric NOT NULL, CONSTRAINT "PK_4788b03472eec9547df44a82c48" PRIMARY KEY ("id"))`
+            `CREATE TABLE "nabla_swap_liquidity_deposit" ("id" character varying NOT NULL, "timestamp" TIMESTAMP WITH TIME ZONE NOT NULL, "sender" text NOT NULL, "pool_shares_minted" numeric NOT NULL, "amount_pool_tokens_deposited" numeric NOT NULL, CONSTRAINT "PK_4788b03472eec9547df44a82c48" PRIMARY KEY ("id"))`
         )
         await db.query(
-            `CREATE TABLE "nabla_backstop_liquidity_withdrawal" ("id" character varying NOT NULL, "timestamp" TIMESTAMP WITH TIME ZONE NOT NULL, "sender" text NOT NULL, "pool_shares_burned" numeric NOT NULL, "amount_principle_withdrawn" numeric NOT NULL, CONSTRAINT "PK_9fca1665db21118d0b318e1f828" PRIMARY KEY ("id"))`
+            `CREATE TABLE "nabla_backstop_liquidity_withdrawal" ("id" character varying NOT NULL, "timestamp" TIMESTAMP WITH TIME ZONE NOT NULL, "sender" text NOT NULL, "pool_shares_burned" numeric NOT NULL, "amount_pool_tokens_withdrawn" numeric NOT NULL, CONSTRAINT "PK_9fca1665db21118d0b318e1f828" PRIMARY KEY ("id"))`
         )
         await db.query(
-            `CREATE TABLE "nabla_swap_liquidity_withdrawal" ("id" character varying NOT NULL, "timestamp" TIMESTAMP WITH TIME ZONE NOT NULL, "sender" text NOT NULL, "pool_shares_burned" numeric NOT NULL, "amount_principle_withdrawn" numeric NOT NULL, CONSTRAINT "PK_38c9ff7047fcf36ccbd4b7cb521" PRIMARY KEY ("id"))`
+            `CREATE TABLE "nabla_swap_liquidity_withdrawal" ("id" character varying NOT NULL, "timestamp" TIMESTAMP WITH TIME ZONE NOT NULL, "sender" text NOT NULL, "pool_shares_burned" numeric NOT NULL, "amount_pool_tokens_withdrawn" numeric NOT NULL, CONSTRAINT "PK_38c9ff7047fcf36ccbd4b7cb521" PRIMARY KEY ("id"))`
         )
         await db.query(
             `CREATE TABLE "event" ("id" character varying NOT NULL, "index" integer NOT NULL, "phase" text NOT NULL, "pallet" text NOT NULL, "name" text NOT NULL, "args" jsonb, "args_str" text array, "block_id" character varying, "extrinsic_id" character varying, "call_id" character varying, CONSTRAINT "PK_30c2f3bbaf6d34a55f8ae6e4614" PRIMARY KEY ("id"))`
@@ -573,6 +579,12 @@ module.exports = class Data1714664455673 {
             `ALTER TABLE "swap_pool" ADD CONSTRAINT "FK_b66a5cc8d2ce7bba1b48fd8c1ab" FOREIGN KEY ("token_id") REFERENCES "nabla_token"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`
         )
         await db.query(
+            `ALTER TABLE "nabla_swap" ADD CONSTRAINT "FK_78ad17aaf8e256aada35d50c95a" FOREIGN KEY ("token_in_id") REFERENCES "nabla_token"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`
+        )
+        await db.query(
+            `ALTER TABLE "nabla_swap" ADD CONSTRAINT "FK_3ddf0d667a8f06da7f6ab50004f" FOREIGN KEY ("token_out_id") REFERENCES "nabla_token"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`
+        )
+        await db.query(
             `ALTER TABLE "nabla_swap" ADD CONSTRAINT "FK_dd24afed240ad46290bfcf0603b" FOREIGN KEY ("swap_fee_id") REFERENCES "nabla_swap_fee"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`
         )
         await db.query(
@@ -711,6 +723,8 @@ module.exports = class Data1714664455673 {
         await db.query(`DROP INDEX "public"."IDX_b66a5cc8d2ce7bba1b48fd8c1a"`)
         await db.query(`DROP TABLE "router"`)
         await db.query(`DROP TABLE "nabla_swap"`)
+        await db.query(`DROP INDEX "public"."IDX_78ad17aaf8e256aada35d50c95"`)
+        await db.query(`DROP INDEX "public"."IDX_3ddf0d667a8f06da7f6ab50004"`)
         await db.query(`DROP INDEX "public"."IDX_dd24afed240ad46290bfcf0603"`)
         await db.query(`DROP TABLE "nabla_backstop_liquidity_deposit"`)
         await db.query(`DROP TABLE "nabla_swap_liquidity_deposit"`)
@@ -883,6 +897,12 @@ module.exports = class Data1714664455673 {
         )
         await db.query(
             `ALTER TABLE "swap_pool" DROP CONSTRAINT "FK_b66a5cc8d2ce7bba1b48fd8c1ab"`
+        )
+        await db.query(
+            `ALTER TABLE "nabla_swap" DROP CONSTRAINT "FK_78ad17aaf8e256aada35d50c95a"`
+        )
+        await db.query(
+            `ALTER TABLE "nabla_swap" DROP CONSTRAINT "FK_3ddf0d667a8f06da7f6ab50004f"`
         )
         await db.query(
             `ALTER TABLE "nabla_swap" DROP CONSTRAINT "FK_dd24afed240ad46290bfcf0603b"`

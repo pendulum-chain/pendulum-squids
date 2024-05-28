@@ -30,5 +30,5 @@ export class NablaBackstopLiquidityWithdrawal {
         transformer: marshal.bigintTransformer,
         nullable: false,
     })
-    amountPrincipleWithdrawn!: bigint
+    amountPoolTokensWithdrawn!: bigint
 }

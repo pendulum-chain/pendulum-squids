@@ -30,5 +30,5 @@ export class NablaSwapLiquidityDeposit {
         transformer: marshal.bigintTransformer,
         nullable: false,
     })
-    amountPrincipleDeposited!: bigint
+    amountPoolTokensDeposited!: bigint
 }

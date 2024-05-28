@@ -6,6 +6,7 @@ import {
     Index as Index_,
 } from 'typeorm'
 import * as marshal from './marshal'
+import { NablaToken } from './nablaToken.model'
 import { NablaSwapFee } from './nablaSwapFee.model'
 
 @Entity_()
@@ -35,16 +36,18 @@ export class NablaSwap {
     })
     amountOut!: bigint
 
-    @Column_('text', { nullable: false })
-    tokenIn!: string
+    @Index_()
+    @ManyToOne_(() => NablaToken, { nullable: true })
+    tokenIn!: NablaToken
 
-    @Column_('text', { nullable: false })
-    tokenOut!: string
+    @Index_()
+    @ManyToOne_(() => NablaToken, { nullable: true })
+    tokenOut!: NablaToken
 
     @Column_('text', { nullable: false })
     to!: string
 
     @Index_()
     @ManyToOne_(() => NablaSwapFee, { nullable: true })
-    swapFee!: NablaSwapFee
+    swapFee!: NablaSwapFee | undefined | null
 }

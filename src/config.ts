@@ -59,7 +59,6 @@ export const config: ProcessorConfig =
 console.log('Using ProcessorConfig: ', config)
 
 // Fetch max height from the archive and export it as a promise
-
 export const maxHeightPromise =
     network === 'local'
         ? Promise.resolve(0)
@@ -77,3 +76,11 @@ export const maxHeightPromise =
                   )
                   return Number.MAX_SAFE_INTEGER
               })
+
+// Derive ids from block number and extrinsic index of the event
+export function generateId(
+    blockNumber: number,
+    extrinsicIndex?: number
+): string {
+    return `${blockNumber}-${extrinsicIndex ?? ''}`
+}

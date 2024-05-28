@@ -807,10 +807,9 @@ type NablaSwap @entity {
     sender: String!
     amountIn: BigInt!
     amountOut: BigInt!
-    tokenIn: String!
-    tokenOut: String!
+    tokenIn: NablaToken!
+    tokenOut: NablaToken!
     to: String!
-
     # this will bring backstop pool and swap pool info
     swapFee: NablaSwapFee
 }
@@ -822,7 +821,7 @@ type NablaBackstopLiquidityDeposit @entity {
     # from backstop Mint event
     sender: String!
     poolSharesMinted: BigInt!
-    amountPrincipleDeposited: BigInt!
+    amountPoolTokensDeposited: BigInt!
 }
 
 type NablaSwapLiquidityDeposit @entity {
@@ -832,7 +831,7 @@ type NablaSwapLiquidityDeposit @entity {
     # from swap Mint event
     sender: String!
     poolSharesMinted: BigInt!
-    amountPrincipleDeposited: BigInt!
+    amountPoolTokensDeposited: BigInt!
 }
 
 type NablaBackstopLiquidityWithdrawal @entity {
@@ -842,7 +841,7 @@ type NablaBackstopLiquidityWithdrawal @entity {
     # from backstop Burn event
     sender: String!
     poolSharesBurned: BigInt!
-    amountPrincipleWithdrawn: BigInt!
+    amountPoolTokensWithdrawn: BigInt!
 }
 
 type NablaSwapLiquidityWithdrawal @entity {
@@ -852,7 +851,7 @@ type NablaSwapLiquidityWithdrawal @entity {
     # from swap Burn event
     sender: String!
     poolSharesBurned: BigInt!
-    amountPrincipleWithdrawn: BigInt!
+    amountPoolTokensWithdrawn: BigInt!
 }
 
 type Block @entity {

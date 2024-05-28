@@ -7,7 +7,7 @@ import {
     getBackstopPool,
     getSwapPool,
 } from './creation'
-import { NablaSwapFee, SwapPool } from '../../model'
+import { NablaSwap, NablaSwapFee, SwapPool } from '../../model'
 import {
     decodeEvent,
     Contract as SwapPoolContract,
@@ -97,7 +97,7 @@ export async function handleBurn(
         ctx.event.block.height,
         ctx.event.extrinsicIndex,
         ctx.event.block.timestamp,
-        event.sender,
+        hexToSs58(event.sender),
         event.poolSharesBurned,
         event.amountPrincipleWithdrawn
     )
@@ -140,7 +140,7 @@ export async function handleMint(
         ctx.event.block.height,
         ctx.event.extrinsicIndex,
         ctx.event.block.timestamp,
-        event.sender,
+        hexToSs58(event.sender),
         event.poolSharesMinted,
         event.amountPrincipleDeposited
     )
@@ -213,10 +213,18 @@ async function filterSwapFeeHistory(
     feesHistory: NablaSwapFee[],
     pastPeriodInSeconds: bigint
 ) {
-    const filteredFeeHistory: string[] = []
-
     for (const swapFee of feesHistory) {
         if (swapFee.timestamp < pastPeriodInSeconds) {
+            // Check for references in the NablaSwap table
+            const swapReference = await ctx.store.findOne(NablaSwap, {
+                where: { swapFee: { id: swapFee.id } },
+            })
+            if (swapReference) {
+                swapReference.swapFee = null
+                await ctx.store.save(swapReference)
+            }
+
+            // Now it should be safe to remove the swap fee
             await ctx.store.remove(swapFee)
         }
     }

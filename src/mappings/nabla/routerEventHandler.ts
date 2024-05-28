@@ -103,12 +103,12 @@ export async function handleSwap(
         ctx.event.block.height,
         ctx.event.extrinsicIndex,
         ctx.event.block.timestamp!,
-        event.sender,
+        hexToSs58(event.sender),
         event.amountIn,
         event.amountOut,
-        tokenIn.id,
-        tokenOut.id,
-        event.to,
+        tokenIn,
+        tokenOut,
+        hexToSs58(event.to),
         swapFee
     )
 }

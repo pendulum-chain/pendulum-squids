@@ -83,7 +83,7 @@ export async function handleBurn(
         ctx.event.block.height,
         ctx.event.extrinsicIndex,
         ctx.event.block.timestamp,
-        event.sender,
+        hexToSs58(event.sender),
         event.poolSharesBurned,
         event.amountPrincipleWithdrawn
     )
@@ -137,7 +137,7 @@ export async function handleMint(
         ctx.event.block.height,
         ctx.event.extrinsicIndex,
         ctx.event.block.timestamp,
-        event.sender,
+        hexToSs58(event.sender),
         event.poolSharesMinted,
         event.amountPrincipleDeposited
     )

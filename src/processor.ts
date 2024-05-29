@@ -41,7 +41,6 @@ import {
     handleTokenWithdrawn,
 } from './mappings/token'
 import { handleBalanceTransfer } from './mappings/balances'
-import { handleContractEvent } from './mappings/nabla'
 import { handleUpdatedPrices } from './mappings/prices'
 import { handleBatchWithRemark } from './mappings/remark'
 import {
@@ -50,8 +49,10 @@ import {
     saveEvent,
     saveExtrinsic,
 } from './mappings/block-details'
-
-const DataSelection = { data: { event: true } } as const
+import {
+    handleContractEvent,
+    handleContractInstantiated,
+} from './mappings/nabla/handleEvent'
 
 const processor = new SubstrateBatchProcessor()
     .setDataSource(config.dataSource)
@@ -122,6 +123,7 @@ const processor = new SubstrateBatchProcessor()
             'Tokens.BalanceSet',
             // Contracts
             'Contracts.ContractEmitted',
+            'Contracts.Instantiated',
         ],
         call: true,
         extrinsic: true,
@@ -314,6 +316,13 @@ processor.run(new TypeormDatabase(), async (ctx) => {
                     // contracts
                     case 'Contracts.ContractEmitted':
                         await handleContractEvent({
+                            ...ctx,
+                            block,
+                            event,
+                        })
+                        break
+                    case 'Contracts.Instantiated':
+                        await handleContractInstantiated({
                             ...ctx,
                             block,
                             event,

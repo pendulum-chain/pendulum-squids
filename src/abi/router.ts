@@ -8,7 +8,7 @@ export const metadata = {
     },
     source: {
         compiler: 'solang 0.3.2',
-        hash: '0x6e7bac057718ec67cf2b2995370248e5bfb03fc38a29127a51dbf4ccf12e08ca',
+        hash: '0x1461e0f01fe866142df918dc0c65f8a185e5079d6a642da2b79436f6839db44e',
         language: 'Solidity 0.3.2',
     },
     spec: {
@@ -31,11 +31,11 @@ export const metadata = {
             },
             balance: {
                 displayName: ['Balance'],
-                type: 7,
+                type: 8,
             },
             blockNumber: {
                 displayName: ['BlockNumber'],
-                type: 8,
+                type: 9,
             },
             chainExtension: {
                 displayName: [],
@@ -43,12 +43,12 @@ export const metadata = {
             },
             hash: {
                 displayName: ['Hash'],
-                type: 9,
+                type: 10,
             },
             maxEventTopics: 4,
             timestamp: {
                 displayName: ['Timestamp'],
-                type: 8,
+                type: 9,
             },
         },
         events: [
@@ -126,6 +126,19 @@ export const metadata = {
                 args: [
                     {
                         docs: [],
+                        indexed: true,
+                        label: 'sender',
+                        type: {
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
+                            type: 2,
+                        },
+                    },
+                    {
+                        docs: [],
                         indexed: false,
                         label: 'pool',
                         type: {
@@ -153,6 +166,38 @@ export const metadata = {
                 ],
                 docs: ['Emitted when a new pool is registered'],
                 label: 'SwapPoolRegistered',
+            },
+            {
+                args: [
+                    {
+                        docs: [],
+                        indexed: true,
+                        label: 'sender',
+                        type: {
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
+                            type: 2,
+                        },
+                    },
+                    {
+                        docs: [],
+                        indexed: false,
+                        label: 'asset',
+                        type: {
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
+                            type: 2,
+                        },
+                    },
+                ],
+                docs: ['Emitted when pool is unregistered'],
+                label: 'SwapPoolUnregistered',
             },
             {
                 args: [
@@ -233,7 +278,7 @@ export const metadata = {
         ],
         lang_error: {
             displayName: ['SolidityError'],
-            type: 13,
+            type: 14,
         },
         messages: [
             {
@@ -297,7 +342,7 @@ export const metadata = {
             {
                 args: [
                     {
-                        label: '',
+                        label: 'asset',
                         type: {
                             displayName: [
                                 'ink_primitives',
@@ -322,7 +367,7 @@ export const metadata = {
             {
                 args: [
                     {
-                        label: '',
+                        label: 'asset',
                         type: {
                             displayName: [
                                 'ink_primitives',
@@ -405,12 +450,40 @@ export const metadata = {
                     },
                 ],
                 default: false,
-                docs: ['Registers a newly created swap pool.'],
+                docs: ['Registers a newly created swap pool'],
                 label: 'registerPool',
                 mutates: true,
                 payable: false,
-                returnType: null,
+                returnType: {
+                    displayName: ['bool'],
+                    type: 4,
+                },
                 selector: '0x7286e5e5',
+            },
+            {
+                args: [
+                    {
+                        label: '_asset',
+                        type: {
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
+                            type: 2,
+                        },
+                    },
+                ],
+                default: false,
+                docs: ['Unregisters a swap pool'],
+                label: 'unregisterPool',
+                mutates: true,
+                payable: false,
+                returnType: {
+                    displayName: ['bool'],
+                    type: 4,
+                },
+                selector: '0xada61cc3',
             },
             {
                 args: [],
@@ -512,8 +585,8 @@ export const metadata = {
                 mutates: false,
                 payable: false,
                 returnType: {
-                    displayName: ['uint256'],
-                    type: 3,
+                    displayName: ['Router', 'getAmountOut', 'return_type'],
+                    type: 7,
                 },
                 selector: '0xb8239ebb',
             },
@@ -704,13 +777,22 @@ export const metadata = {
             id: 7,
             type: {
                 def: {
+                    tuple: [3, 3],
+                },
+                path: ['Router', 'getAmountOut', 'return_type'],
+            },
+        },
+        {
+            id: 8,
+            type: {
+                def: {
                     primitive: 'u128',
                 },
                 path: ['uint128'],
             },
         },
         {
-            id: 8,
+            id: 9,
             type: {
                 def: {
                     primitive: 'u64',
@@ -719,7 +801,7 @@ export const metadata = {
             },
         },
         {
-            id: 9,
+            id: 10,
             type: {
                 def: {
                     composite: {
@@ -734,7 +816,7 @@ export const metadata = {
             },
         },
         {
-            id: 10,
+            id: 11,
             type: {
                 def: {
                     primitive: 'str',
@@ -743,13 +825,13 @@ export const metadata = {
             },
         },
         {
-            id: 11,
+            id: 12,
             type: {
                 def: {
                     composite: {
                         fields: [
                             {
-                                type: 10,
+                                type: 11,
                             },
                         ],
                     },
@@ -758,7 +840,7 @@ export const metadata = {
             },
         },
         {
-            id: 12,
+            id: 13,
             type: {
                 def: {
                     composite: {
@@ -773,7 +855,7 @@ export const metadata = {
             },
         },
         {
-            id: 13,
+            id: 14,
             type: {
                 def: {
                     variant: {
@@ -781,7 +863,7 @@ export const metadata = {
                             {
                                 fields: [
                                     {
-                                        type: 11,
+                                        type: 12,
                                     },
                                 ],
                                 index: 0,
@@ -790,7 +872,7 @@ export const metadata = {
                             {
                                 fields: [
                                     {
-                                        type: 12,
+                                        type: 13,
                                     },
                                 ],
                                 index: 1,
@@ -845,33 +927,35 @@ export class Contract {
         return this.stateCall('0x8da5cb5b', [])
     }
 
-    poolByAsset(accountId: AccountId): Promise<AccountId> {
-        return this.stateCall('0x06de94d8', [])
+    poolByAsset(asset: AccountId): Promise<AccountId> {
+        return this.stateCall('0x06de94d8', [asset])
     }
 
-    oracleByAsset(accountId: AccountId): Promise<AccountId> {
-        return this.stateCall('0x38163032', [])
+    oracleByAsset(asset: AccountId): Promise<AccountId> {
+        return this.stateCall('0x38163032', [asset])
     }
 
     getAmountOut(
         _amountIn: uint256,
         _tokenInOut: AccountId[]
-    ): Promise<uint256> {
+    ): Promise<return_type> {
         return this.stateCall('0xb8239ebb', [_amountIn, _tokenInOut])
     }
 
     private async stateCall<T>(selector: string, args: any[]): Promise<T> {
-        const input = _abi.encodeMessageInput(selector, args)
-        const data = encodeCall(this.address, input)
-        const result = await this.ctx._chain.rpc.call('state_call', [
+        let input = _abi.encodeMessageInput(selector, args)
+        let data = encodeCall(this.address, input)
+        let result = await this.ctx._chain.rpc.call('state_call', [
             'ContractsApi_call',
             data,
             this.blockHash,
         ])
-        const value = decodeResult(result)
+        let value = decodeResult(result)
         return _abi.decodeMessageOutput(selector, value)
     }
 }
+
+export type return_type = [uint256, uint256]
 
 export type uint256 = bigint
 
@@ -901,6 +985,7 @@ export type Message =
     | Message_swapExactTokensForTokens
     | Message_transferOwnership
     | Message_unpause
+    | Message_unregisterPool
 
 /**
  * Get a quote for how many `_toToken` tokens `_amountIn` many `tokenIn`
@@ -917,7 +1002,7 @@ export interface Message_getAmountOut {
  */
 export interface Message_oracleByAsset {
     __kind: 'oracleByAsset'
-    accountId: AccountId
+    asset: AccountId
 }
 
 /**
@@ -946,11 +1031,11 @@ export interface Message_paused {
  */
 export interface Message_poolByAsset {
     __kind: 'poolByAsset'
-    accountId: AccountId
+    asset: AccountId
 }
 
 /**
- * Registers a newly created swap pool.
+ * Registers a newly created swap pool
  */
 export interface Message_registerPool {
     __kind: 'registerPool'
@@ -1002,11 +1087,20 @@ export interface Message_unpause {
     __kind: 'unpause'
 }
 
+/**
+ * Unregisters a swap pool
+ */
+export interface Message_unregisterPool {
+    __kind: 'unregisterPool'
+    asset: AccountId
+}
+
 export type Event =
     | Event_OwnershipTransferred
     | Event_Paused
     | Event_Swap
     | Event_SwapPoolRegistered
+    | Event_SwapPoolUnregistered
     | Event_Unpaused
 
 export interface Event_OwnershipTransferred {
@@ -1032,7 +1126,14 @@ export interface Event_Swap {
 
 export interface Event_SwapPoolRegistered {
     __kind: 'SwapPoolRegistered'
+    sender: AccountId
     pool: AccountId
+    asset: AccountId
+}
+
+export interface Event_SwapPoolUnregistered {
+    __kind: 'SwapPoolUnregistered'
+    sender: AccountId
     asset: AccountId
 }
 

@@ -4,11 +4,13 @@ import {
     PrimaryColumn as PrimaryColumn_,
     ManyToOne as ManyToOne_,
     Index as Index_,
+    OneToMany as OneToMany_,
 } from 'typeorm'
 import * as marshal from './marshal'
 import { Router } from './router.model'
 import { BackstopPool } from './backstopPool.model'
 import { NablaToken } from './nablaToken.model'
+import { NablaSwapFee } from './nablaSwapFee.model'
 
 @Entity_()
 export class SwapPool {
@@ -19,9 +21,18 @@ export class SwapPool {
     @PrimaryColumn_()
     id!: string
 
+    @Column_('text', { nullable: false })
+    name!: string
+
+    @Column_('text', { nullable: false })
+    symbol!: string
+
+    @Column_('int4', { nullable: false })
+    lpTokenDecimals!: number
+
     @Index_()
     @ManyToOne_(() => Router, { nullable: true })
-    router!: Router
+    router!: Router | undefined | null
 
     @Index_()
     @ManyToOne_(() => BackstopPool, { nullable: true })
@@ -35,13 +46,19 @@ export class SwapPool {
         transformer: marshal.bigintTransformer,
         nullable: false,
     })
-    reserves!: bigint
+    reserve!: bigint
 
     @Column_('numeric', {
         transformer: marshal.bigintTransformer,
         nullable: false,
     })
-    liabilities!: bigint
+    reserveWithSlippage!: bigint
+
+    @Column_('numeric', {
+        transformer: marshal.bigintTransformer,
+        nullable: false,
+    })
+    totalLiabilities!: bigint
 
     @Column_('numeric', {
         transformer: marshal.bigintTransformer,
@@ -51,4 +68,22 @@ export class SwapPool {
 
     @Column_('bool', { nullable: false })
     paused!: boolean
+
+    @OneToMany_(() => NablaSwapFee, (e) => e.swapPool)
+    feesHistory!: NablaSwapFee[]
+
+    @Column_('numeric', {
+        transformer: marshal.bigintTransformer,
+        nullable: false,
+    })
+    apr!: bigint
+
+    @Column_('numeric', {
+        transformer: marshal.bigintTransformer,
+        nullable: false,
+    })
+    insuranceFeeBps!: bigint
+
+    @Column_('text', { nullable: true })
+    protocolTreasuryAddress!: string | undefined | null
 }

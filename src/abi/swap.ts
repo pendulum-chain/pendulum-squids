@@ -4,13 +4,13 @@ export const metadata = {
     contract: {
         authors: ['unknown'],
         description:
-            'Swap pool contract. May or may not be covered by a backstop pool. Conceptionally, there are two ways to temporarily disable a pool:\nThe owner can either pause the pool, disabling deposits, swaps & backstop,\nor the owner can set the pool cap to zero which only prevents deposits.\nThe former is for security incidents, the latter for phasing out a pool.',
+            'Swap pool contract. May or may not be covered by a backstop pool. Conceptionally, there are two ways to temporarily disable a pool: The owner can either pause the pool, disabling deposits, swaps & backstop, or the owner can set the pool cap to zero which only prevents deposits. The former is for security incidents, the latter for phasing out a pool.',
         name: 'SwapPool',
         version: '0.0.1',
     },
     source: {
         compiler: 'solang 0.3.2',
-        hash: '0x4878e478a0e56c4febd690a37624ba0fb4b0c0ea8b3e6594519a228b7113e4bb',
+        hash: '0x42108ada7515f8f4ab3ed8cea31e4c3456c433ce52fecb9d3a2afb33c727ab94',
         language: 'Solidity 0.3.2',
     },
     spec: {
@@ -96,7 +96,7 @@ export const metadata = {
             },
         ],
         docs: [
-            'Swap pool contract. May or may not be covered by a backstop pool. Conceptionally, there are two ways to temporarily disable a pool:\nThe owner can either pause the pool, disabling deposits, swaps & backstop,\nor the owner can set the pool cap to zero which only prevents deposits.\nThe former is for security incidents, the latter for phasing out a pool.',
+            'Swap pool contract. May or may not be covered by a backstop pool. Conceptionally, there are two ways to temporarily disable a pool: The owner can either pause the pool, disabling deposits, swaps & backstop, or the owner can set the pool cap to zero which only prevents deposits. The former is for security incidents, the latter for phasing out a pool.',
         ],
         environment: {
             accountId: {
@@ -105,11 +105,11 @@ export const metadata = {
             },
             balance: {
                 displayName: ['Balance'],
-                type: 13,
+                type: 14,
             },
             blockNumber: {
                 displayName: ['BlockNumber'],
-                type: 14,
+                type: 15,
             },
             chainExtension: {
                 displayName: [],
@@ -117,12 +117,12 @@ export const metadata = {
             },
             hash: {
                 displayName: ['Hash'],
-                type: 15,
+                type: 16,
             },
             maxEventTopics: 4,
             timestamp: {
                 displayName: ['Timestamp'],
-                type: 14,
+                type: 15,
             },
         },
         events: [
@@ -296,6 +296,38 @@ export const metadata = {
                     {
                         docs: [],
                         indexed: false,
+                        label: 'newProtocolTreasury',
+                        type: {
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
+                            type: 2,
+                        },
+                    },
+                ],
+                docs: ['emitted when the protocol treasury address is changed'],
+                label: 'ProtocolTreasuryChanged',
+            },
+            {
+                args: [
+                    {
+                        docs: [],
+                        indexed: true,
+                        label: 'sender',
+                        type: {
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
+                            type: 2,
+                        },
+                    },
+                    {
+                        docs: [],
+                        indexed: false,
                         label: 'poolSharesMinted',
                         type: {
                             displayName: ['uint256'],
@@ -422,7 +454,7 @@ export const metadata = {
         ],
         lang_error: {
             displayName: ['SolidityError'],
-            type: 18,
+            type: 19,
         },
         messages: [
             {
@@ -450,19 +482,6 @@ export const metadata = {
                     type: 5,
                 },
                 selector: '0x95d89b41',
-            },
-            {
-                args: [],
-                default: false,
-                docs: [''],
-                label: 'decimals',
-                mutates: false,
-                payable: false,
-                returnType: {
-                    displayName: ['uint8'],
-                    type: 0,
-                },
-                selector: '0x313ce567',
             },
             {
                 args: [],
@@ -796,15 +815,69 @@ export const metadata = {
             {
                 args: [],
                 default: false,
+                docs: ['Returns the decimals of the pool asset'],
+                label: 'assetDecimals',
+                mutates: false,
+                payable: false,
+                returnType: {
+                    displayName: ['uint8'],
+                    type: 0,
+                },
+                selector: '0xc2d41601',
+            },
+            {
+                args: [],
+                default: false,
+                docs: [
+                    'Returns the decimals of the LP token of this pool\nThis is defined to have the same decimals as the pool token itself\nin order to greatly simplify calculations that involve pool token amounts\nand LP token amounts',
+                ],
+                label: 'decimals',
+                mutates: false,
+                payable: false,
+                returnType: {
+                    displayName: ['uint8'],
+                    type: 0,
+                },
+                selector: '0x313ce567',
+            },
+            {
+                args: [],
+                default: false,
                 docs: [''],
-                label: 'accumulatedSlippage',
+                label: 'totalLiabilities',
                 mutates: false,
                 payable: false,
                 returnType: {
                     displayName: ['uint256'],
                     type: 3,
                 },
-                selector: '0xe4182b09',
+                selector: '0xf73579a9',
+            },
+            {
+                args: [],
+                default: false,
+                docs: [''],
+                label: 'reserve',
+                mutates: false,
+                payable: false,
+                returnType: {
+                    displayName: ['uint256'],
+                    type: 3,
+                },
+                selector: '0xcd3293de',
+            },
+            {
+                args: [],
+                default: false,
+                docs: [''],
+                label: 'reserveWithSlippage',
+                mutates: false,
+                payable: false,
+                returnType: {
+                    displayName: ['uint256'],
+                    type: 3,
+                },
+                selector: '0x0b09d91e',
             },
             {
                 args: [],
@@ -818,6 +891,19 @@ export const metadata = {
                     type: 3,
                 },
                 selector: '0x0d3a7fd4',
+            },
+            {
+                args: [],
+                default: false,
+                docs: [''],
+                label: 'maxCoverageRatioForSwapIn',
+                mutates: false,
+                payable: false,
+                returnType: {
+                    displayName: ['uint256'],
+                    type: 3,
+                },
+                selector: '0xb2f3447a',
             },
             {
                 args: [],
@@ -874,29 +960,6 @@ export const metadata = {
             {
                 args: [
                     {
-                        label: '_amount',
-                        type: {
-                            displayName: ['uint256'],
-                            type: 3,
-                        },
-                    },
-                ],
-                default: false,
-                docs: [
-                    'Deposits amount of tokens into pool Will change cov ratio of pool, will increase delta to 0',
-                ],
-                label: 'deposit',
-                mutates: true,
-                payable: false,
-                returnType: {
-                    displayName: ['SwapPool', 'deposit', 'return_type'],
-                    type: 9,
-                },
-                selector: '0xb6b55f25',
-            },
-            {
-                args: [
-                    {
                         label: '_durationInBlocks',
                         type: {
                             displayName: ['uint256'],
@@ -937,21 +1000,41 @@ export const metadata = {
             {
                 args: [
                     {
-                        label: '_lpFeeBps',
+                        label: '_maxCoverageRatio',
+                        type: {
+                            displayName: ['uint256'],
+                            type: 3,
+                        },
+                    },
+                ],
+                default: false,
+                docs: [
+                    'Set new upper limit of pool coverage ratio (reserves / liabilities) for swap-in',
+                ],
+                label: 'setMaxCoverageRatioForSwapIn',
+                mutates: true,
+                payable: false,
+                returnType: null,
+                selector: '0x0668d07c',
+            },
+            {
+                args: [
+                    {
+                        label: '_lpFee',
                         type: {
                             displayName: ['uint256'],
                             type: 3,
                         },
                     },
                     {
-                        label: '_backstopFeeBps',
+                        label: '_backstopFee',
                         type: {
                             displayName: ['uint256'],
                             type: 3,
                         },
                     },
                     {
-                        label: '_protocolFeeBps',
+                        label: '_protocolFee',
                         type: {
                             displayName: ['uint256'],
                             type: 3,
@@ -969,9 +1052,93 @@ export const metadata = {
                 selector: '0xeb43434e',
             },
             {
+                args: [],
+                default: false,
+                docs: ['Return the configured swap fees for this pool'],
+                label: 'swapFees',
+                mutates: false,
+                payable: false,
+                returnType: {
+                    displayName: ['SwapPool', 'swapFees', 'return_type'],
+                    type: 8,
+                },
+                selector: '0xb9ccf21d',
+            },
+            {
                 args: [
                     {
-                        label: '_shares',
+                        label: '_newProtocolTreasury',
+                        type: {
+                            displayName: [
+                                'ink_primitives',
+                                'types',
+                                'AccountId',
+                            ],
+                            type: 2,
+                        },
+                    },
+                ],
+                default: false,
+                docs: ['Set new treasury address'],
+                label: 'setProtocolTreasury',
+                mutates: true,
+                payable: false,
+                returnType: {
+                    displayName: ['bool'],
+                    type: 4,
+                },
+                selector: '0x0c5a61f8',
+            },
+            {
+                args: [
+                    {
+                        label: '_depositAmount',
+                        type: {
+                            displayName: ['uint256'],
+                            type: 3,
+                        },
+                    },
+                ],
+                default: false,
+                docs: [
+                    'Deposits amount of tokens into pool Will change cov ratio of pool, will increase delta to 0',
+                ],
+                label: 'deposit',
+                mutates: true,
+                payable: false,
+                returnType: {
+                    displayName: ['SwapPool', 'deposit', 'return_type'],
+                    type: 10,
+                },
+                selector: '0xb6b55f25',
+            },
+            {
+                args: [
+                    {
+                        label: '_depositAmount',
+                        type: {
+                            displayName: ['uint256'],
+                            type: 3,
+                        },
+                    },
+                ],
+                default: false,
+                docs: [
+                    'Get a quote for the effective amount of tokens for a deposit',
+                ],
+                label: 'quoteDeposit',
+                mutates: false,
+                payable: false,
+                returnType: {
+                    displayName: ['uint256'],
+                    type: 3,
+                },
+                selector: '0xdb431f06',
+            },
+            {
+                args: [
+                    {
+                        label: '_sharesToBurn',
                         type: {
                             displayName: ['uint256'],
                             type: 3,
@@ -994,9 +1161,32 @@ export const metadata = {
                 payable: false,
                 returnType: {
                     displayName: ['SwapPool', 'withdraw', 'return_type'],
-                    type: 10,
+                    type: 11,
                 },
                 selector: '0x441a3e70',
+            },
+            {
+                args: [
+                    {
+                        label: '_sharesToBurn',
+                        type: {
+                            displayName: ['uint256'],
+                            type: 3,
+                        },
+                    },
+                ],
+                default: false,
+                docs: [
+                    'Get a quote for the effective amount of tokens for a withdrawal',
+                ],
+                label: 'quoteWithdraw',
+                mutates: false,
+                payable: false,
+                returnType: {
+                    displayName: ['uint256'],
+                    type: 3,
+                },
+                selector: '0xec211840',
             },
             {
                 args: [
@@ -1012,7 +1202,7 @@ export const metadata = {
                         },
                     },
                     {
-                        label: '_shares',
+                        label: '_sharesToBurn',
                         type: {
                             displayName: ['uint256'],
                             type: 3,
@@ -1060,8 +1250,34 @@ export const metadata = {
                 label: 'backstopDrain',
                 mutates: true,
                 payable: false,
-                returnType: null,
+                returnType: {
+                    displayName: ['uint256'],
+                    type: 3,
+                },
                 selector: '0xc2cb15de',
+            },
+            {
+                args: [
+                    {
+                        label: '_amount',
+                        type: {
+                            displayName: ['uint256'],
+                            type: 3,
+                        },
+                    },
+                ],
+                default: false,
+                docs: [
+                    'Get a quote for the effective amount of tokens for a backstop drain',
+                ],
+                label: 'quoteBackstopDrain',
+                mutates: false,
+                payable: false,
+                returnType: {
+                    displayName: ['uint256'],
+                    type: 3,
+                },
+                selector: '0xe237fb3d',
             },
             {
                 args: [
@@ -1098,6 +1314,29 @@ export const metadata = {
                 ],
                 default: false,
                 docs: [
+                    'Get a quote for the effective amount of tokens for a swap into',
+                ],
+                label: 'quoteSwapInto',
+                mutates: false,
+                payable: false,
+                returnType: {
+                    displayName: ['uint256'],
+                    type: 3,
+                },
+                selector: '0x3c945248',
+            },
+            {
+                args: [
+                    {
+                        label: '_amount',
+                        type: {
+                            displayName: ['uint256'],
+                            type: 3,
+                        },
+                    },
+                ],
+                default: false,
+                docs: [
                     'get called by Router to withdraw amount of pool asset Can only be called by Router',
                 ],
                 label: 'swapOutFromRouter',
@@ -1108,6 +1347,29 @@ export const metadata = {
                     type: 3,
                 },
                 selector: '0x5f79d44f',
+            },
+            {
+                args: [
+                    {
+                        label: '_amount',
+                        type: {
+                            displayName: ['uint256'],
+                            type: 3,
+                        },
+                    },
+                ],
+                default: false,
+                docs: [
+                    'Get a quote for the effective amount of tokens, incl. slippage and fees',
+                ],
+                label: 'quoteSwapOut',
+                mutates: false,
+                payable: false,
+                returnType: {
+                    displayName: ['SwapPool', 'quoteSwapOut', 'return_type'],
+                    type: 12,
+                },
+                selector: '0x8735c246',
             },
             {
                 args: [],
@@ -1138,87 +1400,29 @@ export const metadata = {
                 payable: false,
                 returnType: {
                     displayName: ['SwapPool', 'coverage', 'return_type'],
-                    type: 11,
+                    type: 13,
                 },
                 selector: '0xee8f6a0e',
             },
             {
-                args: [
-                    {
-                        label: '_liquidityProvider',
-                        type: {
-                            displayName: [
-                                'ink_primitives',
-                                'types',
-                                'AccountId',
-                            ],
-                            type: 2,
-                        },
-                    },
-                ],
+                args: [],
                 default: false,
                 docs: [
-                    'Return the earliest block no that insurance withdrawals are possible.',
+                    'Computes the excess liquidity that forms that valuation of the backstop pool is defined as b + C - B - L where - b is reserve - C is the amount of `asset()` tokens in the pool - B is reserveWithSlippage - L is totalLiabilities The excess liquidity is a fixed point number using the decimals of this pool',
                 ],
-                label: 'insuranceWithdrawalUnlock',
+                label: 'getExcessLiquidity',
                 mutates: false,
                 payable: false,
                 returnType: {
-                    displayName: ['uint256'],
-                    type: 3,
+                    displayName: ['int256'],
+                    type: 9,
                 },
-                selector: '0x5c6f4279',
+                selector: '0xace0f0d5',
             },
             {
                 args: [
                     {
-                        label: '_amount',
-                        type: {
-                            displayName: ['uint256'],
-                            type: 3,
-                        },
-                    },
-                ],
-                default: false,
-                docs: [
-                    'Get a quote for the effective amount of tokens, incl. slippage and fees',
-                ],
-                label: 'quoteSwapInto',
-                mutates: false,
-                payable: false,
-                returnType: {
-                    displayName: ['uint256'],
-                    type: 3,
-                },
-                selector: '0x3c945248',
-            },
-            {
-                args: [
-                    {
-                        label: '_amount',
-                        type: {
-                            displayName: ['uint256'],
-                            type: 3,
-                        },
-                    },
-                ],
-                default: false,
-                docs: [
-                    'Get a quote for the effective amount of tokens, incl. slippage and fees',
-                ],
-                label: 'quoteSwapOut',
-                mutates: false,
-                payable: false,
-                returnType: {
-                    displayName: ['uint256'],
-                    type: 3,
-                },
-                selector: '0x8735c246',
-            },
-            {
-                args: [
-                    {
-                        label: '_shares',
+                        label: '_sharesToBurn',
                         type: {
                             displayName: ['uint256'],
                             type: 3,
@@ -1237,19 +1441,6 @@ export const metadata = {
                     type: 3,
                 },
                 selector: '0xcc045745',
-            },
-            {
-                args: [],
-                default: false,
-                docs: ['Return the configured swap fees for this pool'],
-                label: 'swapFees',
-                mutates: false,
-                payable: false,
-                returnType: {
-                    displayName: ['SwapPool', 'swapFees', 'return_type'],
-                    type: 12,
-                },
-                selector: '0xb9ccf21d',
             },
         ],
     },
@@ -1408,13 +1599,13 @@ export const metadata = {
                             layout: {
                                 leaf: {
                                     key: '0x00000009',
-                                    ty: 3,
+                                    ty: 0,
                                 },
                             },
                             root_key: '0x00000009',
                         },
                     },
-                    name: 'poolCap',
+                    name: 'poolAssetDecimals',
                 },
                 {
                     layout: {
@@ -1428,7 +1619,7 @@ export const metadata = {
                             root_key: '0x0000000a',
                         },
                     },
-                    name: 'accumulatedSlippage',
+                    name: 'poolCap',
                 },
                 {
                     layout: {
@@ -1442,7 +1633,63 @@ export const metadata = {
                             root_key: '0x0000000b',
                         },
                     },
+                    name: 'totalLiabilities',
+                },
+                {
+                    layout: {
+                        root: {
+                            layout: {
+                                leaf: {
+                                    key: '0x0000000c',
+                                    ty: 3,
+                                },
+                            },
+                            root_key: '0x0000000c',
+                        },
+                    },
+                    name: 'reserve',
+                },
+                {
+                    layout: {
+                        root: {
+                            layout: {
+                                leaf: {
+                                    key: '0x0000000d',
+                                    ty: 3,
+                                },
+                            },
+                            root_key: '0x0000000d',
+                        },
+                    },
+                    name: 'reserveWithSlippage',
+                },
+                {
+                    layout: {
+                        root: {
+                            layout: {
+                                leaf: {
+                                    key: '0x0000000e',
+                                    ty: 3,
+                                },
+                            },
+                            root_key: '0x0000000e',
+                        },
+                    },
                     name: 'insuranceWithdrawalTimelock',
+                },
+                {
+                    layout: {
+                        root: {
+                            layout: {
+                                leaf: {
+                                    key: '0x0000000f',
+                                    ty: 3,
+                                },
+                            },
+                            root_key: '0x0000000f',
+                        },
+                    },
+                    name: 'maxCoverageRatioForSwapIn',
                 },
                 {
                     layout: {
@@ -1453,7 +1700,7 @@ export const metadata = {
                                         {
                                             layout: {
                                                 leaf: {
-                                                    key: '0x0000000c',
+                                                    key: '0x00000010',
                                                     ty: 1,
                                                 },
                                             },
@@ -1463,7 +1710,7 @@ export const metadata = {
                                     name: 'AccountId',
                                 },
                             },
-                            root_key: '0x0000000c',
+                            root_key: '0x00000010',
                         },
                     },
                     name: 'protocolTreasury',
@@ -1472,84 +1719,12 @@ export const metadata = {
                     layout: {
                         root: {
                             layout: {
-                                struct: {
-                                    fields: [
-                                        {
-                                            layout: {
-                                                leaf: {
-                                                    key: '0x0000000d',
-                                                    ty: 1,
-                                                },
-                                            },
-                                            name: '',
-                                        },
-                                    ],
-                                    name: 'AccountId',
-                                },
-                            },
-                            root_key: '0x0000000d',
-                        },
-                    },
-                    name: 'backstop',
-                },
-                {
-                    layout: {
-                        root: {
-                            layout: {
-                                struct: {
-                                    fields: [
-                                        {
-                                            layout: {
-                                                leaf: {
-                                                    key: '0x0000000e',
-                                                    ty: 1,
-                                                },
-                                            },
-                                            name: '',
-                                        },
-                                    ],
-                                    name: 'AccountId',
-                                },
-                            },
-                            root_key: '0x0000000e',
-                        },
-                    },
-                    name: 'router',
-                },
-                {
-                    layout: {
-                        root: {
-                            layout: {
-                                struct: {
-                                    fields: [
-                                        {
-                                            layout: {
-                                                leaf: {
-                                                    key: '0x0000000f',
-                                                    ty: 1,
-                                                },
-                                            },
-                                            name: '',
-                                        },
-                                    ],
-                                    name: 'AccountId',
-                                },
-                            },
-                            root_key: '0x0000000f',
-                        },
-                    },
-                    name: 'slippageCurve',
-                },
-                {
-                    layout: {
-                        root: {
-                            layout: {
                                 leaf: {
-                                    key: '0x00000010',
+                                    key: '0x00000011',
                                     ty: 3,
                                 },
                             },
-                            root_key: '0x00000010',
+                            root_key: '0x00000011',
                         },
                     },
                     name: 'latestDepositAtBlockNo',
@@ -1563,35 +1738,35 @@ export const metadata = {
                                         {
                                             layout: {
                                                 leaf: {
-                                                    key: '0x00000011',
+                                                    key: '0x00000012',
                                                     ty: 6,
                                                 },
                                             },
-                                            name: 'lpFeeBps',
+                                            name: 'lpFee',
                                         },
                                         {
                                             layout: {
                                                 leaf: {
-                                                    key: '0x00000011',
+                                                    key: '0x00000012',
                                                     ty: 6,
                                                 },
                                             },
-                                            name: 'backstopFeeBps',
+                                            name: 'backstopFee',
                                         },
                                         {
                                             layout: {
                                                 leaf: {
-                                                    key: '0x00000011',
+                                                    key: '0x00000012',
                                                     ty: 6,
                                                 },
                                             },
-                                            name: 'protocolFeeBps',
+                                            name: 'protocolFee',
                                         },
                                     ],
                                     name: 'SwapFees',
                                 },
                             },
-                            root_key: '0x00000011',
+                            root_key: '0x00000012',
                         },
                     },
                     name: 'swapFeeConfig',
@@ -1600,15 +1775,73 @@ export const metadata = {
                     layout: {
                         root: {
                             layout: {
-                                leaf: {
-                                    key: '0x00000014',
-                                    ty: 3,
+                                struct: {
+                                    fields: [
+                                        {
+                                            layout: {
+                                                leaf: {
+                                                    key: '0x00000015',
+                                                    ty: 1,
+                                                },
+                                            },
+                                            name: '',
+                                        },
+                                    ],
+                                    name: 'AccountId',
                                 },
                             },
-                            root_key: '0x00000014',
+                            root_key: '0x00000015',
                         },
                     },
-                    name: 'totalLiabilities',
+                    name: 'backstop',
+                },
+                {
+                    layout: {
+                        root: {
+                            layout: {
+                                struct: {
+                                    fields: [
+                                        {
+                                            layout: {
+                                                leaf: {
+                                                    key: '0x00000016',
+                                                    ty: 1,
+                                                },
+                                            },
+                                            name: '',
+                                        },
+                                    ],
+                                    name: 'AccountId',
+                                },
+                            },
+                            root_key: '0x00000016',
+                        },
+                    },
+                    name: 'router',
+                },
+                {
+                    layout: {
+                        root: {
+                            layout: {
+                                struct: {
+                                    fields: [
+                                        {
+                                            layout: {
+                                                leaf: {
+                                                    key: '0x00000017',
+                                                    ty: 1,
+                                                },
+                                            },
+                                            name: '',
+                                        },
+                                    ],
+                                    name: 'AccountId',
+                                },
+                            },
+                            root_key: '0x00000017',
+                        },
+                    },
+                    name: 'slippageCurve',
                 },
             ],
             name: 'SwapPool',
@@ -1693,15 +1926,15 @@ export const metadata = {
                     composite: {
                         fields: [
                             {
-                                name: 'lpFeeBps',
+                                name: 'lpFee',
                                 type: 6,
                             },
                             {
-                                name: 'backstopFeeBps',
+                                name: 'backstopFee',
                                 type: 6,
                             },
                             {
-                                name: 'protocolFeeBps',
+                                name: 'protocolFee',
                                 type: 6,
                             },
                         ],
@@ -1714,31 +1947,49 @@ export const metadata = {
             id: 8,
             type: {
                 def: {
-                    primitive: 'i256',
+                    tuple: [3, 3, 3],
                 },
-                path: ['int256'],
+                path: ['SwapPool', 'swapFees', 'return_type'],
             },
         },
         {
             id: 9,
             type: {
                 def: {
-                    tuple: [3, 8],
+                    primitive: 'i256',
                 },
-                path: ['SwapPool', 'deposit', 'return_type'],
+                path: ['int256'],
             },
         },
         {
             id: 10,
             type: {
                 def: {
-                    tuple: [3, 8],
+                    tuple: [3, 9],
+                },
+                path: ['SwapPool', 'deposit', 'return_type'],
+            },
+        },
+        {
+            id: 11,
+            type: {
+                def: {
+                    tuple: [3, 9],
                 },
                 path: ['SwapPool', 'withdraw', 'return_type'],
             },
         },
         {
-            id: 11,
+            id: 12,
+            type: {
+                def: {
+                    tuple: [3, 3, 3, 3],
+                },
+                path: ['SwapPool', 'quoteSwapOut', 'return_type'],
+            },
+        },
+        {
+            id: 13,
             type: {
                 def: {
                     tuple: [3, 3],
@@ -1747,16 +1998,7 @@ export const metadata = {
             },
         },
         {
-            id: 12,
-            type: {
-                def: {
-                    tuple: [3, 3, 3],
-                },
-                path: ['SwapPool', 'swapFees', 'return_type'],
-            },
-        },
-        {
-            id: 13,
+            id: 14,
             type: {
                 def: {
                     primitive: 'u128',
@@ -1765,7 +2007,7 @@ export const metadata = {
             },
         },
         {
-            id: 14,
+            id: 15,
             type: {
                 def: {
                     primitive: 'u64',
@@ -1774,7 +2016,7 @@ export const metadata = {
             },
         },
         {
-            id: 15,
+            id: 16,
             type: {
                 def: {
                     composite: {
@@ -1789,7 +2031,7 @@ export const metadata = {
             },
         },
         {
-            id: 16,
+            id: 17,
             type: {
                 def: {
                     composite: {
@@ -1804,7 +2046,7 @@ export const metadata = {
             },
         },
         {
-            id: 17,
+            id: 18,
             type: {
                 def: {
                     composite: {
@@ -1819,7 +2061,7 @@ export const metadata = {
             },
         },
         {
-            id: 18,
+            id: 19,
             type: {
                 def: {
                     variant: {
@@ -1827,7 +2069,7 @@ export const metadata = {
                             {
                                 fields: [
                                     {
-                                        type: 16,
+                                        type: 17,
                                     },
                                 ],
                                 index: 0,
@@ -1836,7 +2078,7 @@ export const metadata = {
                             {
                                 fields: [
                                     {
-                                        type: 17,
+                                        type: 18,
                                     },
                                 ],
                                 index: 1,
@@ -1891,10 +2133,6 @@ export class Contract {
         return this.stateCall('0x95d89b41', [])
     }
 
-    decimals(): Promise<uint8> {
-        return this.stateCall('0x313ce567', [])
-    }
-
     totalSupply(): Promise<uint256> {
         return this.stateCall('0x18160ddd', [])
     }
@@ -1923,12 +2161,32 @@ export class Contract {
         return this.stateCall('0x38d52e0f', [])
     }
 
-    accumulatedSlippage(): Promise<uint256> {
-        return this.stateCall('0xe4182b09', [])
+    assetDecimals(): Promise<uint8> {
+        return this.stateCall('0xc2d41601', [])
+    }
+
+    decimals(): Promise<uint8> {
+        return this.stateCall('0x313ce567', [])
+    }
+
+    totalLiabilities(): Promise<uint256> {
+        return this.stateCall('0xf73579a9', [])
+    }
+
+    reserve(): Promise<uint256> {
+        return this.stateCall('0xcd3293de', [])
+    }
+
+    reserveWithSlippage(): Promise<uint256> {
+        return this.stateCall('0x0b09d91e', [])
     }
 
     insuranceWithdrawalTimelock(): Promise<uint256> {
         return this.stateCall('0x0d3a7fd4', [])
+    }
+
+    maxCoverageRatioForSwapIn(): Promise<uint256> {
+        return this.stateCall('0xb2f3447a', [])
     }
 
     protocolTreasury(): Promise<AccountId> {
@@ -1947,50 +2205,68 @@ export class Contract {
         return this.stateCall('0xebe26b9e', [])
     }
 
-    coverage(): Promise<[uint256, uint256]> {
-        return this.stateCall('0xee8f6a0e', [])
+    swapFees(): Promise<return_type> {
+        return this.stateCall('0xb9ccf21d', [])
     }
 
-    insuranceWithdrawalUnlock(_liquidityProvider: AccountId): Promise<uint256> {
-        return this.stateCall('0x5c6f4279', [_liquidityProvider])
+    quoteDeposit(_depositAmount: uint256): Promise<uint256> {
+        return this.stateCall('0xdb431f06', [_depositAmount])
+    }
+
+    quoteWithdraw(_sharesToBurn: uint256): Promise<uint256> {
+        return this.stateCall('0xec211840', [_sharesToBurn])
+    }
+
+    quoteBackstopDrain(_amount: uint256): Promise<uint256> {
+        return this.stateCall('0xe237fb3d', [_amount])
     }
 
     quoteSwapInto(_amount: uint256): Promise<uint256> {
         return this.stateCall('0x3c945248', [_amount])
     }
 
-    quoteSwapOut(_amount: uint256): Promise<uint256> {
+    quoteSwapOut(
+        _amount: uint256
+    ): Promise<[uint256, uint256, uint256, uint256]> {
         return this.stateCall('0x8735c246', [_amount])
     }
 
-    sharesTargetWorth(_shares: uint256): Promise<uint256> {
-        return this.stateCall('0xcc045745', [_shares])
+    coverage(): Promise<[uint256, uint256]> {
+        return this.stateCall('0xee8f6a0e', [])
     }
 
-    swapFees(): Promise<[uint256, uint256, uint256]> {
-        return this.stateCall('0xb9ccf21d', [])
+    getExcessLiquidity(): Promise<int256> {
+        return this.stateCall('0xace0f0d5', [])
+    }
+
+    sharesTargetWorth(_sharesToBurn: uint256): Promise<uint256> {
+        return this.stateCall('0xcc045745', [_sharesToBurn])
     }
 
     private async stateCall<T>(selector: string, args: any[]): Promise<T> {
-        const input = _abi.encodeMessageInput(selector, args)
-        const data = encodeCall(this.address, input)
-        const result = await this.ctx._chain.rpc.call('state_call', [
+        let input = _abi.encodeMessageInput(selector, args)
+        let data = encodeCall(this.address, input)
+        let result = await this.ctx._chain.rpc.call('state_call', [
             'ContractsApi_call',
             data,
             this.blockHash,
         ])
-        const value = decodeResult(result)
+        let value = decodeResult(result)
         return _abi.decodeMessageOutput(selector, value)
     }
 }
+
+export type int256 = bigint
+
+export type return_type = [uint256, uint256, uint256]
+
+export type uint8 = number
 
 export type bool = boolean
 
 export type AccountId = Bytes
 
 export type uint256 = bigint
-
-export type uint8 = number
 
 export type Constructor = Constructor_new
 
@@ -2009,10 +2285,10 @@ export interface Constructor_new {
 }
 
 export type Message =
-    | Message_accumulatedSlippage
     | Message_allowance
     | Message_approve
     | Message_asset
+    | Message_assetDecimals
     | Message_backstop
     | Message_backstopBurn
     | Message_backstopDrain
@@ -2021,21 +2297,29 @@ export type Message =
     | Message_decimals
     | Message_decreaseAllowance
     | Message_deposit
+    | Message_getExcessLiquidity
     | Message_increaseAllowance
     | Message_insuranceWithdrawalTimelock
-    | Message_insuranceWithdrawalUnlock
+    | Message_maxCoverageRatioForSwapIn
     | Message_name
     | Message_owner
     | Message_pause
     | Message_paused
     | Message_poolCap
     | Message_protocolTreasury
+    | Message_quoteBackstopDrain
+    | Message_quoteDeposit
     | Message_quoteSwapInto
     | Message_quoteSwapOut
+    | Message_quoteWithdraw
     | Message_renounceOwnership
+    | Message_reserve
+    | Message_reserveWithSlippage
     | Message_router
     | Message_setInsuranceWithdrawalTimelock
+    | Message_setMaxCoverageRatioForSwapIn
     | Message_setPoolCap
+    | Message_setProtocolTreasury
     | Message_setSwapFees
     | Message_sharesTargetWorth
     | Message_slippageCurve
@@ -2043,19 +2327,13 @@ export type Message =
     | Message_swapIntoFromRouter
     | Message_swapOutFromRouter
     | Message_symbol
+    | Message_totalLiabilities
     | Message_totalSupply
     | Message_transfer
     | Message_transferFrom
     | Message_transferOwnership
     | Message_unpause
     | Message_withdraw
-
-/**
- *
- */
-export interface Message_accumulatedSlippage {
-    __kind: 'accumulatedSlippage'
-}
 
 /**
  *
@@ -2083,6 +2361,13 @@ export interface Message_asset {
 }
 
 /**
+ * Returns the decimals of the pool asset
+ */
+export interface Message_assetDecimals {
+    __kind: 'assetDecimals'
+}
+
+/**
  *
  */
 export interface Message_backstop {
@@ -2095,7 +2380,7 @@ export interface Message_backstop {
 export interface Message_backstopBurn {
     __kind: 'backstopBurn'
     owner: AccountId
-    shares: uint256
+    sharesToBurn: uint256
 }
 
 /**
@@ -2123,7 +2408,10 @@ export interface Message_coverage {
 }
 
 /**
- *
+ * Returns the decimals of the LP token of this pool
+This is defined to have the same decimals as the pool token itself
+in order to greatly simplify calculations that involve pool token amounts
+and LP token amounts
  */
 export interface Message_decimals {
     __kind: 'decimals'
@@ -2143,7 +2431,14 @@ export interface Message_decreaseAllowance {
  */
 export interface Message_deposit {
     __kind: 'deposit'
-    amount: uint256
+    depositAmount: uint256
+}
+
+/**
+ * Computes the excess liquidity that forms that valuation of the backstop pool is defined as b + C - B - L where - b is reserve - C is the amount of `asset()` tokens in the pool - B is reserveWithSlippage - L is totalLiabilities The excess liquidity is a fixed point number using the decimals of this pool
+ */
+export interface Message_getExcessLiquidity {
+    __kind: 'getExcessLiquidity'
 }
 
 /**
@@ -2163,11 +2458,10 @@ export interface Message_insuranceWithdrawalTimelock {
 }
 
 /**
- * Return the earliest block no that insurance withdrawals are possible.
+ *
  */
-export interface Message_insuranceWithdrawalUnlock {
-    __kind: 'insuranceWithdrawalUnlock'
-    liquidityProvider: AccountId
+export interface Message_maxCoverageRatioForSwapIn {
+    __kind: 'maxCoverageRatioForSwapIn'
 }
 
 /**
@@ -2213,7 +2507,23 @@ export interface Message_protocolTreasury {
 }
 
 /**
- * Get a quote for the effective amount of tokens, incl. slippage and fees
+ * Get a quote for the effective amount of tokens for a backstop drain
+ */
+export interface Message_quoteBackstopDrain {
+    __kind: 'quoteBackstopDrain'
+    amount: uint256
+}
+
+/**
+ * Get a quote for the effective amount of tokens for a deposit
+ */
+export interface Message_quoteDeposit {
+    __kind: 'quoteDeposit'
+    depositAmount: uint256
+}
+
+/**
+ * Get a quote for the effective amount of tokens for a swap into
  */
 export interface Message_quoteSwapInto {
     __kind: 'quoteSwapInto'
@@ -2229,10 +2539,32 @@ export interface Message_quoteSwapOut {
 }
 
 /**
+ * Get a quote for the effective amount of tokens for a withdrawal
+ */
+export interface Message_quoteWithdraw {
+    __kind: 'quoteWithdraw'
+    sharesToBurn: uint256
+}
+
+/**
  *
  */
 export interface Message_renounceOwnership {
     __kind: 'renounceOwnership'
+}
+
+/**
+ *
+ */
+export interface Message_reserve {
+    __kind: 'reserve'
+}
+
+/**
+ *
+ */
+export interface Message_reserveWithSlippage {
+    __kind: 'reserveWithSlippage'
 }
 
 /**
@@ -2251,6 +2583,14 @@ export interface Message_setInsuranceWithdrawalTimelock {
 }
 
 /**
+ * Set new upper limit of pool coverage ratio (reserves / liabilities) for swap-in
+ */
+export interface Message_setMaxCoverageRatioForSwapIn {
+    __kind: 'setMaxCoverageRatioForSwapIn'
+    maxCoverageRatio: uint256
+}
+
+/**
  * Set new upper limit of pool reserves. Will disable deposits when reached. Can always set to an amount < current reserves to temporarily restrict deposits.
  */
 export interface Message_setPoolCap {
@@ -2259,13 +2599,21 @@ export interface Message_setPoolCap {
 }
 
 /**
+ * Set new treasury address
+ */
+export interface Message_setProtocolTreasury {
+    __kind: 'setProtocolTreasury'
+    newProtocolTreasury: AccountId
+}
+
+/**
  * Set swap fees (applied when swapping funds out of the pool)
  */
 export interface Message_setSwapFees {
     __kind: 'setSwapFees'
-    lpFeeBps: uint256
-    backstopFeeBps: uint256
-    protocolFeeBps: uint256
+    lpFee: uint256
+    backstopFee: uint256
+    protocolFee: uint256
 }
 
 /**
@@ -2273,7 +2621,7 @@ export interface Message_setSwapFees {
  */
 export interface Message_sharesTargetWorth {
     __kind: 'sharesTargetWorth'
-    shares: uint256
+    sharesToBurn: uint256
 }
 
 /**
@@ -2311,6 +2659,13 @@ export interface Message_swapOutFromRouter {
  */
 export interface Message_symbol {
     __kind: 'symbol'
+}
+
+/**
+ *
+ */
+export interface Message_totalLiabilities {
+    __kind: 'totalLiabilities'
 }
 
 /**
@@ -2359,7 +2714,7 @@ export interface Message_unpause {
  */
 export interface Message_withdraw {
     __kind: 'withdraw'
-    shares: uint256
+    sharesToBurn: uint256
     minimumAmount: uint256
 }
 
@@ -2371,6 +2726,7 @@ export type Event =
     | Event_Mint
     | Event_OwnershipTransferred
     | Event_Paused
+    | Event_ProtocolTreasuryChanged
     | Event_Transfer
     | Event_Unpaused
 
@@ -2417,6 +2773,12 @@ export interface Event_OwnershipTransferred {
 export interface Event_Paused {
     __kind: 'Paused'
     account: AccountId
+}
+
+export interface Event_ProtocolTreasuryChanged {
+    __kind: 'ProtocolTreasuryChanged'
+    sender: AccountId
+    newProtocolTreasury: AccountId
 }
 
 export interface Event_Transfer {

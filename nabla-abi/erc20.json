@@ -1,12 +1,12 @@
 {
     "contract": {
         "authors": ["unknown"],
-        "name": "TestableERC20Wrapper",
+        "name": "ERC20Wrapper",
         "version": "0.0.1"
     },
     "source": {
         "compiler": "solang 0.3.2",
-        "hash": "0xcb7e8effdd0165c396793be92cac69d3a78f35d496a4d9a9423e84aac20c5eb4",
+        "hash": "0xfd052826432f969b18f912400fc92fbb97ed4122dd6fa1ee3828bfc81b93e316",
         "language": "Solidity 0.3.2"
     },
     "spec": {
@@ -181,62 +181,6 @@
                 ],
                 "docs": [""],
                 "label": "Approval"
-            },
-            {
-                "args": [
-                    {
-                        "docs": [],
-                        "indexed": true,
-                        "label": "to",
-                        "type": {
-                            "displayName": [
-                                "ink_primitives",
-                                "types",
-                                "AccountId"
-                            ],
-                            "type": 6
-                        }
-                    },
-                    {
-                        "docs": [],
-                        "indexed": false,
-                        "label": "value",
-                        "type": {
-                            "displayName": ["uint256"],
-                            "type": 5
-                        }
-                    }
-                ],
-                "docs": [""],
-                "label": "Mint"
-            },
-            {
-                "args": [
-                    {
-                        "docs": [],
-                        "indexed": true,
-                        "label": "from",
-                        "type": {
-                            "displayName": [
-                                "ink_primitives",
-                                "types",
-                                "AccountId"
-                            ],
-                            "type": 6
-                        }
-                    },
-                    {
-                        "docs": [],
-                        "indexed": false,
-                        "label": "value",
-                        "type": {
-                            "displayName": ["uint256"],
-                            "type": 5
-                        }
-                    }
-                ],
-                "docs": [""],
-                "label": "Burn"
             }
         ],
         "lang_error": {
@@ -288,7 +232,7 @@
                 "default": false,
                 "docs": [""],
                 "label": "totalSupply",
-                "mutates": true,
+                "mutates": false,
                 "payable": false,
                 "returnType": {
                     "displayName": ["uint256"],
@@ -313,7 +257,7 @@
                 "default": false,
                 "docs": [""],
                 "label": "balanceOf",
-                "mutates": true,
+                "mutates": false,
                 "payable": false,
                 "returnType": {
                     "displayName": ["uint256"],
@@ -381,7 +325,7 @@
                 "default": false,
                 "docs": [""],
                 "label": "allowance",
-                "mutates": true,
+                "mutates": false,
                 "payable": false,
                 "returnType": {
                     "displayName": ["uint256"],
@@ -463,70 +407,6 @@
                     "type": 7
                 },
                 "selector": "0x23b872dd"
-            },
-            {
-                "args": [
-                    {
-                        "label": "_to",
-                        "type": {
-                            "displayName": [
-                                "ink_primitives",
-                                "types",
-                                "AccountId"
-                            ],
-                            "type": 6
-                        }
-                    },
-                    {
-                        "label": "_amount",
-                        "type": {
-                            "displayName": ["uint256"],
-                            "type": 5
-                        }
-                    }
-                ],
-                "default": false,
-                "docs": [""],
-                "label": "mint",
-                "mutates": true,
-                "payable": false,
-                "returnType": {
-                    "displayName": ["bool"],
-                    "type": 7
-                },
-                "selector": "0x40c10f19"
-            },
-            {
-                "args": [
-                    {
-                        "label": "_from",
-                        "type": {
-                            "displayName": [
-                                "ink_primitives",
-                                "types",
-                                "AccountId"
-                            ],
-                            "type": 6
-                        }
-                    },
-                    {
-                        "label": "_amount",
-                        "type": {
-                            "displayName": ["uint256"],
-                            "type": 5
-                        }
-                    }
-                ],
-                "default": false,
-                "docs": [""],
-                "label": "burn",
-                "mutates": true,
-                "payable": false,
-                "returnType": {
-                    "displayName": ["bool"],
-                    "type": 7
-                },
-                "selector": "0x9dc29fac"
             }
         ]
     },
@@ -632,7 +512,7 @@
                     "name": "_issuer"
                 }
             ],
-            "name": "TestableERC20Wrapper"
+            "name": "ERC20Wrapper"
         }
     },
     "types": [

@@ -743,8 +743,8 @@ type Incentive @entity {
 
 type Router @entity {
     id: ID! # id can be the address of the router contract
-    swapPools: [SwapPool!] @derivedFrom(field: "router")
-    backstopPools: [BackstopPool!] @derivedFrom(field: "router")
+    swapPools: [SwapPool!]! @derivedFrom(field: "router")
+    backstopPool: [BackstopPool!]! @derivedFrom(field: "router")
     paused: Boolean! # whether the router is paused
 }
 
@@ -753,27 +753,51 @@ type NablaToken @entity {
     decimals: Int! # number of decimal places the token can be split into
     name: String! # name of the token
     symbol: String! # ticker symbol of the token
+    swapPools: [SwapPool!]! @derivedFrom(field: "token")
 }
 
 type SwapPool @entity {
     id: ID! # id can be the address of the swap pool contract
-    router: Router! # link to the Router entity
+    name: String! # name of the swap pool LP token
+    symbol: String! # ticker symbol of the swap pool LP token
+    lpTokenDecimals: Int! # the decimals of the LP token
+    router: Router # link to the Router entity
     backstop: BackstopPool! # link to the BackstopPool entity
     token: NablaToken! # link to the Token entity
-    reserves: BigInt! # current balance of the pool
-    liabilities: BigInt! # total Liquidity Provider (LP) deposits
+    reserve: BigInt! # current usable balance of the pool
+    reserveWithSlippage: BigInt! # current actual balance of the pool
+    totalLiabilities: BigInt! # total Liquidity Provider (LP) deposits
     totalSupply: BigInt! # total supply of LP tokens
     paused: Boolean! # whether the swap pool is paused
+    feesHistory: [NablaSwapFee!]! @derivedFrom(field: "swapPool") # history of swap fees
+    apr: BigInt! # annual percentage rate of the swap pool
+    insuranceFeeBps: BigInt! # insurance fee in basis points
+    protocolTreasuryAddress: String # address of the treasury
 }
 
 type BackstopPool @entity {
     id: ID! # id can be the address of the backstop pool contract
+    name: String! # name of the backstop pool LP token
+    symbol: String! # ticker symbol of the backstop pool LP token
+    lpTokenDecimals: Int! # the decimals of the LP token
     router: Router! # link to the Router entity
     token: NablaToken! # link to the NablaToken entity
     reserves: BigInt! # current balance of the pool
-    liabilities: BigInt! # total Liquidity Provider (LP) deposits
     totalSupply: BigInt! # total supply of LP tokens
     paused: Boolean! # whether the backstop pool is paused
+    coveredSwapPools: [SwapPool!]! @derivedFrom(field: "backstop") # swap pools that are covered by the backstop pool
+    feesHistory: [NablaSwapFee!]! @derivedFrom(field: "backstopPool") # history of swap fees
+    apr: BigInt! # annual percentage rate of the backstop pool
+}
+
+type NablaSwapFee @entity {
+    id: ID! # id is address of the swap pool contract + timestamp
+    lpFees: BigInt! # LP fee in `asset`
+    backstopFees: BigInt! # backstop fee in `asset`
+    protocolFees: BigInt! # protocol fee in `asset`
+    timestamp: BigInt! # timestamp of the swap event
+    swapPool: SwapPool! # link to the SwapPool entity
+    backstopPool: BackstopPool # link to the BackstopPool entity
 }
 
 type Block @entity {

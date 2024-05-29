@@ -3,12 +3,12 @@ import { Abi, Bytes, encodeCall, decodeResult } from '@subsquid/ink-abi'
 export const metadata = {
     contract: {
         authors: ['unknown'],
-        name: 'TestableERC20Wrapper',
+        name: 'ERC20Wrapper',
         version: '0.0.1',
     },
     source: {
         compiler: 'solang 0.3.2',
-        hash: '0xcb7e8effdd0165c396793be92cac69d3a78f35d496a4d9a9423e84aac20c5eb4',
+        hash: '0xfd052826432f969b18f912400fc92fbb97ed4122dd6fa1ee3828bfc81b93e316',
         language: 'Solidity 0.3.2',
     },
     spec: {
@@ -184,62 +184,6 @@ export const metadata = {
                 docs: [''],
                 label: 'Approval',
             },
-            {
-                args: [
-                    {
-                        docs: [],
-                        indexed: true,
-                        label: 'to',
-                        type: {
-                            displayName: [
-                                'ink_primitives',
-                                'types',
-                                'AccountId',
-                            ],
-                            type: 6,
-                        },
-                    },
-                    {
-                        docs: [],
-                        indexed: false,
-                        label: 'value',
-                        type: {
-                            displayName: ['uint256'],
-                            type: 5,
-                        },
-                    },
-                ],
-                docs: [''],
-                label: 'Mint',
-            },
-            {
-                args: [
-                    {
-                        docs: [],
-                        indexed: true,
-                        label: 'from',
-                        type: {
-                            displayName: [
-                                'ink_primitives',
-                                'types',
-                                'AccountId',
-                            ],
-                            type: 6,
-                        },
-                    },
-                    {
-                        docs: [],
-                        indexed: false,
-                        label: 'value',
-                        type: {
-                            displayName: ['uint256'],
-                            type: 5,
-                        },
-                    },
-                ],
-                docs: [''],
-                label: 'Burn',
-            },
         ],
         lang_error: {
             displayName: ['SolidityError'],
@@ -290,7 +234,7 @@ export const metadata = {
                 default: false,
                 docs: [''],
                 label: 'totalSupply',
-                mutates: true,
+                mutates: false,
                 payable: false,
                 returnType: {
                     displayName: ['uint256'],
@@ -315,7 +259,7 @@ export const metadata = {
                 default: false,
                 docs: [''],
                 label: 'balanceOf',
-                mutates: true,
+                mutates: false,
                 payable: false,
                 returnType: {
                     displayName: ['uint256'],
@@ -383,7 +327,7 @@ export const metadata = {
                 default: false,
                 docs: [''],
                 label: 'allowance',
-                mutates: true,
+                mutates: false,
                 payable: false,
                 returnType: {
                     displayName: ['uint256'],
@@ -465,70 +409,6 @@ export const metadata = {
                     type: 7,
                 },
                 selector: '0x23b872dd',
-            },
-            {
-                args: [
-                    {
-                        label: '_to',
-                        type: {
-                            displayName: [
-                                'ink_primitives',
-                                'types',
-                                'AccountId',
-                            ],
-                            type: 6,
-                        },
-                    },
-                    {
-                        label: '_amount',
-                        type: {
-                            displayName: ['uint256'],
-                            type: 5,
-                        },
-                    },
-                ],
-                default: false,
-                docs: [''],
-                label: 'mint',
-                mutates: true,
-                payable: false,
-                returnType: {
-                    displayName: ['bool'],
-                    type: 7,
-                },
-                selector: '0x40c10f19',
-            },
-            {
-                args: [
-                    {
-                        label: '_from',
-                        type: {
-                            displayName: [
-                                'ink_primitives',
-                                'types',
-                                'AccountId',
-                            ],
-                            type: 6,
-                        },
-                    },
-                    {
-                        label: '_amount',
-                        type: {
-                            displayName: ['uint256'],
-                            type: 5,
-                        },
-                    },
-                ],
-                default: false,
-                docs: [''],
-                label: 'burn',
-                mutates: true,
-                payable: false,
-                returnType: {
-                    displayName: ['bool'],
-                    type: 7,
-                },
-                selector: '0x9dc29fac',
             },
         ],
     },
@@ -634,7 +514,7 @@ export const metadata = {
                     name: '_issuer',
                 },
             ],
-            name: 'TestableERC20Wrapper',
+            name: 'ERC20Wrapper',
         },
     },
     types: [
@@ -862,18 +742,34 @@ export class Contract {
         return this.stateCall('0x313ce567', [])
     }
 
+    totalSupply(): Promise<uint256> {
+        return this.stateCall('0x18160ddd', [])
+    }
+
+    balanceOf(_owner: AccountId): Promise<uint256> {
+        return this.stateCall('0x70a08231', [_owner])
+    }
+
+    allowance(_owner: AccountId, _spender: AccountId): Promise<uint256> {
+        return this.stateCall('0xdd62ed3e', [_owner, _spender])
+    }
+
     private async stateCall<T>(selector: string, args: any[]): Promise<T> {
-        const input = _abi.encodeMessageInput(selector, args)
-        const data = encodeCall(this.address, input)
-        const result = await this.ctx._chain.rpc.call('state_call', [
+        let input = _abi.encodeMessageInput(selector, args)
+        let data = encodeCall(this.address, input)
+        let result = await this.ctx._chain.rpc.call('state_call', [
             'ContractsApi_call',
             data,
             this.blockHash,
         ])
-        const value = decodeResult(result)
+        let value = decodeResult(result)
         return _abi.decodeMessageOutput(selector, value)
     }
 }
+
+export type AccountId = Bytes
+
+export type uint256 = bigint
 
 export type uint8 = number
 
@@ -897,9 +793,7 @@ export type Message =
     | Message_allowance
     | Message_approve
     | Message_balanceOf
-    | Message_burn
     | Message_decimals
-    | Message_mint
     | Message_name
     | Message_symbol
     | Message_totalSupply
@@ -935,26 +829,8 @@ export interface Message_balanceOf {
 /**
  *
  */
-export interface Message_burn {
-    __kind: 'burn'
-    from: AccountId
-    amount: uint256
-}
-
-/**
- *
- */
 export interface Message_decimals {
     __kind: 'decimals'
-}
-
-/**
- *
- */
-export interface Message_mint {
-    __kind: 'mint'
-    to: AccountId
-    amount: uint256
 }
 
 /**
@@ -997,28 +873,12 @@ export interface Message_transferFrom {
     amount: uint256
 }
 
-export type uint256 = bigint
-
-export type AccountId = Bytes
-
-export type Event = Event_Approval | Event_Burn | Event_Mint | Event_Transfer
+export type Event = Event_Approval | Event_Transfer
 
 export interface Event_Approval {
     __kind: 'Approval'
     owner: AccountId
     spender: AccountId
-    value: uint256
-}
-
-export interface Event_Burn {
-    __kind: 'Burn'
-    from: AccountId
-    value: uint256
-}
-
-export interface Event_Mint {
-    __kind: 'Mint'
-    to: AccountId
     value: uint256
 }
 

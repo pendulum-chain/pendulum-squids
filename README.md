@@ -194,7 +194,12 @@ npx squid-ink-typegen --abi nabla-abi/{contract}.json --output src/abi/{contract
 ```
 
 We must ensure that the contract's ABI is generated properly and added to the `nabla-abi`
-directory. It is possible to obtain the ABI upon compilation of the ink! contract.
+directory.
+It is possible to obtain the ABI upon compilation of the ink! contract.
+The ABI is contained in the `.contract` file.
+You can copy the contents of that file as is to a new `.json` file but make sure to remove
+the `"source": { "wasm": <0x...> }` field from the JSON object as it's not needed and too large to be included in the
+ABI.
 
 To generate the types for all the ABI's contained in `nabla-abi`, run:
 

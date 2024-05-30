@@ -2,8 +2,11 @@ import {
     Entity as Entity_,
     Column as Column_,
     PrimaryColumn as PrimaryColumn_,
+    ManyToOne as ManyToOne_,
+    Index as Index_,
 } from 'typeorm'
 import * as marshal from './marshal'
+import { SwapPool } from './swapPool.model'
 
 @Entity_()
 export class NablaSwapLiquidityDeposit {
@@ -31,4 +34,8 @@ export class NablaSwapLiquidityDeposit {
         nullable: false,
     })
     amountPoolTokensDeposited!: bigint
+
+    @Index_()
+    @ManyToOne_(() => SwapPool, { nullable: true })
+    swapPool!: SwapPool
 }

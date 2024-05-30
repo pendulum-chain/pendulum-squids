@@ -2,8 +2,11 @@ import {
     Entity as Entity_,
     Column as Column_,
     PrimaryColumn as PrimaryColumn_,
+    ManyToOne as ManyToOne_,
+    Index as Index_,
 } from 'typeorm'
 import * as marshal from './marshal'
+import { BackstopPool } from './backstopPool.model'
 
 @Entity_()
 export class NablaBackstopLiquidityWithdrawal {
@@ -31,4 +34,8 @@ export class NablaBackstopLiquidityWithdrawal {
         nullable: false,
     })
     amountPoolTokensWithdrawn!: bigint
+
+    @Index_()
+    @ManyToOne_(() => BackstopPool, { nullable: true })
+    backstopPool!: BackstopPool
 }

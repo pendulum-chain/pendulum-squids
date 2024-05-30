@@ -62,6 +62,15 @@ const localConfig: ProcessorConfig = {
     },
 }
 
+const localConfig: ProcessorConfig = {
+    chainName: 'local',
+    prefix: 'amplitude',
+    dataSource: {
+        archive: undefined,
+        chain: 'ws://127.0.0.1:9944',
+    },
+}
+
 export const config: ProcessorConfig =
     network === 'foucoco'
         ? isLocalExecution

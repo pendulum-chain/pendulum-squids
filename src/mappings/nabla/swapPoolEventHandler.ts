@@ -99,7 +99,8 @@ export async function handleBurn(
         ctx.event.block.timestamp,
         hexToSs58(event.sender),
         event.poolSharesBurned,
-        event.amountPrincipleWithdrawn
+        event.amountPrincipleWithdrawn,
+        swapPool
     )
 
     await ctx.store.save(swapPool)
@@ -142,7 +143,8 @@ export async function handleMint(
         ctx.event.block.timestamp,
         hexToSs58(event.sender),
         event.poolSharesMinted,
-        event.amountPrincipleDeposited
+        event.amountPrincipleDeposited,
+        swapPool
     )
 
     await ctx.store.save(swapPool)

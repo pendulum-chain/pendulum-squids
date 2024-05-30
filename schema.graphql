@@ -817,41 +817,45 @@ type NablaSwap @entity {
 type NablaBackstopLiquidityDeposit @entity {
     id: ID! # calculated from blockNumber - extrinsicIndex
     timestamp: DateTime!
-
     # from backstop Mint event
     sender: String!
     poolSharesMinted: BigInt!
     amountPoolTokensDeposited: BigInt!
+    # this will bring backstop pool info
+    backstopPool: BackstopPool!
 }
 
 type NablaSwapLiquidityDeposit @entity {
     id: ID! # calculated from blockNumber - extrinsicIndex
     timestamp: DateTime!
-
     # from swap Mint event
     sender: String!
     poolSharesMinted: BigInt!
     amountPoolTokensDeposited: BigInt!
+    # this will bring swap pool info
+    swapPool: SwapPool!
 }
 
 type NablaBackstopLiquidityWithdrawal @entity {
     id: ID! # calculated from blockNumber - extrinsicIndex
     timestamp: DateTime!
-
     # from backstop Burn event
     sender: String!
     poolSharesBurned: BigInt!
     amountPoolTokensWithdrawn: BigInt!
+    # this will bring backstop pool info
+    backstopPool: BackstopPool!
 }
 
 type NablaSwapLiquidityWithdrawal @entity {
     id: ID! # calculated from blockNumber - extrinsicIndex
     timestamp: DateTime!
-
     # from swap Burn event
     sender: String!
     poolSharesBurned: BigInt!
     amountPoolTokensWithdrawn: BigInt!
+    # this will bring swap pool info
+    swapPool: SwapPool!
 }
 
 type Block @entity {

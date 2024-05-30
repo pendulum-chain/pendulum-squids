@@ -14,7 +14,7 @@ import { Contract as Erc20Contract } from '../../abi/erc20'
 import { hexToSs58, ss58ToHex } from './addresses'
 import {
     createNablaBackstopLiquidityDeposit,
-    createNablaSwapLiquidityWithdrawal,
+    createNablaBackstopLiquidityWithdrawal,
     getSwapPool,
 } from './creation'
 import { updateSwapPoolCoverageAndSupply } from './swapPoolEventHandler'
@@ -78,14 +78,15 @@ export async function handleBurn(
     event: Event_Burn,
     backstopPool: BackstopPool
 ) {
-    await createNablaSwapLiquidityWithdrawal(
+    await createNablaBackstopLiquidityWithdrawal(
         ctx,
         ctx.event.block.height,
         ctx.event.extrinsicIndex,
         ctx.event.block.timestamp,
         hexToSs58(event.sender),
         event.poolSharesBurned,
-        event.amountPrincipleWithdrawn
+        event.amountPrincipleWithdrawn,
+        backstopPool
     )
     await updateBackstopCoverageAndSupply(ctx, backstopPool)
     await ctx.store.save(backstopPool)
@@ -139,7 +140,8 @@ export async function handleMint(
         ctx.event.block.timestamp,
         hexToSs58(event.sender),
         event.poolSharesMinted,
-        event.amountPrincipleDeposited
+        event.amountPrincipleDeposited,
+        backstopPool
     )
     await ctx.store.save(backstopPool)
 }

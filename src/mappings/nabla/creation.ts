@@ -280,7 +280,8 @@ export async function createNablaBackstopLiquidityDeposit(
     timestamp: number | undefined,
     sender: string,
     poolSharesMinted: bigint,
-    amountPoolTokensDeposited: bigint
+    amountPoolTokensDeposited: bigint,
+    backstopPool: BackstopPool
 ): Promise<NablaBackstopLiquidityDeposit> {
     const backstopDepositId = generateId(blockNumber, extrinsicIndex)
     const backstopDeposit = new NablaBackstopLiquidityDeposit({
@@ -289,6 +290,7 @@ export async function createNablaBackstopLiquidityDeposit(
         sender,
         poolSharesMinted,
         amountPoolTokensDeposited,
+        backstopPool,
     })
 
     await ctx.store.save(backstopDeposit)
@@ -302,7 +304,8 @@ export async function createNablaSwapLiquidityDeposit(
     timestamp: number | undefined,
     sender: string,
     poolSharesMinted: bigint,
-    amountPoolTokensDeposited: bigint
+    amountPoolTokensDeposited: bigint,
+    swapPool: SwapPool
 ): Promise<NablaSwapLiquidityDeposit> {
     const swapDepositId = generateId(blockNumber, extrinsicIndex)
     const swapDeposit = new NablaSwapLiquidityDeposit({
@@ -311,6 +314,7 @@ export async function createNablaSwapLiquidityDeposit(
         sender,
         poolSharesMinted,
         amountPoolTokensDeposited,
+        swapPool,
     })
 
     await ctx.store.save(swapDeposit)
@@ -324,7 +328,8 @@ export async function createNablaBackstopLiquidityWithdrawal(
     timestamp: number | undefined,
     sender: string,
     poolSharesBurned: bigint,
-    amountPoolTokensWithdrawn: bigint
+    amountPoolTokensWithdrawn: bigint,
+    backstopPool: BackstopPool
 ): Promise<NablaBackstopLiquidityWithdrawal> {
     const backstopWithdrawalId = generateId(blockNumber, extrinsicIndex)
     const backstopWithdrawal = new NablaBackstopLiquidityWithdrawal({
@@ -333,6 +338,7 @@ export async function createNablaBackstopLiquidityWithdrawal(
         sender,
         poolSharesBurned,
         amountPoolTokensWithdrawn,
+        backstopPool,
     })
 
     await ctx.store.save(backstopWithdrawal)
@@ -346,7 +352,8 @@ export async function createNablaSwapLiquidityWithdrawal(
     timestamp: number | undefined,
     sender: string,
     poolSharesBurned: bigint,
-    amountPoolTokensWithdrawn: bigint
+    amountPoolTokensWithdrawn: bigint,
+    swapPool: SwapPool
 ): Promise<NablaSwapLiquidityWithdrawal> {
     const swapWithdrawalId = generateId(blockNumber, extrinsicIndex)
     const swapWithdrawal = new NablaSwapLiquidityWithdrawal({
@@ -355,6 +362,7 @@ export async function createNablaSwapLiquidityWithdrawal(
         sender,
         poolSharesBurned,
         amountPoolTokensWithdrawn,
+        swapPool,
     })
 
     await ctx.store.save(swapWithdrawal)

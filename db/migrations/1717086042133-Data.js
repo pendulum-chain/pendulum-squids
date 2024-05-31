@@ -1,5 +1,5 @@
-module.exports = class Data1714034652645 {
-    name = 'Data1714034652645'
+module.exports = class Data1717086042133 {
+    name = 'Data1717086042133'
 
     async up(db) {
         await db.query(
@@ -327,6 +327,42 @@ module.exports = class Data1714034652645 {
             `CREATE TABLE "router" ("id" character varying NOT NULL, "paused" boolean NOT NULL, CONSTRAINT "PK_510c864aa88ac8eb3a306789801" PRIMARY KEY ("id"))`
         )
         await db.query(
+            `CREATE TABLE "nabla_swap" ("id" character varying NOT NULL, "timestamp" TIMESTAMP WITH TIME ZONE NOT NULL, "sender" text NOT NULL, "amount_in" numeric NOT NULL, "amount_out" numeric NOT NULL, "to" text NOT NULL, "token_in_id" character varying, "token_out_id" character varying, "swap_fee_id" character varying, CONSTRAINT "PK_6274610b518e1a9e61b1c6f03bb" PRIMARY KEY ("id"))`
+        )
+        await db.query(
+            `CREATE INDEX "IDX_78ad17aaf8e256aada35d50c95" ON "nabla_swap" ("token_in_id") `
+        )
+        await db.query(
+            `CREATE INDEX "IDX_3ddf0d667a8f06da7f6ab50004" ON "nabla_swap" ("token_out_id") `
+        )
+        await db.query(
+            `CREATE INDEX "IDX_dd24afed240ad46290bfcf0603" ON "nabla_swap" ("swap_fee_id") `
+        )
+        await db.query(
+            `CREATE TABLE "nabla_backstop_liquidity_deposit" ("id" character varying NOT NULL, "timestamp" TIMESTAMP WITH TIME ZONE NOT NULL, "sender" text NOT NULL, "pool_shares_minted" numeric NOT NULL, "amount_pool_tokens_deposited" numeric NOT NULL, "backstop_pool_id" character varying, CONSTRAINT "PK_6a7b952f6ac801d591360e47743" PRIMARY KEY ("id"))`
+        )
+        await db.query(
+            `CREATE INDEX "IDX_a3ce6e5ba78f5987919e7ee346" ON "nabla_backstop_liquidity_deposit" ("backstop_pool_id") `
+        )
+        await db.query(
+            `CREATE TABLE "nabla_swap_liquidity_deposit" ("id" character varying NOT NULL, "timestamp" TIMESTAMP WITH TIME ZONE NOT NULL, "sender" text NOT NULL, "pool_shares_minted" numeric NOT NULL, "amount_pool_tokens_deposited" numeric NOT NULL, "swap_pool_id" character varying, CONSTRAINT "PK_4788b03472eec9547df44a82c48" PRIMARY KEY ("id"))`
+        )
+        await db.query(
+            `CREATE INDEX "IDX_e0480f777845618674d1bbc3b1" ON "nabla_swap_liquidity_deposit" ("swap_pool_id") `
+        )
+        await db.query(
+            `CREATE TABLE "nabla_backstop_liquidity_withdrawal" ("id" character varying NOT NULL, "timestamp" TIMESTAMP WITH TIME ZONE NOT NULL, "sender" text NOT NULL, "pool_shares_burned" numeric NOT NULL, "amount_pool_tokens_withdrawn" numeric NOT NULL, "backstop_pool_id" character varying, CONSTRAINT "PK_9fca1665db21118d0b318e1f828" PRIMARY KEY ("id"))`
+        )
+        await db.query(
+            `CREATE INDEX "IDX_33f15234263ac9c6d07fe5441f" ON "nabla_backstop_liquidity_withdrawal" ("backstop_pool_id") `
+        )
+        await db.query(
+            `CREATE TABLE "nabla_swap_liquidity_withdrawal" ("id" character varying NOT NULL, "timestamp" TIMESTAMP WITH TIME ZONE NOT NULL, "sender" text NOT NULL, "pool_shares_burned" numeric NOT NULL, "amount_pool_tokens_withdrawn" numeric NOT NULL, "swap_pool_id" character varying, CONSTRAINT "PK_38c9ff7047fcf36ccbd4b7cb521" PRIMARY KEY ("id"))`
+        )
+        await db.query(
+            `CREATE INDEX "IDX_ec313e0ceb8429cb76aa63ed74" ON "nabla_swap_liquidity_withdrawal" ("swap_pool_id") `
+        )
+        await db.query(
             `CREATE TABLE "event" ("id" character varying NOT NULL, "index" integer NOT NULL, "phase" text NOT NULL, "pallet" text NOT NULL, "name" text NOT NULL, "args" jsonb, "args_str" text array, "block_id" character varying, "extrinsic_id" character varying, "call_id" character varying, CONSTRAINT "PK_30c2f3bbaf6d34a55f8ae6e4614" PRIMARY KEY ("id"))`
         )
         await db.query(
@@ -555,6 +591,27 @@ module.exports = class Data1714034652645 {
             `ALTER TABLE "swap_pool" ADD CONSTRAINT "FK_b66a5cc8d2ce7bba1b48fd8c1ab" FOREIGN KEY ("token_id") REFERENCES "nabla_token"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`
         )
         await db.query(
+            `ALTER TABLE "nabla_swap" ADD CONSTRAINT "FK_78ad17aaf8e256aada35d50c95a" FOREIGN KEY ("token_in_id") REFERENCES "nabla_token"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`
+        )
+        await db.query(
+            `ALTER TABLE "nabla_swap" ADD CONSTRAINT "FK_3ddf0d667a8f06da7f6ab50004f" FOREIGN KEY ("token_out_id") REFERENCES "nabla_token"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`
+        )
+        await db.query(
+            `ALTER TABLE "nabla_swap" ADD CONSTRAINT "FK_dd24afed240ad46290bfcf0603b" FOREIGN KEY ("swap_fee_id") REFERENCES "nabla_swap_fee"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`
+        )
+        await db.query(
+            `ALTER TABLE "nabla_backstop_liquidity_deposit" ADD CONSTRAINT "FK_a3ce6e5ba78f5987919e7ee3467" FOREIGN KEY ("backstop_pool_id") REFERENCES "backstop_pool"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`
+        )
+        await db.query(
+            `ALTER TABLE "nabla_swap_liquidity_deposit" ADD CONSTRAINT "FK_e0480f777845618674d1bbc3b18" FOREIGN KEY ("swap_pool_id") REFERENCES "swap_pool"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`
+        )
+        await db.query(
+            `ALTER TABLE "nabla_backstop_liquidity_withdrawal" ADD CONSTRAINT "FK_33f15234263ac9c6d07fe5441f0" FOREIGN KEY ("backstop_pool_id") REFERENCES "backstop_pool"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`
+        )
+        await db.query(
+            `ALTER TABLE "nabla_swap_liquidity_withdrawal" ADD CONSTRAINT "FK_ec313e0ceb8429cb76aa63ed746" FOREIGN KEY ("swap_pool_id") REFERENCES "swap_pool"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`
+        )
+        await db.query(
             `ALTER TABLE "event" ADD CONSTRAINT "FK_2b0d35d675c4f99751855c45021" FOREIGN KEY ("block_id") REFERENCES "block"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`
         )
         await db.query(
@@ -689,6 +746,18 @@ module.exports = class Data1714034652645 {
         await db.query(`DROP INDEX "public"."IDX_5c3209a88e41d53bdc450605b3"`)
         await db.query(`DROP INDEX "public"."IDX_b66a5cc8d2ce7bba1b48fd8c1a"`)
         await db.query(`DROP TABLE "router"`)
+        await db.query(`DROP TABLE "nabla_swap"`)
+        await db.query(`DROP INDEX "public"."IDX_78ad17aaf8e256aada35d50c95"`)
+        await db.query(`DROP INDEX "public"."IDX_3ddf0d667a8f06da7f6ab50004"`)
+        await db.query(`DROP INDEX "public"."IDX_dd24afed240ad46290bfcf0603"`)
+        await db.query(`DROP TABLE "nabla_backstop_liquidity_deposit"`)
+        await db.query(`DROP INDEX "public"."IDX_a3ce6e5ba78f5987919e7ee346"`)
+        await db.query(`DROP TABLE "nabla_swap_liquidity_deposit"`)
+        await db.query(`DROP INDEX "public"."IDX_e0480f777845618674d1bbc3b1"`)
+        await db.query(`DROP TABLE "nabla_backstop_liquidity_withdrawal"`)
+        await db.query(`DROP INDEX "public"."IDX_33f15234263ac9c6d07fe5441f"`)
+        await db.query(`DROP TABLE "nabla_swap_liquidity_withdrawal"`)
+        await db.query(`DROP INDEX "public"."IDX_ec313e0ceb8429cb76aa63ed74"`)
         await db.query(`DROP TABLE "event"`)
         await db.query(`DROP INDEX "public"."IDX_2b0d35d675c4f99751855c4502"`)
         await db.query(`DROP INDEX "public"."IDX_129efedcb305c80256db2d57a5"`)
@@ -856,6 +925,27 @@ module.exports = class Data1714034652645 {
         )
         await db.query(
             `ALTER TABLE "swap_pool" DROP CONSTRAINT "FK_b66a5cc8d2ce7bba1b48fd8c1ab"`
+        )
+        await db.query(
+            `ALTER TABLE "nabla_swap" DROP CONSTRAINT "FK_78ad17aaf8e256aada35d50c95a"`
+        )
+        await db.query(
+            `ALTER TABLE "nabla_swap" DROP CONSTRAINT "FK_3ddf0d667a8f06da7f6ab50004f"`
+        )
+        await db.query(
+            `ALTER TABLE "nabla_swap" DROP CONSTRAINT "FK_dd24afed240ad46290bfcf0603b"`
+        )
+        await db.query(
+            `ALTER TABLE "nabla_backstop_liquidity_deposit" DROP CONSTRAINT "FK_a3ce6e5ba78f5987919e7ee3467"`
+        )
+        await db.query(
+            `ALTER TABLE "nabla_swap_liquidity_deposit" DROP CONSTRAINT "FK_e0480f777845618674d1bbc3b18"`
+        )
+        await db.query(
+            `ALTER TABLE "nabla_backstop_liquidity_withdrawal" DROP CONSTRAINT "FK_33f15234263ac9c6d07fe5441f0"`
+        )
+        await db.query(
+            `ALTER TABLE "nabla_swap_liquidity_withdrawal" DROP CONSTRAINT "FK_ec313e0ceb8429cb76aa63ed746"`
         )
         await db.query(
             `ALTER TABLE "event" DROP CONSTRAINT "FK_2b0d35d675c4f99751855c45021"`

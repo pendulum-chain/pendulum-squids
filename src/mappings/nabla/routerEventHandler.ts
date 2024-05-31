@@ -11,6 +11,8 @@ import {
     getSwapPoolsOfRouterForToken,
     getOrCreateNablaToken,
     getSwapPool,
+    createNablaSwap,
+    getSwapFee,
 } from './creation'
 import { updateSwapPoolCoverageAndSupply } from './swapPoolEventHandler'
 import { hexToSs58, ss58ToHex } from './addresses'
@@ -89,6 +91,26 @@ export async function handleSwap(
         await updateSwapPoolCoverageAndSupply(ctx, swapPoolOut)
         await ctx.store.save(swapPoolOut)
     }
+
+    const swapFee = await getSwapFee(
+        ctx,
+        ctx.event.block.height,
+        ctx.event.extrinsicIndex
+    )
+
+    await createNablaSwap(
+        ctx,
+        ctx.event.block.height,
+        ctx.event.extrinsicIndex,
+        ctx.event.block.timestamp!,
+        hexToSs58(event.sender),
+        event.amountIn,
+        event.amountOut,
+        tokenIn,
+        tokenOut,
+        hexToSs58(event.to),
+        swapFee
+    )
 }
 
 export async function handleSwapPoolRegistered(

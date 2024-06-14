@@ -28,6 +28,7 @@ import {
     config,
     maxHeightPromise,
     catchupPriceUpdatePeriod,
+    newHeadTimeoutMs,
 } from './config'
 
 import {
@@ -56,6 +57,9 @@ import {
 
 const processor = new SubstrateBatchProcessor()
     .setDataSource(config.dataSource)
+    .setRpcDataIngestionSettings({
+        newHeadTimeout: newHeadTimeoutMs,
+    })
     .setFields({
         block: {
             timestamp: true,

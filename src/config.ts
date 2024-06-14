@@ -26,6 +26,9 @@ export const catchupPriceUpdatePeriod = process.env.CATCHUP_PRICE_UPDATE_PERIOD
     ? parseInt(process.env.CATCHUP_PRICE_UPDATE_PERIOD, 10)
     : 100
 
+// The timeout after which the RPC connection will be reset if no new blocks are received
+export const newHeadTimeoutMs = 60_000
+
 const pendulumConfig: ProcessorConfig = {
     chainName: 'pendulum',
     prefix: 'pendulum',

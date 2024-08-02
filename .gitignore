@@ -13,6 +13,7 @@ node_modules/
 *.d.ts
 !db/migrations/*.js
 *.map
+!local-archive-endpoint/server.js
 
 # Ignore coverage reports
 coverage/

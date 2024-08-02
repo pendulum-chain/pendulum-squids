@@ -1,6 +1,6 @@
 {
     "outDir": "src/types/foucoco",
-    "specVersions": "https://v2.archive.subsquid.io/metadata/foucoco",
+    "specVersions": "http://localhost:3000/",
     "events": [
         "Balances.Transfer",
 

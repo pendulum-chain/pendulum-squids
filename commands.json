@@ -131,13 +131,9 @@
             "description": "Open a local browser window",
             "cmd": ["npx", "--yes", "opener"]
         },
-        "extract-metadata": {
-            "description": "Extract metadata from runtime.wasm",
-            "cmd": ["npm", "run", "extract-metadata"]
-        },
-        "start": {
-            "description": "Extract metadata and start the local server",
-            "cmd": ["npm", "run", "start-local-archive-endpoint"]
+        "pre-runtime-upgrade": {
+            "description": "Pre-runtime upgrade for a specific runtime",
+            "cmd": ["npm", "run", "pre-runtime-upgrade"]
         }
     }
 }

@@ -9,7 +9,7 @@ const archiveURL = 'https://v2.archive.subsquid.io/metadata/foucoco'
 
 function readLocalMetadata() {
     const localMetadataContent = fs.readFileSync(metadataFile, 'utf-8')
-    return localMetadataContent
+    return localMetadataContent.trim()
 }
 
 app.get('/', async (req, res) => {
@@ -38,8 +38,7 @@ app.get('/', async (req, res) => {
 
         const newSpecVersion = specVersion + 1
 
-        const localRuntimeMetadata = readLocalMetadata().trim()
-
+        const localRuntimeMetadata = readLocalMetadata()
         const customMetadata = {
             blockNumber: 0,
             blockHash: '0x0000',
@@ -52,14 +51,12 @@ app.get('/', async (req, res) => {
             .trim()
             .split('\n')
             .map((line) => JSON.parse(line))
-
         const customMetadataString = JSON.stringify(customMetadata)
-
         const combinedMetadataString =
-            metadataArray.map((obj) => JSON.stringify(obj)).join('') +
+            metadataArray.map((obj) => JSON.stringify(obj)).join('\n') +
+            '\n' +
             customMetadataString
 
-        //Haven't yet formatted the response as it should be
         res.send(combinedMetadataString)
     } catch (error) {
         console.error(

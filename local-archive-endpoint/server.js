@@ -48,7 +48,7 @@ function concatenateMetadata(metadata, customMetadata) {
     return combinedMetadataString
 }
 
-// Finds the last occurrence of "specVersion": and extracts the value
+// Finds the last occurrence of `"specVersion":` and extracts the value
 // Used for incrementing the specVersion in the custom metadata
 function getLastSpecVersion(metadata) {
     const lastSpecVersionIndex = metadata.lastIndexOf('"specVersion":')

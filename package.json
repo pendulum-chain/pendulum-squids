@@ -13,7 +13,7 @@
         "prepare": "husky install",
         "lint": "eslint . --ignore-path .eslintignore --ext .ts",
         "lint:fix": "eslint . --ignore-path .eslintignore --ext .ts --fix",
-        "pre-runtime-upgrade": "node local-archive-endpoint/server.js"
+        "generate-types-from-runtime-binary": "node local-archive-endpoint/server.js"
     },
     "dependencies": {
         "@polkadot/util": "11.1.1",

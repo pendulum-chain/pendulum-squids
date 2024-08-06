@@ -240,6 +240,23 @@ foucoco manifest.
 sqd deploy --org pendulum . -m squid-foucoco.yaml
 ```
 
+## Regenerate types before enactment of runtime upgrade
+
+In the past we noticed that the metadata changes introduced by runtime upgrades make our indexers unable to decode some of the events properly. Therefore, in order to reduce the indexer downtime whenever a runtime upgrade happens, we can regenerate the types by providing the runtime that will be enacted when running this command:
+
+```
+sqd generate-types-from-runtime-binary <runtime_name> <path_to_runtime_binary>
+```
+
+When running the above command, the following will happen (in order):
+
+-   `subwasm` is ran against a local runtime binary at `<path_to_runtime_binary>` which produces a `<runtime_name>.metadata` file containing the hex+scale encoded metadata.
+-   The corresponding `typegen-<runtime_name>.json` is updated to contain the local archive endpoint URL on the specVersions field i.e. `http://localhost:3000`.
+-   Local archive endpoint is started at `http://localhost:3000`.
+-   `sqd typegen:<runtime_name>` command is ran which in turn will spawn a process that will make a request to the URL found in the specVersions field of `typegen-<runtime_name>.json`.
+-   Server receives request, fetches the original metadata file from `https://v2.archive.subsquid.io/metadata/<runtime_name>`, increments the last specVersion found in the original file, adds it to the new custom metadata file along with the subwasm generated metadata and then serves the concatenated original metadata + custom metadata files.
+-   After types are generated successfully based on the new metadata file, `typegen-<runtime_name>.json` is updated again with the old URL value for `specVersions` field i.e. `https://v2.archive.subsquid.io/metadata/<runtime_name>` and server gracefully shuts down.
+
 ## Subscribe to specific events
 
 [Here](./scripts/subscribeTransfer.js) you can find a link to an example JavaScript snippet that can be used to

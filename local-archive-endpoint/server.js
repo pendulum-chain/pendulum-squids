@@ -5,8 +5,9 @@ const { spawn, execSync } = require('child_process')
 
 const app = express()
 const port = 3000
-let runtime
 
+const runtime = process.argv[2]
+const runtimeBinaryPath = process.argv[3]
 const allowedRuntimes = ['pendulum', 'amplitude', 'foucoco']
 
 function readLocalMetadata(metadataFile) {
@@ -15,7 +16,7 @@ function readLocalMetadata(metadataFile) {
     return localMetadataContent.trim()
 }
 
-function updateTypegenFile(runtime, newSpecVersionUrl) {
+function updateTypegenFile(newSpecVersionUrl) {
     console.log(
         `Updating typegen file for ${runtime} with URL ${newSpecVersionUrl}`
     )
@@ -27,7 +28,7 @@ function updateTypegenFile(runtime, newSpecVersionUrl) {
     return originalSpecVersionUrl
 }
 
-function revertTypegenFile(runtime, originalSpecVersionUrl) {
+function revertTypegenFile(originalSpecVersionUrl) {
     console.log(
         `Reverting typegen file for ${runtime} to URL ${originalSpecVersionUrl}`
     )
@@ -81,7 +82,7 @@ function startServer() {
     })
 }
 
-function runTypegenCommand(runtime) {
+function runTypegenCommand() {
     return new Promise((resolve, reject) => {
         console.log('Running typegen command...')
         const typegenProcess = spawn('sqd', ['typegen:' + runtime], {
@@ -100,7 +101,7 @@ function runTypegenCommand(runtime) {
 }
 
 app.get('/', async (req, res) => {
-    const metadataFile = `./local-archive-endpoint/runtime.metadata`
+    const metadataFile = `./local-archive-endpoint/${runtime}.metadata`
     const archiveURL = `https://v2.archive.subsquid.io/metadata/${runtime}`
 
     try {
@@ -130,29 +131,24 @@ app.get('/', async (req, res) => {
     }
 })
 
-async function run(runtimeParam) {
-    runtime = runtimeParam
-
+async function run() {
     try {
         console.log('Extracting metadata with subwasm')
-        const subwasmCommand = `subwasm metadata local-archive-endpoint/${runtime}_runtime.compact.compressed.wasm -f hex+scale > local-archive-endpoint/runtime.metadata`
+        const subwasmCommand = `subwasm metadata ${runtimeBinaryPath} -f hex+scale > local-archive-endpoint/${runtime}.metadata`
         execSync(subwasmCommand, { stdio: 'inherit' })
         console.log('Metadata extracted successfully')
 
         const newSpecVersionUrl = `http://localhost:${port}`
-        const originalSpecVersionUrl = updateTypegenFile(
-            runtime,
-            newSpecVersionUrl
-        )
+        const originalSpecVersionUrl = updateTypegenFile(newSpecVersionUrl)
 
         const server = await startServer()
 
         try {
-            await runTypegenCommand(runtime)
+            await runTypegenCommand()
         } catch (error) {
             console.error(`Error running typegen command: ${error.message}`)
         } finally {
-            revertTypegenFile(runtime, originalSpecVersionUrl)
+            revertTypegenFile(originalSpecVersionUrl)
             console.log('Shutting down server...')
             server.close(() => {
                 process.exit(0)
@@ -164,19 +160,20 @@ async function run(runtimeParam) {
     }
 }
 
-const runtimeParam = process.argv[2]
-if (!runtimeParam) {
-    console.error('Usage: sqd pre-runtime-upgrade <runtime_name>')
+if (!runtime || !runtimeBinaryPath) {
+    console.error(
+        'Usage: sqd generate-types-from-runtime-binary <runtime_name> <path_to_runtime_binary>'
+    )
     process.exit(1)
 }
 
-if (!allowedRuntimes.includes(runtimeParam)) {
+if (!allowedRuntimes.includes(runtime)) {
     console.error(
-        `Invalid runtime name: ${runtimeParam}. Must be one of ${allowedRuntimes.join(
+        `Invalid runtime name: ${runtime}. Must be one of ${allowedRuntimes.join(
             ', '
         )}`
     )
     process.exit(1)
 }
 
-run(runtimeParam)
+run()

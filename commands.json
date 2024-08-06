@@ -131,9 +131,9 @@
             "description": "Open a local browser window",
             "cmd": ["npx", "--yes", "opener"]
         },
-        "pre-runtime-upgrade": {
-            "description": "Pre-runtime upgrade type generation for a specific runtime",
-            "cmd": ["npm", "run", "pre-runtime-upgrade"]
+        "generate-types-from-runtime-binary": {
+            "description": "Generates the respective type files for a provided parachain runtime binary",
+            "cmd": ["npm", "run", "generate-types-from-runtime-binary"]
         }
     }
 }

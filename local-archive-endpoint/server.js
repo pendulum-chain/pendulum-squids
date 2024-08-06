@@ -7,6 +7,8 @@ const app = express()
 const port = 3000
 let runtime
 
+const allowedRuntimes = ['pendulum', 'amplitude', 'foucoco']
+
 function readLocalMetadata(metadataFile) {
     console.log(`Reading local metadata from ${metadataFile}`)
     const localMetadataContent = fs.readFileSync(metadataFile, 'utf-8')
@@ -165,6 +167,15 @@ async function run(runtimeParam) {
 const runtimeParam = process.argv[2]
 if (!runtimeParam) {
     console.error('Usage: sqd pre-runtime-upgrade <runtime_name>')
+    process.exit(1)
+}
+
+if (!allowedRuntimes.includes(runtimeParam)) {
+    console.error(
+        `Invalid runtime name: ${runtimeParam}. Must be one of ${allowedRuntimes.join(
+            ', '
+        )}`
+    )
     process.exit(1)
 }
 

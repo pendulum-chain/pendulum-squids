@@ -1,7 +1,7 @@
 const express = require('express')
 const fs = require('fs')
 const axios = require('axios')
-const { execSync } = require('child_process')
+const { spawn, execSync } = require('child_process')
 
 const app = express()
 const port = 3000
@@ -35,40 +35,81 @@ function revertTypegenFile(runtime, originalSpecVersionUrl) {
     fs.writeFileSync(typegenFile, JSON.stringify(typegenConfig, null, 4))
 }
 
+function concatenateMetadata(metadata, customMetadata) {
+    const metadataArray = metadata
+        .trim()
+        .split('\n')
+        .map((line) => JSON.parse(line))
+    const customMetadataString = JSON.stringify(customMetadata)
+    const combinedMetadataString =
+        metadataArray.map((obj) => JSON.stringify(obj)).join('\n') +
+        '\n' +
+        customMetadataString
+    return combinedMetadataString
+}
+
+// Finds the last occurrence of "specVersion": and extracts the value
+// Used for incrementing the specVersion in the custom metadata
+function getLastSpecVersion(metadata) {
+    const lastSpecVersionIndex = metadata.lastIndexOf('"specVersion":')
+    if (lastSpecVersionIndex === -1) {
+        throw new Error('specVersion not found in the original metadata')
+    }
+
+    const startIndex = lastSpecVersionIndex + '"specVersion":'.length
+    const endIndex = metadata.indexOf(',', startIndex)
+
+    const specVersionString = metadata.substring(startIndex, endIndex).trim()
+    const specVersion = parseInt(specVersionString, 10)
+
+    if (isNaN(specVersion)) {
+        throw new Error('Failed to parse specVersion')
+    }
+    return specVersion
+}
+
+function startServer() {
+    return new Promise((resolve) => {
+        const server = app.listen(port, () => {
+            console.log(
+                `Local archive endpoint running at http://localhost:${port}`
+            )
+            resolve(server)
+        })
+    })
+}
+
+function runTypegenCommand(runtime) {
+    return new Promise((resolve, reject) => {
+        console.log('Running typegen command...')
+        const typegenProcess = spawn('sqd', ['typegen:' + runtime], {
+            stdio: 'inherit',
+        })
+
+        typegenProcess.on('close', (code) => {
+            if (code === 0) {
+                console.log('Typegen command completed successfully')
+                resolve()
+            } else {
+                reject(new Error(`Typegen command failed with code ${code}`))
+            }
+        })
+    })
+}
+
 app.get('/', async (req, res) => {
     const metadataFile = `./local-archive-endpoint/runtime.metadata`
     const archiveURL = `https://v2.archive.subsquid.io/metadata/${runtime}`
 
     try {
-        console.log(`Fetching metadata from ${archiveURL}`)
-        // Fetch the original metadata from the archive
+        console.log(`Fetching original metadata from ${archiveURL}`)
         const response = await axios.get(archiveURL)
         const metadata = response.data
         console.log('Fetched original metadata successfully')
 
-        // Find the last occurrence of "specVersion": and extract the value
-        const lastSpecVersionIndex = metadata.lastIndexOf('"specVersion":')
-        if (lastSpecVersionIndex === -1) {
-            throw new Error('specVersion not found in the original metadata')
-        }
+        const latestSpecVersion = getLastSpecVersion(metadata)
+        const newSpecVersion = latestSpecVersion + 1
 
-        const startIndex = lastSpecVersionIndex + '"specVersion":'.length
-        const endIndex = metadata.indexOf(',', startIndex)
-
-        const specVersionString = metadata
-            .substring(startIndex, endIndex)
-            .trim()
-        const specVersion = parseInt(specVersionString, 10)
-
-        if (isNaN(specVersion)) {
-            throw new Error('Failed to parse specVersion')
-        }
-
-        console.log('Spec version:', specVersion)
-
-        const newSpecVersion = specVersion + 1
-
-        console.log('Reading local runtime metadata')
         const localRuntimeMetadata = readLocalMetadata(metadataFile)
         const customMetadata = {
             blockNumber: 0,
@@ -78,39 +119,21 @@ app.get('/', async (req, res) => {
             metadata: localRuntimeMetadata,
         }
 
-        const metadataArray = metadata
-            .trim()
-            .split('\n')
-            .map((line) => JSON.parse(line))
-        const customMetadataString = JSON.stringify(customMetadata)
-        const combinedMetadataString =
-            metadataArray.map((obj) => JSON.stringify(obj)).join('\n') +
-            '\n' +
-            customMetadataString
+        const concatMetadata = concatenateMetadata(metadata, customMetadata)
 
-        console.log('Serving combined metadata')
-        res.send(combinedMetadataString)
+        res.send(concatMetadata)
     } catch (error) {
         console.error(`Error fetching or processing metadata: ${error.message}`)
         res.status(500).send('Error fetching or processing metadata')
     }
 })
 
-function startServer() {
-    return new Promise((resolve) => {
-        const server = app.listen(port, () => {
-            console.log(`Server running at http://localhost:${port}`)
-            resolve(server)
-        })
-    })
-}
-
 async function run(runtimeParam) {
     runtime = runtimeParam
 
-    const subwasmCommand = `subwasm metadata local-archive-endpoint/${runtime}_runtime.compact.compressed.wasm -f hex+scale > local-archive-endpoint/runtime.metadata`
     try {
         console.log('Extracting metadata with subwasm')
+        const subwasmCommand = `subwasm metadata local-archive-endpoint/${runtime}_runtime.compact.compressed.wasm -f hex+scale > local-archive-endpoint/runtime.metadata`
         execSync(subwasmCommand, { stdio: 'inherit' })
         console.log('Metadata extracted successfully')
 
@@ -122,22 +145,17 @@ async function run(runtimeParam) {
 
         const server = await startServer()
 
-        setTimeout(() => {
-            try {
-                console.log('Running typegen command...')
-                const typegenCommand = `sqd typegen:${runtime}`
-                execSync(typegenCommand, { stdio: 'inherit' })
-                console.log('Typegen command completed successfully')
-            } catch (error) {
-                console.error(`Error running typegen command: ${error.message}`)
-            } finally {
-                revertTypegenFile(runtime, originalSpecVersionUrl)
-                console.log('Shutting down server...')
-                server.close(() => {
-                    process.exit(0)
-                })
-            }
-        }, 5000)
+        try {
+            await runTypegenCommand(runtime)
+        } catch (error) {
+            console.error(`Error running typegen command: ${error.message}`)
+        } finally {
+            revertTypegenFile(runtime, originalSpecVersionUrl)
+            console.log('Shutting down server...')
+            server.close(() => {
+                process.exit(0)
+            })
+        }
     } catch (error) {
         console.error(`Error running subwasm or typegen: ${error.message}`)
         process.exit(1)

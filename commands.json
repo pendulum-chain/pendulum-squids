@@ -132,7 +132,7 @@
             "cmd": ["npx", "--yes", "opener"]
         },
         "pre-runtime-upgrade": {
-            "description": "Pre-runtime upgrade for a specific runtime",
+            "description": "Pre-runtime upgrade type generation for a specific runtime",
             "cmd": ["npm", "run", "pre-runtime-upgrade"]
         }
     }

@@ -242,20 +242,44 @@ sqd deploy --org pendulum . -m squid-foucoco.yaml
 
 ## Regenerate types before enactment of runtime upgrade
 
-In the past we noticed that the metadata changes introduced by runtime upgrades make our indexers unable to decode some of the events properly. Therefore, in order to reduce the indexer downtime whenever a runtime upgrade happens, we can regenerate the types by providing the runtime that will be enacted when running this command:
+In the past we noticed that the metadata changes introduced by runtime upgrades make our indexers unable to decode some
+of the events properly. Therefore, in order to reduce the indexer downtime whenever a runtime upgrade happens, we can
+regenerate the types by providing the runtime that is going to be used for the upgrade.
+
+### Prerequisites
+
+You need to have [subwasm](https://github.com/chevdor/subwasm) installed.
+You can find the installation instructions [here](https://github.com/chevdor/subwasm?tab=readme-ov-file#install).
+
+You also need to have access to the binary of the compiled wasm runtime that will be used for the upgrade.
+
+### Preparing the types for the upcoming runtime upgrade
+
+To generate the types for the upcoming runtime upgrade, you can use the following command:
 
 ```
 sqd generate-types-from-runtime-binary <runtime_name> <path_to_runtime_binary>
 ```
 
+with `runtime_name` being either `pendulum`, `amplitude` or `foucoco` and `path_to_runtime_binary` being the path to the
+compiled runtime binary.
+
 When running the above command, the following will happen (in order):
 
--   `subwasm` is ran against a local runtime binary at `<path_to_runtime_binary>` which produces a `<runtime_name>.metadata` file containing the hex+scale encoded metadata.
--   The corresponding `typegen-<runtime_name>.json` is updated to contain the local archive endpoint URL on the specVersions field i.e. `http://localhost:3000`.
+-   `subwasm` is ran against a local runtime binary at `<path_to_runtime_binary>` which produces
+    a `<runtime_name>.metadata` file containing the hex+scale encoded metadata.
+-   The corresponding `typegen-<runtime_name>.json` is updated to contain the local archive endpoint URL on the
+    specVersions field i.e. `http://localhost:3000`.
 -   Local archive endpoint is started at `http://localhost:3000`.
--   `sqd typegen:<runtime_name>` command is ran which in turn will spawn a process that will make a request to the URL found in the specVersions field of `typegen-<runtime_name>.json`.
--   Server receives request, fetches the original metadata file from `https://v2.archive.subsquid.io/metadata/<runtime_name>`, increments the last specVersion found in the original file, adds it to the new custom metadata file along with the subwasm generated metadata and then serves the concatenated original metadata + custom metadata files.
--   After types are generated successfully based on the new metadata file, `typegen-<runtime_name>.json` is updated again with the old URL value for `specVersions` field i.e. `https://v2.archive.subsquid.io/metadata/<runtime_name>` and server gracefully shuts down.
+-   `sqd typegen:<runtime_name>` command is ran which in turn will spawn a process that will make a request to the URL
+    found in the specVersions field of `typegen-<runtime_name>.json`.
+-   Server receives request, fetches the original metadata file
+    from `https://v2.archive.subsquid.io/metadata/<runtime_name>`, increments the last specVersion found in the original
+    file, adds it to the new custom metadata file along with the subwasm generated metadata and then serves the
+    concatenated original metadata + custom metadata files.
+-   After types are generated successfully based on the new metadata file, `typegen-<runtime_name>.json` is updated again
+    with the old URL value for `specVersions` field i.e. `https://v2.archive.subsquid.io/metadata/<runtime_name>` and
+    server gracefully shuts down.
 
 ## Subscribe to specific events
 

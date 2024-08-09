@@ -26,3 +26,5 @@ lib/*
 
 # IDE files
 /.idea
+
+local-archive-endpoint/*.metadata

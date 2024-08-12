@@ -130,6 +130,10 @@
         "open": {
             "description": "Open a local browser window",
             "cmd": ["npx", "--yes", "opener"]
+        },
+        "generate-types-from-runtime-binary": {
+            "description": "Generates the respective type files for a provided parachain runtime binary",
+            "cmd": ["npm", "run", "generate-types-from-runtime-binary"]
         }
     }
 }

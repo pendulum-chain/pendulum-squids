@@ -1,8 +1,8 @@
 import { ProcessorConfig } from './types'
-import { lookupArchive } from '@subsquid/archive-registry'
 import axios from 'axios'
 
 export type Network = 'foucoco' | 'amplitude' | 'pendulum'
+
 function determineNetwork(): Network {
     switch (process.env.NETWORK) {
         case 'foucoco':
@@ -32,17 +32,19 @@ export const newHeadTimeoutMs = 60_000
 const pendulumConfig: ProcessorConfig = {
     chainName: 'pendulum',
     prefix: 'pendulum',
+    archive: 'https://v2.archive.subsquid.io/network/pendulum',
     dataSource: {
-        archive: lookupArchive('pendulum', { release: 'ArrowSquid' }),
-        chain: 'wss://rpc-pendulum.prd.pendulumchain.tech/',
+        chain: {
+            url: 'wss://rpc-pendulum.prd.pendulumchain.tech/',
+        },
     },
 }
 
 const amplitudeConfig: ProcessorConfig = {
     chainName: 'amplitude',
     prefix: 'amplitude',
+    archive: 'https://v2.archive.subsquid.io/network/amplitude',
     dataSource: {
-        archive: lookupArchive('amplitude', { release: 'ArrowSquid' }),
         chain: 'wss://rpc-amplitude.pendulumchain.tech',
     },
 }
@@ -50,8 +52,8 @@ const amplitudeConfig: ProcessorConfig = {
 const foucocoConfig: ProcessorConfig = {
     chainName: 'foucoco',
     prefix: 'amplitude',
+    archive: 'https://v2.archive.subsquid.io/network/foucoco',
     dataSource: {
-        archive: lookupArchive('foucoco', { release: 'ArrowSquid' }),
         chain: 'wss://pencol-roa-00.pendulumchain.tech',
     },
 }
@@ -59,8 +61,8 @@ const foucocoConfig: ProcessorConfig = {
 const localConfig: ProcessorConfig = {
     chainName: 'local',
     prefix: 'amplitude',
+    archive: undefined,
     dataSource: {
-        archive: undefined,
         chain: 'ws://127.0.0.1:9944',
     },
 }

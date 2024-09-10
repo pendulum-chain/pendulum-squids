@@ -16,6 +16,9 @@ export interface ProcessorConfig {
     dataSource: Parameters<
         SubstrateBatchProcessor<FieldSelection>['setDataSource']
     >[0]
+    archive?: Parameters<
+        SubstrateBatchProcessor<FieldSelection>['setArchive']
+    >[0]
     blockRange?: Parameters<
         SubstrateBatchProcessor<FieldSelection>['setBlockRange']
     >[0]

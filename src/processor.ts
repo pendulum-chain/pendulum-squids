@@ -56,7 +56,7 @@ import {
 } from './mappings/nabla/handleEvent'
 
 const processor = new SubstrateBatchProcessor()
-    .setDataSource(config.dataSource)
+    .setRpcEndpoint(config.dataSource.chain)
     .setRpcDataIngestionSettings({
         newHeadTimeout: newHeadTimeoutMs,
     })
@@ -133,6 +133,11 @@ const processor = new SubstrateBatchProcessor()
         extrinsic: true,
     })
     .includeAllBlocks()
+
+if (config.archive) {
+    // We don't have an archive when running the processor locally
+    processor.setGateway(config.archive)
+}
 
 type Fields = SubstrateBatchProcessorFields<typeof processor>
 export type Call_ = Call<Fields>

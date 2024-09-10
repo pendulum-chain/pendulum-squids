@@ -132,14 +132,14 @@ export async function updateTokenDayData(
     }
     tokenDayData.priceUSD = BigDecimal(token.derivedETH)
         .times(bundle.ethPrice)
-        .toFixed(6)
+        .toFixed(10)
     tokenDayData.totalLiquidityToken = token.totalLiquidity
     tokenDayData.totalLiquidityETH = BigDecimal(token.totalLiquidity)
         .times(token.derivedETH)
         .toString()
     tokenDayData.totalLiquidityUSD = BigDecimal(tokenDayData.totalLiquidityETH)
         .times(bundle.ethPrice)
-        .toFixed(6)
+        .toFixed(10)
     tokenDayData.dailyTxns += 1
     await ctx.store.save(tokenDayData)
     return tokenDayData
@@ -170,10 +170,10 @@ export async function updateZenlinkDayInfo(
     }
     zenlinkDayInfo.tvlUSD = BigDecimal(factoryDayData.totalLiquidityUSD)
         // .add(stableDayData.tvlUSD)
-        .toFixed(6)
+        .toFixed(10)
     zenlinkDayInfo.dailyVolumeUSD = BigDecimal(factoryDayData.dailyVolumeUSD)
         // .add(stableDayData.dailyVolumeUSD)
-        .toFixed(6)
+        .toFixed(10)
     await ctx.store.save(zenlinkDayInfo)
     return zenlinkDayInfo
 }
@@ -185,10 +185,10 @@ export async function updateZenlinkInfo(
     const { factory } = zenlinkInfo
     zenlinkInfo.totalTvlUSD = BigDecimal(factory?.totalLiquidityUSD || '0')
         // .add(stableSwapInfo.totalTvlUSD)
-        .toFixed(6)
+        .toFixed(10)
     zenlinkInfo.totalVolumeUSD = BigDecimal(factory?.totalVolumeUSD || '0')
         // .add(stableSwapInfo.totalVolumeUSD)
-        .toFixed(6)
+        .toFixed(10)
     zenlinkInfo.txCount = factory?.txCount || 0
     zenlinkInfo.updatedDate = new Date(ctx.block.timestamp!)
     await ctx.store.save(zenlinkInfo)

@@ -27,7 +27,7 @@ export const catchupPriceUpdatePeriod = process.env.CATCHUP_PRICE_UPDATE_PERIOD
     : 100
 
 // The timeout after which the RPC connection will be reset if no new blocks are received
-export const newHeadTimeoutMs = 60_000
+export const newHeadTimeoutMs = 5 * 60_000
 
 const pendulumConfig: ProcessorConfig = {
     chainName: 'pendulum',
@@ -82,7 +82,7 @@ console.log('Using ProcessorConfig: ', config)
 export const maxHeightPromise = isLocalExecution
     ? Promise.resolve(0)
     : axios
-          .get(config.dataSource.archive + '/height')
+          .get(config.archive + '/height')
           .then((response) => {
               const data = response.data
               console.log('Max height:', data)

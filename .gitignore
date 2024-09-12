@@ -13,6 +13,7 @@ node_modules/
 *.d.ts
 !db/migrations/*.js
 *.map
+!local-archive-endpoint/server.js
 
 # Ignore coverage reports
 coverage/
@@ -25,3 +26,5 @@ lib/*
 
 # IDE files
 /.idea
+
+local-archive-endpoint/*.metadata

@@ -3,14 +3,11 @@
     "specVersions": "https://v2.archive.subsquid.io/metadata/foucoco",
     "events": [
         "Balances.Transfer",
-
         "Tokens.Transfer",
         "Tokens.Deposited",
         "Tokens.Withdrawn",
         "Tokens.BalanceSet",
-
         "DiaOracleModule.UpdatedPrices",
-
         "Farming.FarmingPoolCreated",
         "Farming.FarmingPoolReset",
         "Farming.FarmingPoolClosed",
@@ -39,9 +36,7 @@
         "Timestamp.Now",
         "Tokens.Accounts",
         "Tokens.TotalIssuance",
-
         "DiaOracleModule.CoinInfosMap",
-
         "Farming.PoolInfos",
         "Farming.GaugePoolInfos",
         "Farming.GaugeInfos",

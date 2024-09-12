@@ -3,14 +3,11 @@
     "specVersions": "https://v2.archive.subsquid.io/metadata/pendulum",
     "events": [
         "Balances.Transfer",
-
         "Tokens.Transfer",
         "Tokens.Deposited",
         "Tokens.Withdrawn",
         "Tokens.BalanceSet",
-
         "DiaOracleModule.UpdatedPrices",
-
         "Farming.FarmingPoolCreated",
         "Farming.FarmingPoolReset",
         "Farming.FarmingPoolClosed",
@@ -27,7 +24,6 @@
         "Farming.AllRetired",
         "Farming.PartiallyRetired",
         "Farming.RetireLimitSet",
-
         "ZenlinkProtocol.AssetSwap",
         "ZenlinkProtocol.LiquidityAdded",
         "ZenlinkProtocol.LiquidityRemoved"
@@ -40,14 +36,11 @@
         "Timestamp.Now",
         "Tokens.Accounts",
         "Tokens.TotalIssuance",
-
         "DiaOracleModule.CoinInfosMap",
-
         "Farming.PoolInfos",
         "Farming.GaugePoolInfos",
         "Farming.GaugeInfos",
         "Farming.SharesAndWithdrawnRewards",
-
         "ZenlinkProtocol.PairStatuses",
         "ZenlinkProtocol.LiquidityPairs"
     ]

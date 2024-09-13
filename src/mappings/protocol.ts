@@ -48,7 +48,7 @@ export async function handleLiquiditySync(
 
     factory.totalLiquidityETH = BigDecimal(factory.totalLiquidityETH)
         .minus(pair.trackedReserveETH)
-        .toFixed(6)
+        .toFixed(10)
     token0.totalLiquidity = BigDecimal(token0.totalLiquidity)
         .minus(pair.reserve0)
         .toString()
@@ -82,19 +82,19 @@ export async function handleLiquiditySync(
         token1.decimals
     )
     pair.token0Price = !BigDecimal(reserve1Decimal).eq(ZERO_BD)
-        ? BigDecimal(reserve0Decimal).div(reserve1Decimal).toFixed(6)
-        : ZERO_BD.toFixed(6)
+        ? BigDecimal(reserve0Decimal).div(reserve1Decimal).toFixed(10)
+        : ZERO_BD.toFixed(10)
     pair.token1Price = !BigDecimal(reserve0Decimal).eq(ZERO_BD)
-        ? BigDecimal(reserve1Decimal).div(reserve0Decimal).toFixed(6)
-        : ZERO_BD.toFixed(6)
+        ? BigDecimal(reserve1Decimal).div(reserve0Decimal).toFixed(10)
+        : ZERO_BD.toFixed(10)
     await ctx.store.save(pair)
 
     // update ETH price now that reserves could have changed
-    bundle.ethPrice = (await getEthPriceInUSD(ctx)).toFixed(6)
+    bundle.ethPrice = (await getEthPriceInUSD(ctx)).toFixed(10)
     await ctx.store.save(bundle)
 
-    token0.derivedETH = (await findEthPerToken(ctx, token0.id)).toFixed(6)
-    token1.derivedETH = (await findEthPerToken(ctx, token1.id)).toFixed(6)
+    token0.derivedETH = (await findEthPerToken(ctx, token0.id)).toFixed(10)
+    token1.derivedETH = (await findEthPerToken(ctx, token1.id)).toFixed(10)
 
     let trackedLiquidityETH = ZERO_BD
     if (!BigDecimal(bundle.ethPrice).eq(ZERO_BD)) {
@@ -125,23 +125,23 @@ export async function handleLiquiditySync(
         trackedLiquidityETH = trackedLiquidityETH.div(bundle.ethPrice)
     }
 
-    pair.trackedReserveETH = trackedLiquidityETH.toFixed(6)
+    pair.trackedReserveETH = trackedLiquidityETH.toFixed(10)
     pair.reserveETH = BigDecimal(reserve0Decimal)
         .times(token0.derivedETH)
         .plus(BigDecimal(reserve1Decimal).times(token1.derivedETH))
-        .toFixed(6)
+        .toFixed(10)
     pair.reserveUSD = BigDecimal(pair.reserveETH)
         .times(bundle.ethPrice)
-        .toFixed(6)
+        .toFixed(10)
     await ctx.store.save(pair)
 
     // use tracked amounts globally
     factory.totalLiquidityETH = BigDecimal(factory.totalLiquidityETH)
         .plus(trackedLiquidityETH)
-        .toFixed(6)
+        .toFixed(10)
     factory.totalLiquidityUSD = BigDecimal(factory.totalLiquidityETH)
         .times(bundle.ethPrice)
-        .toFixed(6)
+        .toFixed(10)
     await ctx.store.save(factory)
 
     // now correctly set liquidity amounts for each token
@@ -200,10 +200,10 @@ export async function handleLiquidityAdded(ctx: EventHandlerContext) {
     await ctx.store.save(factory)
 
     mint.sender = codec(config.prefix).encode(event[0])
-    mint.amount0 = token0Amount.toFixed(6)
-    mint.amount1 = token1Amount.toFixed(6)
+    mint.amount0 = token0Amount.toFixed(10)
+    mint.amount1 = token1Amount.toFixed(10)
     mint.logIndex = ctx.event.index
-    mint.amountUSD = amountTotalUSD.toFixed(6)
+    mint.amountUSD = amountTotalUSD.toFixed(10)
     await ctx.store.save(mint)
 
     const user = (await ctx.store.get(User, mint.to))!
@@ -277,7 +277,7 @@ export async function handleLiquidityRemoved(ctx: EventHandlerContext) {
             id: sender,
             liquidityPositions: [],
             stableSwapLiquidityPositions: [],
-            usdSwapped: ZERO_BD.toFixed(6),
+            usdSwapped: ZERO_BD.toFixed(10),
         })
         await ctx.store.save(user)
     }
@@ -291,10 +291,10 @@ export async function handleLiquidityRemoved(ctx: EventHandlerContext) {
 
     burn.sender = sender
     burn.to = to
-    burn.amount0 = token0Amount.toFixed(6)
-    burn.amount1 = token1Amount.toFixed(6)
+    burn.amount0 = token0Amount.toFixed(10)
+    burn.amount1 = token1Amount.toFixed(10)
     burn.logIndex = ctx.event.index
-    burn.amountUSD = amountTotalUSD.toFixed(6)
+    burn.amountUSD = amountTotalUSD.toFixed(10)
     await ctx.store.save(burn)
 
     // update the LP position
@@ -426,53 +426,53 @@ export async function handleAssetSwap(ctx: EventHandlerContext) {
         // update token0 global volume and token liquidity stats
         token0.tradeVolume = BigDecimal(token0.tradeVolume)
             .plus(amount0Total)
-            .toFixed(6)
+            .toFixed(10)
         token0.tradeVolumeUSD = BigDecimal(token0.tradeVolumeUSD)
             .plus(trackedAmountUSD)
-            .toFixed(6)
+            .toFixed(10)
         token0.untrackedVolumeUSD = BigDecimal(token0.untrackedVolumeUSD)
             .plus(derivedAmountUSD)
-            .toFixed(6)
+            .toFixed(10)
         token0.txCount += 1
         // update token1 global volume and token liquidity stats
         token1.tradeVolume = BigDecimal(token1.tradeVolume)
             .plus(amount1Total)
-            .toFixed(6)
+            .toFixed(10)
         token1.tradeVolumeUSD = BigDecimal(token1.tradeVolumeUSD)
             .plus(trackedAmountUSD)
-            .toFixed(6)
+            .toFixed(10)
         token1.untrackedVolumeUSD = BigDecimal(token1.untrackedVolumeUSD)
             .plus(derivedAmountUSD)
-            .toFixed(6)
+            .toFixed(10)
         token1.txCount += 1
         await ctx.store.save([token0, token1])
 
         // update pair volume data, use tracked amount if we have it as its probably more accurate
         pair.volumeUSD = BigDecimal(pair.volumeUSD)
             .plus(trackedAmountUSD)
-            .toFixed(6)
+            .toFixed(10)
         pair.volumeToken0 = BigDecimal(pair.volumeToken0)
             .plus(amount0Total)
-            .toFixed(6)
+            .toFixed(10)
         pair.volumeToken1 = BigDecimal(pair.volumeToken1)
             .plus(amount1Total)
-            .toFixed(6)
+            .toFixed(10)
         pair.untrackedVolumeUSD = BigDecimal(pair.untrackedVolumeUSD)
             .plus(derivedAmountUSD)
-            .toFixed(6)
+            .toFixed(10)
         pair.txCount += 1
         await ctx.store.save(pair)
 
         // update global values, only used tracked amounts for volume
         factory.totalVolumeUSD = BigDecimal(factory.totalVolumeUSD)
             .plus(trackedAmountUSD)
-            .toFixed(6)
+            .toFixed(10)
         factory.totalVolumeETH = BigDecimal(factory.totalVolumeETH)
             .plus(trackedAmountETH)
-            .toFixed(6)
+            .toFixed(10)
         factory.untrackedVolumeUSD = BigDecimal(factory.untrackedVolumeUSD)
             .plus(derivedAmountUSD)
-            .toFixed(6)
+            .toFixed(10)
         factory.txCount += 1
         await ctx.store.save(factory)
 
@@ -498,17 +498,17 @@ export async function handleAssetSwap(ctx: EventHandlerContext) {
             transaction,
             pair,
             timestamp: new Date(ctx.block.timestamp!),
-            amount0In: amount0In.toFixed(6),
-            amount1In: amount1In.toFixed(6),
-            amount0Out: amount0Out.toFixed(6),
-            amount1Out: amount1Out.toFixed(6),
+            amount0In: amount0In.toFixed(10),
+            amount1In: amount1In.toFixed(10),
+            amount0Out: amount0Out.toFixed(10),
+            amount1Out: amount1Out.toFixed(10),
             sender: sender.toLowerCase(),
             from: sender.toLowerCase(),
             to: to.toLowerCase(),
             logIndex: ctx.event.index,
             amountUSD: trackedAmountUSD.eq(ZERO_BD)
-                ? derivedAmountUSD.toFixed(6)
-                : trackedAmountUSD.toFixed(6),
+                ? derivedAmountUSD.toFixed(10)
+                : trackedAmountUSD.toFixed(10),
         })
 
         await ctx.store.save(swap)
@@ -525,17 +525,17 @@ export async function handleAssetSwap(ctx: EventHandlerContext) {
             factoryDayData.dailyVolumeUSD
         )
             .plus(trackedAmountUSD)
-            .toFixed(6)
+            .toFixed(10)
         factoryDayData.dailyVolumeETH = BigDecimal(
             factoryDayData.dailyVolumeETH
         )
             .plus(trackedAmountETH)
-            .toFixed(6)
+            .toFixed(10)
         factoryDayData.dailyVolumeUntracked = BigDecimal(
             factoryDayData.dailyVolumeUntracked
         )
             .plus(derivedAmountUSD)
-            .toFixed(6)
+            .toFixed(10)
         await ctx.store.save(factoryDayData)
 
         // swap specific updating for pair
@@ -543,30 +543,30 @@ export async function handleAssetSwap(ctx: EventHandlerContext) {
             pairDayData.dailyVolumeToken0
         )
             .plus(amount0Total)
-            .toFixed(6)
+            .toFixed(10)
         pairDayData.dailyVolumeToken1 = BigDecimal(
             pairDayData.dailyVolumeToken1
         )
             .plus(amount1Total)
-            .toFixed(6)
+            .toFixed(10)
         pairDayData.dailyVolumeUSD = BigDecimal(pairDayData.dailyVolumeUSD)
             .plus(trackedAmountUSD)
-            .toFixed(6)
+            .toFixed(10)
         await ctx.store.save(pairDayData)
 
         pairHourData.hourlyVolumeToken0 = BigDecimal(
             pairHourData.hourlyVolumeToken0
         )
             .plus(amount0Total)
-            .toFixed(6)
+            .toFixed(10)
         pairHourData.hourlyVolumeToken1 = BigDecimal(
             pairHourData.hourlyVolumeToken1
         )
             .plus(amount1Total)
-            .toFixed(6)
+            .toFixed(10)
         pairHourData.hourlyVolumeUSD = BigDecimal(pairHourData.hourlyVolumeUSD)
             .plus(trackedAmountUSD)
-            .toFixed(6)
+            .toFixed(10)
         await ctx.store.save(pairHourData)
 
         // swap specific updating for token0
@@ -574,13 +574,13 @@ export async function handleAssetSwap(ctx: EventHandlerContext) {
             token0DayData.dailyVolumeToken
         )
             .plus(amount0Total)
-            .toFixed(6)
+            .toFixed(10)
         token0DayData.dailyVolumeETH = BigDecimal(token0DayData.dailyVolumeETH)
             .plus(amount0Total.times(token0.derivedETH))
-            .toFixed(6)
+            .toFixed(10)
         token0DayData.dailyVolumeUSD = BigDecimal(token0DayData.dailyVolumeUSD)
             .plus(amount0Total.times(token0.derivedETH).times(bundle.ethPrice))
-            .toFixed(6)
+            .toFixed(10)
         await ctx.store.save(token0DayData)
 
         // swap specific updating
@@ -588,13 +588,13 @@ export async function handleAssetSwap(ctx: EventHandlerContext) {
             token1DayData.dailyVolumeToken
         )
             .plus(amount1Total)
-            .toFixed(6)
+            .toFixed(10)
         token1DayData.dailyVolumeETH = BigDecimal(token1DayData.dailyVolumeETH)
             .plus(amount1Total.times(token1.derivedETH))
-            .toFixed(6)
+            .toFixed(10)
         token1DayData.dailyVolumeUSD = BigDecimal(token1DayData.dailyVolumeUSD)
             .plus(amount1Total.times(token1.derivedETH).times(bundle.ethPrice))
-            .toFixed(6)
+            .toFixed(10)
         await ctx.store.save(token1DayData)
     }
 }

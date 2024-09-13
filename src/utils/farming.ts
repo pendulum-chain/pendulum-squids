@@ -184,7 +184,7 @@ export async function updateFarmingPoolInfo(
             )
             const rewardEth = rewardTokenDecimal
                 .times(token.derivedETH)
-                .toFixed(6)
+                .toFixed(10)
             return rewardEth
         })
     )
@@ -222,14 +222,14 @@ export async function updateFarmingPoolInfo(
             bundle = await ctx.store.get(Bundle, '1')
             rewardUSDPerDay = rewardEthPerDay * Number(bundle?.ethPrice ?? 0)
 
-            rewardUSDRate = rewardUSDPerDay.toFixed(6)
+            rewardUSDRate = rewardUSDPerDay.toFixed(10)
             stakeToken = pair.id
             const stakedUSD =
                 BigInt(pair.totalSupply) === 0n
                     ? 0
                     : (Number(liquidityStaked) * Number(pair.reserveUSD ?? 0)) /
                       Number(BigInt(pair.totalSupply ?? 0))
-            stakeUSD = stakedUSD.toFixed(6)
+            stakeUSD = stakedUSD.toFixed(10)
 
             const farmingId = `${stakeToken}-${pid}`
             farmingData = await ctx.store.get(Farm, farmingId)
@@ -254,7 +254,7 @@ export async function updateFarmingPoolInfo(
         // single token
         bundle = await ctx.store.get(Bundle, '1')
         rewardUSDPerDay = rewardEthPerDay * Number(bundle?.ethPrice ?? 0)
-        rewardUSDRate = rewardUSDPerDay.toFixed(6)
+        rewardUSDRate = rewardUSDPerDay.toFixed(10)
 
         const token = await getOrCreateToken(ctx, {
             chainId: getChainIdFromNetwork(network),
@@ -289,12 +289,12 @@ export async function updateFarmingPoolInfo(
         const stakedUSD = stakeTokenDecimal
             .times(token.derivedETH)
             .times(bundle?.ethPrice ?? 0)
-        stakeUSD = stakedUSD.toFixed(6)
+        stakeUSD = stakedUSD.toFixed(10)
 
         singleTokenLock.totalLiquidity = liquidityStaked.toString()
         singleTokenLock.totalLiquidityETH = stakeTokenDecimal
             .times(token.derivedETH)
-            .toFixed(6)
+            .toFixed(10)
         singleTokenLock.totalLiquidityUSD = stakeUSD
         await ctx.store.save(singleTokenLock)
         await updateSingleTokenLockHourData(ctx, singleTokenLock)
@@ -321,7 +321,7 @@ export async function updateFarmingPoolInfo(
     }
 
     if (Number(stakeUSD) !== 0) {
-        stakeApr = ((rewardUSDPerDay * 365) / Number(stakeUSD)).toFixed(6)
+        stakeApr = ((rewardUSDPerDay * 365) / Number(stakeUSD)).toFixed(10)
     }
 
     if (!farmingData) return
@@ -349,10 +349,10 @@ export async function updateFarmingPoolInfo(
                 id: incentiveId,
                 farm: farmingData,
                 rewardToken: reward.token,
-                rewardPerDay: reward.rewardPerDay.toFixed(6),
+                rewardPerDay: reward.rewardPerDay.toFixed(10),
             })
         }
-        incentive.rewardPerDay = reward.rewardPerDay.toFixed(6)
+        incentive.rewardPerDay = reward.rewardPerDay.toFixed(10)
         await ctx.store.save(incentive)
     }
 }
@@ -427,7 +427,7 @@ export async function killFarmingPoolInfo(
             )
             const rewardEth = rewardTokenDecimal
                 .times(token.derivedETH)
-                .toFixed(6)
+                .toFixed(10)
             return rewardEth
         })
     )
@@ -465,14 +465,14 @@ export async function killFarmingPoolInfo(
             bundle = await ctx.store.get(Bundle, '1')
             rewardUSDPerDay = rewardEthPerDay * Number(bundle?.ethPrice ?? 0)
 
-            rewardUSDRate = rewardUSDPerDay.toFixed(6)
+            rewardUSDRate = rewardUSDPerDay.toFixed(10)
             stakeToken = pair.id
             const stakedUSD =
                 BigInt(pair.totalSupply) === 0n
                     ? 0
                     : (Number(liquidityStaked) * Number(pair.reserveUSD ?? 0)) /
                       Number(BigInt(pair.totalSupply ?? 0))
-            stakeUSD = stakedUSD.toFixed(6)
+            stakeUSD = stakedUSD.toFixed(10)
 
             const farmingId = `${stakeToken}-${pid}`
             farmingData = await ctx.store.get(Farm, farmingId)
@@ -497,7 +497,7 @@ export async function killFarmingPoolInfo(
         // single token
         bundle = await ctx.store.get(Bundle, '1')
         rewardUSDPerDay = rewardEthPerDay * Number(bundle?.ethPrice ?? 0)
-        rewardUSDRate = rewardUSDPerDay.toFixed(6)
+        rewardUSDRate = rewardUSDPerDay.toFixed(10)
 
         const token = await getOrCreateToken(ctx, {
             chainId: getChainIdFromNetwork(network),
@@ -532,12 +532,12 @@ export async function killFarmingPoolInfo(
         const stakedUSD = stakeTokenDecimal
             .times(token.derivedETH)
             .times(bundle?.ethPrice ?? 0)
-        stakeUSD = stakedUSD.toFixed(6)
+        stakeUSD = stakedUSD.toFixed(10)
 
         singleTokenLock.totalLiquidity = liquidityStaked.toString()
         singleTokenLock.totalLiquidityETH = stakeTokenDecimal
             .times(token.derivedETH)
-            .toFixed(6)
+            .toFixed(10)
         singleTokenLock.totalLiquidityUSD = stakeUSD
         await ctx.store.save(singleTokenLock)
         await updateSingleTokenLockHourData(ctx, singleTokenLock)
@@ -564,7 +564,7 @@ export async function killFarmingPoolInfo(
     }
 
     if (Number(stakeUSD) !== 0) {
-        stakeApr = ((rewardUSDPerDay * 365) / Number(stakeUSD)).toFixed(6)
+        stakeApr = ((rewardUSDPerDay * 365) / Number(stakeUSD)).toFixed(10)
     }
 
     if (!farmingData) return
@@ -592,10 +592,10 @@ export async function killFarmingPoolInfo(
                 id: incentiveId,
                 farm: farmingData,
                 rewardToken: reward.token,
-                rewardPerDay: reward.rewardPerDay.toFixed(6),
+                rewardPerDay: reward.rewardPerDay.toFixed(10),
             })
         }
-        incentive.rewardPerDay = reward.rewardPerDay.toFixed(6)
+        incentive.rewardPerDay = reward.rewardPerDay.toFixed(10)
         await ctx.store.save(incentive)
     }
 }

@@ -179,7 +179,7 @@ export async function handleTokenDeposited(ctx: EventHandlerContext) {
             id: to,
             liquidityPositions: [],
             stableSwapLiquidityPositions: [],
-            usdSwapped: ZERO_BD.toFixed(6),
+            usdSwapped: ZERO_BD.toFixed(10),
         })
         await ctx.store.save(user)
     }
@@ -281,7 +281,7 @@ export async function handleTokenWithdrawn(ctx: EventHandlerContext) {
         user = new User({
             id: to,
             liquidityPositions: [],
-            usdSwapped: ZERO_BD.toFixed(6),
+            usdSwapped: ZERO_BD.toFixed(10),
         })
         await ctx.store.save(user)
     }
@@ -432,7 +432,7 @@ export async function handleTokenTransfer(ctx: EventHandlerContext) {
             id: to,
             liquidityPositions: [],
             stableSwapLiquidityPositions: [],
-            usdSwapped: ZERO_BD.toFixed(6),
+            usdSwapped: ZERO_BD.toFixed(10),
         })
         await ctx.store.save(userTo)
     }
@@ -491,10 +491,10 @@ export async function createLiquiditySnapShot(
             pair: position.pair,
             token0PriceUSD: BigDecimal(token0.derivedETH)
                 .times(BigDecimal(bundle.ethPrice))
-                .toFixed(6),
+                .toFixed(10),
             token1PriceUSD: BigDecimal(token1.derivedETH)
                 .times(BigDecimal(bundle.ethPrice))
-                .toFixed(6),
+                .toFixed(10),
             reserve0: pair.reserve0,
             reserve1: pair.reserve1,
             reserveUSD: pair.reserveUSD,

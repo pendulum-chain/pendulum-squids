@@ -16,7 +16,7 @@ export async function getUser(
             id: codec(config.prefix).encode(who),
             liquidityPositions: [],
             stableSwapLiquidityPositions: [],
-            usdSwapped: ZERO_BD.toFixed(6),
+            usdSwapped: ZERO_BD.toFixed(10),
         })
         await ctx.store.save(user)
     }

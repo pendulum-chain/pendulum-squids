@@ -79,22 +79,23 @@ export const config: ProcessorConfig =
 console.log('Using ProcessorConfig: ', config)
 
 // Fetch max height from the archive and export it as a promise
-export const maxHeightPromise = isLocalExecution
-    ? Promise.resolve(0)
-    : axios
-          .get(config.archive + '/height')
-          .then((response) => {
-              const data = response.data
-              console.log('Max height:', data)
-              return data
-          })
-          .catch((error) => {
-              console.error(
-                  'Error getting block height from archive, using default value instead:',
-                  error
-              )
-              return Number.MAX_SAFE_INTEGER
-          })
+export const maxHeightPromise =
+    isLocalExecution || !config.archive
+        ? Promise.resolve(0)
+        : axios
+              .get(config.archive + '/height')
+              .then((response) => {
+                  const data = response.data
+                  console.log('Max height:', data)
+                  return data
+              })
+              .catch((error) => {
+                  console.error(
+                      'Error getting block height from archive, using default value instead:',
+                      error
+                  )
+                  return Number.MIN_SAFE_INTEGER
+              })
 
 // Derive ids from block number and extrinsic index of the event
 export function generateId(

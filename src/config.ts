@@ -52,7 +52,7 @@ const amplitudeConfig: ProcessorConfig = {
 const foucocoConfig: ProcessorConfig = {
     chainName: 'foucoco',
     prefix: 'amplitude',
-    archive: 'https://v2.archive.subsquid.io/network/foucoco',
+    // archive: 'https://v2.archive.subsquid.io/network/foucoco',
     dataSource: {
         chain: 'wss://pencol-roa-00.pendulumchain.tech',
     },

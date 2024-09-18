@@ -22,6 +22,32 @@ export const ShareInfo: sts.Type<ShareInfo> = sts.struct(() => {
     }
 })
 
+export interface GaugeInfo {
+    who: AccountId32
+    gaugeAmount: bigint
+    totalTimeFactor: bigint
+    latestTimeFactor: bigint
+    claimedTimeFactor: bigint
+    gaugeStartBlock: number
+    gaugeStopBlock: number
+    gaugeLastBlock: number
+    lastClaimBlock: number
+}
+
+export const GaugeInfo: sts.Type<GaugeInfo> = sts.struct(() => {
+    return {
+        who: AccountId32,
+        gaugeAmount: sts.bigint(),
+        totalTimeFactor: sts.bigint(),
+        latestTimeFactor: sts.bigint(),
+        claimedTimeFactor: sts.bigint(),
+        gaugeStartBlock: sts.number(),
+        gaugeStopBlock: sts.number(),
+        gaugeLastBlock: sts.number(),
+        lastClaimBlock: sts.number(),
+    }
+})
+
 export interface GaugePoolInfo {
     pid: number
     token: CurrencyId
@@ -164,15 +190,99 @@ export const PoolState: sts.Type<PoolState> = sts.closedEnum(() => {
 
 export const Perbill = sts.number()
 
-export type AccountId32 = Bytes
+export type PairStatus =
+    | PairStatus_Bootstrap
+    | PairStatus_Disable
+    | PairStatus_Trading
 
-export interface Type_503 {
+export interface PairStatus_Bootstrap {
+    __kind: 'Bootstrap'
+    value: BootstrapParameter
+}
+
+export interface PairStatus_Disable {
+    __kind: 'Disable'
+}
+
+export interface PairStatus_Trading {
+    __kind: 'Trading'
+    value: PairMetadata
+}
+
+export interface PairMetadata {
+    pairAccount: AccountId32
+    totalSupply: bigint
+}
+
+export interface BootstrapParameter {
+    targetSupply: [bigint, bigint]
+    capacitySupply: [bigint, bigint]
+    accumulatedSupply: [bigint, bigint]
+    endBlockNumber: number
+    pairAccount: AccountId32
+}
+
+export const PairStatus: sts.Type<PairStatus> = sts.closedEnum(() => {
+    return {
+        Bootstrap: BootstrapParameter,
+        Disable: sts.unit(),
+        Trading: PairMetadata,
+    }
+})
+
+export const PairMetadata: sts.Type<PairMetadata> = sts.struct(() => {
+    return {
+        pairAccount: AccountId32,
+        totalSupply: sts.bigint(),
+    }
+})
+
+export const BootstrapParameter: sts.Type<BootstrapParameter> = sts.struct(
+    () => {
+        return {
+            targetSupply: sts.tuple(() => [sts.bigint(), sts.bigint()]),
+            capacitySupply: sts.tuple(() => [sts.bigint(), sts.bigint()]),
+            accumulatedSupply: sts.tuple(() => [sts.bigint(), sts.bigint()]),
+            endBlockNumber: sts.number(),
+            pairAccount: AccountId32,
+        }
+    }
+)
+
+export interface AssetId {
+    chainId: number
+    assetType: number
+    assetIndex: bigint
+}
+
+export interface Type_550 {
+    blockchain: Bytes
+    symbol: Bytes
+}
+
+export interface CoinInfo {
+    symbol: Bytes
+    name: Bytes
+    blockchain: Bytes
+    supply: bigint
+    lastUpdateTimestamp: bigint
+    price: bigint
+}
+
+export const Type_550: sts.Type<Type_550> = sts.struct(() => {
+    return {
+        blockchain: sts.bytes(),
+        symbol: sts.bytes(),
+    }
+})
+
+export interface Type_520 {
     free: bigint
     reserved: bigint
     frozen: bigint
 }
 
-export const Type_503: sts.Type<Type_503> = sts.struct(() => {
+export const Type_520: sts.Type<Type_520> = sts.struct(() => {
     return {
         free: sts.bigint(),
         reserved: sts.bigint(),
@@ -229,7 +339,68 @@ export interface Asset_StellarNative {
     __kind: 'StellarNative'
 }
 
-export const AccountId32 = sts.bytes()
+export type H256 = Bytes
+
+export const H256 = sts.bytes()
+
+export type AccountId32 = Bytes
+
+export interface AccountInfo {
+    nonce: number
+    consumers: number
+    providers: number
+    sufficients: number
+    data: AccountData
+}
+
+export interface AccountData {
+    free: bigint
+    reserved: bigint
+    frozen: bigint
+    flags: ExtraFlags
+}
+
+export type ExtraFlags = bigint
+
+export const AccountInfo: sts.Type<AccountInfo> = sts.struct(() => {
+    return {
+        nonce: sts.number(),
+        consumers: sts.number(),
+        providers: sts.number(),
+        sufficients: sts.number(),
+        data: AccountData,
+    }
+})
+
+export const AccountData: sts.Type<AccountData> = sts.struct(() => {
+    return {
+        free: sts.bigint(),
+        reserved: sts.bigint(),
+        frozen: sts.bigint(),
+        flags: ExtraFlags,
+    }
+})
+
+export const ExtraFlags = sts.bigint()
+
+export const AssetId: sts.Type<AssetId> = sts.struct(() => {
+    return {
+        chainId: sts.number(),
+        assetType: sts.number(),
+        assetIndex: sts.bigint(),
+    }
+})
+
+export const CoinInfo: sts.Type<CoinInfo> = sts.struct(() => {
+    return {
+        symbol: sts.bytes(),
+        name: sts.bytes(),
+        blockchain: sts.bytes(),
+        supply: sts.bigint(),
+        lastUpdateTimestamp: sts.bigint(),
+        price: sts.bigint(),
+    }
+})
 
 export const CurrencyId: sts.Type<CurrencyId> = sts.closedEnum(() => {
     return {
@@ -259,3 +430,5 @@ export const Asset: sts.Type<Asset> = sts.closedEnum(() => {
         StellarNative: sts.unit(),
     }
 })
+
+export const AccountId32 = sts.bytes()

@@ -94,7 +94,7 @@ export const maxHeightPromise =
                       'Error getting block height from archive, using default value instead:',
                       error
                   )
-                  return Number.MIN_SAFE_INTEGER
+                  return 0
               })
 
 // Derive ids from block number and extrinsic index of the event

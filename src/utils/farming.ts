@@ -331,7 +331,7 @@ export async function updateFarmingPoolInfo(
     farmingData.stakeApr = stakeApr
 
     if (poolState?.__kind === 'Dead') {
-        ;(farmingData.rewardUSDPerDay = '0'), (farmingData.stakeApr = '0')
+        (farmingData.rewardUSDPerDay = '0'), (farmingData.stakeApr = '0')
     }
     await ctx.store.save(farmingData)
 
@@ -574,7 +574,7 @@ export async function killFarmingPoolInfo(
     farmingData.stakeApr = stakeApr
 
     if (poolState?.__kind === 'Dead') {
-        ;(farmingData.rewardUSDPerDay = '0'), (farmingData.stakeApr = '0')
+        (farmingData.rewardUSDPerDay = '0'), (farmingData.stakeApr = '0')
     }
     await ctx.store.save(farmingData)
 

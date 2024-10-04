@@ -54,6 +54,7 @@ import {
     handleContractEvent,
     handleContractInstantiated,
 } from './mappings/nabla/handleEvent'
+import { handleIssueRequest, handleRedeemRequest } from './mappings/spacewalk'
 
 const processor = new SubstrateBatchProcessor()
     .setRpcEndpoint(config.dataSource.chain)
@@ -128,6 +129,9 @@ const processor = new SubstrateBatchProcessor()
             // Contracts
             'Contracts.ContractEmitted',
             'Contracts.Instantiated',
+            // Spacewalk
+            'Issue.RequestIssue',
+            'Redeem.RequestRedeem',
         ],
         call: true,
         extrinsic: true,
@@ -332,6 +336,20 @@ processor.run(new TypeormDatabase(), async (ctx) => {
                         break
                     case 'Contracts.Instantiated':
                         await handleContractInstantiated({
+                            ...ctx,
+                            block,
+                            event,
+                        })
+                        break
+                    case 'Issue.RequestIssue':
+                        await handleIssueRequest({
+                            ...ctx,
+                            block,
+                            event,
+                        })
+                        break
+                    case 'Redeem.RequestRedeem':
+                        await handleRedeemRequest({
                             ...ctx,
                             block,
                             event,

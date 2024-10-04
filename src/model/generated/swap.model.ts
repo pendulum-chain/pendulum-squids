@@ -4,7 +4,10 @@ import {
     PrimaryColumn as PrimaryColumn_,
     ManyToOne as ManyToOne_,
     Index as Index_,
-} from 'typeorm'
+    DateTimeColumn as DateTimeColumn_,
+    StringColumn as StringColumn_,
+    IntColumn as IntColumn_,
+} from '@subsquid/typeorm-store'
 import { Transaction } from './transaction.model'
 import { Pair } from './pair.model'
 
@@ -21,37 +24,37 @@ export class Swap {
     @ManyToOne_(() => Transaction, { nullable: true })
     transaction!: Transaction
 
-    @Column_('timestamp with time zone', { nullable: false })
+    @DateTimeColumn_({ nullable: false })
     timestamp!: Date
 
     @Index_()
     @ManyToOne_(() => Pair, { nullable: true })
     pair!: Pair
 
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     sender!: string
 
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     from!: string
 
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     amount0In!: string
 
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     amount1In!: string
 
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     amount0Out!: string
 
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     amount1Out!: string
 
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     to!: string
 
-    @Column_('int4', { nullable: true })
+    @IntColumn_({ nullable: true })
     logIndex!: number | undefined | null
 
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     amountUSD!: string
 }

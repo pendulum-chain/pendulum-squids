@@ -2,9 +2,12 @@ import {
     Entity as Entity_,
     Column as Column_,
     PrimaryColumn as PrimaryColumn_,
+    IntColumn as IntColumn_,
     Index as Index_,
-} from 'typeorm'
-import * as marshal from './marshal'
+    DateTimeColumn as DateTimeColumn_,
+    StringColumn as StringColumn_,
+    BigIntColumn as BigIntColumn_,
+} from '@subsquid/typeorm-store'
 
 @Entity_()
 export class Transfer {
@@ -16,36 +19,30 @@ export class Transfer {
     id!: string
 
     @Index_()
-    @Column_('int4', { nullable: false })
+    @IntColumn_({ nullable: false })
     blockNumber!: number
 
     @Index_()
-    @Column_('timestamp with time zone', { nullable: false })
+    @DateTimeColumn_({ nullable: false })
     timestamp!: Date
 
     @Index_()
-    @Column_('text', { nullable: true })
+    @StringColumn_({ nullable: true })
     extrinsicHash!: string | undefined | null
 
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     from!: string
 
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     to!: string
 
     @Index_()
-    @Column_('numeric', {
-        transformer: marshal.bigintTransformer,
-        nullable: false,
-    })
+    @BigIntColumn_({ nullable: false })
     amount!: bigint
 
-    @Column_('numeric', {
-        transformer: marshal.bigintTransformer,
-        nullable: false,
-    })
+    @BigIntColumn_({ nullable: false })
     fee!: bigint
 
-    @Column_('text', { nullable: true })
+    @StringColumn_({ nullable: true })
     remark!: string | undefined | null
 }

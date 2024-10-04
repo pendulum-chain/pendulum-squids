@@ -2,7 +2,9 @@ import {
     Entity as Entity_,
     Column as Column_,
     PrimaryColumn as PrimaryColumn_,
-} from 'typeorm'
+    DateTimeColumn as DateTimeColumn_,
+    StringColumn as StringColumn_,
+} from '@subsquid/typeorm-store'
 
 @Entity_()
 export class StableDayData {
@@ -13,12 +15,12 @@ export class StableDayData {
     @PrimaryColumn_()
     id!: string
 
-    @Column_('timestamp with time zone', { nullable: false })
+    @DateTimeColumn_({ nullable: false })
     date!: Date
 
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     dailyVolumeUSD!: string
 
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     tvlUSD!: string
 }

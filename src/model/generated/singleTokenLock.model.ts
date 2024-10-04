@@ -4,8 +4,9 @@ import {
     PrimaryColumn as PrimaryColumn_,
     ManyToOne as ManyToOne_,
     Index as Index_,
+    StringColumn as StringColumn_,
     OneToMany as OneToMany_,
-} from 'typeorm'
+} from '@subsquid/typeorm-store'
 import { Token } from './token.model'
 import { SingleTokenLockDayData } from './singleTokenLockDayData.model'
 import { SingleTokenLockHourData } from './singleTokenLockHourData.model'
@@ -27,16 +28,16 @@ export class SingleTokenLock {
     /**
      * BigDecimal
      */
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     totalLiquidityUSD!: string
 
     /**
      * BigDecimal
      */
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     totalLiquidity!: string
 
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     totalLiquidityETH!: string
 
     @OneToMany_(() => SingleTokenLockDayData, (e) => e.singleTokenLock)

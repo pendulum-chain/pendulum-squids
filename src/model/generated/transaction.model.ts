@@ -2,8 +2,10 @@ import {
     Entity as Entity_,
     Column as Column_,
     PrimaryColumn as PrimaryColumn_,
-} from 'typeorm'
-import * as marshal from './marshal'
+    BigIntColumn as BigIntColumn_,
+    DateTimeColumn as DateTimeColumn_,
+    StringColumn as StringColumn_,
+} from '@subsquid/typeorm-store'
 
 @Entity_()
 export class Transaction {
@@ -14,21 +16,18 @@ export class Transaction {
     @PrimaryColumn_()
     id!: string
 
-    @Column_('numeric', {
-        transformer: marshal.bigintTransformer,
-        nullable: false,
-    })
+    @BigIntColumn_({ nullable: false })
     blockNumber!: bigint
 
-    @Column_('timestamp with time zone', { nullable: false })
+    @DateTimeColumn_({ nullable: false })
     timestamp!: Date
 
-    @Column_('text', { array: true, nullable: false })
+    @StringColumn_({ array: true, nullable: false })
     mints!: string[]
 
-    @Column_('text', { array: true, nullable: false })
+    @StringColumn_({ array: true, nullable: false })
     burns!: string[]
 
-    @Column_('text', { array: true, nullable: false })
+    @StringColumn_({ array: true, nullable: false })
     swaps!: string[]
 }

@@ -2,8 +2,10 @@ import {
     Entity as Entity_,
     Column as Column_,
     PrimaryColumn as PrimaryColumn_,
+    IntColumn as IntColumn_,
+    StringColumn as StringColumn_,
     OneToMany as OneToMany_,
-} from 'typeorm'
+} from '@subsquid/typeorm-store'
 import { SwapPool } from './swapPool.model'
 
 @Entity_()
@@ -15,13 +17,13 @@ export class NablaToken {
     @PrimaryColumn_()
     id!: string
 
-    @Column_('int4', { nullable: false })
+    @IntColumn_({ nullable: false })
     decimals!: number
 
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     name!: string
 
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     symbol!: string
 
     @OneToMany_(() => SwapPool, (e) => e.token)

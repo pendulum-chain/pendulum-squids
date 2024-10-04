@@ -4,8 +4,13 @@ import {
     PrimaryColumn as PrimaryColumn_,
     ManyToOne as ManyToOne_,
     Index as Index_,
+    IntColumn as IntColumn_,
+    BigIntColumn as BigIntColumn_,
+    BooleanColumn as BooleanColumn_,
+    JSONColumn as JSONColumn_,
+    BytesColumn as BytesColumn_,
     OneToMany as OneToMany_,
-} from 'typeorm'
+} from '@subsquid/typeorm-store'
 import * as marshal from './marshal'
 import { Block } from './block.model'
 import { Call } from './call.model'
@@ -29,10 +34,10 @@ export class Extrinsic {
     @ManyToOne_(() => Call, { nullable: true })
     call!: Call
 
-    @Column_('int4', { nullable: false })
+    @IntColumn_({ nullable: false })
     index!: number
 
-    @Column_('int4', { nullable: false })
+    @IntColumn_({ nullable: false })
     version!: number
 
     @Column_('jsonb', {
@@ -47,27 +52,21 @@ export class Extrinsic {
     })
     signature!: ExtrinsicSignature | undefined | null
 
-    @Column_('numeric', {
-        transformer: marshal.bigintTransformer,
-        nullable: true,
-    })
+    @BigIntColumn_({ nullable: true })
     tip!: bigint | undefined | null
 
-    @Column_('numeric', {
-        transformer: marshal.bigintTransformer,
-        nullable: true,
-    })
+    @BigIntColumn_({ nullable: true })
     fee!: bigint | undefined | null
 
     @Index_()
-    @Column_('bool', { nullable: true })
+    @BooleanColumn_({ nullable: true })
     success!: boolean | undefined | null
 
-    @Column_('jsonb', { nullable: true })
+    @JSONColumn_({ nullable: true })
     error!: unknown | undefined | null
 
     @Index_()
-    @Column_('bytea', { nullable: false })
+    @BytesColumn_({ nullable: false })
     hash!: Uint8Array
 
     @OneToMany_(() => Call, (e) => e.extrinsic)

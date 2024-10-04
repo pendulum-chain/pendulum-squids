@@ -4,8 +4,8 @@ import {
     PrimaryColumn as PrimaryColumn_,
     ManyToOne as ManyToOne_,
     Index as Index_,
-} from 'typeorm'
-import * as marshal from './marshal'
+    BigIntColumn as BigIntColumn_,
+} from '@subsquid/typeorm-store'
 import { User } from './user.model'
 import { Farm } from './farm.model'
 
@@ -26,9 +26,6 @@ export class StakePosition {
     @ManyToOne_(() => Farm, { nullable: true })
     farm!: Farm
 
-    @Column_('numeric', {
-        transformer: marshal.bigintTransformer,
-        nullable: false,
-    })
+    @BigIntColumn_({ nullable: false })
     liquidityStakedBalance!: bigint
 }

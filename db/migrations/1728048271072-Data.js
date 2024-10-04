@@ -1,5 +1,5 @@
-module.exports = class Data1717086042133 {
-    name = 'Data1717086042133'
+module.exports = class Data1728048271072 {
+    name = 'Data1728048271072'
 
     async up(db) {
         await db.query(
@@ -363,6 +363,21 @@ module.exports = class Data1717086042133 {
             `CREATE INDEX "IDX_ec313e0ceb8429cb76aa63ed74" ON "nabla_swap_liquidity_withdrawal" ("swap_pool_id") `
         )
         await db.query(
+            `CREATE TABLE "vault" ("id" character varying NOT NULL, "account_id" text NOT NULL, "wrapped" text NOT NULL, "collateral" text NOT NULL, "vault_stellar_public_key" text NOT NULL, CONSTRAINT "PK_dd0898234c77f9d97585171ac59" PRIMARY KEY ("id"))`
+        )
+        await db.query(
+            `CREATE TABLE "issue_request" ("id" character varying NOT NULL, "issue_id" text NOT NULL, "timestamp" TIMESTAMP WITH TIME ZONE NOT NULL, "requester" text NOT NULL, "amount" numeric NOT NULL, "vault_id" character varying, CONSTRAINT "PK_498cd8089f9302db334fd7fe7f6" PRIMARY KEY ("id"))`
+        )
+        await db.query(
+            `CREATE INDEX "IDX_62755a570447cc6fb07d57ec30" ON "issue_request" ("vault_id") `
+        )
+        await db.query(
+            `CREATE TABLE "redeem_request" ("id" character varying NOT NULL, "redeem_id" text NOT NULL, "timestamp" TIMESTAMP WITH TIME ZONE NOT NULL, "redeemer" text NOT NULL, "amount" numeric NOT NULL, "vault_id" character varying, CONSTRAINT "PK_cfc413a4a56777d07b29de675fa" PRIMARY KEY ("id"))`
+        )
+        await db.query(
+            `CREATE INDEX "IDX_1b3c9ec8a5fa79b7af69bb30ad" ON "redeem_request" ("vault_id") `
+        )
+        await db.query(
             `CREATE TABLE "event" ("id" character varying NOT NULL, "index" integer NOT NULL, "phase" text NOT NULL, "pallet" text NOT NULL, "name" text NOT NULL, "args" jsonb, "args_str" text array, "block_id" character varying, "extrinsic_id" character varying, "call_id" character varying, CONSTRAINT "PK_30c2f3bbaf6d34a55f8ae6e4614" PRIMARY KEY ("id"))`
         )
         await db.query(
@@ -612,6 +627,12 @@ module.exports = class Data1717086042133 {
             `ALTER TABLE "nabla_swap_liquidity_withdrawal" ADD CONSTRAINT "FK_ec313e0ceb8429cb76aa63ed746" FOREIGN KEY ("swap_pool_id") REFERENCES "swap_pool"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`
         )
         await db.query(
+            `ALTER TABLE "issue_request" ADD CONSTRAINT "FK_62755a570447cc6fb07d57ec30e" FOREIGN KEY ("vault_id") REFERENCES "vault"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`
+        )
+        await db.query(
+            `ALTER TABLE "redeem_request" ADD CONSTRAINT "FK_1b3c9ec8a5fa79b7af69bb30ad2" FOREIGN KEY ("vault_id") REFERENCES "vault"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`
+        )
+        await db.query(
             `ALTER TABLE "event" ADD CONSTRAINT "FK_2b0d35d675c4f99751855c45021" FOREIGN KEY ("block_id") REFERENCES "block"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`
         )
         await db.query(
@@ -758,6 +779,11 @@ module.exports = class Data1717086042133 {
         await db.query(`DROP INDEX "public"."IDX_33f15234263ac9c6d07fe5441f"`)
         await db.query(`DROP TABLE "nabla_swap_liquidity_withdrawal"`)
         await db.query(`DROP INDEX "public"."IDX_ec313e0ceb8429cb76aa63ed74"`)
+        await db.query(`DROP TABLE "vault"`)
+        await db.query(`DROP TABLE "issue_request"`)
+        await db.query(`DROP INDEX "public"."IDX_62755a570447cc6fb07d57ec30"`)
+        await db.query(`DROP TABLE "redeem_request"`)
+        await db.query(`DROP INDEX "public"."IDX_1b3c9ec8a5fa79b7af69bb30ad"`)
         await db.query(`DROP TABLE "event"`)
         await db.query(`DROP INDEX "public"."IDX_2b0d35d675c4f99751855c4502"`)
         await db.query(`DROP INDEX "public"."IDX_129efedcb305c80256db2d57a5"`)
@@ -946,6 +972,12 @@ module.exports = class Data1717086042133 {
         )
         await db.query(
             `ALTER TABLE "nabla_swap_liquidity_withdrawal" DROP CONSTRAINT "FK_ec313e0ceb8429cb76aa63ed746"`
+        )
+        await db.query(
+            `ALTER TABLE "issue_request" DROP CONSTRAINT "FK_62755a570447cc6fb07d57ec30e"`
+        )
+        await db.query(
+            `ALTER TABLE "redeem_request" DROP CONSTRAINT "FK_1b3c9ec8a5fa79b7af69bb30ad2"`
         )
         await db.query(
             `ALTER TABLE "event" DROP CONSTRAINT "FK_2b0d35d675c4f99751855c45021"`

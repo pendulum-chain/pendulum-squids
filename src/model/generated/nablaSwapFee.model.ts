@@ -2,10 +2,10 @@ import {
     Entity as Entity_,
     Column as Column_,
     PrimaryColumn as PrimaryColumn_,
+    BigIntColumn as BigIntColumn_,
     ManyToOne as ManyToOne_,
     Index as Index_,
-} from 'typeorm'
-import * as marshal from './marshal'
+} from '@subsquid/typeorm-store'
 import { SwapPool } from './swapPool.model'
 import { BackstopPool } from './backstopPool.model'
 
@@ -18,28 +18,16 @@ export class NablaSwapFee {
     @PrimaryColumn_()
     id!: string
 
-    @Column_('numeric', {
-        transformer: marshal.bigintTransformer,
-        nullable: false,
-    })
+    @BigIntColumn_({ nullable: false })
     lpFees!: bigint
 
-    @Column_('numeric', {
-        transformer: marshal.bigintTransformer,
-        nullable: false,
-    })
+    @BigIntColumn_({ nullable: false })
     backstopFees!: bigint
 
-    @Column_('numeric', {
-        transformer: marshal.bigintTransformer,
-        nullable: false,
-    })
+    @BigIntColumn_({ nullable: false })
     protocolFees!: bigint
 
-    @Column_('numeric', {
-        transformer: marshal.bigintTransformer,
-        nullable: false,
-    })
+    @BigIntColumn_({ nullable: false })
     timestamp!: bigint
 
     @Index_()

@@ -2,11 +2,12 @@ import {
     Entity as Entity_,
     Column as Column_,
     PrimaryColumn as PrimaryColumn_,
+    BigIntColumn as BigIntColumn_,
     ManyToOne as ManyToOne_,
     Index as Index_,
+    StringColumn as StringColumn_,
     OneToMany as OneToMany_,
-} from 'typeorm'
-import * as marshal from './marshal'
+} from '@subsquid/typeorm-store'
 import { SingleTokenLock } from './singleTokenLock.model'
 import { StableSwap } from './stableSwap.model'
 import { Pair } from './pair.model'
@@ -22,10 +23,7 @@ export class Farm {
     @PrimaryColumn_()
     id!: string
 
-    @Column_('numeric', {
-        transformer: marshal.bigintTransformer,
-        nullable: false,
-    })
+    @BigIntColumn_({ nullable: false })
     pid!: bigint
 
     @Index_()
@@ -40,34 +38,25 @@ export class Farm {
     @ManyToOne_(() => Pair, { nullable: true })
     pair!: Pair | undefined | null
 
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     stakeToken!: string
 
-    @Column_('numeric', {
-        transformer: marshal.bigintTransformer,
-        nullable: false,
-    })
+    @BigIntColumn_({ nullable: false })
     liquidityStaked!: bigint
 
-    @Column_('numeric', {
-        transformer: marshal.bigintTransformer,
-        nullable: false,
-    })
+    @BigIntColumn_({ nullable: false })
     createdAtBlock!: bigint
 
-    @Column_('numeric', {
-        transformer: marshal.bigintTransformer,
-        nullable: false,
-    })
+    @BigIntColumn_({ nullable: false })
     createdAtTimestamp!: bigint
 
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     stakedUSD!: string
 
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     rewardUSDPerDay!: string
 
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     stakeApr!: string
 
     @OneToMany_(() => Incentive, (e) => e.farm)

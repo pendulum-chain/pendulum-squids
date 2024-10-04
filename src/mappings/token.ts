@@ -62,13 +62,10 @@ function deriveStellarPublicKeyFromHex(issuer: string) {
     return StrKey.encodeEd25519PublicKey(buffer)
 }
 
-function beautifyCurrencyIdString(event: any) {
-    let currencyId = ''
-
-    switch (event.currencyId.__kind) {
+export function beautifyCurrencyIdString(currencyId: any) {
+    switch (currencyId.__kind) {
         case 'ZenlinkLPToken': {
-            currencyId =
-                'ZenlinkLPToken(' + String(event.currencyId.value) + ')'
+            currencyId = 'ZenlinkLPToken(' + String(currencyId.value) + ')'
             break
         }
         case 'Native': {
@@ -76,7 +73,7 @@ function beautifyCurrencyIdString(event: any) {
             break
         }
         case 'Stellar': {
-            switch (event.currencyId.value.__kind) {
+            switch (currencyId.value.__kind) {
                 case 'StellarNative': {
                     currencyId = 'StellarNative'
                     break
@@ -84,22 +81,18 @@ function beautifyCurrencyIdString(event: any) {
                 case 'AlphaNum4': {
                     currencyId =
                         'Stellar::AlphaNum4(' +
-                        hexAssetCodeToString(event.currencyId.value.code) +
+                        hexAssetCodeToString(currencyId.value.code) +
                         ',' +
-                        deriveStellarPublicKeyFromHex(
-                            event.currencyId.value.issuer
-                        ) +
+                        deriveStellarPublicKeyFromHex(currencyId.value.issuer) +
                         ')'
                     break
                 }
                 case 'AlphaNum12': {
                     currencyId =
                         'Stellar::AlphaNum12(' +
-                        hexAssetCodeToString(event.currencyId.value.code) +
+                        hexAssetCodeToString(currencyId.value.code) +
                         ',' +
-                        deriveStellarPublicKeyFromHex(
-                            event.currencyId.value.issuer
-                        ) +
+                        deriveStellarPublicKeyFromHex(currencyId.value.issuer) +
                         ')'
                     break
                 }
@@ -107,22 +100,21 @@ function beautifyCurrencyIdString(event: any) {
             break
         }
         case 'XCM': {
-            switch (typeof event.currencyId.value) {
+            switch (typeof currencyId.value) {
                 case 'number': {
-                    currencyId = 'XCM(' + String(event.currencyId.value) + ')'
+                    currencyId = 'XCM(' + String(currencyId.value) + ')'
                     break
                 }
                 // Probably a ForeignCurrencyId
                 case 'object': {
-                    currencyId =
-                        'XCM(' + String(event.currencyId.value.__kind) + ')'
+                    currencyId = 'XCM(' + String(currencyId.value.__kind) + ')'
                     break
                 }
             }
             break
         }
         default:
-            currencyId = JSON.stringify(event.currencyId)
+            currencyId = JSON.stringify(currencyId)
             break
     }
 
@@ -137,7 +129,7 @@ export async function handleTokenDeposited(ctx: EventHandlerContext) {
 
     if (!event) return
 
-    const currencyId = beautifyCurrencyIdString(event)
+    const currencyId = beautifyCurrencyIdString(event.currencyId)
 
     const tokenDeposit = new TokenDeposit({
         id: ctx.event.id,
@@ -241,7 +233,7 @@ export async function handleTokenWithdrawn(ctx: EventHandlerContext) {
 
     if (!event) return
 
-    const currencyId = beautifyCurrencyIdString(event)
+    const currencyId = beautifyCurrencyIdString(event.currencyId)
 
     const tokenWithdrawn = new TokenWithdrawn({
         id: ctx.event.id,
@@ -372,7 +364,7 @@ export async function handleTokenTransfer(ctx: EventHandlerContext) {
 
     if (!event) return
 
-    const currencyId = beautifyCurrencyIdString(event)
+    const currencyId = beautifyCurrencyIdString(event.currencyId)
 
     const tokenTransfer = new TokenTransfer({
         id: ctx.event.id,

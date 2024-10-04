@@ -2,11 +2,13 @@ import {
     Entity as Entity_,
     Column as Column_,
     PrimaryColumn as PrimaryColumn_,
+    StringColumn as StringColumn_,
+    IntColumn as IntColumn_,
+    BigIntColumn as BigIntColumn_,
     ManyToOne as ManyToOne_,
     Index as Index_,
     OneToMany as OneToMany_,
-} from 'typeorm'
-import * as marshal from './marshal'
+} from '@subsquid/typeorm-store'
 import { StableSwapInfo } from './stableSwapInfo.model'
 import { StableSwapEvent } from './stableSwapEvent.model'
 import { StableSwapExchange } from './stableSwapExchange.model'
@@ -23,55 +25,43 @@ export class StableSwap {
     @PrimaryColumn_()
     id!: string
 
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     address!: string
 
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     baseSwapAddress!: string
 
-    @Column_('int4', { nullable: false })
+    @IntColumn_({ nullable: false })
     numTokens!: number
 
-    @Column_('text', { array: true, nullable: false })
+    @StringColumn_({ array: true, nullable: false })
     tokens!: string[]
 
-    @Column_('text', { array: true, nullable: false })
+    @StringColumn_({ array: true, nullable: false })
     baseTokens!: string[]
 
-    @Column_('text', { array: true, nullable: false })
+    @StringColumn_({ array: true, nullable: false })
     allTokens!: string[]
 
-    @Column_('text', { array: true, nullable: false })
+    @StringColumn_({ array: true, nullable: false })
     balances!: string[]
 
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     lpToken!: string
 
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     lpTotalSupply!: string
 
-    @Column_('numeric', {
-        transformer: marshal.bigintTransformer,
-        nullable: false,
-    })
+    @BigIntColumn_({ nullable: false })
     a!: bigint
 
-    @Column_('numeric', {
-        transformer: marshal.bigintTransformer,
-        nullable: false,
-    })
+    @BigIntColumn_({ nullable: false })
     swapFee!: bigint
 
-    @Column_('numeric', {
-        transformer: marshal.bigintTransformer,
-        nullable: false,
-    })
+    @BigIntColumn_({ nullable: false })
     adminFee!: bigint
 
-    @Column_('numeric', {
-        transformer: marshal.bigintTransformer,
-        nullable: false,
-    })
+    @BigIntColumn_({ nullable: false })
     virtualPrice!: bigint
 
     @Index_()
@@ -96,12 +86,12 @@ export class StableSwap {
     /**
      * BigDecimal
      */
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     tvlUSD!: string
 
     /**
      * BigDecimal
      */
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     volumeUSD!: string
 }

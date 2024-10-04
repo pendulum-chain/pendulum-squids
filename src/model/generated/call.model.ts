@@ -4,8 +4,12 @@ import {
     PrimaryColumn as PrimaryColumn_,
     Index as Index_,
     ManyToOne as ManyToOne_,
+    IntColumn as IntColumn_,
+    BooleanColumn as BooleanColumn_,
+    JSONColumn as JSONColumn_,
+    StringColumn as StringColumn_,
     OneToMany as OneToMany_,
-} from 'typeorm'
+} from '@subsquid/typeorm-store'
 import { Block } from './block.model'
 import { Extrinsic } from './extrinsic.model'
 import { Event } from './event.model'
@@ -32,28 +36,28 @@ export class Call {
     @ManyToOne_(() => Call, { nullable: true })
     parent!: Call | undefined | null
 
-    @Column_('int4', { array: true, nullable: false })
+    @IntColumn_({ array: true, nullable: false })
     address!: number[]
 
     @Index_()
-    @Column_('bool', { nullable: false })
+    @BooleanColumn_({ nullable: false })
     success!: boolean
 
-    @Column_('jsonb', { nullable: true })
+    @JSONColumn_({ nullable: true })
     error!: unknown | undefined | null
 
     @Index_()
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     pallet!: string
 
     @Index_()
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     name!: string
 
-    @Column_('jsonb', { nullable: true })
+    @JSONColumn_({ nullable: true })
     args!: unknown | undefined | null
 
-    @Column_('text', { array: true, nullable: true })
+    @StringColumn_({ array: true, nullable: true })
     argsStr!: (string | undefined | null)[] | undefined | null
 
     @OneToMany_(() => Call, (e) => e.parent)

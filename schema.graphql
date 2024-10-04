@@ -853,6 +853,32 @@ type NablaSwapLiquidityWithdrawal @entity {
     swapPool: SwapPool!
 }
 
+type Vault @entity {
+    id: ID! # string concat{vaultId.accountId}-${vaultId.collateral}-${vaultId.wrapped}
+    accountId: String!
+    wrapped: String!
+    collateral: String!
+    vaultStellarPublicKey: String!
+}
+
+type IssueRequest @entity {
+    id: ID!
+    issueId: String!
+    timestamp: DateTime!
+    requester: String!
+    amount: BigInt!
+    vault: Vault! # we get asset from this entity
+}
+
+type RedeemRequest @entity {
+    id: ID!
+    redeemId: String!
+    timestamp: DateTime!
+    redeemer: String!
+    amount: BigInt!
+    vault: Vault! # we get asset from this entity
+}
+
 type Block @entity {
     "BlockHeight-blockHash - e.g. 0001812319-0001c"
     id: ID!

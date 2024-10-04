@@ -2,9 +2,11 @@ import {
     Entity as Entity_,
     Column as Column_,
     PrimaryColumn as PrimaryColumn_,
+    DateTimeColumn as DateTimeColumn_,
     ManyToOne as ManyToOne_,
     Index as Index_,
-} from 'typeorm'
+    StringColumn as StringColumn_,
+} from '@subsquid/typeorm-store'
 import { FactoryDayData } from './factoryDayData.model'
 import { StableSwapDayData } from './stableSwapDayData.model'
 
@@ -17,7 +19,7 @@ export class ZenlinkDayInfo {
     @PrimaryColumn_()
     id!: string
 
-    @Column_('timestamp with time zone', { nullable: false })
+    @DateTimeColumn_({ nullable: false })
     date!: Date
 
     @Index_()
@@ -28,9 +30,9 @@ export class ZenlinkDayInfo {
     @ManyToOne_(() => StableSwapDayData, { nullable: true })
     stableInfo!: StableSwapDayData
 
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     dailyVolumeUSD!: string
 
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     tvlUSD!: string
 }

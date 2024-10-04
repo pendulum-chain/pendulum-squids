@@ -2,9 +2,13 @@ import {
     Entity as Entity_,
     Column as Column_,
     PrimaryColumn as PrimaryColumn_,
+    IntColumn as IntColumn_,
     Index as Index_,
+    BytesColumn as BytesColumn_,
+    StringColumn as StringColumn_,
+    DateTimeColumn as DateTimeColumn_,
     OneToMany as OneToMany_,
-} from 'typeorm'
+} from '@subsquid/typeorm-store'
 import { Extrinsic } from './extrinsic.model'
 import { Call } from './call.model'
 import { Event } from './event.model'
@@ -22,50 +26,50 @@ export class Block {
     id!: string
 
     @Index_()
-    @Column_('int4', { nullable: false })
+    @IntColumn_({ nullable: false })
     height!: number
 
     @Index_()
-    @Column_('bytea', { nullable: false })
+    @BytesColumn_({ nullable: false })
     hash!: Uint8Array
 
-    @Column_('bytea', { nullable: false })
+    @BytesColumn_({ nullable: false })
     parentHash!: Uint8Array
 
-    @Column_('bytea', { nullable: false })
+    @BytesColumn_({ nullable: false })
     stateRoot!: Uint8Array
 
-    @Column_('bytea', { nullable: false })
+    @BytesColumn_({ nullable: false })
     extrinsicsicRoot!: Uint8Array
 
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     specName!: string
 
     @Index_()
-    @Column_('int4', { nullable: false })
+    @IntColumn_({ nullable: false })
     specVersion!: number
 
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     implName!: string
 
-    @Column_('int4', { nullable: false })
+    @IntColumn_({ nullable: false })
     implVersion!: number
 
     @Index_()
-    @Column_('timestamp with time zone', { nullable: false })
+    @DateTimeColumn_({ nullable: false })
     timestamp!: Date
 
     @Index_()
-    @Column_('bytea', { nullable: true })
+    @BytesColumn_({ nullable: true })
     validator!: Uint8Array | undefined | null
 
-    @Column_('int4', { nullable: false })
+    @IntColumn_({ nullable: false })
     extrinsicsCount!: number
 
-    @Column_('int4', { nullable: false })
+    @IntColumn_({ nullable: false })
     callsCount!: number
 
-    @Column_('int4', { nullable: false })
+    @IntColumn_({ nullable: false })
     eventsCount!: number
 
     @OneToMany_(() => Extrinsic, (e) => e.block)

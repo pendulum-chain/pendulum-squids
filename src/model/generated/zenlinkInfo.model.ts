@@ -2,9 +2,12 @@ import {
     Entity as Entity_,
     Column as Column_,
     PrimaryColumn as PrimaryColumn_,
+    DateTimeColumn as DateTimeColumn_,
+    StringColumn as StringColumn_,
+    IntColumn as IntColumn_,
     ManyToOne as ManyToOne_,
     Index as Index_,
-} from 'typeorm'
+} from '@subsquid/typeorm-store'
 import { Factory } from './factory.model'
 import { StableSwapInfo } from './stableSwapInfo.model'
 
@@ -17,22 +20,22 @@ export class ZenlinkInfo {
     @PrimaryColumn_()
     id!: string
 
-    @Column_('timestamp with time zone', { nullable: false })
+    @DateTimeColumn_({ nullable: false })
     updatedDate!: Date
 
     /**
      * BigDecimal
      */
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     totalVolumeUSD!: string
 
     /**
      * BigDecimal
      */
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     totalTvlUSD!: string
 
-    @Column_('int4', { nullable: false })
+    @IntColumn_({ nullable: false })
     txCount!: number
 
     @Index_()

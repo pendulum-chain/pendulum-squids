@@ -6,17 +6,23 @@ import {
 } from '@subsquid/typeorm-store'
 
 @Entity_()
-export class Bundle {
-    constructor(props?: Partial<Bundle>) {
+export class Vault {
+    constructor(props?: Partial<Vault>) {
         Object.assign(this, props)
     }
 
     @PrimaryColumn_()
     id!: string
 
-    /**
-     * BigDecimal
-     */
     @StringColumn_({ nullable: false })
-    ethPrice!: string
+    accountId!: string
+
+    @StringColumn_({ nullable: false })
+    wrapped!: string
+
+    @StringColumn_({ nullable: false })
+    collateral!: string
+
+    @StringColumn_({ nullable: false })
+    vaultStellarPublicKey!: string
 }

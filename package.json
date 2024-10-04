@@ -13,7 +13,7 @@
         "query-node:start": "squid-graphql-server --subscriptions --max-response-size 10000 --dumb-cache in-memory --dumb-cache-ttl 1000 --dumb-cache-size 100 --dumb-cache-max-age 1000",
         "prepare": "husky install",
         "lint": "eslint . ",
-        "lint:fix": "eslint . --ext .ts --fix",
+        "lint:fix": "eslint . --fix",
         "generate-types-from-runtime-binary": "node local-archive-endpoint/server.js"
     },
     "dependencies": {

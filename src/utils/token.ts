@@ -2,7 +2,6 @@ import { EventHandlerContext } from '../processor'
 import { AssetId, CurrencyId, CurrencyIdV12 } from '../types/common'
 import { codec } from '@subsquid/ss58'
 import { config, network } from '../config'
-import { invert } from 'lodash'
 import { hexToU8a } from '@polkadot/util'
 import { getVersionedStorage } from '../types/eventsAndStorageSelector'
 
@@ -348,9 +347,6 @@ export async function getTokenBurned(
     assetId: CurrencyId,
     account: string
 ) {
-    const block = {
-        hash: ctx.block.parentHash,
-    }
     let result
     if (assetId.__kind === 'Native') {
         const systemAccountStorage = await getVersionedStorage(

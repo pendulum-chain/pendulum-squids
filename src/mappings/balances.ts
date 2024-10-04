@@ -1,11 +1,11 @@
 import { codec } from '@subsquid/ss58'
 import { EventHandlerContext } from '../processor'
 import { Transfer } from '../model'
-import events from '../types/events'
-import { config } from '../config'
+import { config, network } from '../config'
+import { decodeEvent } from '../types/eventsAndStorageSelector'
 
 export async function handleBalanceTransfer(ctx: EventHandlerContext) {
-    const event = events.balances.transfer.v1.decode(ctx.event)
+    const event = decodeEvent(network, ctx, 'balances', 'transfer')
 
     const from = codec(config.prefix).encode(event.from)
     const to = codec(config.prefix).encode(event.to)

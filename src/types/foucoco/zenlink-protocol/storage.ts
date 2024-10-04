@@ -7,65 +7,77 @@ import {
     StorageType,
     RuntimeCtx,
 } from '../support'
-import * as v1 from '../v1'
+import * as v18 from '../v18'
 
 export const liquidityPairs = {
-    v1: new StorageType(
+    v18: new StorageType(
         'ZenlinkProtocol.LiquidityPairs',
         'Default',
-        [sts.tuple(() => [v1.AssetId, v1.AssetId])],
-        sts.option(() => v1.AssetId)
-    ) as LiquidityPairsV1,
+        [sts.tuple(() => [v18.AssetId, v18.AssetId])],
+        sts.option(() => v18.AssetId)
+    ) as LiquidityPairsV18,
 }
 
-export interface LiquidityPairsV1 {
+export interface LiquidityPairsV18 {
     is(block: RuntimeCtx): boolean
-    getDefault(block: Block): v1.AssetId | undefined
+    getDefault(block: Block): v18.AssetId | undefined
     get(
         block: Block,
-        key: [v1.AssetId, v1.AssetId]
-    ): Promise<(v1.AssetId | undefined) | undefined>
+        key: [v18.AssetId, v18.AssetId]
+    ): Promise<(v18.AssetId | undefined) | undefined>
     getMany(
         block: Block,
-        keys: [v1.AssetId, v1.AssetId][]
-    ): Promise<((v1.AssetId | undefined) | undefined)[]>
-    getKeys(block: Block): Promise<[v1.AssetId, v1.AssetId][]>
+        keys: [v18.AssetId, v18.AssetId][]
+    ): Promise<((v18.AssetId | undefined) | undefined)[]>
+    getKeys(block: Block): Promise<[v18.AssetId, v18.AssetId][]>
     getKeys(
         block: Block,
-        key: [v1.AssetId, v1.AssetId]
-    ): Promise<[v1.AssetId, v1.AssetId][]>
+        key: [v18.AssetId, v18.AssetId]
+    ): Promise<[v18.AssetId, v18.AssetId][]>
     getKeysPaged(
         pageSize: number,
         block: Block
-    ): AsyncIterable<[v1.AssetId, v1.AssetId][]>
+    ): AsyncIterable<[v18.AssetId, v18.AssetId][]>
     getKeysPaged(
         pageSize: number,
         block: Block,
-        key: [v1.AssetId, v1.AssetId]
-    ): AsyncIterable<[v1.AssetId, v1.AssetId][]>
+        key: [v18.AssetId, v18.AssetId]
+    ): AsyncIterable<[v18.AssetId, v18.AssetId][]>
     getPairs(
         block: Block
     ): Promise<
-        [k: [v1.AssetId, v1.AssetId], v: (v1.AssetId | undefined) | undefined][]
+        [
+            k: [v18.AssetId, v18.AssetId],
+            v: (v18.AssetId | undefined) | undefined
+        ][]
     >
     getPairs(
         block: Block,
-        key: [v1.AssetId, v1.AssetId]
+        key: [v18.AssetId, v18.AssetId]
     ): Promise<
-        [k: [v1.AssetId, v1.AssetId], v: (v1.AssetId | undefined) | undefined][]
+        [
+            k: [v18.AssetId, v18.AssetId],
+            v: (v18.AssetId | undefined) | undefined
+        ][]
     >
     getPairsPaged(
         pageSize: number,
         block: Block
     ): AsyncIterable<
-        [k: [v1.AssetId, v1.AssetId], v: (v1.AssetId | undefined) | undefined][]
+        [
+            k: [v18.AssetId, v18.AssetId],
+            v: (v18.AssetId | undefined) | undefined
+        ][]
     >
     getPairsPaged(
         pageSize: number,
         block: Block,
-        key: [v1.AssetId, v1.AssetId]
+        key: [v18.AssetId, v18.AssetId]
     ): AsyncIterable<
-        [k: [v1.AssetId, v1.AssetId], v: (v1.AssetId | undefined) | undefined][]
+        [
+            k: [v18.AssetId, v18.AssetId],
+            v: (v18.AssetId | undefined) | undefined
+        ][]
     >
 }
 
@@ -73,60 +85,60 @@ export const pairStatuses = {
     /**
      *  (T::AssetId, T::AssetId) -> PairStatus
      */
-    v1: new StorageType(
+    v18: new StorageType(
         'ZenlinkProtocol.PairStatuses',
         'Default',
-        [sts.tuple(() => [v1.AssetId, v1.AssetId])],
-        v1.PairStatus
-    ) as PairStatusesV1,
+        [sts.tuple(() => [v18.AssetId, v18.AssetId])],
+        v18.PairStatus
+    ) as PairStatusesV18,
 }
 
 /**
  *  (T::AssetId, T::AssetId) -> PairStatus
  */
-export interface PairStatusesV1 {
+export interface PairStatusesV18 {
     is(block: RuntimeCtx): boolean
-    getDefault(block: Block): v1.PairStatus
+    getDefault(block: Block): v18.PairStatus
     get(
         block: Block,
-        key: [v1.AssetId, v1.AssetId]
-    ): Promise<v1.PairStatus | undefined>
+        key: [v18.AssetId, v18.AssetId]
+    ): Promise<v18.PairStatus | undefined>
     getMany(
         block: Block,
-        keys: [v1.AssetId, v1.AssetId][]
-    ): Promise<(v1.PairStatus | undefined)[]>
-    getKeys(block: Block): Promise<[v1.AssetId, v1.AssetId][]>
+        keys: [v18.AssetId, v18.AssetId][]
+    ): Promise<(v18.PairStatus | undefined)[]>
+    getKeys(block: Block): Promise<[v18.AssetId, v18.AssetId][]>
     getKeys(
         block: Block,
-        key: [v1.AssetId, v1.AssetId]
-    ): Promise<[v1.AssetId, v1.AssetId][]>
+        key: [v18.AssetId, v18.AssetId]
+    ): Promise<[v18.AssetId, v18.AssetId][]>
     getKeysPaged(
         pageSize: number,
         block: Block
-    ): AsyncIterable<[v1.AssetId, v1.AssetId][]>
+    ): AsyncIterable<[v18.AssetId, v18.AssetId][]>
     getKeysPaged(
         pageSize: number,
         block: Block,
-        key: [v1.AssetId, v1.AssetId]
-    ): AsyncIterable<[v1.AssetId, v1.AssetId][]>
+        key: [v18.AssetId, v18.AssetId]
+    ): AsyncIterable<[v18.AssetId, v18.AssetId][]>
     getPairs(
         block: Block
-    ): Promise<[k: [v1.AssetId, v1.AssetId], v: v1.PairStatus | undefined][]>
+    ): Promise<[k: [v18.AssetId, v18.AssetId], v: v18.PairStatus | undefined][]>
     getPairs(
         block: Block,
-        key: [v1.AssetId, v1.AssetId]
-    ): Promise<[k: [v1.AssetId, v1.AssetId], v: v1.PairStatus | undefined][]>
+        key: [v18.AssetId, v18.AssetId]
+    ): Promise<[k: [v18.AssetId, v18.AssetId], v: v18.PairStatus | undefined][]>
     getPairsPaged(
         pageSize: number,
         block: Block
     ): AsyncIterable<
-        [k: [v1.AssetId, v1.AssetId], v: v1.PairStatus | undefined][]
+        [k: [v18.AssetId, v18.AssetId], v: v18.PairStatus | undefined][]
     >
     getPairsPaged(
         pageSize: number,
         block: Block,
-        key: [v1.AssetId, v1.AssetId]
+        key: [v18.AssetId, v18.AssetId]
     ): AsyncIterable<
-        [k: [v1.AssetId, v1.AssetId], v: v1.PairStatus | undefined][]
+        [k: [v18.AssetId, v18.AssetId], v: v18.PairStatus | undefined][]
     >
 }

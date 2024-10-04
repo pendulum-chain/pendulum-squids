@@ -18,7 +18,6 @@ import {
     getVersionedStorage,
     decodeEvent,
 } from '../types/eventsAndStorageSelector'
-import { v1 } from '../types/foucoco'
 
 export function formatFarmingCreatedPoolEvent(ctx: EventHandlerContext) {
     return decodeEvent(network, ctx, 'farming', 'farmingPoolCreated')

@@ -12,18 +12,18 @@ export const totalIssuance = {
     /**
      *  The total units issued in the system.
      */
-    v1: new StorageType(
+    v18: new StorageType(
         'Balances.TotalIssuance',
         'Default',
         [],
         sts.bigint()
-    ) as TotalIssuanceV1,
+    ) as TotalIssuanceV18,
 }
 
 /**
  *  The total units issued in the system.
  */
-export interface TotalIssuanceV1 {
+export interface TotalIssuanceV18 {
     is(block: RuntimeCtx): boolean
     getDefault(block: Block): bigint
     get(block: Block): Promise<bigint | undefined>

@@ -7,32 +7,19 @@ import {
     EventType,
     RuntimeCtx,
 } from '../support'
-import * as v1 from '../v1'
-import * as v4 from '../v4'
+import * as v18 from '../v18'
 
 export const transfer = {
     name: 'Tokens.Transfer',
     /**
      * Transfer succeeded.
      */
-    v1: new EventType(
+    v18: new EventType(
         'Tokens.Transfer',
         sts.struct({
-            currencyId: v1.CurrencyId,
-            from: v1.AccountId32,
-            to: v1.AccountId32,
-            amount: sts.bigint(),
-        })
-    ),
-    /**
-     * Transfer succeeded.
-     */
-    v4: new EventType(
-        'Tokens.Transfer',
-        sts.struct({
-            currencyId: v4.CurrencyId,
-            from: v4.AccountId32,
-            to: v4.AccountId32,
+            currencyId: v18.CurrencyId,
+            from: v18.AccountId32,
+            to: v18.AccountId32,
             amount: sts.bigint(),
         })
     ),
@@ -43,23 +30,11 @@ export const balanceSet = {
     /**
      * A balance was set by root.
      */
-    v1: new EventType(
+    v18: new EventType(
         'Tokens.BalanceSet',
         sts.struct({
-            currencyId: v1.CurrencyId,
-            who: v1.AccountId32,
-            free: sts.bigint(),
-            reserved: sts.bigint(),
-        })
-    ),
-    /**
-     * A balance was set by root.
-     */
-    v4: new EventType(
-        'Tokens.BalanceSet',
-        sts.struct({
-            currencyId: v4.CurrencyId,
-            who: v4.AccountId32,
+            currencyId: v18.CurrencyId,
+            who: v18.AccountId32,
             free: sts.bigint(),
             reserved: sts.bigint(),
         })
@@ -71,22 +46,11 @@ export const withdrawn = {
     /**
      * Some balances were withdrawn (e.g. pay for transaction fee)
      */
-    v1: new EventType(
+    v18: new EventType(
         'Tokens.Withdrawn',
         sts.struct({
-            currencyId: v1.CurrencyId,
-            who: v1.AccountId32,
-            amount: sts.bigint(),
-        })
-    ),
-    /**
-     * Some balances were withdrawn (e.g. pay for transaction fee)
-     */
-    v4: new EventType(
-        'Tokens.Withdrawn',
-        sts.struct({
-            currencyId: v4.CurrencyId,
-            who: v4.AccountId32,
+            currencyId: v18.CurrencyId,
+            who: v18.AccountId32,
             amount: sts.bigint(),
         })
     ),
@@ -97,22 +61,11 @@ export const deposited = {
     /**
      * Deposited some balance into an account
      */
-    v1: new EventType(
+    v18: new EventType(
         'Tokens.Deposited',
         sts.struct({
-            currencyId: v1.CurrencyId,
-            who: v1.AccountId32,
-            amount: sts.bigint(),
-        })
-    ),
-    /**
-     * Deposited some balance into an account
-     */
-    v4: new EventType(
-        'Tokens.Deposited',
-        sts.struct({
-            currencyId: v4.CurrencyId,
-            who: v4.AccountId32,
+            currencyId: v18.CurrencyId,
+            who: v18.AccountId32,
             amount: sts.bigint(),
         })
     ),

@@ -125,7 +125,7 @@
         "bump": {
             "description": "Bump @subsquid packages to the latest versions",
             "deps": ["check-updates"],
-            "cmd": ["npm", "i", "-f"]
+            "cmd": ["yarn", "install"]
         },
         "open": {
             "description": "Open a local browser window",
@@ -133,7 +133,7 @@
         },
         "generate-types-from-runtime-binary": {
             "description": "Generates the respective type files for a provided parachain runtime binary",
-            "cmd": ["npm", "run", "generate-types-from-runtime-binary"]
+            "cmd": ["yarn", "run", "generate-types-from-runtime-binary"]
         }
     }
 }

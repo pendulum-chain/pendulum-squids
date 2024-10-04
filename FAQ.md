@@ -48,7 +48,7 @@ Here's a step-by-step instruction. First, generated the model files:
 
 ```sh
 npx sqd codegen
-npm run build
+yarn build
 ```
 
 Now you have to options: either create a migration for an incremental schema update or recreate the whole schema from scratch.
@@ -89,7 +89,7 @@ Observe the port (4350 by default) and navigate to `localhost:4350/graphql` to e
 First, make sure you have compiled your project with
 
 ```
-npm run build
+yarn build
 ```
 
 Then simply run

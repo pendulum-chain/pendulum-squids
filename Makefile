@@ -3,7 +3,7 @@ process: migrate
 
 
 build:
-	@npm run build
+	@yarn build
 
 build-processor-image:
 	@docker build . --target processor -t squid-processor

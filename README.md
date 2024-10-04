@@ -13,7 +13,7 @@ The production deployments of our squids are available at:
 
 -   node 16.x
 -   docker
--   npm -- note that `yarn` package manager is not supported
+-   yarn
 
 ### Quickly running the sample
 
@@ -21,9 +21,8 @@ Example commands below use [make(1)](https://www.gnu.org/software/make/).
 Please, have a look at commands in [Makefile](Makefile) if your platform doesn't support it.
 
 ```bash
-# 1. Update Squid SDK and install dependencies
-npm run update
-npm ci
+# 1. Install dependencies
+yarn install
 
 # 2. Compile typescript files
 sqd build

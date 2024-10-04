@@ -28,12 +28,12 @@ export async function handleIssueRequest(ctx: EventHandlerContext) {
 
 export async function handleRedeemRequest(ctx: EventHandlerContext) {
     const { id: eventId, args } = ctx.event
-    const { redeemId, redeemer, amount, vaultId, vaultStellarPublicKey } = args
+    const { redeemId, redeemer, amount, vaultId } = args
     const vaultIdFlat = parseVaultId(vaultId)
     const vault = await getOrCreateVault(
         ctx,
         vaultIdFlat,
-        vaultStellarPublicKey
+        undefined // It doesn't matter we don't have this, the vault should have already issued something and therefore must have been created.
     )
 
     const redeemRequest = new RedeemRequest({

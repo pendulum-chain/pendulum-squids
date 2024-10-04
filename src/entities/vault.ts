@@ -11,7 +11,7 @@ export interface VaultIdFlat {
 export async function getOrCreateVault(
     ctx: EventHandlerContext,
     vaultId: VaultIdFlat,
-    vaultStellarPublicKey: string
+    vaultStellarPublicKey: string | undefined
 ): Promise<Vault | undefined> {
     const vaultIdString = `${vaultId.accountId}-${vaultId.collateral}-${vaultId.wrapped}`
     let vault = await ctx.store.get(Vault, vaultIdString)

@@ -4,7 +4,6 @@ import { EventHandlerContext } from '../processor'
 import {
     addressFromAsset,
     getTotalIssuance,
-    u8a2s,
     zenlinkAssetIdToCurrencyId,
 } from '../utils/token'
 import { AssetId } from '../types/common'

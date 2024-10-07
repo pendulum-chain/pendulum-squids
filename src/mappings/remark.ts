@@ -26,7 +26,7 @@ export async function handleBatchWithRemark(ctx: CallHandlerContext) {
     // Try decoding remark from hex
     try {
         remark = Buffer.from(remarkRaw.slice(2), 'hex').toString('utf8')
-    } catch (e) {
+    } catch {
         ctx.log.info(
             `Error when decoding remark '${remarkRaw}' with id ${ctx.call.id}.`
         )

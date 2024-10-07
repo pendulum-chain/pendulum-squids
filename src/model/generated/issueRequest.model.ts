@@ -2,13 +2,14 @@ import {
     Entity as Entity_,
     Column as Column_,
     PrimaryColumn as PrimaryColumn_,
-    StringColumn as StringColumn_,
     DateTimeColumn as DateTimeColumn_,
     BigIntColumn as BigIntColumn_,
+    StringColumn as StringColumn_,
     ManyToOne as ManyToOne_,
     Index as Index_,
 } from '@subsquid/typeorm-store'
 import { Vault } from './vault.model'
+import { IssueRequestStatus } from './_issueRequestStatus'
 
 @Entity_()
 export class IssueRequest {
@@ -19,11 +20,14 @@ export class IssueRequest {
     @PrimaryColumn_()
     id!: string
 
-    @StringColumn_({ nullable: false })
-    issueId!: string
-
     @DateTimeColumn_({ nullable: false })
     timestamp!: Date
+
+    @BigIntColumn_({ nullable: false })
+    opentime!: bigint
+
+    @BigIntColumn_({ nullable: false })
+    period!: bigint
 
     @StringColumn_({ nullable: false })
     requester!: string
@@ -34,4 +38,16 @@ export class IssueRequest {
     @Index_()
     @ManyToOne_(() => Vault, { nullable: true })
     vault!: Vault
+
+    @BigIntColumn_({ nullable: false })
+    fee!: bigint
+
+    @BigIntColumn_({ nullable: false })
+    griefingCollateral!: bigint
+
+    @BigIntColumn_({ nullable: true })
+    slashedCollateral!: bigint | undefined | null
+
+    @Column_('varchar', { length: 9, nullable: false })
+    status!: IssueRequestStatus
 }

@@ -28,7 +28,12 @@
         "ZenlinkProtocol.LiquidityAdded",
         "ZenlinkProtocol.LiquidityRemoved",
         "Issue.RequestIssue",
-        "Redeem.RequestRedeem"
+        "Issue.ExecuteIssue",
+        "Issue.CancelIssue",
+        "Issue.IssueAmountChange",
+        "Redeem.RequestRedeem",
+        "Redeem.ExecuteRedeem",
+        "Redeem.CancelRedeem"
     ],
     "calls": [],
     "storage": [
@@ -44,6 +49,8 @@
         "Farming.GaugeInfos",
         "Farming.SharesAndWithdrawnRewards",
         "ZenlinkProtocol.PairStatuses",
-        "ZenlinkProtocol.LiquidityPairs"
+        "ZenlinkProtocol.LiquidityPairs",
+        "Issue.IssueRequests",
+        "Redeem.RedeemRequests"
     ]
 }

@@ -1,5 +1,5 @@
-module.exports = class Data1728048271072 {
-    name = 'Data1728048271072'
+module.exports = class Data1728327845148 {
+    name = 'Data1728327845148'
 
     async up(db) {
         await db.query(
@@ -366,13 +366,13 @@ module.exports = class Data1728048271072 {
             `CREATE TABLE "vault" ("id" character varying NOT NULL, "account_id" text NOT NULL, "wrapped" text NOT NULL, "collateral" text NOT NULL, "vault_stellar_public_key" text NOT NULL, CONSTRAINT "PK_dd0898234c77f9d97585171ac59" PRIMARY KEY ("id"))`
         )
         await db.query(
-            `CREATE TABLE "issue_request" ("id" character varying NOT NULL, "issue_id" text NOT NULL, "timestamp" TIMESTAMP WITH TIME ZONE NOT NULL, "requester" text NOT NULL, "amount" numeric NOT NULL, "vault_id" character varying, CONSTRAINT "PK_498cd8089f9302db334fd7fe7f6" PRIMARY KEY ("id"))`
+            `CREATE TABLE "issue_request" ("id" character varying NOT NULL, "timestamp" TIMESTAMP WITH TIME ZONE NOT NULL, "opentime" numeric NOT NULL, "period" numeric NOT NULL, "requester" text NOT NULL, "amount" numeric NOT NULL, "fee" numeric NOT NULL, "griefing_collateral" numeric NOT NULL, "slashed_collateral" numeric, "status" character varying(9) NOT NULL, "vault_id" character varying, CONSTRAINT "PK_498cd8089f9302db334fd7fe7f6" PRIMARY KEY ("id"))`
         )
         await db.query(
             `CREATE INDEX "IDX_62755a570447cc6fb07d57ec30" ON "issue_request" ("vault_id") `
         )
         await db.query(
-            `CREATE TABLE "redeem_request" ("id" character varying NOT NULL, "redeem_id" text NOT NULL, "timestamp" TIMESTAMP WITH TIME ZONE NOT NULL, "redeemer" text NOT NULL, "amount" numeric NOT NULL, "vault_id" character varying, CONSTRAINT "PK_cfc413a4a56777d07b29de675fa" PRIMARY KEY ("id"))`
+            `CREATE TABLE "redeem_request" ("id" character varying NOT NULL, "timestamp" TIMESTAMP WITH TIME ZONE NOT NULL, "opentime" numeric NOT NULL, "period" numeric NOT NULL, "redeemer" text NOT NULL, "amount" numeric NOT NULL, "fee" numeric NOT NULL, "premium" numeric NOT NULL, "transfer_fee" numeric NOT NULL, "slashed_amount" numeric, "status" character varying(17) NOT NULL, "vault_id" character varying, CONSTRAINT "PK_cfc413a4a56777d07b29de675fa" PRIMARY KEY ("id"))`
         )
         await db.query(
             `CREATE INDEX "IDX_1b3c9ec8a5fa79b7af69bb30ad" ON "redeem_request" ("vault_id") `

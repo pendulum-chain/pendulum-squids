@@ -861,22 +861,47 @@ type Vault @entity {
     vaultStellarPublicKey: String!
 }
 
+enum IssueRequestStatus {
+    PENDING
+    COMPLETED
+    CANCELLED
+}
+
 type IssueRequest @entity {
-    id: ID!
-    issueId: String!
+    id: ID! # issueId
     timestamp: DateTime!
+    opentime: BigInt!
+    period: BigInt! # we get this from storage upon reception of event
     requester: String!
     amount: BigInt!
     vault: Vault! # we get asset from this entity
+    fee: BigInt!
+    griefingCollateral: BigInt!
+    slashedCollateral: BigInt
+    status: IssueRequestStatus!
+}
+
+enum RedeemRequestStatus {
+    PENDING
+    COMPLETED
+    REIMBURSED
+    REIMBURSED_MINTED # Similar to REIMBURSED. Minted only happens if vault did not have enough collateral to reimburse.
+    RETRIED
 }
 
 type RedeemRequest @entity {
-    id: ID!
-    redeemId: String!
+    id: ID! #redeemId
     timestamp: DateTime!
+    opentime: BigInt!
+    period: BigInt! # we get this from storage upon reception of event
     redeemer: String!
     amount: BigInt!
     vault: Vault! # we get asset from this entity
+    fee: BigInt!
+    premium: BigInt!
+    transferFee: BigInt!
+    slashedAmount: BigInt
+    status: RedeemRequestStatus!
 }
 
 type Block @entity {

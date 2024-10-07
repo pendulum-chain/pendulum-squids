@@ -1,7 +1,7 @@
 import { EventHandlerContext } from '../processor'
 import { Vault } from '../model'
 import { hexToSs58 } from '../mappings/nabla/addresses'
-
+import { deriveVaultIdAsString } from '../utils/vault'
 export interface VaultIdFlat {
     accountId: string
     collateral: string
@@ -13,7 +13,7 @@ export async function getOrCreateVault(
     vaultId: VaultIdFlat,
     vaultStellarPublicKey: string | undefined
 ): Promise<Vault | undefined> {
-    const vaultIdString = `${vaultId.accountId}-${vaultId.collateral}-${vaultId.wrapped}`
+    const vaultIdString = deriveVaultIdAsString(vaultId)
     let vault = await ctx.store.get(Vault, vaultIdString)
 
     if (!vault) {

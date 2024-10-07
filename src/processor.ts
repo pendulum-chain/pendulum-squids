@@ -54,7 +54,15 @@ import {
     handleContractEvent,
     handleContractInstantiated,
 } from './mappings/nabla/handleEvent'
-import { handleIssueRequest, handleRedeemRequest } from './mappings/spacewalk'
+import {
+    handleIssueRequest,
+    handleRedeemRequest,
+    handleIssueRequestAmountChanged,
+    handleIssueRequestCancelled,
+    handleIssueRequestExecuted,
+    handleRedeemRequestCancelled,
+    handleRedeemRequestExecuted,
+} from './mappings/spacewalk'
 
 const processor = new SubstrateBatchProcessor()
     .setRpcEndpoint(config.dataSource.chain)
@@ -96,6 +104,7 @@ const processor = new SubstrateBatchProcessor()
         extrinsic: true,
         stack: true,
     })
+    .setBlockRange({ from: 2500000 })
     .addEvent({
         name: [
             // Zenlink
@@ -131,7 +140,12 @@ const processor = new SubstrateBatchProcessor()
             'Contracts.Instantiated',
             // Spacewalk
             'Issue.RequestIssue',
+            'Issue.ExecuteIssue',
+            'Issue.CancelIssue',
+            'Issue.IssueAmountChange',
             'Redeem.RequestRedeem',
+            'Redeem.ExecuteRedeem',
+            'Redeem.CancelRedeem',
         ],
         call: true,
         extrinsic: true,
@@ -348,6 +362,41 @@ processor.run(new TypeormDatabase(), async (ctx) => {
                             event,
                         })
                         break
+                    case 'Issue.IssueAmountChange':
+                        await handleIssueRequestAmountChanged({
+                            ...ctx,
+                            block,
+                            event,
+                        })
+                        break
+                    case 'Issue.CancelIssue':
+                        await handleIssueRequestCancelled({
+                            ...ctx,
+                            block,
+                            event,
+                        })
+                        break
+                    case 'Issue.ExecuteIssue':
+                        await handleIssueRequestExecuted({
+                            ...ctx,
+                            block,
+                            event,
+                        })
+                        break
+                    case 'Redeem.CancelRedeem':
+                        await handleRedeemRequestCancelled({
+                            ...ctx,
+                            block,
+                            event,
+                        })
+                        break
+                    case 'Redeem.ExecuteRedeem':
+                        await handleRedeemRequestExecuted({
+                            ...ctx,
+                            block,
+                            event,
+                        })
+                        break
                     case 'Redeem.RequestRedeem':
                         await handleRedeemRequest({
                             ...ctx,
@@ -355,6 +404,7 @@ processor.run(new TypeormDatabase(), async (ctx) => {
                             event,
                         })
                         break
+
                     // price oracle
                     case 'DiaOracleModule.UpdatedPrices':
                         // Only processing these events once every CATCHUP_PRICE_UPDATE_PERIOD blocks or if the current block is the 'head' of the chain

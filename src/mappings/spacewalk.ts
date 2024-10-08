@@ -82,8 +82,6 @@ async function createOrUpdateIssueRequest(
         status: getIssueRequestStatus(storageIssue.status),
     })
 
-    console.log('issueRequest', issueRequest)
-
     await ctx.store.save(issueRequest)
 }
 
@@ -164,8 +162,6 @@ export async function createOrUpdateRedeemRequest(
             storageRedeem.stellarAddress
         ),
     })
-
-    console.log('existingRedeemRequest', redeemRequest)
 
     await ctx.store.save(redeemRequest)
 }

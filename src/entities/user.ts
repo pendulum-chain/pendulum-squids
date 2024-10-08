@@ -1,4 +1,3 @@
-import { isU8a } from '@polkadot/util'
 import { codec } from '@subsquid/ss58'
 import { config } from '../config'
 import { ZERO_BD } from '../constants'

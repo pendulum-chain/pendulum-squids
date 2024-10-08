@@ -6,7 +6,7 @@ import {
     updateSingleTokenLockHourData,
 } from '../mappings/farming/update'
 import { handleLiquiditySync } from '../mappings/protocol'
-import { Bundle, Farm, Incentive, Pair, SingleTokenLock } from '../model'
+import { Bundle, Farm, Incentive, SingleTokenLock } from '../model'
 import { EventHandlerContext } from '../processor'
 import { convertTokenToDecimal, getTimePerBlock } from './helpers'
 import { sortAssets } from './sort'
@@ -331,7 +331,8 @@ export async function updateFarmingPoolInfo(
     farmingData.stakeApr = stakeApr
 
     if (poolState?.__kind === 'Dead') {
-        ;(farmingData.rewardUSDPerDay = '0'), (farmingData.stakeApr = '0')
+        farmingData.rewardUSDPerDay = '0'
+        farmingData.stakeApr = '0'
     }
     await ctx.store.save(farmingData)
 
@@ -375,10 +376,6 @@ export async function killFarmingPoolInfo(
 
     let stakeToken = assetIdIndex.toString()
     const liquidityStaked = farmingPoolInfo?.totalShares ?? 0n
-
-    const timePerBlock = getTimePerBlock(ctx)
-
-    const blocksPerDay = BigInt(((3600 * 1000 * 24) / timePerBlock).toFixed(0))
 
     let stakeUSD = '0'
     let rewardUSDRate = '0'
@@ -574,7 +571,8 @@ export async function killFarmingPoolInfo(
     farmingData.stakeApr = stakeApr
 
     if (poolState?.__kind === 'Dead') {
-        ;(farmingData.rewardUSDPerDay = '0'), (farmingData.stakeApr = '0')
+        farmingData.rewardUSDPerDay = '0'
+        farmingData.stakeApr = '0'
     }
     await ctx.store.save(farmingData)
 

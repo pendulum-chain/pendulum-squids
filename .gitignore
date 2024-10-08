@@ -28,4 +28,4 @@ lib/*
 /.idea
 
 local-archive-endpoint/*.metadata
-.yarn
+.yarn/

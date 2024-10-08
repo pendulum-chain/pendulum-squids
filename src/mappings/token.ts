@@ -64,61 +64,47 @@ function deriveStellarPublicKeyFromHex(issuer: string) {
 
 export function beautifyCurrencyIdString(currencyId: any) {
     switch (currencyId.__kind) {
-        case 'ZenlinkLPToken': {
-            currencyId = 'ZenlinkLPToken(' + String(currencyId.value) + ')'
-            break
-        }
-        case 'Native': {
-            currencyId = 'Native'
-            break
-        }
-        case 'Stellar': {
+        case 'ZenlinkLPToken':
+            return 'ZenlinkLPToken(' + String(currencyId.value) + ')'
+
+        case 'Native':
+            return 'Native'
+
+        case 'Stellar':
             switch (currencyId.value.__kind) {
-                case 'StellarNative': {
-                    currencyId = 'StellarNative'
-                    break
-                }
-                case 'AlphaNum4': {
-                    currencyId =
+                case 'StellarNative':
+                    return 'StellarNative'
+
+                case 'AlphaNum4':
+                    return (
                         'Stellar::AlphaNum4(' +
                         hexAssetCodeToString(currencyId.value.code) +
                         ',' +
                         deriveStellarPublicKeyFromHex(currencyId.value.issuer) +
                         ')'
-                    break
-                }
-                case 'AlphaNum12': {
-                    currencyId =
+                    )
+                case 'AlphaNum12':
+                    return (
                         'Stellar::AlphaNum12(' +
                         hexAssetCodeToString(currencyId.value.code) +
                         ',' +
                         deriveStellarPublicKeyFromHex(currencyId.value.issuer) +
                         ')'
-                    break
-                }
+                    )
             }
-            break
-        }
-        case 'XCM': {
-            switch (typeof currencyId.value) {
-                case 'number': {
-                    currencyId = 'XCM(' + String(currencyId.value) + ')'
-                    break
-                }
-                // Probably a ForeignCurrencyId
-                case 'object': {
-                    currencyId = 'XCM(' + String(currencyId.value.__kind) + ')'
-                    break
-                }
-            }
-            break
-        }
-        default:
-            currencyId = JSON.stringify(currencyId)
-            break
-    }
 
-    return currencyId
+        case 'XCM':
+            switch (typeof currencyId.value) {
+                case 'number':
+                    return 'XCM(' + String(currencyId.value) + ')'
+
+                // Probably a ForeignCurrencyId
+                case 'object':
+                    return 'XCM(' + String(currencyId.value.__kind) + ')'
+            }
+        default:
+            return JSON.stringify(currencyId)
+    }
 }
 
 export async function handleTokenDeposited(ctx: EventHandlerContext) {

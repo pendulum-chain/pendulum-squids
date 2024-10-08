@@ -1,11 +1,13 @@
 import { VaultIdFlat } from '../entities/vault'
 import { beautifyCurrencyIdString } from '../mappings/token'
+import { VaultIdType } from '../types/common'
+import { hexToSs58 } from '../mappings/nabla/addresses'
 
-export function parseVaultId(vaultId: any): VaultIdFlat {
+export function parseVaultId(vault: VaultIdType): VaultIdFlat {
     return {
-        accountId: vaultId.accountId,
-        collateral: beautifyCurrencyIdString(vaultId.currencies.collateral),
-        wrapped: beautifyCurrencyIdString(vaultId.currencies.wrapped),
+        accountId: hexToSs58(vault.accountId),
+        collateral: beautifyCurrencyIdString(vault.currencies.collateral),
+        wrapped: beautifyCurrencyIdString(vault.currencies.wrapped),
     }
 }
 

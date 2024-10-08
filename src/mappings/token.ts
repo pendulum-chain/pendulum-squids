@@ -57,7 +57,7 @@ function trimCode(code: string): string {
     }
 }
 
-function deriveStellarPublicKeyFromHex(issuer: string) {
+export function deriveStellarPublicKeyFromHex(issuer: string) {
     const buffer = Buffer.from(issuer.split('0x')[1], 'hex')
     return StrKey.encodeEd25519PublicKey(buffer)
 }

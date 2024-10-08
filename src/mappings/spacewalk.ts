@@ -1,14 +1,14 @@
 import { EventHandlerContext } from '../processor'
 import { RedeemRequest, IssueRequest } from '../model'
-import { hexToSs58 } from './nabla/addresses'
+import { maybeHexToSs58 } from './nabla/addresses'
 import { getOrCreateVault } from '../entities/vault'
-import { parseVaultId } from '../utils/vault'
 import { getVersionedStorage } from '../types/eventsAndStorageSelector'
 import { network } from '../config'
 import { IssueRequestStatus } from '../model/generated/_issueRequestStatus'
 import { RedeemRequestStatus } from '../model/generated/_redeemRequestStatus'
-import { IssueRequestType } from '../types/common'
+import { IssueRequestType, RedeemRequestType } from '../types/common'
 import { beautifyCurrencyIdString } from './token'
+import { deriveStellarPublicKeyFromHex } from './token'
 
 function getIssueRequestStatus(status: IssueRequestType['status']) {
     switch (status.__kind) {
@@ -18,6 +18,23 @@ function getIssueRequestStatus(status: IssueRequestType['status']) {
             return IssueRequestStatus.COMPLETED
         case 'Pending':
             return IssueRequestStatus.PENDING
+    }
+}
+
+function getRedeemRequestStatus(status: RedeemRequestType['status']) {
+    switch (status.__kind) {
+        case 'Pending':
+            return RedeemRequestStatus.PENDING
+        case 'Completed':
+            return RedeemRequestStatus.COMPLETED
+        case 'Retried':
+            return RedeemRequestStatus.RETRIED
+        case 'Reimbursed':
+            if (status.value) {
+                return RedeemRequestStatus.REIMBURSED_MINTED
+            } else {
+                return RedeemRequestStatus.REIMBURSED
+            }
     }
 }
 
@@ -37,6 +54,12 @@ async function createOrUpdateIssueRequest(
         issueId
     )) as IssueRequestType
 
+    const vault = await getOrCreateVault(
+        ctx,
+        storageIssue.vault,
+        storageIssue.stellarAddress
+    )
+
     // Get existing issue request from the database if any
     let existingIssueRequest = await ctx.store.get(IssueRequest, issueId)
 
@@ -45,17 +68,21 @@ async function createOrUpdateIssueRequest(
         timestamp: existingIssueRequest
             ? existingIssueRequest.timestamp
             : new Date(ctx.block.timestamp ?? 0),
-        opentime: storageIssue.opentime as any, // Fixme: opentime is not a number
-        period: storageIssue.period as any, // Fixme: period is not a number
-        requester: hexToSs58(storageIssue.requester),
-        amount: storageIssue.amount,
-        vault: storageIssue.vault as any, // Fixme: vault is not a string
-        fee: storageIssue.fee,
+        opentime: BigInt(storageIssue.opentime),
+        period: BigInt(storageIssue.period),
+        requester: maybeHexToSs58(storageIssue.requester),
+        amount: BigInt(storageIssue.amount),
+        vault: vault, // Our vault entity, not the storage's vault type
+        fee: BigInt(storageIssue.fee),
         asset: beautifyCurrencyIdString(storageIssue.asset),
-        stellarAddress: storageIssue.stellarAddress, // TODO possibly already convert to proper Stellar encoding
-        griefingCollateral: storageIssue.griefingCollateral,
+        stellarAddress: deriveStellarPublicKeyFromHex(
+            storageIssue.stellarAddress
+        ),
+        griefingCollateral: BigInt(storageIssue.griefingCollateral),
         status: getIssueRequestStatus(storageIssue.status),
     })
+
+    console.log('issueRequest', issueRequest)
 
     await ctx.store.save(issueRequest)
 }
@@ -90,80 +117,76 @@ export async function handleIssueRequestAmountChanged(
     await createOrUpdateIssueRequest(ctx, issueId)
 }
 
-export async function handleRedeemRequest(ctx: EventHandlerContext) {
-    const { args } = ctx.event
-    const { redeemId, redeemer, amount, vaultId, fee, premium, transferFee } =
-        args
-    const vaultIdFlat = parseVaultId(vaultId)
-    const vault = await getOrCreateVault(
-        ctx,
-        vaultIdFlat,
-        undefined // It doesn't matter we don't have this, the vault should have already issued something and therefore must have been created.
-    )
-
+export async function createOrUpdateRedeemRequest(
+    ctx: EventHandlerContext,
+    redeemId: string
+) {
     const redeemRequestStorage = await getVersionedStorage(
         network,
         ctx,
         'redeem',
         'redeemRequests'
     )
-    const createdRedeem = await redeemRequestStorage.get(ctx.block, redeemId)
+    const storageRedeem = (await redeemRequestStorage.get(
+        ctx.block,
+        redeemId
+    )) as RedeemRequestType
+
+    const vault = await getOrCreateVault(
+        ctx,
+        storageRedeem.vault,
+        undefined // We don't have the stellar address of the vault in the redeem request. Nevertheless, the vault was already created on issue.
+    )
+
+    // vault must exist
+    if (!vault) {
+        throw new Error(`Vault ${storageRedeem.vault} not found`)
+    }
+
+    let existingRedeemRequest = await ctx.store.get(RedeemRequest, redeemId)
 
     const redeemRequest = new RedeemRequest({
         id: redeemId,
-        timestamp: new Date(ctx.block.timestamp ?? 0),
-        opentime: createdRedeem.opentimes,
-        period: createdRedeem.period,
-        redeemer: hexToSs58(redeemer),
-        amount: amount,
+        timestamp: existingRedeemRequest
+            ? existingRedeemRequest.timestamp
+            : new Date(ctx.block.timestamp ?? 0),
+        opentime: BigInt(storageRedeem.opentime),
+        period: BigInt(storageRedeem.period),
+        redeemer: maybeHexToSs58(storageRedeem.redeemer),
+        amount: BigInt(storageRedeem.amount),
+        asset: beautifyCurrencyIdString(storageRedeem.asset),
         vault: vault,
-        fee: fee,
-        premium: premium,
-        transferFee: transferFee,
-        status: RedeemRequestStatus.PENDING,
+        fee: BigInt(storageRedeem.fee),
+        premium: BigInt(storageRedeem.premium),
+        transferFee: BigInt(storageRedeem.transferFee),
+        status: getRedeemRequestStatus(storageRedeem.status),
+        stellarAddress: deriveStellarPublicKeyFromHex(
+            storageRedeem.stellarAddress
+        ),
     })
 
+    console.log('existingRedeemRequest', redeemRequest)
+
     await ctx.store.save(redeemRequest)
+}
+
+export async function handleRedeemRequest(ctx: EventHandlerContext) {
+    const { args } = ctx.event
+    const { redeemId } = args
+
+    await createOrUpdateRedeemRequest(ctx, redeemId)
 }
 
 export async function handleRedeemRequestExecuted(ctx: EventHandlerContext) {
     const { args } = ctx.event
     const { redeemId } = args
 
-    let redeemRequest = await ctx.store.get(RedeemRequest, redeemId)
-
-    if (redeemRequest == null) {
-        throw new Error(
-            'Redeem request MUST exists on the database when handling executed event'
-        )
-    }
-
-    redeemRequest.status = RedeemRequestStatus.COMPLETED
-
-    await ctx.store.save(redeemRequest)
+    await createOrUpdateRedeemRequest(ctx, redeemId)
 }
 
 export async function handleRedeemRequestCancelled(ctx: EventHandlerContext) {
     const { args } = ctx.event
-    const { redeemId, status, slashedAmount } = args
+    const { redeemId } = args
 
-    let redeemRequest = await ctx.store.get(RedeemRequest, redeemId)
-
-    if (redeemRequest == null) {
-        throw new Error(
-            'Redeem request MUST exists on the database when handling cancel event'
-        )
-    }
-
-    if (status == 'Reimbursed') {
-        redeemRequest.status = RedeemRequestStatus.REIMBURSED
-        // Todo, not sure how this status is represented.
-    } else if (status == 'Reimbursed(true)?') {
-        redeemRequest.status = RedeemRequestStatus.REIMBURSED_MINTED
-    } else {
-        redeemRequest.status = RedeemRequestStatus.RETRIED
-    }
-    redeemRequest.slashedAmount = slashedAmount
-
-    await ctx.store.save(redeemRequest)
+    await createOrUpdateRedeemRequest(ctx, redeemId)
 }

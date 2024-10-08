@@ -35,6 +35,9 @@ export class RedeemRequest {
     @BigIntColumn_({ nullable: false })
     amount!: bigint
 
+    @StringColumn_({ nullable: false })
+    asset!: string
+
     @Index_()
     @ManyToOne_(() => Vault, { nullable: true })
     vault!: Vault
@@ -48,9 +51,9 @@ export class RedeemRequest {
     @BigIntColumn_({ nullable: false })
     transferFee!: bigint
 
-    @BigIntColumn_({ nullable: true })
-    slashedAmount!: bigint | undefined | null
-
     @Column_('varchar', { length: 17, nullable: false })
     status!: RedeemRequestStatus
+
+    @StringColumn_({ nullable: false })
+    stellarAddress!: string
 }

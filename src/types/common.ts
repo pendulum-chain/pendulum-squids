@@ -5,6 +5,7 @@ import {
     IssueRequest as IssueRequestType,
     RedeemRequest as RedeemRequestType,
 } from './pendulum/v12'
+import { VaultId as VaultIdType } from './pendulum/v12'
 
 export {
     AssetId,
@@ -12,4 +13,5 @@ export {
     CurrencyIdV12,
     IssueRequestType,
     RedeemRequestType,
+    VaultIdType,
 }

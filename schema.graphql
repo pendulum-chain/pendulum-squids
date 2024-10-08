@@ -894,15 +894,16 @@ type RedeemRequest @entity {
     id: ID! #redeemId
     timestamp: DateTime!
     opentime: BigInt!
-    period: BigInt! # we get this from storage upon reception of event
+    period: BigInt!
     redeemer: String!
     amount: BigInt!
-    vault: Vault! # we get asset from this entity
+    asset: String!
+    vault: Vault!
     fee: BigInt!
     premium: BigInt!
     transferFee: BigInt!
-    slashedAmount: BigInt
     status: RedeemRequestStatus!
+    stellarAddress: String!
 }
 
 type Block @entity {

@@ -7,102 +7,87 @@ import { getVersionedStorage } from '../types/eventsAndStorageSelector'
 import { network } from '../config'
 import { IssueRequestStatus } from '../model/generated/_issueRequestStatus'
 import { RedeemRequestStatus } from '../model/generated/_redeemRequestStatus'
+import { IssueRequestType } from '../types/common'
+import { beautifyCurrencyIdString } from './token'
 
-export async function handleIssueRequest(ctx: EventHandlerContext) {
-    const { args } = ctx.event
-    const {
-        issueId,
-        requester,
-        amount,
-        vaultId,
-        vaultStellarPublicKey,
-        fee,
-        griefingCollateral,
-    } = args
-    const vaultIdFlat = parseVaultId(vaultId)
-    const vault = await getOrCreateVault(
-        ctx,
-        vaultIdFlat,
-        vaultStellarPublicKey
-    )
+function getIssueRequestStatus(status: IssueRequestType['status']) {
+    switch (status.__kind) {
+        case 'Cancelled':
+            return IssueRequestStatus.CANCELLED
+        case 'Completed':
+            return IssueRequestStatus.COMPLETED
+        case 'Pending':
+            return IssueRequestStatus.PENDING
+    }
+}
 
+// This function is used to get the latest info about an issue request from the storage and save it to the database.
+async function createOrUpdateIssueRequest(
+    ctx: EventHandlerContext,
+    issueId: string
+) {
     const issueRequestStorage = await getVersionedStorage(
         network,
         ctx,
         'issue',
         'issueRequests'
     )
-    const createdIssue = await issueRequestStorage.get(ctx.block, issueId)
+    const storageIssue = (await issueRequestStorage.get(
+        ctx.block,
+        issueId
+    )) as IssueRequestType
+
+    // Get existing issue request from the database if any
+    let existingIssueRequest = await ctx.store.get(IssueRequest, issueId)
 
     const issueRequest = new IssueRequest({
         id: issueId,
-        timestamp: new Date(ctx.block.timestamp ?? 0),
-        opentime: createdIssue.opentime,
-        period: createdIssue.period,
-        requester: hexToSs58(requester),
-        amount: amount,
-        vault: vault,
-        fee: fee,
-        griefingCollateral: griefingCollateral,
-        status: IssueRequestStatus.PENDING,
+        timestamp: existingIssueRequest
+            ? existingIssueRequest.timestamp
+            : new Date(ctx.block.timestamp ?? 0),
+        opentime: storageIssue.opentime as any, // Fixme: opentime is not a number
+        period: storageIssue.period as any, // Fixme: period is not a number
+        requester: hexToSs58(storageIssue.requester),
+        amount: storageIssue.amount,
+        vault: storageIssue.vault as any, // Fixme: vault is not a string
+        fee: storageIssue.fee,
+        asset: beautifyCurrencyIdString(storageIssue.asset),
+        stellarAddress: storageIssue.stellarAddress, // TODO possibly already convert to proper Stellar encoding
+        griefingCollateral: storageIssue.griefingCollateral,
+        status: getIssueRequestStatus(storageIssue.status),
     })
+
     await ctx.store.save(issueRequest)
+}
+
+export async function handleIssueRequest(ctx: EventHandlerContext) {
+    const { args } = ctx.event
+    const { issueId } = args
+
+    await createOrUpdateIssueRequest(ctx, issueId)
 }
 
 export async function handleIssueRequestExecuted(ctx: EventHandlerContext) {
     const { args } = ctx.event
-    const { issueId, amount, fee } = args
+    const { issueId } = args
 
-    let issueRequest = await ctx.store.get(IssueRequest, issueId)
-
-    if (issueRequest == null) {
-        throw new Error(
-            'Issue request MUST exists on the database when handling executed event'
-        )
-    }
-    // set property to completed, amount and fee could have also changed.
-    issueRequest.status = IssueRequestStatus.COMPLETED
-    issueRequest.amount = amount
-    issueRequest.fee = fee
-
-    await ctx.store.save(issueRequest)
+    await createOrUpdateIssueRequest(ctx, issueId)
 }
 
 export async function handleIssueRequestCancelled(ctx: EventHandlerContext) {
     const { args } = ctx.event
-    const { issueId, griefingCollateral } = args
+    const { issueId } = args
 
-    let issueRequest = await ctx.store.get(IssueRequest, issueId)
-
-    if (issueRequest == null) {
-        throw new Error(
-            'Issue request MUST exists on the database when handling cancel event'
-        )
-    }
-    // set property to completed. Griefing collateral slashed depends on when the requester cancelled, or if it expired.
-    issueRequest.status = IssueRequestStatus.CANCELLED
-    issueRequest.slashedCollateral = griefingCollateral
-
-    await ctx.store.save(issueRequest)
+    await createOrUpdateIssueRequest(ctx, issueId)
 }
 
 export async function handleIssueRequestAmountChanged(
     ctx: EventHandlerContext
 ) {
     const { args } = ctx.event
-    const { issueId, confiscatedGriefingCollateral } = args
+    const { issueId } = args
 
-    let issueRequest = await ctx.store.get(IssueRequest, issueId)
-
-    if (issueRequest == null) {
-        throw new Error(
-            'Issue request MUST exists on the database when handling cancel event'
-        )
-    }
-
-    // we update on this event the slashed collateral if the amount sent was not enough. The amount is updated on the executed event.
-    issueRequest.slashedCollateral = confiscatedGriefingCollateral
-    await ctx.store.save(issueRequest)
+    await createOrUpdateIssueRequest(ctx, issueId)
 }
 
 export async function handleRedeemRequest(ctx: EventHandlerContext) {

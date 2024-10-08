@@ -39,14 +39,17 @@ export class IssueRequest {
     @ManyToOne_(() => Vault, { nullable: true })
     vault!: Vault
 
+    @StringColumn_({ nullable: false })
+    asset!: string
+
     @BigIntColumn_({ nullable: false })
     fee!: bigint
 
     @BigIntColumn_({ nullable: false })
     griefingCollateral!: bigint
 
-    @BigIntColumn_({ nullable: true })
-    slashedCollateral!: bigint | undefined | null
+    @StringColumn_({ nullable: false })
+    stellarAddress!: string
 
     @Column_('varchar', { length: 9, nullable: false })
     status!: IssueRequestStatus

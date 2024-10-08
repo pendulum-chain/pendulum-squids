@@ -875,9 +875,10 @@ type IssueRequest @entity {
     requester: String!
     amount: BigInt!
     vault: Vault! # we get asset from this entity
+    asset: String!
     fee: BigInt!
     griefingCollateral: BigInt!
-    slashedCollateral: BigInt
+    stellarAddress: String!
     status: IssueRequestStatus!
 }
 

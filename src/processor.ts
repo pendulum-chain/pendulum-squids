@@ -104,7 +104,6 @@ const processor = new SubstrateBatchProcessor()
         extrinsic: true,
         stack: true,
     })
-    .setBlockRange({ from: 2500000 })
     .addEvent({
         name: [
             // Zenlink

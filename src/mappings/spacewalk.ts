@@ -85,7 +85,7 @@ async function createOrUpdateIssueRequest(
     await ctx.store.save(issueRequest)
 }
 
-export async function handleIssueRequest(ctx: EventHandlerContext) {
+export async function handleIssueRequestCreated(ctx: EventHandlerContext) {
     const { args } = ctx.event
     const { issueId } = args
 
@@ -166,7 +166,7 @@ export async function createOrUpdateRedeemRequest(
     await ctx.store.save(redeemRequest)
 }
 
-export async function handleRedeemRequest(ctx: EventHandlerContext) {
+export async function handleRedeemRequestCreated(ctx: EventHandlerContext) {
     const { args } = ctx.event
     const { redeemId } = args
 
@@ -181,6 +181,15 @@ export async function handleRedeemRequestExecuted(ctx: EventHandlerContext) {
 }
 
 export async function handleRedeemRequestCancelled(ctx: EventHandlerContext) {
+    const { args } = ctx.event
+    const { redeemId } = args
+
+    await createOrUpdateRedeemRequest(ctx, redeemId)
+}
+
+export async function handleMintTokensForReimburseRedeem(
+    ctx: EventHandlerContext
+) {
     const { args } = ctx.event
     const { redeemId } = args
 

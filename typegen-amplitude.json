@@ -33,7 +33,9 @@
         "Issue.IssueAmountChange",
         "Redeem.RequestRedeem",
         "Redeem.ExecuteRedeem",
-        "Redeem.CancelRedeem"
+        "Redeem.CancelRedeem",
+        "Redeem.LiquidationRedeem",
+        "Redeem.MintTokensForReimbursedRedeem"
     ],
     "calls": [],
     "storage": [

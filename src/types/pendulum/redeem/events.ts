@@ -27,6 +27,18 @@ export const requestRedeem = {
     ),
 }
 
+export const liquidationRedeem = {
+    name: 'Redeem.LiquidationRedeem',
+    v12: new EventType(
+        'Redeem.LiquidationRedeem',
+        sts.struct({
+            redeemer: v12.AccountId32,
+            amount: sts.bigint(),
+            asset: v12.CurrencyId,
+        })
+    ),
+}
+
 export const executeRedeem = {
     name: 'Redeem.ExecuteRedeem',
     v12: new EventType(
@@ -53,6 +65,18 @@ export const cancelRedeem = {
             vaultId: v12.VaultId,
             slashedAmount: sts.bigint(),
             status: v12.RedeemRequestStatus,
+        })
+    ),
+}
+
+export const mintTokensForReimbursedRedeem = {
+    name: 'Redeem.MintTokensForReimbursedRedeem',
+    v12: new EventType(
+        'Redeem.MintTokensForReimbursedRedeem',
+        sts.struct({
+            redeemId: v12.H256,
+            vaultId: v12.VaultId,
+            amount: sts.bigint(),
         })
     ),
 }

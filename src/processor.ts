@@ -55,13 +55,15 @@ import {
     handleContractInstantiated,
 } from './mappings/nabla/handleEvent'
 import {
-    handleIssueRequest,
-    handleRedeemRequest,
+    handleIssueRequestCreated,
+    handleRedeemRequestCreated,
     handleIssueRequestAmountChanged,
     handleIssueRequestCancelled,
     handleIssueRequestExecuted,
     handleRedeemRequestCancelled,
     handleRedeemRequestExecuted,
+    handleLiquidationRedeem,
+    handleMintTokensForReimburseRedeem,
 } from './mappings/spacewalk'
 
 const processor = new SubstrateBatchProcessor()
@@ -146,7 +148,7 @@ const processor = new SubstrateBatchProcessor()
             'Redeem.ExecuteRedeem',
             'Redeem.CancelRedeem',
             'Redeem.LiquidationRedeem',
-            'Redeem.MintTokensForReimbursedRedeem'
+            'Redeem.MintTokensForReimbursedRedeem',
         ],
         call: true,
         extrinsic: true,
@@ -357,7 +359,7 @@ processor.run(new TypeormDatabase(), async (ctx) => {
                         })
                         break
                     case 'Issue.RequestIssue':
-                        await handleIssueRequest({
+                        await handleIssueRequestCreated({
                             ...ctx,
                             block,
                             event,
@@ -384,6 +386,13 @@ processor.run(new TypeormDatabase(), async (ctx) => {
                             event,
                         })
                         break
+                    case 'Redeem.RequestRedeem':
+                        await handleRedeemRequestCreated({
+                            ...ctx,
+                            block,
+                            event,
+                        })
+                        break
                     case 'Redeem.CancelRedeem':
                         await handleRedeemRequestCancelled({
                             ...ctx,
@@ -398,8 +407,8 @@ processor.run(new TypeormDatabase(), async (ctx) => {
                             event,
                         })
                         break
-                    case 'Redeem.RequestRedeem':
-                        await handleRedeemRequest({
+                    case 'Redeem.MintTokensForReimbursedRedeem':
+                        await handleMintTokensForReimburseRedeem({
                             ...ctx,
                             block,
                             event,

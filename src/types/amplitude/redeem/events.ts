@@ -57,6 +57,34 @@ export const requestRedeem = {
     ),
 }
 
+export const liquidationRedeem = {
+    name: 'Redeem.LiquidationRedeem',
+    v8: new EventType(
+        'Redeem.LiquidationRedeem',
+        sts.struct({
+            redeemer: v8.AccountId32,
+            amount: sts.bigint(),
+            asset: v8.CurrencyId,
+        })
+    ),
+    v10: new EventType(
+        'Redeem.LiquidationRedeem',
+        sts.struct({
+            redeemer: v10.AccountId32,
+            amount: sts.bigint(),
+            asset: v10.CurrencyId,
+        })
+    ),
+    v12: new EventType(
+        'Redeem.LiquidationRedeem',
+        sts.struct({
+            redeemer: v12.AccountId32,
+            amount: sts.bigint(),
+            asset: v12.CurrencyId,
+        })
+    ),
+}
+
 export const executeRedeem = {
     name: 'Redeem.ExecuteRedeem',
     v8: new EventType(
@@ -127,6 +155,34 @@ export const cancelRedeem = {
             vaultId: v12.VaultId,
             slashedAmount: sts.bigint(),
             status: v12.RedeemRequestStatus,
+        })
+    ),
+}
+
+export const mintTokensForReimbursedRedeem = {
+    name: 'Redeem.MintTokensForReimbursedRedeem',
+    v8: new EventType(
+        'Redeem.MintTokensForReimbursedRedeem',
+        sts.struct({
+            redeemId: v8.H256,
+            vaultId: v8.VaultId,
+            amount: sts.bigint(),
+        })
+    ),
+    v10: new EventType(
+        'Redeem.MintTokensForReimbursedRedeem',
+        sts.struct({
+            redeemId: v10.H256,
+            vaultId: v10.VaultId,
+            amount: sts.bigint(),
+        })
+    ),
+    v12: new EventType(
+        'Redeem.MintTokensForReimbursedRedeem',
+        sts.struct({
+            redeemId: v12.H256,
+            vaultId: v12.VaultId,
+            amount: sts.bigint(),
         })
     ),
 }

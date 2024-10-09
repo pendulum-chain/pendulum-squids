@@ -145,6 +145,8 @@ const processor = new SubstrateBatchProcessor()
             'Redeem.RequestRedeem',
             'Redeem.ExecuteRedeem',
             'Redeem.CancelRedeem',
+            'Redeem.LiquidationRedeem',
+            'Redeem.MintTokensForReimbursedRedeem'
         ],
         call: true,
         extrinsic: true,

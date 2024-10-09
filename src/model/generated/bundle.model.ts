@@ -2,7 +2,8 @@ import {
     Entity as Entity_,
     Column as Column_,
     PrimaryColumn as PrimaryColumn_,
-} from 'typeorm'
+    StringColumn as StringColumn_,
+} from '@subsquid/typeorm-store'
 
 @Entity_()
 export class Bundle {
@@ -16,6 +17,6 @@ export class Bundle {
     /**
      * BigDecimal
      */
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     ethPrice!: string
 }

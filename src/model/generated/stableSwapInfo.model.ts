@@ -2,8 +2,10 @@ import {
     Entity as Entity_,
     Column as Column_,
     PrimaryColumn as PrimaryColumn_,
+    IntColumn as IntColumn_,
+    StringColumn as StringColumn_,
     OneToMany as OneToMany_,
-} from 'typeorm'
+} from '@subsquid/typeorm-store'
 import { StableSwap } from './stableSwap.model'
 
 @Entity_()
@@ -15,22 +17,22 @@ export class StableSwapInfo {
     @PrimaryColumn_()
     id!: string
 
-    @Column_('int4', { nullable: false })
+    @IntColumn_({ nullable: false })
     poolCount!: number
 
     /**
      * BigDecimal
      */
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     totalVolumeUSD!: string
 
     /**
      * BigDecimal
      */
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     totalTvlUSD!: string
 
-    @Column_('int4', { nullable: false })
+    @IntColumn_({ nullable: false })
     txCount!: number
 
     @OneToMany_(() => StableSwap, (e) => e.stableSwapInfo)

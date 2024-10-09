@@ -4,7 +4,8 @@ import {
     PrimaryColumn as PrimaryColumn_,
     ManyToOne as ManyToOne_,
     Index as Index_,
-} from 'typeorm'
+    StringColumn as StringColumn_,
+} from '@subsquid/typeorm-store'
 import { User } from './user.model'
 import { StableSwap } from './stableSwap.model'
 
@@ -25,6 +26,6 @@ export class StableSwapLiquidityPosition {
     @ManyToOne_(() => StableSwap, { nullable: true })
     stableSwap!: StableSwap
 
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     liquidityTokenBalance!: string
 }

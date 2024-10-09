@@ -4,7 +4,9 @@ import {
     PrimaryColumn as PrimaryColumn_,
     ManyToOne as ManyToOne_,
     Index as Index_,
-} from 'typeorm'
+    BigIntColumn as BigIntColumn_,
+    BytesColumn as BytesColumn_,
+} from '@subsquid/typeorm-store'
 import * as marshal from './marshal'
 import { StableSwap } from './stableSwap.model'
 import {
@@ -35,18 +37,12 @@ export class StableSwapEvent {
     })
     data!: StableSwapEventData | undefined | null
 
-    @Column_('numeric', {
-        transformer: marshal.bigintTransformer,
-        nullable: false,
-    })
+    @BigIntColumn_({ nullable: false })
     block!: bigint
 
-    @Column_('numeric', {
-        transformer: marshal.bigintTransformer,
-        nullable: false,
-    })
+    @BigIntColumn_({ nullable: false })
     timestamp!: bigint
 
-    @Column_('bytea', { nullable: false })
+    @BytesColumn_({ nullable: false })
     transaction!: Uint8Array
 }

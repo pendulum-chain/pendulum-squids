@@ -4,7 +4,10 @@ import {
     PrimaryColumn as PrimaryColumn_,
     Index as Index_,
     ManyToOne as ManyToOne_,
-} from 'typeorm'
+    IntColumn as IntColumn_,
+    StringColumn as StringColumn_,
+    JSONColumn as JSONColumn_,
+} from '@subsquid/typeorm-store'
 import { Block } from './block.model'
 import { Extrinsic } from './extrinsic.model'
 import { Call } from './call.model'
@@ -34,23 +37,23 @@ export class Event {
     @ManyToOne_(() => Call, { nullable: true })
     call!: Call | undefined | null
 
-    @Column_('int4', { nullable: false })
+    @IntColumn_({ nullable: false })
     index!: number
 
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     phase!: string
 
     @Index_()
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     pallet!: string
 
     @Index_()
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     name!: string
 
-    @Column_('jsonb', { nullable: true })
+    @JSONColumn_({ nullable: true })
     args!: unknown | undefined | null
 
-    @Column_('text', { array: true, nullable: true })
+    @StringColumn_({ array: true, nullable: true })
     argsStr!: (string | undefined | null)[] | undefined | null
 }

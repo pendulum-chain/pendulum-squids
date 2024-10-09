@@ -4,7 +4,9 @@ import {
     PrimaryColumn as PrimaryColumn_,
     ManyToOne as ManyToOne_,
     Index as Index_,
-} from 'typeorm'
+    DateTimeColumn as DateTimeColumn_,
+    StringColumn as StringColumn_,
+} from '@subsquid/typeorm-store'
 import { SingleTokenLock } from './singleTokenLock.model'
 
 @Entity_()
@@ -20,15 +22,15 @@ export class SingleTokenLockDayData {
     @ManyToOne_(() => SingleTokenLock, { nullable: true })
     singleTokenLock!: SingleTokenLock
 
-    @Column_('timestamp with time zone', { nullable: false })
+    @DateTimeColumn_({ nullable: false })
     date!: Date
 
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     totalLiquidity!: string
 
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     totalLiquidityUSD!: string
 
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     totalLiquidityETH!: string
 }

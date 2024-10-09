@@ -3,7 +3,8 @@ import {
     Column as Column_,
     PrimaryColumn as PrimaryColumn_,
     OneToMany as OneToMany_,
-} from 'typeorm'
+    StringColumn as StringColumn_,
+} from '@subsquid/typeorm-store'
 import { LiquidityPosition } from './liquidityPosition.model'
 import { StableSwapLiquidityPosition } from './stableSwapLiquidityPosition.model'
 import { StakePosition } from './stakePosition.model'
@@ -29,6 +30,6 @@ export class User {
     /**
      * BigDecimal
      */
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     usdSwapped!: string
 }

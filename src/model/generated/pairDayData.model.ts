@@ -2,9 +2,12 @@ import {
     Entity as Entity_,
     Column as Column_,
     PrimaryColumn as PrimaryColumn_,
+    DateTimeColumn as DateTimeColumn_,
+    StringColumn as StringColumn_,
     ManyToOne as ManyToOne_,
     Index as Index_,
-} from 'typeorm'
+    IntColumn as IntColumn_,
+} from '@subsquid/typeorm-store'
 import { Pair } from './pair.model'
 import { Token } from './token.model'
 
@@ -17,10 +20,10 @@ export class PairDayData {
     @PrimaryColumn_()
     id!: string
 
-    @Column_('timestamp with time zone', { nullable: false })
+    @DateTimeColumn_({ nullable: false })
     date!: Date
 
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     pairAddress!: string
 
     @Index_()
@@ -35,27 +38,27 @@ export class PairDayData {
     @ManyToOne_(() => Token, { nullable: true })
     token1!: Token
 
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     reserve0!: string
 
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     reserve1!: string
 
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     totalSupply!: string
 
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     reserveUSD!: string
 
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     dailyVolumeToken0!: string
 
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     dailyVolumeToken1!: string
 
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     dailyVolumeUSD!: string
 
-    @Column_('int4', { nullable: false })
+    @IntColumn_({ nullable: false })
     dailyTxns!: number
 }

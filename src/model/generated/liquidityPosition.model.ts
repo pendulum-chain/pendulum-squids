@@ -4,7 +4,8 @@ import {
     PrimaryColumn as PrimaryColumn_,
     ManyToOne as ManyToOne_,
     Index as Index_,
-} from 'typeorm'
+    StringColumn as StringColumn_,
+} from '@subsquid/typeorm-store'
 import { User } from './user.model'
 import { Pair } from './pair.model'
 
@@ -28,6 +29,6 @@ export class LiquidityPosition {
     /**
      * BigDecimal
      */
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     liquidityTokenBalance!: string
 }

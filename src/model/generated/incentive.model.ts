@@ -4,7 +4,8 @@ import {
     PrimaryColumn as PrimaryColumn_,
     ManyToOne as ManyToOne_,
     Index as Index_,
-} from 'typeorm'
+    StringColumn as StringColumn_,
+} from '@subsquid/typeorm-store'
 import { Farm } from './farm.model'
 import { Token } from './token.model'
 
@@ -25,6 +26,6 @@ export class Incentive {
     @ManyToOne_(() => Token, { nullable: true })
     rewardToken!: Token
 
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     rewardPerDay!: string
 }

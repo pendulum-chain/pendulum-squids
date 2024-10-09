@@ -2,10 +2,12 @@ import {
     Entity as Entity_,
     Column as Column_,
     PrimaryColumn as PrimaryColumn_,
+    DateTimeColumn as DateTimeColumn_,
+    StringColumn as StringColumn_,
+    BigIntColumn as BigIntColumn_,
     ManyToOne as ManyToOne_,
     Index as Index_,
-} from 'typeorm'
-import * as marshal from './marshal'
+} from '@subsquid/typeorm-store'
 import { NablaToken } from './nablaToken.model'
 import { NablaSwapFee } from './nablaSwapFee.model'
 
@@ -18,22 +20,16 @@ export class NablaSwap {
     @PrimaryColumn_()
     id!: string
 
-    @Column_('timestamp with time zone', { nullable: false })
+    @DateTimeColumn_({ nullable: false })
     timestamp!: Date
 
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     sender!: string
 
-    @Column_('numeric', {
-        transformer: marshal.bigintTransformer,
-        nullable: false,
-    })
+    @BigIntColumn_({ nullable: false })
     amountIn!: bigint
 
-    @Column_('numeric', {
-        transformer: marshal.bigintTransformer,
-        nullable: false,
-    })
+    @BigIntColumn_({ nullable: false })
     amountOut!: bigint
 
     @Index_()
@@ -44,7 +40,7 @@ export class NablaSwap {
     @ManyToOne_(() => NablaToken, { nullable: true })
     tokenOut!: NablaToken
 
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     to!: string
 
     @Index_()

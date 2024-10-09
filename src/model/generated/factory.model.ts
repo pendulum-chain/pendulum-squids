@@ -2,7 +2,9 @@ import {
     Entity as Entity_,
     Column as Column_,
     PrimaryColumn as PrimaryColumn_,
-} from 'typeorm'
+    IntColumn as IntColumn_,
+    StringColumn as StringColumn_,
+} from '@subsquid/typeorm-store'
 
 @Entity_()
 export class Factory {
@@ -13,39 +15,39 @@ export class Factory {
     @PrimaryColumn_()
     id!: string
 
-    @Column_('int4', { nullable: false })
+    @IntColumn_({ nullable: false })
     pairCount!: number
 
     /**
      * BigDecimal
      */
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     totalVolumeUSD!: string
 
     /**
      * BigDecimal
      */
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     totalVolumeETH!: string
 
     /**
      * BigDecimal
      */
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     untrackedVolumeUSD!: string
 
     /**
      * BigDecimal
      */
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     totalLiquidityUSD!: string
 
     /**
      * BigDecimal
      */
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     totalLiquidityETH!: string
 
-    @Column_('int4', { nullable: false })
+    @IntColumn_({ nullable: false })
     txCount!: number
 }

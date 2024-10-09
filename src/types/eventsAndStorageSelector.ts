@@ -13,7 +13,7 @@ import { StorageType as StorageTypeAmplitude } from './amplitude/support'
 // Must keep up to date with the possible versions
 // of events and storage
 const foucocoVersions: string[] = ['v18']
-const pendulumVersions: string[] = ['v1', 'v3', 'v9', 'v10', 'v15']
+const pendulumVersions: string[] = ['v1', 'v3', 'v9', 'v10', 'v12', 'v15']
 const amplitudeVersions: string[] = [
     'v1',
     'v3',

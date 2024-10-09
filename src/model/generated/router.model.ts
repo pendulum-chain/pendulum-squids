@@ -3,7 +3,8 @@ import {
     Column as Column_,
     PrimaryColumn as PrimaryColumn_,
     OneToMany as OneToMany_,
-} from 'typeorm'
+    BooleanColumn as BooleanColumn_,
+} from '@subsquid/typeorm-store'
 import { SwapPool } from './swapPool.model'
 import { BackstopPool } from './backstopPool.model'
 
@@ -22,6 +23,6 @@ export class Router {
     @OneToMany_(() => BackstopPool, (e) => e.router)
     backstopPool!: BackstopPool[]
 
-    @Column_('bool', { nullable: false })
+    @BooleanColumn_({ nullable: false })
     paused!: boolean
 }

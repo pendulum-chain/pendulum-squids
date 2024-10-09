@@ -2,10 +2,12 @@ import {
     Entity as Entity_,
     Column as Column_,
     PrimaryColumn as PrimaryColumn_,
+    DateTimeColumn as DateTimeColumn_,
+    StringColumn as StringColumn_,
+    BigIntColumn as BigIntColumn_,
     ManyToOne as ManyToOne_,
     Index as Index_,
-} from 'typeorm'
-import * as marshal from './marshal'
+} from '@subsquid/typeorm-store'
 import { BackstopPool } from './backstopPool.model'
 
 @Entity_()
@@ -17,22 +19,16 @@ export class NablaBackstopLiquidityDeposit {
     @PrimaryColumn_()
     id!: string
 
-    @Column_('timestamp with time zone', { nullable: false })
+    @DateTimeColumn_({ nullable: false })
     timestamp!: Date
 
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     sender!: string
 
-    @Column_('numeric', {
-        transformer: marshal.bigintTransformer,
-        nullable: false,
-    })
+    @BigIntColumn_({ nullable: false })
     poolSharesMinted!: bigint
 
-    @Column_('numeric', {
-        transformer: marshal.bigintTransformer,
-        nullable: false,
-    })
+    @BigIntColumn_({ nullable: false })
     amountPoolTokensDeposited!: bigint
 
     @Index_()

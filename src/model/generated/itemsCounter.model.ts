@@ -3,7 +3,8 @@ import {
     Column as Column_,
     PrimaryColumn as PrimaryColumn_,
     Index as Index_,
-} from 'typeorm'
+    IntColumn as IntColumn_,
+} from '@subsquid/typeorm-store'
 import { ItemType } from './_itemType'
 import { CounterLevel } from './_counterLevel'
 
@@ -25,6 +26,6 @@ export class ItemsCounter {
     level!: CounterLevel
 
     @Index_()
-    @Column_('int4', { nullable: false })
+    @IntColumn_({ nullable: false })
     total!: number
 }

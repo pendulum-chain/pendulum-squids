@@ -57,76 +57,54 @@ function trimCode(code: string): string {
     }
 }
 
-function deriveStellarPublicKeyFromHex(issuer: string) {
+export function deriveStellarPublicKeyFromHex(issuer: string) {
     const buffer = Buffer.from(issuer.split('0x')[1], 'hex')
     return StrKey.encodeEd25519PublicKey(buffer)
 }
 
-function beautifyCurrencyIdString(event: any) {
-    let currencyId = ''
+export function beautifyCurrencyIdString(currencyId: any) {
+    switch (currencyId.__kind) {
+        case 'ZenlinkLPToken':
+            return 'ZenlinkLPToken(' + String(currencyId.value) + ')'
 
-    switch (event.currencyId.__kind) {
-        case 'ZenlinkLPToken': {
-            currencyId =
-                'ZenlinkLPToken(' + String(event.currencyId.value) + ')'
-            break
-        }
-        case 'Native': {
-            currencyId = 'Native'
-            break
-        }
-        case 'Stellar': {
-            switch (event.currencyId.value.__kind) {
-                case 'StellarNative': {
-                    currencyId = 'StellarNative'
-                    break
-                }
-                case 'AlphaNum4': {
-                    currencyId =
+        case 'Native':
+            return 'Native'
+
+        case 'Stellar':
+            switch (currencyId.value.__kind) {
+                case 'StellarNative':
+                    return 'StellarNative'
+
+                case 'AlphaNum4':
+                    return (
                         'Stellar::AlphaNum4(' +
-                        hexAssetCodeToString(event.currencyId.value.code) +
+                        hexAssetCodeToString(currencyId.value.code) +
                         ',' +
-                        deriveStellarPublicKeyFromHex(
-                            event.currencyId.value.issuer
-                        ) +
+                        deriveStellarPublicKeyFromHex(currencyId.value.issuer) +
                         ')'
-                    break
-                }
-                case 'AlphaNum12': {
-                    currencyId =
+                    )
+                case 'AlphaNum12':
+                    return (
                         'Stellar::AlphaNum12(' +
-                        hexAssetCodeToString(event.currencyId.value.code) +
+                        hexAssetCodeToString(currencyId.value.code) +
                         ',' +
-                        deriveStellarPublicKeyFromHex(
-                            event.currencyId.value.issuer
-                        ) +
+                        deriveStellarPublicKeyFromHex(currencyId.value.issuer) +
                         ')'
-                    break
-                }
+                    )
             }
-            break
-        }
-        case 'XCM': {
-            switch (typeof event.currencyId.value) {
-                case 'number': {
-                    currencyId = 'XCM(' + String(event.currencyId.value) + ')'
-                    break
-                }
-                // Probably a ForeignCurrencyId
-                case 'object': {
-                    currencyId =
-                        'XCM(' + String(event.currencyId.value.__kind) + ')'
-                    break
-                }
-            }
-            break
-        }
-        default:
-            currencyId = JSON.stringify(event.currencyId)
-            break
-    }
 
-    return currencyId
+        case 'XCM':
+            switch (typeof currencyId.value) {
+                case 'number':
+                    return 'XCM(' + String(currencyId.value) + ')'
+
+                // Probably a ForeignCurrencyId
+                case 'object':
+                    return 'XCM(' + String(currencyId.value.__kind) + ')'
+            }
+        default:
+            return JSON.stringify(currencyId)
+    }
 }
 
 export async function handleTokenDeposited(ctx: EventHandlerContext) {
@@ -137,7 +115,7 @@ export async function handleTokenDeposited(ctx: EventHandlerContext) {
 
     if (!event) return
 
-    const currencyId = beautifyCurrencyIdString(event)
+    const currencyId = beautifyCurrencyIdString(event.currencyId)
 
     const tokenDeposit = new TokenDeposit({
         id: ctx.event.id,
@@ -241,7 +219,7 @@ export async function handleTokenWithdrawn(ctx: EventHandlerContext) {
 
     if (!event) return
 
-    const currencyId = beautifyCurrencyIdString(event)
+    const currencyId = beautifyCurrencyIdString(event.currencyId)
 
     const tokenWithdrawn = new TokenWithdrawn({
         id: ctx.event.id,
@@ -372,7 +350,7 @@ export async function handleTokenTransfer(ctx: EventHandlerContext) {
 
     if (!event) return
 
-    const currencyId = beautifyCurrencyIdString(event)
+    const currencyId = beautifyCurrencyIdString(event.currencyId)
 
     const tokenTransfer = new TokenTransfer({
         id: ctx.event.id,

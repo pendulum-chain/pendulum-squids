@@ -2,11 +2,14 @@ import {
     Entity as Entity_,
     Column as Column_,
     PrimaryColumn as PrimaryColumn_,
+    StringColumn as StringColumn_,
+    IntColumn as IntColumn_,
     ManyToOne as ManyToOne_,
     Index as Index_,
+    BigIntColumn as BigIntColumn_,
+    BooleanColumn as BooleanColumn_,
     OneToMany as OneToMany_,
-} from 'typeorm'
-import * as marshal from './marshal'
+} from '@subsquid/typeorm-store'
 import { Router } from './router.model'
 import { BackstopPool } from './backstopPool.model'
 import { NablaToken } from './nablaToken.model'
@@ -21,13 +24,13 @@ export class SwapPool {
     @PrimaryColumn_()
     id!: string
 
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     name!: string
 
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     symbol!: string
 
-    @Column_('int4', { nullable: false })
+    @IntColumn_({ nullable: false })
     lpTokenDecimals!: number
 
     @Index_()
@@ -42,48 +45,30 @@ export class SwapPool {
     @ManyToOne_(() => NablaToken, { nullable: true })
     token!: NablaToken
 
-    @Column_('numeric', {
-        transformer: marshal.bigintTransformer,
-        nullable: false,
-    })
+    @BigIntColumn_({ nullable: false })
     reserve!: bigint
 
-    @Column_('numeric', {
-        transformer: marshal.bigintTransformer,
-        nullable: false,
-    })
+    @BigIntColumn_({ nullable: false })
     reserveWithSlippage!: bigint
 
-    @Column_('numeric', {
-        transformer: marshal.bigintTransformer,
-        nullable: false,
-    })
+    @BigIntColumn_({ nullable: false })
     totalLiabilities!: bigint
 
-    @Column_('numeric', {
-        transformer: marshal.bigintTransformer,
-        nullable: false,
-    })
+    @BigIntColumn_({ nullable: false })
     totalSupply!: bigint
 
-    @Column_('bool', { nullable: false })
+    @BooleanColumn_({ nullable: false })
     paused!: boolean
 
     @OneToMany_(() => NablaSwapFee, (e) => e.swapPool)
     feesHistory!: NablaSwapFee[]
 
-    @Column_('numeric', {
-        transformer: marshal.bigintTransformer,
-        nullable: false,
-    })
+    @BigIntColumn_({ nullable: false })
     apr!: bigint
 
-    @Column_('numeric', {
-        transformer: marshal.bigintTransformer,
-        nullable: false,
-    })
+    @BigIntColumn_({ nullable: false })
     insuranceFeeBps!: bigint
 
-    @Column_('text', { nullable: true })
+    @StringColumn_({ nullable: true })
     protocolTreasuryAddress!: string | undefined | null
 }

@@ -2,10 +2,11 @@ import {
     Entity as Entity_,
     Column as Column_,
     PrimaryColumn as PrimaryColumn_,
+    BigIntColumn as BigIntColumn_,
     ManyToOne as ManyToOne_,
     Index as Index_,
-} from 'typeorm'
-import * as marshal from './marshal'
+    StringColumn as StringColumn_,
+} from '@subsquid/typeorm-store'
 import { SingleTokenLock } from './singleTokenLock.model'
 
 @Entity_()
@@ -17,22 +18,19 @@ export class SingleTokenLockHourData {
     @PrimaryColumn_()
     id!: string
 
-    @Column_('numeric', {
-        transformer: marshal.bigintTransformer,
-        nullable: false,
-    })
+    @BigIntColumn_({ nullable: false })
     hourStartUnix!: bigint
 
     @Index_()
     @ManyToOne_(() => SingleTokenLock, { nullable: true })
     singleTokenLock!: SingleTokenLock
 
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     totalLiquidity!: string
 
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     totalLiquidityUSD!: string
 
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     totalLiquidityETH!: string
 }

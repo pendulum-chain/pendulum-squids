@@ -2,11 +2,14 @@ import {
     Entity as Entity_,
     Column as Column_,
     PrimaryColumn as PrimaryColumn_,
+    StringColumn as StringColumn_,
+    IntColumn as IntColumn_,
     ManyToOne as ManyToOne_,
     Index as Index_,
+    BigIntColumn as BigIntColumn_,
+    BooleanColumn as BooleanColumn_,
     OneToMany as OneToMany_,
-} from 'typeorm'
-import * as marshal from './marshal'
+} from '@subsquid/typeorm-store'
 import { Router } from './router.model'
 import { NablaToken } from './nablaToken.model'
 import { SwapPool } from './swapPool.model'
@@ -21,13 +24,13 @@ export class BackstopPool {
     @PrimaryColumn_()
     id!: string
 
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     name!: string
 
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     symbol!: string
 
-    @Column_('int4', { nullable: false })
+    @IntColumn_({ nullable: false })
     lpTokenDecimals!: number
 
     @Index_()
@@ -38,19 +41,13 @@ export class BackstopPool {
     @ManyToOne_(() => NablaToken, { nullable: true })
     token!: NablaToken
 
-    @Column_('numeric', {
-        transformer: marshal.bigintTransformer,
-        nullable: false,
-    })
+    @BigIntColumn_({ nullable: false })
     reserves!: bigint
 
-    @Column_('numeric', {
-        transformer: marshal.bigintTransformer,
-        nullable: false,
-    })
+    @BigIntColumn_({ nullable: false })
     totalSupply!: bigint
 
-    @Column_('bool', { nullable: false })
+    @BooleanColumn_({ nullable: false })
     paused!: boolean
 
     @OneToMany_(() => SwapPool, (e) => e.backstop)
@@ -59,9 +56,6 @@ export class BackstopPool {
     @OneToMany_(() => NablaSwapFee, (e) => e.backstopPool)
     feesHistory!: NablaSwapFee[]
 
-    @Column_('numeric', {
-        transformer: marshal.bigintTransformer,
-        nullable: false,
-    })
+    @BigIntColumn_({ nullable: false })
     apr!: bigint
 }

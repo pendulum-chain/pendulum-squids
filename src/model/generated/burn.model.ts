@@ -4,7 +4,11 @@ import {
     PrimaryColumn as PrimaryColumn_,
     ManyToOne as ManyToOne_,
     Index as Index_,
-} from 'typeorm'
+    DateTimeColumn as DateTimeColumn_,
+    StringColumn as StringColumn_,
+    IntColumn as IntColumn_,
+    BooleanColumn as BooleanColumn_,
+} from '@subsquid/typeorm-store'
 import { Transaction } from './transaction.model'
 import { Pair } from './pair.model'
 
@@ -21,40 +25,40 @@ export class Burn {
     @ManyToOne_(() => Transaction, { nullable: true })
     transaction!: Transaction
 
-    @Column_('timestamp with time zone', { nullable: false })
+    @DateTimeColumn_({ nullable: false })
     timestamp!: Date
 
     @Index_()
     @ManyToOne_(() => Pair, { nullable: true })
     pair!: Pair
 
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     liquidity!: string
 
-    @Column_('text', { nullable: true })
+    @StringColumn_({ nullable: true })
     sender!: string | undefined | null
 
-    @Column_('text', { nullable: true })
+    @StringColumn_({ nullable: true })
     amount0!: string | undefined | null
 
-    @Column_('text', { nullable: true })
+    @StringColumn_({ nullable: true })
     amount1!: string | undefined | null
 
-    @Column_('text', { nullable: true })
+    @StringColumn_({ nullable: true })
     to!: string | undefined | null
 
-    @Column_('int4', { nullable: true })
+    @IntColumn_({ nullable: true })
     logIndex!: number | undefined | null
 
-    @Column_('text', { nullable: true })
+    @StringColumn_({ nullable: true })
     amountUSD!: string | undefined | null
 
-    @Column_('bool', { nullable: false })
+    @BooleanColumn_({ nullable: false })
     needsComplete!: boolean
 
-    @Column_('text', { nullable: true })
+    @StringColumn_({ nullable: true })
     feeTo!: string | undefined | null
 
-    @Column_('text', { nullable: true })
+    @StringColumn_({ nullable: true })
     feeLiquidity!: string | undefined | null
 }

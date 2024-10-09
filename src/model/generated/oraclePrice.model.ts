@@ -2,9 +2,11 @@ import {
     Entity as Entity_,
     Column as Column_,
     PrimaryColumn as PrimaryColumn_,
+    StringColumn as StringColumn_,
     Index as Index_,
-} from 'typeorm'
-import * as marshal from './marshal'
+    BigIntColumn as BigIntColumn_,
+    IntColumn as IntColumn_,
+} from '@subsquid/typeorm-store'
 
 @Entity_()
 export class OraclePrice {
@@ -16,36 +18,33 @@ export class OraclePrice {
     id!: string
 
     @Index_()
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     symbol!: string
 
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     name!: string
 
     @Index_()
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     blockchain!: string
 
     @Index_()
-    @Column_('numeric', {
-        transformer: marshal.bigintTransformer,
-        nullable: false,
-    })
+    @BigIntColumn_({ nullable: false })
     timestamp!: bigint
 
     /**
      * BigDecimal
      */
     @Index_()
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     price!: string
 
     /**
      * BigDecimal
      */
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     supply!: string
 
-    @Column_('int4', { nullable: false })
+    @IntColumn_({ nullable: false })
     decimals!: number
 }

@@ -4,7 +4,10 @@ import {
     PrimaryColumn as PrimaryColumn_,
     ManyToOne as ManyToOne_,
     Index as Index_,
-} from 'typeorm'
+    DateTimeColumn as DateTimeColumn_,
+    IntColumn as IntColumn_,
+    StringColumn as StringColumn_,
+} from '@subsquid/typeorm-store'
 import { LiquidityPosition } from './liquidityPosition.model'
 import { User } from './user.model'
 import { Pair } from './pair.model'
@@ -22,10 +25,10 @@ export class LiquidityPositionSnapshot {
     @ManyToOne_(() => LiquidityPosition, { nullable: true })
     liquidityPosition!: LiquidityPosition
 
-    @Column_('timestamp with time zone', { nullable: false })
+    @DateTimeColumn_({ nullable: false })
     timestamp!: Date
 
-    @Column_('int4', { nullable: false })
+    @IntColumn_({ nullable: false })
     block!: number
 
     @Index_()
@@ -39,42 +42,42 @@ export class LiquidityPositionSnapshot {
     /**
      * BigDecimal
      */
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     token0PriceUSD!: string
 
     /**
      * BigDecimal
      */
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     token1PriceUSD!: string
 
     /**
      * BigDecimal
      */
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     reserve0!: string
 
     /**
      * BigDecimal
      */
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     reserve1!: string
 
     /**
      * BigDecimal
      */
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     reserveUSD!: string
 
     /**
      * BigDecimal
      */
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     liquidityTokenTotalSupply!: string
 
     /**
      * BigDecimal
      */
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     liquidityTokenBalance!: string
 }

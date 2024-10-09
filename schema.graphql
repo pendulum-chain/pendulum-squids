@@ -853,6 +853,59 @@ type NablaSwapLiquidityWithdrawal @entity {
     swapPool: SwapPool!
 }
 
+type Vault @entity {
+    id: ID! # string concat{vaultId.accountId}-${vaultId.collateral}-${vaultId.wrapped}
+    accountId: String!
+    wrapped: String!
+    collateral: String!
+    vaultStellarPublicKey: String!
+}
+
+enum IssueRequestStatus {
+    PENDING
+    COMPLETED
+    CANCELLED
+}
+
+type IssueRequest @entity {
+    id: ID! # issueId
+    timestamp: DateTime!
+    opentime: BigInt!
+    period: BigInt! # we get this from storage upon reception of event
+    requester: String!
+    amount: BigInt!
+    vault: Vault! # we get asset from this entity
+    asset: String!
+    fee: BigInt!
+    griefingCollateral: BigInt!
+    stellarAddress: String!
+    status: IssueRequestStatus!
+}
+
+enum RedeemRequestStatus {
+    PENDING
+    COMPLETED
+    REIMBURSED
+    REIMBURSED_MINTED # Similar to REIMBURSED. Minted only happens if vault did not have enough collateral to reimburse.
+    RETRIED
+}
+
+type RedeemRequest @entity {
+    id: ID! #redeemId
+    timestamp: DateTime!
+    opentime: BigInt!
+    period: BigInt!
+    redeemer: String!
+    amount: BigInt!
+    asset: String!
+    vault: Vault!
+    fee: BigInt!
+    premium: BigInt!
+    transferFee: BigInt!
+    status: RedeemRequestStatus!
+    stellarAddress: String!
+}
+
 type Block @entity {
     "BlockHeight-blockHash - e.g. 0001812319-0001c"
     id: ID!

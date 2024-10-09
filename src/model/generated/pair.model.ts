@@ -4,9 +4,12 @@ import {
     PrimaryColumn as PrimaryColumn_,
     ManyToOne as ManyToOne_,
     Index as Index_,
+    StringColumn as StringColumn_,
+    IntColumn as IntColumn_,
+    DateTimeColumn as DateTimeColumn_,
+    BigIntColumn as BigIntColumn_,
     OneToMany as OneToMany_,
-} from 'typeorm'
-import * as marshal from './marshal'
+} from '@subsquid/typeorm-store'
 import { Token } from './token.model'
 import { PairHourData } from './pairHourData.model'
 import { PairDayData } from './pairDayData.model'
@@ -37,91 +40,88 @@ export class Pair {
     /**
      * BigDecimal
      */
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     reserve0!: string
 
     /**
      * BigDecimal
      */
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     reserve1!: string
 
     /**
      * BigDecimal
      */
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     totalSupply!: string
 
     /**
      * BigDecimal
      */
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     reserveETH!: string
 
     /**
      * BigDecimal
      */
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     reserveUSD!: string
 
     /**
      * BigDecimal
      */
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     trackedReserveETH!: string
 
     /**
      * BigDecimal
      */
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     token0Price!: string
 
     /**
      * BigDecimal
      */
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     token1Price!: string
 
     /**
      * BigDecimal
      */
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     volumeToken0!: string
 
     /**
      * BigDecimal
      */
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     volumeToken1!: string
 
     /**
      * BigDecimal
      */
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     volumeUSD!: string
 
     /**
      * BigDecimal
      */
-    @Column_('text', { nullable: false })
+    @StringColumn_({ nullable: false })
     untrackedVolumeUSD!: string
 
-    @Column_('int4', { nullable: false })
+    @IntColumn_({ nullable: false })
     txCount!: number
 
-    @Column_('timestamp with time zone', { nullable: false })
+    @DateTimeColumn_({ nullable: false })
     createdAtTimestamp!: Date
 
-    @Column_('numeric', {
-        transformer: marshal.bigintTransformer,
-        nullable: false,
-    })
+    @BigIntColumn_({ nullable: false })
     createdAtBlockNumber!: bigint
 
     /**
      *  APR
      */
-    @Column_('int4', { nullable: false })
+    @IntColumn_({ nullable: false })
     liquidityProviderCount!: number
 
     @OneToMany_(() => PairHourData, (e) => e.pair)

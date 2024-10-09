@@ -62,7 +62,6 @@ import {
     handleIssueRequestExecuted,
     handleRedeemRequestCancelled,
     handleRedeemRequestExecuted,
-    handleLiquidationRedeem,
     handleMintTokensForReimburseRedeem,
 } from './mappings/spacewalk'
 

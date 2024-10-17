@@ -18,6 +18,7 @@ import {
     getSwapPool,
 } from './creation'
 import { updateSwapPoolCoverageAndSupply } from './swapPoolEventHandler'
+import { addBackstopLP, removeBackstopLP } from '../handlePoints'
 
 export async function handleBackstopPoolEvent(
     ctx: EventHandlerContext,
@@ -89,6 +90,13 @@ export async function handleBurn(
         backstopPool
     )
     await updateBackstopCoverageAndSupply(ctx, backstopPool)
+
+    removeBackstopLP(
+        hexToSs58(event.sender),
+        backstopPool.id,
+        event.poolSharesBurned
+    )
+
     await ctx.store.save(backstopPool)
 }
 
@@ -143,6 +151,12 @@ export async function handleMint(
         event.amountPrincipleDeposited,
         backstopPool
     )
+    addBackstopLP(
+        hexToSs58(event.sender),
+        backstopPool.id,
+        event.poolSharesMinted
+    )
+
     await ctx.store.save(backstopPool)
 }
 

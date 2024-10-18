@@ -1,21 +1,16 @@
-import { EventHandlerContext, Ctx, BlockHeader_ } from '../processor'
+import { Ctx, BlockHeader_ } from '../processor'
+import { Points, Router, Token } from '../model'
+import { ss58ToHex } from '../mappings/nabla/addresses'
 import { network } from '../config'
-import { decodeEvent } from '../types/eventsAndStorageSelector'
-import { Points } from '../model'
+import { BackstopPool, SwapPool, NablaToken } from '../model'
 
-import {
-    BackstopPool,
-    Router,
-    NablaToken,
-    SwapPool,
-    NablaSwapFee,
-    NablaSwap,
-    NablaBackstopLiquidityDeposit,
-    NablaSwapLiquidityDeposit,
-    NablaBackstopLiquidityWithdrawal,
-    NablaSwapLiquidityWithdrawal,
-} from '../model'
+import { Big } from 'big.js'
 
+import { Contract as BackstopPoolContract } from '../abi/backstop'
+import { Contract as OracleContract } from '../abi/oracle'
+import { Contract as RouterContract } from '../abi/router'
+import { getVersionedStorage } from '../types/eventsAndStorageSelector'
+import { ContextExtended } from '../processor'
 type address = string
 type BackstopPoolId = string //??
 type SwapPoolId = string //??
@@ -36,7 +31,7 @@ export function addSwapLP(
         swapLPCount.set(address, new Map<SwapPoolId, bigint>())
     }
     const userLPs = swapLPCount.get(address)!
-    if (userLPs.has(swapPoolId)) {
+    if (!userLPs.has(swapPoolId)) {
         userLPs.set(swapPoolId, BigInt(0))
     }
     userLPs.set(swapPoolId, userLPs.get(swapPoolId)! + amount)
@@ -51,7 +46,7 @@ export function addBackstopLP(
         backstopLPCount.set(address, new Map<BackstopPoolId, bigint>())
     }
     const userLPs = backstopLPCount.get(address)!
-    if (userLPs.has(backstopPoolId)) {
+    if (!userLPs.has(backstopPoolId)) {
         userLPs.set(backstopPoolId, BigInt(0))
     }
     userLPs.set(backstopPoolId, userLPs.get(backstopPoolId)! + amount)
@@ -89,62 +84,74 @@ export function removeBackstopLP(
 
 // each block we accumulate the points based on price and LPs that the address has.
 export async function handlePointAccumulation(ctx: Ctx, block: BlockHeader_) {
-    // cache maps for swap pool prices and backstop pool prices
-    const swapPoolLPPrices = new Map<SwapPoolId, bigint>()
-    const backstopPooLPlPrices = new Map<BackstopPoolId, bigint>()
+    // Cache maps for swap pool prices and backstop pool prices
+    // avoid calling the store on each iteration
+    const swapPoolLPPrices = new Map<SwapPoolId, Big>()
+    const backstopPoolLPPrices = new Map<BackstopPoolId, Big>()
 
-    // Iterating over all addresses that have LPs in at least some pool
-    for (const [address, userLPs] of swapLPCount) {
+    const ctxExtended = { ...ctx, block: block }
+
+    const addresses = new Set<address>([
+        ...swapLPCount.keys(),
+        ...backstopLPCount.keys(),
+    ])
+
+    // Accumulate points from both swap LPs and backstop LPs
+    for (const address of addresses) {
         let totalPoints = pointsCount.get(address) || BigInt(0)
 
-        for (const [swapPoolId, lpAmount] of userLPs) {
-            let price = swapPoolLPPrices.get(swapPoolId)
+        const swapUserLPs = swapLPCount.get(address)
+        if (swapUserLPs) {
+            for (const [swapPoolId, lpAmount] of swapUserLPs) {
+                let price = swapPoolLPPrices.get(swapPoolId)
 
-            if (price === undefined) {
-                const swapPool = await ctx.store.get(SwapPool, swapPoolId)
-                if (!swapPool) {
-                    throw new Error(
-                        `SwapPool not found for id: ${swapPoolId}. Should exist.`
-                    )
+                if (price === undefined) {
+                    const swapPool = await ctx.store.get(SwapPool, swapPoolId)
+                    if (!swapPool) {
+                        throw new Error(
+                            `SwapPool not found for id: ${swapPoolId}. Should exist.`
+                        )
+                    }
+
+                    price = await getSwapPoolLPPrice(ctxExtended, swapPool)
+                    console.log(`price for swap pool ${swapPoolId} is ${price}`)
+                    swapPoolLPPrices.set(swapPoolId, price)
                 }
-                price = swapPool.totalLiabilities / swapPool.totalSupply
-                swapPoolLPPrices.set(swapPoolId, price)
-            }
 
-            const points = calculateSwapPointsThisBlock(lpAmount, price)
-            totalPoints += points
+                const points = calculateSwapPointsThisBlock(lpAmount, price)
+                totalPoints += points
+            }
         }
 
-        pointsCount.set(address, totalPoints)
-        await maybeStorePointsOnEntity(address, ctx, totalPoints, block)
-    }
+        const backstopUserLPs = backstopLPCount.get(address)
+        if (backstopUserLPs) {
+            for (const [backstopPoolId, amount] of backstopUserLPs) {
+                let price = backstopPoolLPPrices.get(backstopPoolId)
 
-    for (const [address, userLPs] of backstopLPCount) {
-        let totalPoints = pointsCount.get(address) || BigInt(0)
-
-        for (const [backstopPoolId, amount] of userLPs) {
-            let price = backstopPooLPlPrices.get(backstopPoolId)
-
-            if (price === undefined) {
-                const backstopPool = await ctx.store.get(
-                    SwapPool,
-                    backstopPoolId
-                )
-                if (!backstopPool) {
-                    throw new Error(
-                        `BackstopPool not found for id: ${backstopPoolId}. Should exist.`
+                if (price === undefined) {
+                    const backstopPool = await ctx.store.get(
+                        BackstopPool,
+                        backstopPoolId
                     )
+                    if (!backstopPool) {
+                        throw new Error(
+                            `BackstopPool not found for id: ${backstopPoolId}. Should exist.`
+                        )
+                    }
+                    price = await getBackstopPoolLPPrice(
+                        ctxExtended,
+                        backstopPool
+                    )
+                    backstopPoolLPPrices.set(backstopPoolId, price)
                 }
-                price = backstopPool.totalLiabilities / backstopPool.totalSupply
-                backstopPooLPlPrices.set(backstopPoolId, price)
 
                 const points = calculateBackstopPointsThisBlock(amount, price)
                 totalPoints += points
             }
-
-            pointsCount.set(address, totalPoints)
-            await maybeStorePointsOnEntity(address, ctx, totalPoints, block)
         }
+
+        pointsCount.set(address, totalPoints)
+        await maybeStorePointsOnEntity(address, ctx, totalPoints, block)
     }
 }
 
@@ -170,13 +177,176 @@ async function maybeStorePointsOnEntity(
     await ctx.store.save(points)
 }
 
-function calculateSwapPointsThisBlock(amount: bigint, price: bigint): bigint {
-    return (amount / (price * BigInt(100))) * BigInt(1 / 7200)
+async function getBackstopPoolLPPrice(ctx: Ctx, backstopPool: BackstopPool) {
+    const contract = new BackstopPoolContract(ctx, ss58ToHex(backstopPool.id))
+    const totalValue = await contract.getTotalPoolWorth()
+
+    const { priceUsdUnits, decimals } =
+        await getBackstopPoolTokenPriceAndDecimals(ctx, backstopPool)
+    const totalValueBig = new Big(totalValue.toString())
+    const totalSupplyBig = new Big(backstopPool.totalSupply.toString())
+
+    // Workaround for total supply = 0 issue.
+    if (totalSupplyBig.eq(0)) {
+        return new Big(0)
+    }
+    const price = totalValueBig.div(totalSupplyBig)
+    const priceUnitsUsd = price
+        .div(new Big(10).pow(decimals))
+        .times(priceUsdUnits)
+    return priceUnitsUsd
 }
 
-function calculateBackstopPointsThisBlock(
-    amount: bigint,
-    price: bigint
-): bigint {
-    return (amount / (price * BigInt(50))) * BigInt(1 / 7200)
+async function getSwapPoolLPPrice(
+    ctxExtended: ContextExtended,
+    swapPool: SwapPool
+) {
+    const totalLiabilitiesBig = new Big(swapPool.totalLiabilities.toString())
+
+    const { priceUsdUnits, decimals } = await getSwapPoolTokenPriceAndDecimals(
+        ctxExtended,
+        swapPool
+    )
+    const totalSupplyBig = new Big(swapPool.totalSupply.toString())
+    const price = totalLiabilitiesBig.times(priceUsdUnits).div(totalSupplyBig)
+
+    const priceUnitsUsd = price
+        .div(new Big(10).pow(decimals))
+        .times(priceUsdUnits)
+
+    return priceUnitsUsd
+}
+
+async function getSwapPoolTokenPriceAndDecimals(
+    ctxExtended: ContextExtended,
+    swapPool: SwapPool
+): Promise<any> {
+    const router = await ctxExtended.store.findOne(Router, {
+        where: {
+            swapPools: {
+                id: swapPool.id,
+            },
+        },
+    })
+    const token = await ctxExtended.store.findOne(NablaToken, {
+        where: {
+            swapPools: {
+                id: swapPool.id,
+            },
+        },
+    })
+    // const routerAddress = swapPool.router;
+    if (!router || !token) {
+        throw new Error(
+            `Router address or token address not found for swap pool ${swapPool.id}. Should exist.`
+        )
+    }
+
+    const routerContract = new RouterContract(ctxExtended, ss58ToHex(router.id))
+    const relevantOracleHexAddress = await routerContract.oracleByAsset(
+        ss58ToHex(token.id)
+    )
+    const oracleContract = new OracleContract(
+        ctxExtended,
+        relevantOracleHexAddress
+    )
+
+    const poolAssetPrice = (await oracleContract.stateCall('0xb3596f07', [
+        ss58ToHex(token.id),
+    ])) as string
+
+    const oracleKeyAsset = await oracleContract.getOracleKeyBlockchain(
+        ss58ToHex(token.id)
+    )
+    const oracleKeyBlockchain = await oracleContract.getOracleKeyBlockchain(
+        ss58ToHex(token.id)
+    )
+
+    console.log(
+        `key and blockchain for ${swapPool.id} is ${oracleKeyAsset} and ${oracleKeyBlockchain}`
+    )
+
+    const versionPairStorage = await getVersionedStorage(
+        network,
+        ctxExtended,
+        'diaOracleModule',
+        'coinInfosMap'
+    )
+
+    const coinInfo = versionPairStorage.get(ctxExtended.block, {
+        blockchain: oracleKeyBlockchain,
+        symbol: oracleKeyAsset,
+    })
+    console.log(`price from storage for ${swapPool.id} is ${coinInfo}`)
+
+    const priceUsdUnits = new Big(poolAssetPrice).div(
+        new Big(10).pow(token.decimals)
+    )
+    console.log(`price in usd units for  ${swapPool.id} is ${priceUsdUnits}`)
+    return { priceUsdUnits: priceUsdUnits, decimals: token.decimals }
+}
+
+async function getBackstopPoolTokenPriceAndDecimals(
+    ctx: Ctx,
+    backstopPool: BackstopPool
+): Promise<any> {
+    const router = await ctx.store.findOne(Router, {
+        where: {
+            backstopPool: {
+                id: backstopPool.id,
+            },
+        },
+    })
+    const token = await ctx.store.findOne(NablaToken, {
+        where: {
+            swapPools: {
+                id: backstopPool.id,
+            },
+        },
+    })
+    // const routerAddress = swapPool.router;
+    if (!router || !token) {
+        throw new Error(
+            `Router address or token address not found for backstop pool ${backstopPool.id}. Should exist.`
+        )
+    }
+
+    const routerContract = new RouterContract(ctx, ss58ToHex(router.id))
+    const relevantOracleHexAddress = await routerContract.oracleByAsset(
+        ss58ToHex(token.id)
+    )
+    const oracleContract = new OracleContract(ctx, relevantOracleHexAddress)
+
+    const poolAssetPrice = (await oracleContract.stateCall('0xb3596f07', [
+        ss58ToHex(token.id),
+    ])) as string
+    const priceUsdUnits = new Big(poolAssetPrice).div(
+        new Big(10).pow(token.decimals)
+    )
+
+    return { priceUsdUnits: priceUsdUnits, decimals: token.decimals }
+}
+
+function calculateSwapPointsThisBlock(amount: bigint, price: Big): bigint {
+    const blocksPerDayScale = new Big(1).div(7200)
+    const amountBig = new Big(amount.toString())
+
+    const priceAdjustedAmount = amountBig.div(price.times(100))
+    const points = priceAdjustedAmount.times(blocksPerDayScale)
+    return BigInt(points.round(0, 0).toString())
+}
+
+function calculateBackstopPointsThisBlock(amount: bigint, price: Big): bigint {
+    // return 0 if price 0
+    // Workaround for total supply = 0 issue.
+    if (price.eq(0)) {
+        return BigInt(0)
+    }
+
+    const blocksPerDayScale = new Big(1).div(7200)
+    const amountBig = new Big(amount.toString())
+    const priceAdjustedAmount = amountBig.div(price.times(50))
+    const points = priceAdjustedAmount.times(blocksPerDayScale)
+
+    return BigInt(points.round(0, 0).toString())
 }

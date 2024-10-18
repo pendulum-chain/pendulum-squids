@@ -72,7 +72,7 @@ const processor = new SubstrateBatchProcessor()
     .setRpcDataIngestionSettings({
         newHeadTimeout: newHeadTimeoutMs,
     })
-    //.setBlockRange({from: 2800000})
+    .setBlockRange({ from: 3780686 }) // 3780686 tested , 3794635 first mint event.
     .setFields({
         block: {
             timestamp: true,
@@ -175,6 +175,10 @@ export interface EventHandlerContext extends Ctx {
     event: Event<Fields>
 }
 
+export interface ContextExtended extends Ctx {
+    block: BlockHeader<Fields>
+}
+
 export interface CallHandlerContext extends Ctx {
     block: BlockHeader<Fields>
     call: Call<Fields>
@@ -216,27 +220,27 @@ processor.run(new TypeormDatabase(), async (ctx) => {
         for (const event of events) {
             try {
                 switch (event.name) {
-                    case 'Tokens.Deposited':
-                        await handleTokenDeposited({
-                            ...ctx,
-                            block,
-                            event,
-                        })
-                        break
-                    case 'Tokens.Withdrawn':
-                        await handleTokenWithdrawn({
-                            ...ctx,
-                            block,
-                            event,
-                        })
-                        break
-                    case 'Tokens.Transfer':
-                        await handleTokenTransfer({
-                            ...ctx,
-                            block,
-                            event,
-                        })
-                        break
+                    // case 'Tokens.Deposited':
+                    //     await handleTokenDeposited({
+                    //         ...ctx,
+                    //         block,
+                    //         event,
+                    //     })
+                    //     break
+                    // case 'Tokens.Withdrawn':
+                    //     await handleTokenWithdrawn({
+                    //         ...ctx,
+                    //         block,
+                    //         event,
+                    //     })
+                    //     break
+                    // case 'Tokens.Transfer':
+                    //     await handleTokenTransfer({
+                    //         ...ctx,
+                    //         block,
+                    //         event,
+                    //     })
+                    //     break
                     // //zenlink
                     // case 'ZenlinkProtocol.LiquidityAdded':
                     //     await handleLiquidityAdded({
@@ -338,13 +342,13 @@ processor.run(new TypeormDatabase(), async (ctx) => {
                     //     })
                     //     break
                     // // balances
-                    case 'Balances.Transfer':
-                        await handleBalanceTransfer({
-                            ...ctx,
-                            block,
-                            event,
-                        })
-                        break
+                    // case 'Balances.Transfer':
+                    //     await handleBalanceTransfer({
+                    //         ...ctx,
+                    //         block,
+                    //         event,
+                    //     })
+                    //     break
                     // contracts
                     case 'Contracts.ContractEmitted':
                         await handleContractEvent({
@@ -421,16 +425,13 @@ processor.run(new TypeormDatabase(), async (ctx) => {
                     // case 'DiaOracleModule.UpdatedPrices':
                     //     // Only processing these events once every CATCHUP_PRICE_UPDATE_PERIOD blocks or if the current block is the 'head' of the chain
                     //     // CATCHUP_PRICE_UPDATE_PERIOD is used so that we don't have to process these events for every block but still maintain a fairly accurate price history
-                    //     if (
-                    //         ctx.isHead ||
-                    //         block.height % catchupPriceUpdatePeriod === 0
-                    //     ) {
-                    //         await handleUpdatedPrices({
-                    //             ...ctx,
-                    //             block,
-                    //             event,
-                    //         })
-                    //     }
+
+                    //     await handleUpdatedPrices({
+                    //         ...ctx,
+                    //         block,
+                    //         event,
+                    //     })
+
                     //     break
                     default:
                         break

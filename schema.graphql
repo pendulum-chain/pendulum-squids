@@ -861,6 +861,11 @@ type Vault @entity {
     vaultStellarPublicKey: String!
 }
 
+type Points @entity {
+    id: ID! # account
+    points: BigInt!
+}
+
 enum IssueRequestStatus {
     PENDING
     COMPLETED

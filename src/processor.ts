@@ -65,11 +65,14 @@ import {
     handleMintTokensForReimburseRedeem,
 } from './mappings/spacewalk'
 
+import { handlePointAccumulation } from './mappings/handlePoints'
+
 const processor = new SubstrateBatchProcessor()
     .setRpcEndpoint(config.dataSource.chain)
     .setRpcDataIngestionSettings({
         newHeadTimeout: newHeadTimeoutMs,
     })
+    .setBlockRange({ from: 3780686 }) // 3780686 tested , 3794635 first mint event.
     .setFields({
         block: {
             timestamp: true,
@@ -172,6 +175,10 @@ export interface EventHandlerContext extends Ctx {
     event: Event<Fields>
 }
 
+export interface ContextExtended extends Ctx {
+    block: BlockHeader<Fields>
+}
+
 export interface CallHandlerContext extends Ctx {
     block: BlockHeader<Fields>
     call: Call<Fields>
@@ -213,135 +220,135 @@ processor.run(new TypeormDatabase(), async (ctx) => {
         for (const event of events) {
             try {
                 switch (event.name) {
-                    case 'Tokens.Deposited':
-                        await handleTokenDeposited({
-                            ...ctx,
-                            block,
-                            event,
-                        })
-                        break
-                    case 'Tokens.Withdrawn':
-                        await handleTokenWithdrawn({
-                            ...ctx,
-                            block,
-                            event,
-                        })
-                        break
-                    case 'Tokens.Transfer':
-                        await handleTokenTransfer({
-                            ...ctx,
-                            block,
-                            event,
-                        })
-                        break
-                    //zenlink
-                    case 'ZenlinkProtocol.LiquidityAdded':
-                        await handleLiquidityAdded({
-                            ...ctx,
-                            block,
-                            event,
-                        })
-                        break
-                    case 'ZenlinkProtocol.LiquidityRemoved':
-                        await handleLiquidityRemoved({
-                            ...ctx,
-                            block,
-                            event,
-                        })
-                        break
-                    case 'ZenlinkProtocol.AssetSwap':
-                        await handleAssetSwap({
-                            ...ctx,
-                            block,
-                            event,
-                        })
-                        break
-                    // farming
-                    case 'Farming.FarmingPoolCreated':
-                        await handleFarmingPoolCreated({
-                            ...ctx,
-                            block,
-                            event,
-                        })
-                        break
-                    case 'Farming.FarmingPoolReset':
-                        await handleFarmingPoolReset({
-                            ...ctx,
-                            block,
-                            event,
-                        })
-                        break
-                    case 'Farming.FarmingPoolClosed':
-                        await handleFarmingPoolClosed({
-                            ...ctx,
-                            block,
-                            event,
-                        })
-                        break
-                    case 'Farming.FarmingPoolKilled':
-                        await handleFarmingPoolKilled({
-                            ...ctx,
-                            block,
-                            event,
-                        })
-                        break
-                    case 'Farming.FarmingPoolEdited':
-                        await handleFarmingPoolEdited({
-                            ...ctx,
-                            block,
-                            event,
-                        })
-                        break
-                    case 'Farming.Charged':
-                        await handleFarmingCharged({
-                            ...ctx,
-                            block,
-                            event,
-                        })
-                        break
-                    case 'Farming.Deposited':
-                        await handleFarmingDeposited({
-                            ...ctx,
-                            block,
-                            event,
-                        })
-                        break
-                    case 'Farming.Withdrawn':
-                        await handleFarmingWithdrawn({
-                            ...ctx,
-                            block,
-                            event,
-                        })
-                        break
-                    case 'Farming.Claimed':
-                        await handleFarmingClaimed({
-                            ...ctx,
-                            block,
-                            event,
-                        })
-                        break
-                    case 'Farming.WithdrawClaimed':
-                        await handleFarmingWithdrawClaimed({
-                            ...ctx,
-                            block,
-                            event,
-                        })
-                        break
-                    case 'Farming.GaugeWithdrawn':
-                        await handleFarmingGaugeWithdrawn({
-                            ...ctx,
-                            block,
-                            event,
-                        })
-                        break
-                    // balances
-                    case 'Balances.Transfer':
-                        await handleBalanceTransfer({
-                            ...ctx,
-                            block,
-                            event,
-                        })
-                        break
+                    // case 'Tokens.Deposited':
+                    //     await handleTokenDeposited({
+                    //         ...ctx,
+                    //         block,
+                    //         event,
+                    //     })
+                    //     break
+                    // case 'Tokens.Withdrawn':
+                    //     await handleTokenWithdrawn({
+                    //         ...ctx,
+                    //         block,
+                    //         event,
+                    //     })
+                    //     break
+                    // case 'Tokens.Transfer':
+                    //     await handleTokenTransfer({
+                    //         ...ctx,
+                    //         block,
+                    //         event,
+                    //     })
+                    //     break
+                    // //zenlink
+                    // case 'ZenlinkProtocol.LiquidityAdded':
+                    //     await handleLiquidityAdded({
+                    //         ...ctx,
+                    //         block,
+                    //         event,
+                    //     })
+                    //     break
+                    // case 'ZenlinkProtocol.LiquidityRemoved':
+                    //     await handleLiquidityRemoved({
+                    //         ...ctx,
+                    //         block,
+                    //         event,
+                    //     })
+                    //     break
+                    // case 'ZenlinkProtocol.AssetSwap':
+                    //     await handleAssetSwap({
+                    //         ...ctx,
+                    //         block,
+                    //         event,
+                    //     })
+                    //     break
+                    // // farming
+                    // case 'Farming.FarmingPoolCreated':
+                    //     await handleFarmingPoolCreated({
+                    //         ...ctx,
+                    //         block,
+                    //         event,
+                    //     })
+                    //     break
+                    // case 'Farming.FarmingPoolReset':
+                    //     await handleFarmingPoolReset({
+                    //         ...ctx,
+                    //         block,
+                    //         event,
+                    //     })
+                    //     break
+                    // case 'Farming.FarmingPoolClosed':
+                    //     await handleFarmingPoolClosed({
+                    //         ...ctx,
+                    //         block,
+                    //         event,
+                    //     })
+                    //     break
+                    // case 'Farming.FarmingPoolKilled':
+                    //     await handleFarmingPoolKilled({
+                    //         ...ctx,
+                    //         block,
+                    //         event,
+                    //     })
+                    //     break
+                    // case 'Farming.FarmingPoolEdited':
+                    //     await handleFarmingPoolEdited({
+                    //         ...ctx,
+                    //         block,
+                    //         event,
+                    //     })
+                    //     break
+                    // case 'Farming.Charged':
+                    //     await handleFarmingCharged({
+                    //         ...ctx,
+                    //         block,
+                    //         event,
+                    //     })
+                    //     break
+                    // case 'Farming.Deposited':
+                    //     await handleFarmingDeposited({
+                    //         ...ctx,
+                    //         block,
+                    //         event,
+                    //     })
+                    //     break
+                    // case 'Farming.Withdrawn':
+                    //     await handleFarmingWithdrawn({
+                    //         ...ctx,
+                    //         block,
+                    //         event,
+                    //     })
+                    //     break
+                    // case 'Farming.Claimed':
+                    //     await handleFarmingClaimed({
+                    //         ...ctx,
+                    //         block,
+                    //         event,
+                    //     })
+                    //     break
+                    // case 'Farming.WithdrawClaimed':
+                    //     await handleFarmingWithdrawClaimed({
+                    //         ...ctx,
+                    //         block,
+                    //         event,
+                    //     })
+                    //     break
+                    // case 'Farming.GaugeWithdrawn':
+                    //     await handleFarmingGaugeWithdrawn({
+                    //         ...ctx,
+                    //         block,
+                    //         event,
+                    //     })
+                    //     break
+                    // // balances
+                    // case 'Balances.Transfer':
+                    //     await handleBalanceTransfer({
+                    //         ...ctx,
+                    //         block,
+                    //         event,
+                    //     })
+                    //     break
                     // contracts
                     case 'Contracts.ContractEmitted':
                         await handleContractEvent({
@@ -357,78 +364,75 @@ processor.run(new TypeormDatabase(), async (ctx) => {
                             event,
                         })
                         break
-                    case 'Issue.RequestIssue':
-                        await handleIssueRequestCreated({
-                            ...ctx,
-                            block,
-                            event,
-                        })
-                        break
-                    case 'Issue.IssueAmountChange':
-                        await handleIssueRequestAmountChanged({
-                            ...ctx,
-                            block,
-                            event,
-                        })
-                        break
-                    case 'Issue.CancelIssue':
-                        await handleIssueRequestCancelled({
-                            ...ctx,
-                            block,
-                            event,
-                        })
-                        break
-                    case 'Issue.ExecuteIssue':
-                        await handleIssueRequestExecuted({
-                            ...ctx,
-                            block,
-                            event,
-                        })
-                        break
-                    case 'Redeem.RequestRedeem':
-                        await handleRedeemRequestCreated({
-                            ...ctx,
-                            block,
-                            event,
-                        })
-                        break
-                    case 'Redeem.CancelRedeem':
-                        await handleRedeemRequestCancelled({
-                            ...ctx,
-                            block,
-                            event,
-                        })
-                        break
-                    case 'Redeem.ExecuteRedeem':
-                        await handleRedeemRequestExecuted({
-                            ...ctx,
-                            block,
-                            event,
-                        })
-                        break
-                    case 'Redeem.MintTokensForReimbursedRedeem':
-                        await handleMintTokensForReimburseRedeem({
-                            ...ctx,
-                            block,
-                            event,
-                        })
-                        break
+                    // case 'Issue.RequestIssue':
+                    //     await handleIssueRequestCreated({
+                    //         ...ctx,
+                    //         block,
+                    //         event,
+                    //     })
+                    //     break
+                    // case 'Issue.IssueAmountChange':
+                    //     await handleIssueRequestAmountChanged({
+                    //         ...ctx,
+                    //         block,
+                    //         event,
+                    //     })
+                    //     break
+                    // case 'Issue.CancelIssue':
+                    //     await handleIssueRequestCancelled({
+                    //         ...ctx,
+                    //         block,
+                    //         event,
+                    //     })
+                    //     break
+                    // case 'Issue.ExecuteIssue':
+                    //     await handleIssueRequestExecuted({
+                    //         ...ctx,
+                    //         block,
+                    //         event,
+                    //     })
+                    //     break
+                    // case 'Redeem.RequestRedeem':
+                    //     await handleRedeemRequestCreated({
+                    //         ...ctx,
+                    //         block,
+                    //         event,
+                    //     })
+                    //     break
+                    // case 'Redeem.CancelRedeem':
+                    //     await handleRedeemRequestCancelled({
+                    //         ...ctx,
+                    //         block,
+                    //         event,
+                    //     })
+                    //     break
+                    // case 'Redeem.ExecuteRedeem':
+                    //     await handleRedeemRequestExecuted({
+                    //         ...ctx,
+                    //         block,
+                    //         event,
+                    //     })
+                    //     break
+                    // case 'Redeem.MintTokensForReimbursedRedeem':
+                    //     await handleMintTokensForReimburseRedeem({
+                    //         ...ctx,
+                    //         block,
+                    //         event,
+                    //     })
+                    //     break
 
                     // price oracle
-                    case 'DiaOracleModule.UpdatedPrices':
-                        // Only processing these events once every CATCHUP_PRICE_UPDATE_PERIOD blocks or if the current block is the 'head' of the chain
-                        // CATCHUP_PRICE_UPDATE_PERIOD is used so that we don't have to process these events for every block but still maintain a fairly accurate price history
-                        if (
-                            ctx.isHead ||
-                            block.height % catchupPriceUpdatePeriod === 0
-                        ) {
-                            await handleUpdatedPrices({
-                                ...ctx,
-                                block,
-                                event,
-                            })
-                        }
-                        break
+                    // case 'DiaOracleModule.UpdatedPrices':
+                    //     // Only processing these events once every CATCHUP_PRICE_UPDATE_PERIOD blocks or if the current block is the 'head' of the chain
+                    //     // CATCHUP_PRICE_UPDATE_PERIOD is used so that we don't have to process these events for every block but still maintain a fairly accurate price history
+
+                    //     await handleUpdatedPrices({
+                    //         ...ctx,
+                    //         block,
+                    //         event,
+                    //     })
+
+                    //     break
                     default:
                         break
                 }
@@ -439,6 +443,9 @@ processor.run(new TypeormDatabase(), async (ctx) => {
                 )
             }
         }
+
+        await handlePointAccumulation(ctx, block)
+
         // It's important to process the calls after the events,
         // because for the system.remark call we need to have
         // processed the token transfers first

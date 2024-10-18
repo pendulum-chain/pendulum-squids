@@ -89,6 +89,9 @@ export async function handlePointAccumulation(ctx: Ctx, block: BlockHeader_) {
     const swapPoolLPPrices = new Map<SwapPoolId, Big>()
     const backstopPoolLPPrices = new Map<BackstopPoolId, Big>()
 
+    const swapPools = new Map<string, SwapPool>()
+    const backstopPools = new Map<string, BackstopPool>()
+
     const ctxExtended = { ...ctx, block: block }
 
     const addresses = new Set<address>([
@@ -116,9 +119,14 @@ export async function handlePointAccumulation(ctx: Ctx, block: BlockHeader_) {
                     price = await getSwapPoolLPPrice(ctxExtended, swapPool)
                     console.log(`price for swap pool ${swapPoolId} is ${price}`)
                     swapPoolLPPrices.set(swapPoolId, price)
+                    swapPools.set(swapPoolId, swapPool)
                 }
 
-                const points = calculateSwapPointsThisBlock(lpAmount, price)
+                const points = calculateSwapPointsThisBlock(
+                    lpAmount,
+                    price,
+                    swapPools.get(swapPoolId)!
+                )
                 totalPoints += points
             }
         }
@@ -143,9 +151,14 @@ export async function handlePointAccumulation(ctx: Ctx, block: BlockHeader_) {
                         backstopPool
                     )
                     backstopPoolLPPrices.set(backstopPoolId, price)
+                    backstopPools.set(backstopPoolId, backstopPool)
                 }
 
-                const points = calculateBackstopPointsThisBlock(amount, price)
+                const points = calculateBackstopPointsThisBlock(
+                    amount,
+                    price,
+                    backstopPools.get(backstopPoolId)!
+                )
                 totalPoints += points
             }
         }
@@ -191,10 +204,8 @@ async function getBackstopPoolLPPrice(ctx: Ctx, backstopPool: BackstopPool) {
         return new Big(0)
     }
     const price = totalValueBig.div(totalSupplyBig)
-    const priceUnitsUsd = price
-        .div(new Big(10).pow(decimals))
-        .times(priceUsdUnits)
-    return priceUnitsUsd
+
+    return price
 }
 
 async function getSwapPoolLPPrice(
@@ -210,11 +221,7 @@ async function getSwapPoolLPPrice(
     const totalSupplyBig = new Big(swapPool.totalSupply.toString())
     const price = totalLiabilitiesBig.times(priceUsdUnits).div(totalSupplyBig)
 
-    const priceUnitsUsd = price
-        .div(new Big(10).pow(decimals))
-        .times(priceUsdUnits)
-
-    return priceUnitsUsd
+    return price
 }
 
 async function getSwapPoolTokenPriceAndDecimals(
@@ -255,7 +262,7 @@ async function getSwapPoolTokenPriceAndDecimals(
         ss58ToHex(token.id),
     ])) as string
 
-    const oracleKeyAsset = await oracleContract.getOracleKeyBlockchain(
+    const oracleKeySymbol = await oracleContract.getOracleKeySymbol(
         ss58ToHex(token.id)
     )
     const oracleKeyBlockchain = await oracleContract.getOracleKeyBlockchain(
@@ -263,7 +270,7 @@ async function getSwapPoolTokenPriceAndDecimals(
     )
 
     console.log(
-        `key and blockchain for ${swapPool.id} is ${oracleKeyAsset} and ${oracleKeyBlockchain}`
+        `key and blockchain for ${swapPool.id} is ${oracleKeySymbol} and ${oracleKeyBlockchain}`
     )
 
     const versionPairStorage = await getVersionedStorage(
@@ -273,11 +280,11 @@ async function getSwapPoolTokenPriceAndDecimals(
         'coinInfosMap'
     )
 
-    const coinInfo = versionPairStorage.get(ctxExtended.block, {
-        blockchain: oracleKeyBlockchain,
-        symbol: oracleKeyAsset,
+    const coinInfo = await versionPairStorage.get(ctxExtended.block, {
+        blockchain: stringToBytes(oracleKeyBlockchain),
+        symbol: stringToBytes(oracleKeySymbol),
     })
-    console.log(`price from storage for ${swapPool.id} is ${coinInfo}`)
+    console.log(`price from storage for ${swapPool.id} is ${coinInfo.price}`)
 
     const priceUsdUnits = new Big(poolAssetPrice).div(
         new Big(10).pow(token.decimals)
@@ -318,6 +325,7 @@ async function getBackstopPoolTokenPriceAndDecimals(
     const oracleContract = new OracleContract(ctx, relevantOracleHexAddress)
 
     const poolAssetPrice = (await oracleContract.stateCall('0xb3596f07', [
+        //0xb3596f07 -> getAssetPrice call
         ss58ToHex(token.id),
     ])) as string
     const priceUsdUnits = new Big(poolAssetPrice).div(
@@ -327,16 +335,27 @@ async function getBackstopPoolTokenPriceAndDecimals(
     return { priceUsdUnits: priceUsdUnits, decimals: token.decimals }
 }
 
-function calculateSwapPointsThisBlock(amount: bigint, price: Big): bigint {
+function calculateSwapPointsThisBlock(
+    amount: bigint,
+    price: Big,
+    swapPool: SwapPool
+): bigint {
     const blocksPerDayScale = new Big(1).div(7200)
     const amountBig = new Big(amount.toString())
 
     const priceAdjustedAmount = amountBig.div(price.times(100))
     const points = priceAdjustedAmount.times(blocksPerDayScale)
-    return BigInt(points.round(0, 0).toString())
+    const lpDecimals = swapPool.lpTokenDecimals
+
+    const pointsAdjusted = points.div(new Big(10).pow(lpDecimals))
+    return BigInt(pointsAdjusted.round(0, 0).toString())
 }
 
-function calculateBackstopPointsThisBlock(amount: bigint, price: Big): bigint {
+function calculateBackstopPointsThisBlock(
+    amount: bigint,
+    price: Big,
+    backstopPool: BackstopPool
+): bigint {
     // return 0 if price 0
     // Workaround for total supply = 0 issue.
     if (price.eq(0)) {
@@ -348,5 +367,18 @@ function calculateBackstopPointsThisBlock(amount: bigint, price: Big): bigint {
     const priceAdjustedAmount = amountBig.div(price.times(50))
     const points = priceAdjustedAmount.times(blocksPerDayScale)
 
-    return BigInt(points.round(0, 0).toString())
+    const lpDecimals = backstopPool.lpTokenDecimals
+    const pointsAdjusted = points.div(new Big(10).pow(lpDecimals))
+
+    return BigInt(pointsAdjusted.round(0, 0).toString())
+}
+
+const stringToBytes = (str: string): string => {
+    const encoder = new TextEncoder()
+    return (
+        '0x' +
+        Array.from(encoder.encode(str))
+            .map((byte) => byte.toString(16))
+            .join('')
+    )
 }

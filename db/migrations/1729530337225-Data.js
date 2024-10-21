@@ -1,5 +1,5 @@
-module.exports = class Data1729194534401 {
-    name = 'Data1729194534401'
+module.exports = class Data1729530337225 {
+    name = 'Data1729530337225'
 
     async up(db) {
         await db.query(
@@ -364,6 +364,9 @@ module.exports = class Data1729194534401 {
         )
         await db.query(
             `CREATE TABLE "vault" ("id" character varying NOT NULL, "account_id" text NOT NULL, "wrapped" text NOT NULL, "collateral" text NOT NULL, "vault_stellar_public_key" text NOT NULL, CONSTRAINT "PK_dd0898234c77f9d97585171ac59" PRIMARY KEY ("id"))`
+        )
+        await db.query(
+            `CREATE TABLE "points" ("id" character varying NOT NULL, "points" numeric NOT NULL, CONSTRAINT "PK_57a558e5e1e17668324b165dadf" PRIMARY KEY ("id"))`
         )
         await db.query(
             `CREATE TABLE "issue_request" ("id" character varying NOT NULL, "timestamp" TIMESTAMP WITH TIME ZONE NOT NULL, "opentime" numeric NOT NULL, "period" numeric NOT NULL, "requester" text NOT NULL, "amount" numeric NOT NULL, "asset" text NOT NULL, "fee" numeric NOT NULL, "griefing_collateral" numeric NOT NULL, "stellar_address" text NOT NULL, "status" character varying(9) NOT NULL, "vault_id" character varying, CONSTRAINT "PK_498cd8089f9302db334fd7fe7f6" PRIMARY KEY ("id"))`
@@ -780,6 +783,7 @@ module.exports = class Data1729194534401 {
         await db.query(`DROP TABLE "nabla_swap_liquidity_withdrawal"`)
         await db.query(`DROP INDEX "public"."IDX_ec313e0ceb8429cb76aa63ed74"`)
         await db.query(`DROP TABLE "vault"`)
+        await db.query(`DROP TABLE "points"`)
         await db.query(`DROP TABLE "issue_request"`)
         await db.query(`DROP INDEX "public"."IDX_62755a570447cc6fb07d57ec30"`)
         await db.query(`DROP TABLE "redeem_request"`)

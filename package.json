@@ -20,7 +20,7 @@
         "@polkadot/util": "11.1.1",
         "@subsquid/big-decimal": "^1.0.0",
         "@subsquid/evm-typegen": "^4.3.0",
-        "@subsquid/graphql-server": "4.7.0",
+        "@subsquid/graphql-server": "4.9.0",
         "@subsquid/ink-abi": "^3.1.2",
         "@subsquid/ss58": "2.0.2",
         "@subsquid/substrate-processor": "^8.5.1",

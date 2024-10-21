@@ -72,7 +72,7 @@ const processor = new SubstrateBatchProcessor()
     .setRpcDataIngestionSettings({
         newHeadTimeout: newHeadTimeoutMs,
     })
-    .setBlockRange({ from: 3780686 }) // 3780686 tested , 3794635 first mint event.
+    .setBlockRange({ from: 3789065 }) // 3780686 tested , 3794635 first mint event. 3789065 just before instantiating contracts
     .setFields({
         block: {
             timestamp: true,
@@ -173,10 +173,6 @@ export type Ctx = DataHandlerContext<Store, Fields>
 export interface EventHandlerContext extends Ctx {
     block: BlockHeader<Fields>
     event: Event<Fields>
-}
-
-export interface ContextExtended extends Ctx {
-    block: BlockHeader<Fields>
 }
 
 export interface CallHandlerContext extends Ctx {

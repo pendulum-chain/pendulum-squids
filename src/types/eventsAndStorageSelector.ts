@@ -1,4 +1,4 @@
-import { EventHandlerContext, ContextExtended } from '../processor'
+import { EventHandlerContext } from '../processor'
 import * as foucocoEvents from './foucoco/events'
 import * as pendulumEvents from './pendulum/events'
 import * as amplitudeEvents from './amplitude/events'
@@ -62,7 +62,7 @@ export function decodeEvent(
 
 export async function getVersionedStorage(
     network: string,
-    ctx: EventHandlerContext | ContextExtended,
+    ctx: EventHandlerContext,
     moduleName: string,
     storageEntity: string
 ): Promise<StorageTypeFoucoco | StorageTypePendulum | StorageTypeAmplitude> {

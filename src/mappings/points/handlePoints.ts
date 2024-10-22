@@ -12,7 +12,7 @@ type BackstopPoolId = string
 type SwapPoolId = string
 
 const OUTPUT_CSV_PATH = 'points.csv'
-const DUMP_BLOCK_HEIGHT = 3795124 // whenever the campaign finishes.
+const DUMP_BLOCK_HEIGHT = 3797700 // whenever the campaign finishes.
 
 // global vars to count points
 export const pointsCount = new Map<address, Big>()
@@ -130,7 +130,7 @@ export async function handlePointAccumulation(ctx: Ctx, block: BlockHeader_) {
                     price,
                     swapPools.get(swapPoolId)!
                 )
-                totalPoints.add(points)
+                totalPoints = totalPoints.add(points)
             }
         }
 
@@ -163,12 +163,16 @@ export async function handlePointAccumulation(ctx: Ctx, block: BlockHeader_) {
                     price,
                     backstopPools.get(backstopPoolId)!
                 )
-                totalPoints.add(points)
+                totalPoints = totalPoints.add(points)
             }
         }
 
         pointsCount.set(address, totalPoints)
         await maybeStorePointsOnEntity(address, ctx, totalPoints, block)
+
+        console.log(
+            `total points: ${totalPoints.toFixed(10)} for address: ${address}`
+        )
     }
 
     // Dump points to CSV at the specified block height
@@ -192,11 +196,11 @@ async function maybeStorePointsOnEntity(
     if (points === undefined) {
         points = new Points({
             id: address,
-            points: new Big(0).toFixed(4),
+            points: new Big(0).toFixed(10),
         })
     }
 
-    points.points = newPoints.toFixed(4)
+    points.points = newPoints.toFixed(10)
     await ctx.store.save(points)
 }
 
@@ -214,7 +218,6 @@ function calculateSwapPointsThisBlock(
         .times(blocksPerDayScale)
         .times(price)
         .div(100)
-
     return pointsBig
 }
 
@@ -241,7 +244,7 @@ function dumpPointsToCSV() {
     const rows = [headers.join(',')]
 
     for (const [user, points] of pointsCount.entries()) {
-        rows.push(`${user},${points.toFixed(4)}`)
+        rows.push(`${user},${points.toFixed(10)}`)
     }
 
     const csvContent = rows.join('\n')

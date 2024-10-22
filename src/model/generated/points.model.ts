@@ -2,7 +2,7 @@ import {
     Entity as Entity_,
     Column as Column_,
     PrimaryColumn as PrimaryColumn_,
-    BigIntColumn as BigIntColumn_,
+    StringColumn as StringColumn_,
 } from '@subsquid/typeorm-store'
 
 @Entity_()
@@ -14,6 +14,6 @@ export class Points {
     @PrimaryColumn_()
     id!: string
 
-    @BigIntColumn_({ nullable: false })
-    points!: string // to handle precision.
+    @StringColumn_({ nullable: false })
+    points!: string
 }

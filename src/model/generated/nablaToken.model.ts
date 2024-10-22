@@ -7,6 +7,7 @@ import {
     OneToMany as OneToMany_,
 } from '@subsquid/typeorm-store'
 import { SwapPool } from './swapPool.model'
+import { BackstopPool } from './backstopPool.model'
 
 @Entity_()
 export class NablaToken {
@@ -28,4 +29,7 @@ export class NablaToken {
 
     @OneToMany_(() => SwapPool, (e) => e.token)
     swapPools!: SwapPool[]
+
+    @OneToMany_(() => BackstopPool, (e) => e.token)
+    backstopPool!: BackstopPool[]
 }

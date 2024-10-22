@@ -65,7 +65,7 @@ import {
     handleMintTokensForReimburseRedeem,
 } from './mappings/spacewalk'
 
-import { handlePointAccumulation } from './mappings/handlePoints'
+import { handlePointAccumulation } from './mappings/points/handlePoints'
 
 const processor = new SubstrateBatchProcessor()
     .setRpcEndpoint(config.dataSource.chain)

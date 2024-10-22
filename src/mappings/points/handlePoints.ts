@@ -1,18 +1,18 @@
-import { Ctx, BlockHeader_ } from '../processor'
-import { Points, Router, Token } from '../model'
-import { ss58ToHex } from '../mappings/nabla/addresses'
-import { network } from '../config'
-import { BackstopPool, SwapPool, NablaToken } from '../model'
+import { Ctx, BlockHeader_ } from '../../processor'
+import { Points } from '../../model'
+import { BackstopPool, SwapPool } from '../../model'
 
 import { Big } from 'big.js'
 
-import { Contract as BackstopPoolContract } from '../abi/backstop'
-import { Contract as OracleContract } from '../abi/oracle'
-import { Contract as RouterContract } from '../abi/router'
+import { getBackstopPoolLPPrice, getSwapPoolLPPrice } from './helpers'
+import fs from 'fs'
 
 type address = string
 type BackstopPoolId = string
 type SwapPoolId = string
+
+const OUTPUT_CSV_PATH = 'points.csv'
+const DUMP_BLOCK_HEIGHT = 3795124 // whenever the campaign finishes.
 
 // global vars to count points
 export const pointsCount = new Map<address, Big>()
@@ -121,7 +121,6 @@ export async function handlePointAccumulation(ctx: Ctx, block: BlockHeader_) {
                     }
                     price = await getSwapPoolLPPrice(ctx, block, swapPool)
 
-                    console.log(`price for swap pool ${swapPoolId} is ${price}`)
                     swapPoolLPPrices.set(swapPoolId, price)
                     swapPools.set(swapPoolId, swapPool)
                 }
@@ -171,6 +170,12 @@ export async function handlePointAccumulation(ctx: Ctx, block: BlockHeader_) {
         pointsCount.set(address, totalPoints)
         await maybeStorePointsOnEntity(address, ctx, totalPoints, block)
     }
+
+    // Dump points to CSV at the specified block height
+    if (block.height === DUMP_BLOCK_HEIGHT) {
+        dumpPointsToCSV()
+        process.exit(0)
+    }
 }
 
 async function maybeStorePointsOnEntity(
@@ -209,7 +214,6 @@ function calculateSwapPointsThisBlock(
         .times(blocksPerDayScale)
         .times(price)
         .div(100)
-    console.log(`points for swap pool ${swapPool.id} is ${pointsBig}`)
 
     return pointsBig
 }
@@ -232,140 +236,16 @@ function calculateBackstopPointsThisBlock(
     return pointsBig
 }
 
-async function getBackstopPoolLPPrice(
-    ctx: Ctx,
-    block: BlockHeader_,
-    backstopPool: BackstopPool
-) {
-    const contract = new BackstopPoolContract(
-        ctx,
-        ss58ToHex(backstopPool.id),
-        block.hash
-    )
-    const totalValue = await contract.getTotalPoolWorth()
+function dumpPointsToCSV() {
+    const headers = ['User', 'Points']
+    const rows = [headers.join(',')]
 
-    const { priceUsdUnits, decimals } =
-        await getBackstopPoolTokenPriceAndDecimals(ctx, block, backstopPool)
-
-    const totalValueBig = new Big(totalValue.toString()).times(priceUsdUnits)
-    const totalSupplyBig = new Big(backstopPool.totalSupply.toString())
-    const price = totalValueBig.div(totalSupplyBig)
-
-    return price
-}
-
-async function getSwapPoolLPPrice(
-    ctx: Ctx,
-    block: BlockHeader_,
-    swapPool: SwapPool
-) {
-    const totalLiabilitiesBig = new Big(swapPool.totalLiabilities.toString())
-
-    const { priceUsdUnits, decimals } = await getSwapPoolTokenPriceAndDecimals(
-        ctx,
-        block,
-        swapPool
-    )
-    console.log(`price in usd units for  ${swapPool.id} is ${priceUsdUnits}`)
-
-    const totalSupplyBig = new Big(swapPool.totalSupply.toString())
-    const price = totalLiabilitiesBig.times(priceUsdUnits).div(totalSupplyBig)
-
-    return price
-}
-
-async function getSwapPoolTokenPriceAndDecimals(
-    ctx: Ctx,
-    block: BlockHeader_,
-    swapPool: SwapPool
-): Promise<any> {
-    const { router, token } = await getRouterAndToken(ctx, swapPool, 'swapPool')
-
-    const routerContract = new RouterContract(
-        ctx,
-        ss58ToHex(router.id),
-        block.hash
-    )
-    const relevantOracleHexAddress = await routerContract.oracleByAsset(
-        ss58ToHex(token.id)
-    )
-    const oracleContract = new OracleContract(
-        ctx,
-        relevantOracleHexAddress,
-        block.hash
-    )
-
-    const poolAssetPrice = (await oracleContract.stateCall('0xb3596f07', [
-        ss58ToHex(token.id),
-    ])) as string
-
-    const priceUsdUnits = new Big(poolAssetPrice).div(new Big(10).pow(12))
-    console.log(`price in usd units for  ${swapPool.id} is ${priceUsdUnits}`)
-    return { priceUsdUnits: priceUsdUnits, decimals: token.decimals }
-}
-
-async function getBackstopPoolTokenPriceAndDecimals(
-    ctx: Ctx,
-    block: BlockHeader_,
-    backstopPool: BackstopPool
-): Promise<any> {
-    const { router, token } = await getRouterAndToken(
-        ctx,
-        backstopPool,
-        'backstopPool'
-    )
-
-    const routerContract = new RouterContract(
-        ctx,
-        ss58ToHex(router.id),
-        block.hash
-    )
-    const relevantOracleHexAddress = await routerContract.oracleByAsset(
-        ss58ToHex(token.id)
-    )
-    const oracleContract = new OracleContract(
-        ctx,
-        relevantOracleHexAddress,
-        block.hash
-    )
-
-    const poolAssetPrice = (await oracleContract.stateCall('0xb3596f07', [
-        //0xb3596f07 -> getAssetPrice call
-        ss58ToHex(token.id),
-    ])) as string
-    const priceUsdUnits = new Big(poolAssetPrice).div(new Big(10).pow(12))
-
-    return { priceUsdUnits: priceUsdUnits, decimals: token.decimals }
-}
-
-async function getRouterAndToken(
-    ctx: Ctx,
-    pool: SwapPool | BackstopPool,
-    poolType: 'swapPool' | 'backstopPool'
-): Promise<{ router: Router; token: NablaToken }> {
-    const relationKey = poolType === 'swapPool' ? 'swapPools' : 'backstopPool'
-
-    const router = await ctx.store.findOne(Router, {
-        where: {
-            [relationKey]: {
-                id: pool.id,
-            },
-        },
-    })
-
-    const token = await ctx.store.findOne(NablaToken, {
-        where: {
-            [relationKey]: {
-                id: pool.id,
-            },
-        },
-    })
-
-    if (!router || !token) {
-        throw new Error(
-            `Router address or token address not found for ${poolType} ${pool.id}. They should exist at this point.`
-        )
+    for (const [user, points] of pointsCount.entries()) {
+        rows.push(`${user},${points.toFixed(4)}`)
     }
 
-    return { router, token }
+    const csvContent = rows.join('\n')
+
+    fs.writeFileSync(OUTPUT_CSV_PATH, csvContent, 'utf8')
+    console.log(`User points have been dumped to ${OUTPUT_CSV_PATH}`)
 }

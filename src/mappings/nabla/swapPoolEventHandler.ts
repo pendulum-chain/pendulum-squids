@@ -19,7 +19,7 @@ import {
 import { Contract as BackstopPoolContract } from '../../abi/backstop'
 import { hexToSs58, ss58ToHex } from './addresses'
 import { updateBackstopCoverageAndSupply } from './backstopPoolEventHandler'
-import { addSwapLP, removeSwapLP } from '../handlePoints'
+import { addSwapLP, removeSwapLP } from '../points/handlePoints'
 
 const SWAP_FEE_PRUNE_INTERVAL_MILLI_SECONDS = 7 * 24 * 60 * 60 * 1000
 
@@ -103,8 +103,6 @@ export async function handleBurn(
         event.amountPrincipleWithdrawn,
         swapPool
     )
-    console.log('burned')
-    console.log(event)
 
     removeSwapLP(hexToSs58(event.sender), swapPool.id, event.poolSharesBurned)
 
@@ -151,8 +149,6 @@ export async function handleMint(
         event.amountPrincipleDeposited,
         swapPool
     )
-    console.log('minted')
-    console.log(event)
     addSwapLP(hexToSs58(event.sender), swapPool.id, event.poolSharesMinted)
 
     await ctx.store.save(swapPool)

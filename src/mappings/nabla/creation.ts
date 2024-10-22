@@ -84,7 +84,11 @@ export async function createBackstopPool(
         return
     }
 
-    const contract = new backstopPoolAbi.Contract(ctx, hexAddress)
+    const contract = new backstopPoolAbi.Contract(
+        ctx,
+        hexAddress,
+        ctx.block.hash
+    )
 
     const routerAddress = await contract.router()
     const tokenAddress = await contract.asset()
@@ -99,7 +103,11 @@ export async function createBackstopPool(
     }
 
     const token = await getOrCreateNablaToken(ctx, tokenAddress)
-    const tokenContract = new erc20Abi.Contract(ctx, tokenAddress)
+    const tokenContract = new erc20Abi.Contract(
+        ctx,
+        tokenAddress,
+        ctx.block.hash
+    )
 
     const backstop = new BackstopPool({
         id: ss58Address,
@@ -141,7 +149,7 @@ export async function getOrCreateNablaToken(
     const ss58Address = hexToSs58(hexAddress)
     let nablaToken = await ctx.store.get(NablaToken, ss58Address)
     if (!nablaToken) {
-        const contract = new erc20Abi.Contract(ctx, hexAddress)
+        const contract = new erc20Abi.Contract(ctx, hexAddress, ctx.block.hash)
         nablaToken = new NablaToken({
             id: ss58Address,
             decimals: await contract.decimals(),
@@ -166,7 +174,7 @@ export async function createSwapPool(
         return
     }
 
-    const contract = new swapPoolAbi.Contract(ctx, hexAddress)
+    const contract = new swapPoolAbi.Contract(ctx, hexAddress, ctx.block.hash)
 
     const backstopPoolAddress = await contract.backstop()
     const routerAddress = await contract.router()

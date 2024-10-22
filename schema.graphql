@@ -754,6 +754,7 @@ type NablaToken @entity {
     name: String! # name of the token
     symbol: String! # ticker symbol of the token
     swapPools: [SwapPool!]! @derivedFrom(field: "token")
+    backstopPool: [BackstopPool!]! @derivedFrom(field: "router")
 }
 
 type SwapPool @entity {

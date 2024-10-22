@@ -119,7 +119,7 @@ export async function handlePointAccumulation(ctx: Ctx, block: BlockHeader_) {
                             `SwapPool not found for id: ${swapPoolId}. Should exist.`
                         )
                     }
-                    price = await getSwapPoolLPPrice(ctx, swapPool)
+                    price = await getSwapPoolLPPrice(ctx, block, swapPool)
 
                     console.log(`price for swap pool ${swapPoolId} is ${price}`)
                     swapPoolLPPrices.set(swapPoolId, price)
@@ -150,7 +150,11 @@ export async function handlePointAccumulation(ctx: Ctx, block: BlockHeader_) {
                             `BackstopPool not found for id: ${backstopPoolId}. Should exist.`
                         )
                     }
-                    price = await getBackstopPoolLPPrice(ctx, backstopPool)
+                    price = await getBackstopPoolLPPrice(
+                        ctx,
+                        block,
+                        backstopPool
+                    )
                     backstopPoolLPPrices.set(backstopPoolId, price)
                     backstopPools.set(backstopPoolId, backstopPool)
                 }
@@ -215,12 +219,6 @@ function calculateBackstopPointsThisBlock(
     price: Big,
     backstopPool: BackstopPool
 ): bigint {
-    // return 0 if price 0
-    // Workaround for total supply = 0 issue.
-    if (price.eq(0)) {
-        return BigInt(0)
-    }
-
     const blocksPerDayScale = new Big(1).div(216000) // Blocks in 30 days
     const lpDecimals = backstopPool.lpTokenDecimals
     const amountBigRaw = new Big(amount.toString())
@@ -231,30 +229,38 @@ function calculateBackstopPointsThisBlock(
     return BigInt(points.round(0, 0).toString())
 }
 
-async function getBackstopPoolLPPrice(ctx: Ctx, backstopPool: BackstopPool) {
-    const contract = new BackstopPoolContract(ctx, ss58ToHex(backstopPool.id))
+async function getBackstopPoolLPPrice(
+    ctx: Ctx,
+    block: BlockHeader_,
+    backstopPool: BackstopPool
+) {
+    const contract = new BackstopPoolContract(
+        ctx,
+        ss58ToHex(backstopPool.id),
+        block.hash
+    )
     const totalValue = await contract.getTotalPoolWorth()
 
     const { priceUsdUnits, decimals } =
-        await getBackstopPoolTokenPriceAndDecimals(ctx, backstopPool)
+        await getBackstopPoolTokenPriceAndDecimals(ctx, block, backstopPool)
 
     const totalValueBig = new Big(totalValue.toString()).times(priceUsdUnits)
     const totalSupplyBig = new Big(backstopPool.totalSupply.toString())
-
-    // Workaround for total supply = 0 issue.
-    if (totalSupplyBig.eq(0)) {
-        return new Big(0)
-    }
     const price = totalValueBig.div(totalSupplyBig)
 
     return price
 }
 
-async function getSwapPoolLPPrice(ctx: Ctx, swapPool: SwapPool) {
+async function getSwapPoolLPPrice(
+    ctx: Ctx,
+    block: BlockHeader_,
+    swapPool: SwapPool
+) {
     const totalLiabilitiesBig = new Big(swapPool.totalLiabilities.toString())
 
     const { priceUsdUnits, decimals } = await getSwapPoolTokenPriceAndDecimals(
         ctx,
+        block,
         swapPool
     )
     console.log(`price in usd units for  ${swapPool.id} is ${priceUsdUnits}`)
@@ -267,15 +273,24 @@ async function getSwapPoolLPPrice(ctx: Ctx, swapPool: SwapPool) {
 
 async function getSwapPoolTokenPriceAndDecimals(
     ctx: Ctx,
+    block: BlockHeader_,
     swapPool: SwapPool
 ): Promise<any> {
     const { router, token } = await getRouterAndToken(ctx, swapPool, 'swapPool')
 
-    const routerContract = new RouterContract(ctx, ss58ToHex(router.id))
+    const routerContract = new RouterContract(
+        ctx,
+        ss58ToHex(router.id),
+        block.hash
+    )
     const relevantOracleHexAddress = await routerContract.oracleByAsset(
         ss58ToHex(token.id)
     )
-    const oracleContract = new OracleContract(ctx, relevantOracleHexAddress)
+    const oracleContract = new OracleContract(
+        ctx,
+        relevantOracleHexAddress,
+        block.hash
+    )
 
     const poolAssetPrice = (await oracleContract.stateCall('0xb3596f07', [
         ss58ToHex(token.id),
@@ -288,6 +303,7 @@ async function getSwapPoolTokenPriceAndDecimals(
 
 async function getBackstopPoolTokenPriceAndDecimals(
     ctx: Ctx,
+    block: BlockHeader_,
     backstopPool: BackstopPool
 ): Promise<any> {
     const { router, token } = await getRouterAndToken(
@@ -296,11 +312,19 @@ async function getBackstopPoolTokenPriceAndDecimals(
         'backstopPool'
     )
 
-    const routerContract = new RouterContract(ctx, ss58ToHex(router.id))
+    const routerContract = new RouterContract(
+        ctx,
+        ss58ToHex(router.id),
+        block.hash
+    )
     const relevantOracleHexAddress = await routerContract.oracleByAsset(
         ss58ToHex(token.id)
     )
-    const oracleContract = new OracleContract(ctx, relevantOracleHexAddress)
+    const oracleContract = new OracleContract(
+        ctx,
+        relevantOracleHexAddress,
+        block.hash
+    )
 
     const poolAssetPrice = (await oracleContract.stateCall('0xb3596f07', [
         //0xb3596f07 -> getAssetPrice call
@@ -326,16 +350,13 @@ async function getRouterAndToken(
         },
     })
 
-    // const token = await ctx.store.findOne(NablaToken, {
-    //     where: {
-    //         [relationKey]: { // Won't work with backstop pool actually.
-    //             id: pool.id,
-    //         },
-    //     },
-    // });
-
-    const tokenId = pool.token.id
-    const token = await ctx.store.get(NablaToken, tokenId)
+    const token = await ctx.store.findOne(NablaToken, {
+        where: {
+            [relationKey]: {
+                id: pool.id,
+            },
+        },
+    })
 
     if (!router || !token) {
         throw new Error(

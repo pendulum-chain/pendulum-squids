@@ -1,5 +1,5 @@
-module.exports = class Data1729602190835 {
-    name = 'Data1729602190835'
+module.exports = class Data1729603382542 {
+    name = 'Data1729603382542'
 
     async up(db) {
         await db.query(

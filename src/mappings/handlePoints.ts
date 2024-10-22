@@ -15,7 +15,7 @@ type BackstopPoolId = string
 type SwapPoolId = string
 
 // global vars to count points
-export const pointsCount = new Map<address, bigint>()
+export const pointsCount = new Map<address, Big>()
 
 // keep track of user's LPs
 const perSwapPoolLPCount = new Map<address, Map<SwapPoolId, bigint>>()
@@ -105,7 +105,7 @@ export async function handlePointAccumulation(ctx: Ctx, block: BlockHeader_) {
 
     // Accumulate points from both swap LPs and backstop LPs
     for (const address of addresses) {
-        let totalPoints = pointsCount.get(address) || BigInt(0)
+        let totalPoints = pointsCount.get(address) || new Big(0)
 
         const swapUserLPs = perSwapPoolLPCount.get(address)
         if (swapUserLPs) {
@@ -131,7 +131,7 @@ export async function handlePointAccumulation(ctx: Ctx, block: BlockHeader_) {
                     price,
                     swapPools.get(swapPoolId)!
                 )
-                totalPoints += points
+                totalPoints.add(points)
             }
         }
 
@@ -164,7 +164,7 @@ export async function handlePointAccumulation(ctx: Ctx, block: BlockHeader_) {
                     price,
                     backstopPools.get(backstopPoolId)!
                 )
-                totalPoints += points
+                totalPoints.add(points)
             }
         }
 
@@ -176,7 +176,7 @@ export async function handlePointAccumulation(ctx: Ctx, block: BlockHeader_) {
 async function maybeStorePointsOnEntity(
     address: string,
     ctx: Ctx,
-    newPoints: bigint,
+    newPoints: Big,
     blockHeader: BlockHeader_
 ) {
     if (blockHeader.height % 100 !== 0) {
@@ -187,11 +187,11 @@ async function maybeStorePointsOnEntity(
     if (points === undefined) {
         points = new Points({
             id: address,
-            points: BigInt(0),
+            points: new Big(0).toFixed(4),
         })
     }
 
-    points.points = newPoints
+    points.points = newPoints.toFixed(4)
     await ctx.store.save(points)
 }
 
@@ -199,7 +199,7 @@ function calculateSwapPointsThisBlock(
     amount: bigint,
     price: Big,
     swapPool: SwapPool
-): bigint {
+): Big {
     const blocksPerDayScale = new Big(1).div(216000) // Blocks in 30 days
     const lpDecimals = swapPool.lpTokenDecimals
     const amountBigRaw = new Big(amount.toString())
@@ -211,22 +211,25 @@ function calculateSwapPointsThisBlock(
         .div(100)
     console.log(`points for swap pool ${swapPool.id} is ${pointsBig}`)
 
-    return BigInt(pointsBig.round(0, 0).toString()) // we incurr in some precision loss for points here
+    return pointsBig
 }
 
 function calculateBackstopPointsThisBlock(
     amount: bigint,
     price: Big,
     backstopPool: BackstopPool
-): bigint {
+): Big {
     const blocksPerDayScale = new Big(1).div(216000) // Blocks in 30 days
     const lpDecimals = backstopPool.lpTokenDecimals
     const amountBigRaw = new Big(amount.toString())
     const amountBigUnits = amountBigRaw.div(new Big(10).pow(lpDecimals))
 
-    const points = amountBigUnits.times(blocksPerDayScale).times(price).div(50)
+    const pointsBig = amountBigUnits
+        .times(blocksPerDayScale)
+        .times(price)
+        .div(50)
 
-    return BigInt(points.round(0, 0).toString())
+    return pointsBig
 }
 
 async function getBackstopPoolLPPrice(

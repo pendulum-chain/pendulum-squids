@@ -15,5 +15,5 @@ export class Points {
     id!: string
 
     @BigIntColumn_({ nullable: false })
-    points!: bigint
+    points!: string // to handle precision.
 }

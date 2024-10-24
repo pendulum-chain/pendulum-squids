@@ -1,14 +1,22 @@
-import { Ctx, BlockHeader_ } from '../../processor'
+import { Ctx, BlockHeader_, ContextExtended } from '../../processor'
 import { Router } from '../../model'
 import { ss58ToHex } from '../nabla/addresses'
 import { network } from '../../config'
 import { BackstopPool, SwapPool, NablaToken } from '../../model'
+import { getVersionedStorage } from '../../types/eventsAndStorageSelector'
 
 import { Contract as BackstopPoolContract } from '../../abi/backstop'
 import { Contract as OracleContract } from '../../abi/oracle'
 import { Contract as RouterContract } from '../../abi/router'
 
 import { Big } from 'big.js'
+
+const backstopPoolTokenPriceCache = new Map<string, Big>()
+const swapPoolTokenPriceCache = new Map<string, Big>()
+const blockchainSymbolCache = new Map<
+    string,
+    { blockchain: string; symbol: string }
+>()
 
 export async function getBackstopPoolLPPrice(
     ctx: Ctx,
@@ -22,7 +30,7 @@ export async function getBackstopPoolLPPrice(
     )
     const totalValue = await contract.getTotalPoolWorth()
 
-    const { priceUsdUnits, decimals } = await getBackstopPoolTokenPrice(
+    const priceUsdUnits = await getBackstopPoolTokenPrice(
         ctx,
         block,
         backstopPool
@@ -42,11 +50,7 @@ export async function getSwapPoolLPPrice(
 ) {
     const totalLiabilitiesBig = new Big(swapPool.totalLiabilities.toString())
 
-    const { priceUsdUnits, decimals } = await getSwapPoolTokenPrice(
-        ctx,
-        block,
-        swapPool
-    )
+    const priceUsdUnits = await getSwapPoolTokenPrice(ctx, block, swapPool)
 
     const totalSupplyBig = new Big(swapPool.totalSupply.toString())
     const price = totalLiabilitiesBig.times(priceUsdUnits).div(totalSupplyBig)
@@ -60,6 +64,14 @@ async function getSwapPoolTokenPrice(
     swapPool: SwapPool
 ): Promise<any> {
     const { router, token } = await getRouterAndToken(ctx, swapPool, 'swapPool')
+
+    const cacheKey = `${block.hash}-${swapPool.id}`
+
+    if (swapPoolTokenPriceCache.has(cacheKey)) {
+        return swapPoolTokenPriceCache.get(cacheKey)
+    }
+    //clean previous keys
+    swapPoolTokenPriceCache.clear()
 
     const routerContract = new RouterContract(
         ctx,
@@ -75,12 +87,22 @@ async function getSwapPoolTokenPrice(
         block.hash
     )
 
-    const poolAssetPrice = (await oracleContract.stateCall('0xb3596f07', [
-        ss58ToHex(token.id),
-    ])) as string
+    const { symbol, blockchain } = await getBlockchainSymbolForToken(
+        ctx,
+        oracleContract,
+        token.id
+    )
 
-    const priceUsdUnits = new Big(poolAssetPrice).div(new Big(10).pow(12))
-    return { priceUsdUnits: priceUsdUnits, decimals: token.decimals }
+    const priceUsdUnits = await getPriceFromOracle(
+        ctx,
+        block,
+        symbol,
+        blockchain
+    )
+
+    swapPoolTokenPriceCache.set(cacheKey, priceUsdUnits)
+
+    return priceUsdUnits
 }
 
 async function getBackstopPoolTokenPrice(
@@ -88,6 +110,14 @@ async function getBackstopPoolTokenPrice(
     block: BlockHeader_,
     backstopPool: BackstopPool
 ): Promise<any> {
+    const cacheKey = `${block.hash}-${backstopPool.id}`
+
+    if (backstopPoolTokenPriceCache.has(cacheKey)) {
+        return backstopPoolTokenPriceCache.get(cacheKey)
+    }
+    //clean previous keys
+    backstopPoolTokenPriceCache.clear()
+
     const { router, token } = await getRouterAndToken(
         ctx,
         backstopPool,
@@ -108,13 +138,22 @@ async function getBackstopPoolTokenPrice(
         block.hash
     )
 
-    const poolAssetPrice = (await oracleContract.stateCall('0xb3596f07', [
-        //0xb3596f07 -> getAssetPrice call
-        ss58ToHex(token.id),
-    ])) as string
-    const priceUsdUnits = new Big(poolAssetPrice).div(new Big(10).pow(12))
+    const { symbol, blockchain } = await getBlockchainSymbolForToken(
+        ctx,
+        oracleContract,
+        token.id
+    )
 
-    return { priceUsdUnits: priceUsdUnits, decimals: token.decimals }
+    const priceUsdUnits = await getPriceFromOracle(
+        ctx,
+        block,
+        symbol,
+        blockchain
+    )
+
+    backstopPoolTokenPriceCache.set(cacheKey, priceUsdUnits)
+
+    return priceUsdUnits
 }
 
 async function getRouterAndToken(
@@ -147,4 +186,58 @@ async function getRouterAndToken(
     }
 
     return { router, token }
+}
+
+async function getPriceFromOracle(
+    ctx: Ctx,
+    blockHeader: BlockHeader_,
+    symbol: string,
+    blockchain: string
+): Promise<Big> {
+    const ctxExtended: ContextExtended = { ...ctx, block: blockHeader }
+    const coinInfosMapStorage = await getVersionedStorage(
+        network,
+        ctxExtended,
+        'diaOracleModule',
+        'coinInfosMap'
+    )
+
+    const coinInfo = await coinInfosMapStorage.get(ctxExtended.block, {
+        blockchain: stringToBytes(blockchain),
+        symbol: stringToBytes(symbol),
+    })
+
+    const priceUnitsUsd = new Big(coinInfo.price).div(new Big(10).pow(12))
+
+    return priceUnitsUsd
+}
+
+async function getBlockchainSymbolForToken(
+    ctx: Ctx,
+    oracleContract: OracleContract,
+    tokenId: string
+): Promise<{ symbol: string; blockchain: string }> {
+    if (blockchainSymbolCache.has(tokenId)) {
+        return blockchainSymbolCache.get(tokenId)!
+    }
+
+    const blockchain = await oracleContract.getOracleKeyBlockchain(
+        ss58ToHex(tokenId)
+    )
+    const symbol = await oracleContract.getOracleKeySymbol(ss58ToHex(tokenId))
+
+    const result = { symbol: symbol, blockchain: blockchain }
+    blockchainSymbolCache.set(tokenId, result)
+
+    return result
+}
+
+const stringToBytes = (str: string): string => {
+    const encoder = new TextEncoder()
+    return (
+        '0x' +
+        Array.from(encoder.encode(str))
+            .map((byte) => byte.toString(16))
+            .join('')
+    )
 }

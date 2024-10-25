@@ -21,6 +21,7 @@ const getRouterAndTokenCache = new Map<
     string,
     { router: Router; token: NablaToken }
 >()
+const coinInfosStorageCache = new Map<string, any>()
 
 export async function getBackstopPoolLPPrice(
     ctx: Ctx,
@@ -41,9 +42,7 @@ export async function getBackstopPoolLPPrice(
 
     const totalValueBig = new Big(totalValue.toString()).times(priceUsdUnits)
     const totalSupplyBig = new Big(backstopPool.totalSupply.toString())
-    const price = totalValueBig.div(totalSupplyBig)
-
-    return price
+    return totalValueBig.div(totalSupplyBig)
 }
 
 export async function getSwapPoolLPPrice(
@@ -52,13 +51,10 @@ export async function getSwapPoolLPPrice(
     swapPool: SwapPool
 ) {
     const totalLiabilitiesBig = new Big(swapPool.totalLiabilities.toString())
-
     const priceUsdUnits = await getSwapPoolTokenPrice(ctx, block, swapPool)
 
     const totalSupplyBig = new Big(swapPool.totalSupply.toString())
-    const price = totalLiabilitiesBig.times(priceUsdUnits).div(totalSupplyBig)
-
-    return price
+    return totalLiabilitiesBig.times(priceUsdUnits).div(totalSupplyBig)
 }
 
 async function getSwapPoolTokenPrice(
@@ -66,10 +62,7 @@ async function getSwapPoolTokenPrice(
     block: BlockHeader_,
     swapPool: SwapPool
 ): Promise<any> {
-    const { router, token } = await getRouterAndToken(ctx, swapPool, 'swapPool')
-
     const cacheKey = `${block.hash}-${swapPool.id}`
-
     if (swapPoolTokenPriceCache.has(cacheKey)) {
         return swapPoolTokenPriceCache.get(cacheKey)
     }
@@ -81,7 +74,6 @@ async function getSwapPoolTokenPrice(
         block,
         'swapPool'
     )
-
     const priceUsdUnits = await getPriceFromOracle(
         ctx,
         block,
@@ -90,7 +82,6 @@ async function getSwapPoolTokenPrice(
     )
 
     swapPoolTokenPriceCache.set(cacheKey, priceUsdUnits)
-
     return priceUsdUnits
 }
 
@@ -100,11 +91,9 @@ async function getBackstopPoolTokenPrice(
     backstopPool: BackstopPool
 ): Promise<any> {
     const cacheKey = `${block.hash}-${backstopPool.id}`
-
     if (backstopPoolTokenPriceCache.has(cacheKey)) {
         return backstopPoolTokenPriceCache.get(cacheKey)
     }
-    // Clean previous keys
     backstopPoolTokenPriceCache.clear()
 
     const { symbol, blockchain } = await getBlockchainSymbolForToken(
@@ -113,7 +102,6 @@ async function getBackstopPoolTokenPrice(
         block,
         'backstopPool'
     )
-
     const priceUsdUnits = await getPriceFromOracle(
         ctx,
         block,
@@ -122,7 +110,6 @@ async function getBackstopPoolTokenPrice(
     )
 
     backstopPoolTokenPriceCache.set(cacheKey, priceUsdUnits)
-
     return priceUsdUnits
 }
 
@@ -132,38 +119,25 @@ async function getRouterAndToken(
     poolType: 'swapPool' | 'backstopPool'
 ): Promise<{ router: Router; token: NablaToken }> {
     const cacheKey = pool.id
-
-    // Check if the result is already cached
     if (getRouterAndTokenCache.has(cacheKey)) {
         return getRouterAndTokenCache.get(cacheKey)!
     }
 
     const relationKey = poolType === 'swapPool' ? 'swapPools' : 'backstopPool'
-
     const router = await ctx.store.findOne(Router, {
-        where: {
-            [relationKey]: {
-                id: pool.id,
-            },
-        },
+        where: { [relationKey]: { id: pool.id } },
     })
-
     const token = await ctx.store.findOne(NablaToken, {
-        where: {
-            [relationKey]: {
-                id: pool.id,
-            },
-        },
+        where: { [relationKey]: { id: pool.id } },
     })
 
     if (!router || !token) {
         throw new Error(
-            `Router address or token address not found for ${poolType} ${pool.id}. They should exist at this point.`
+            `Router or token not found for ${poolType} ${pool.id}. They should exist at this point.`
         )
     }
 
     const result = { router, token }
-    // Store the result in the cache
     getRouterAndTokenCache.set(cacheKey, result)
     return result
 }
@@ -175,21 +149,46 @@ async function getPriceFromOracle(
     blockchain: string
 ): Promise<Big> {
     const ctxExtended: ContextExtended = { ...ctx, block: blockHeader }
+    const coinInfos = await getCoinInfos(ctxExtended, blockHeader)
+
+    const key = {
+        blockchain: stringToBytes(blockchain),
+        symbol: stringToBytes(symbol),
+    }
+    const coinInfoPair = coinInfos.find(
+        (coinInfo: any) =>
+            coinInfo[0].blockchain == key.blockchain &&
+            coinInfo[0].symbol == key.symbol
+    )
+
+    if (!coinInfoPair) {
+        throw new Error(
+            `Coin info not found for symbol ${symbol} on blockchain ${blockchain}`
+        )
+    }
+
+    const coinInfo = coinInfoPair[1]
+    return new Big(coinInfo.price).div(new Big(10).pow(12))
+}
+
+async function getCoinInfos(
+    ctxExtended: ContextExtended,
+    blockHeader: BlockHeader_
+): Promise<[key: any, value: any][]> {
+    if (coinInfosStorageCache.has(blockHeader.hash)) {
+        return coinInfosStorageCache.get(blockHeader.hash)
+    }
+    coinInfosStorageCache.clear()
+
     const coinInfosMapStorage = await getVersionedStorage(
         network,
         ctxExtended,
         'diaOracleModule',
         'coinInfosMap'
     )
-
-    const coinInfo = await coinInfosMapStorage.get(ctxExtended.block, {
-        blockchain: stringToBytes(blockchain),
-        symbol: stringToBytes(symbol),
-    })
-
-    const priceUnitsUsd = new Big(coinInfo.price).div(new Big(10).pow(12))
-
-    return priceUnitsUsd
+    const coinInfos = await coinInfosMapStorage.getPairs(ctxExtended.block)
+    coinInfosStorageCache.set(blockHeader.hash, coinInfos)
+    return coinInfos
 }
 
 async function getBlockchainSymbolForToken(
@@ -203,13 +202,11 @@ async function getBlockchainSymbolForToken(
     }
 
     const { router, token } = await getRouterAndToken(ctx, pool, poolType)
-
     const routerContract = new RouterContract(
         ctx,
         ss58ToHex(router.id),
         block.hash
     )
-
     const relevantOracleHexAddress = await routerContract.oracleByAsset(
         ss58ToHex(token.id)
     )
@@ -219,7 +216,6 @@ async function getBlockchainSymbolForToken(
         relevantOracleHexAddress,
         block.hash
     )
-
     const blockchain = await oracleContract.getOracleKeyBlockchain(
         ss58ToHex(token.id)
     )
@@ -227,7 +223,6 @@ async function getBlockchainSymbolForToken(
 
     const result = { symbol: symbol, blockchain: blockchain }
     blockchainSymbolCache.set(pool.id, result)
-
     return result
 }
 

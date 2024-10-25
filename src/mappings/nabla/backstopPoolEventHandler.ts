@@ -200,7 +200,11 @@ export async function updateBackstopCoverageAndSupply(
     backstopPool: BackstopPool
 ) {
     const contractHexAddress = ss58ToHex(backstopPool.id)
-    const contract = new BackstopPoolContract(ctx, contractHexAddress)
+    const contract = new BackstopPoolContract(
+        ctx,
+        contractHexAddress,
+        ctx.block.hash
+    )
     const poolTokenAddress = await contract.asset()
     const poolTokenContract = new Erc20Contract(
         ctx,

@@ -188,7 +188,11 @@ export async function updateSwapPoolCoverageAndSupply(
     ctx: EventHandlerContext,
     swapPool: SwapPool
 ) {
-    const contract = new SwapPoolContract(ctx, ss58ToHex(swapPool.id))
+    const contract = new SwapPoolContract(
+        ctx,
+        ss58ToHex(swapPool.id),
+        ctx.block.hash
+    )
     const coverage = await contract.coverage()
 
     swapPool.totalSupply = await contract.totalSupply()
@@ -246,7 +250,8 @@ export async function updateAprAfterSwap(
 
     const swapPoolContract = new SwapPoolContract(
         ctx,
-        ss58ToHex(updatedSwapPool.id)
+        ss58ToHex(updatedSwapPool.id),
+        ctx.block.hash
     )
     const swapPoolLpTokenDecimals = await swapPoolContract.decimals()
 
@@ -276,7 +281,8 @@ export async function updateAprAfterSwap(
     if (backstop !== undefined) {
         const backstopPoolContract = new BackstopPoolContract(
             ctx,
-            ss58ToHex(backstop.id)
+            ss58ToHex(backstop.id),
+            ctx.block.hash
         )
         const backstopPoolLpTokenDecimals =
             await backstopPoolContract.decimals()

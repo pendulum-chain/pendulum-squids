@@ -147,7 +147,11 @@ export async function handleSwapPoolRegistered(
         await ctx.store.save(registeredSwapPool)
     }
 
-    const swapPoolContract = new swapPoolAbi.Contract(ctx, event.pool)
+    const swapPoolContract = new swapPoolAbi.Contract(
+        ctx,
+        event.pool,
+        ctx.block.hash
+    )
     const routerOfSwapPool = await swapPoolContract.router()
     if (routerOfSwapPool === ss58ToHex(router.id)) {
         swapPool.router = router

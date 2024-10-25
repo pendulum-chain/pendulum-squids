@@ -17,6 +17,10 @@ const blockchainSymbolCache = new Map<
     string,
     { blockchain: string; symbol: string }
 >()
+const getRouterAndTokenCache = new Map<
+    string,
+    { router: Router; token: NablaToken }
+>()
 
 export async function getBackstopPoolLPPrice(
     ctx: Ctx,
@@ -161,6 +165,13 @@ async function getRouterAndToken(
     pool: SwapPool | BackstopPool,
     poolType: 'swapPool' | 'backstopPool'
 ): Promise<{ router: Router; token: NablaToken }> {
+    const cacheKey = pool.id
+
+    // Check if the result is already cached
+    if (getRouterAndTokenCache.has(cacheKey)) {
+        return getRouterAndTokenCache.get(cacheKey)!
+    }
+
     const relationKey = poolType === 'swapPool' ? 'swapPools' : 'backstopPool'
 
     const router = await ctx.store.findOne(Router, {
@@ -185,7 +196,10 @@ async function getRouterAndToken(
         )
     }
 
-    return { router, token }
+    const result = { router, token }
+    // Store the result in the cache
+    getRouterAndTokenCache.set(cacheKey, result)
+    return result
 }
 
 async function getPriceFromOracle(

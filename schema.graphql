@@ -789,7 +789,6 @@ type BackstopPool @entity {
     paused: Boolean! # whether the backstop pool is paused
     coveredSwapPools: [SwapPool!]! @derivedFrom(field: "backstop") # swap pools that are covered by the backstop pool
     feesHistory: [NablaSwapFee!]! @derivedFrom(field: "backstopPool") # history of swap fees
-    apr: BigInt! # annual percentage rate of the backstop pool
 }
 
 type NablaSwapFee @entity {

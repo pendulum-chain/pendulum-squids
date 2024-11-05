@@ -770,7 +770,9 @@ type SwapPool @entity {
     totalSupply: BigInt! # total supply of LP tokens
     paused: Boolean! # whether the swap pool is paused
     feesHistory: [NablaSwapFee!]! @derivedFrom(field: "swapPool") # history of swap fees
-    apr: BigInt! # annual percentage rate of the swap pool
+    apr24h: BigInt! # annual percentage rate of the swap pool (1 day average)
+    apr7d: BigInt! # annual percentage rate of the swap pool (7 day average)
+    lastAprUpdate: BigInt! # timestamp of the last APR update
     insuranceFeeBps: BigInt! # insurance fee in basis points
     protocolTreasuryAddress: String # address of the treasury
 }

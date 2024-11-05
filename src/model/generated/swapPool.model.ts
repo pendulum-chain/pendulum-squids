@@ -64,7 +64,13 @@ export class SwapPool {
     feesHistory!: NablaSwapFee[]
 
     @BigIntColumn_({ nullable: false })
-    apr!: bigint
+    apr24h!: bigint
+
+    @BigIntColumn_({ nullable: false })
+    apr7d!: bigint
+
+    @BigIntColumn_({ nullable: false })
+    lastAprUpdate!: bigint
 
     @BigIntColumn_({ nullable: false })
     insuranceFeeBps!: bigint

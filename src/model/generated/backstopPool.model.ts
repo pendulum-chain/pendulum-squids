@@ -55,7 +55,4 @@ export class BackstopPool {
 
     @OneToMany_(() => NablaSwapFee, (e) => e.backstopPool)
     feesHistory!: NablaSwapFee[]
-
-    @BigIntColumn_({ nullable: false })
-    apr!: bigint
 }

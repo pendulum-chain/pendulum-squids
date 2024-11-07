@@ -119,7 +119,6 @@ export async function createBackstopPool(
         reserves: await tokenContract.balanceOf(hexAddress),
         totalSupply: await contract.totalSupply(),
         paused: false,
-        apr: 0n,
     })
     await ctx.store.save(backstop)
 }
@@ -218,7 +217,11 @@ export async function createSwapPool(
         totalLiabilities: coverage[1],
         totalSupply: await contract.totalSupply(),
         paused: false,
-        apr: 0n,
+        apr7d: 0n,
+        apr24h: 0n,
+        backstopFees7d: 0n,
+        backstopFees24h: 0n,
+        lastAprUpdate: 0n,
         insuranceFeeBps: 0n,
         protocolTreasuryAddress: protocolTreasurySs58Address,
     })

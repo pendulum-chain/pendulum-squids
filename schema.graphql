@@ -770,7 +770,6 @@ type SwapPool @entity {
     totalSupply: BigInt! # total supply of LP tokens
     paused: Boolean! # whether the swap pool is paused
     feesHistory: [NablaSwapFee!]! @derivedFrom(field: "swapPool") # history of swap fees
-    backstopFeesLastSevenDays: BigInt! # total backstop fees in `asset`
     backstopFees24h: BigInt! # backstop fees of the last 24 hours in `asset`
     backstopFees7d: BigInt! # backstop fees of the last 7 days in `asset`
     apr24h: BigInt! # annual percentage rate of the swap pool (1 day average)

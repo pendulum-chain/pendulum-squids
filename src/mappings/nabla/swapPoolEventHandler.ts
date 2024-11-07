@@ -238,11 +238,42 @@ export async function updateAprAfterSwap(
 ): Promise<void> {
     // Update the fee history (swapFee, backstopFee)
     await pruneSwapFeeHistory(ctx, swapPoolWithFeeHistory, newSwapFee)
-    const updatedSwapPool = (await getSwapPool(
-        ctx,
-        swapPoolWithFeeHistory.id,
-        true
-    ))!
+    const newSwapFeeTimestamp = newSwapFee.timestamp
+    const tenMinutesAgo = newSwapFeeTimestamp - 600n
+
+    // Check if the APR was updated in the last 10 minutes
+    if (swapPoolWithFeeHistory.lastAprUpdate >= tenMinutesAgo) return
+    const sevenDaysAgo = newSwapFeeTimestamp - 7n * 24n * 60n * 60n
+    const oneDayAgo = newSwapFeeTimestamp - 1n * 24n * 60n * 60n
+
+    let totalLpFees7Days = 0n
+    let totalBspFees7Days = 0n
+
+    let totalLpFees24h = 0n
+    let totalBspFees24h = 0n
+
+    const filteredFeeHistory: string[] = []
+    const poolFeeHistory = swapPoolWithFeeHistory.feesHistory
+
+    for (let i = 0; i < poolFeeHistory.length; i++) {
+        const swapFee = SwapFee.load(poolFeeHistory[i])
+
+        // Sum up the total LP fees & prune the fee history of a pool
+        if (swapFee !== null && swapFee.timestamp > sevenDaysAgo) {
+            // 7 days
+            totalLpFees7Days = totalLpFees7Days.plus(swapFee.lpFee)
+            totalBspFees7Days = totalBspFees7Days.plus(swapFee.backstopFee)
+
+            // 1 day
+            if (swapFee.timestamp > oneDayAgo) {
+                totalLpFees24h = totalLpFees24h.plus(swapFee.lpFee)
+                totalBspFees24h = totalBspFees24h.plus(swapFee.backstopFee)
+            }
+
+            // only store fees that are relevant next iteration
+            filteredFeeHistory.push(swapFee.id)
+        }
+    }
 
     const swapPoolContract = new SwapPoolContract(
         ctx,
@@ -250,6 +281,25 @@ export async function updateAprAfterSwap(
         ctx.block.hash
     )
     const swapPoolLpTokenDecimals = await swapPoolContract.decimals()
+    const poolTotalSupply = updatedSwapPool.totalSupply
+    swapPoolWithFeeHistory.apr7d = calculateApr(
+        totalLpFees7Days,
+        poolTotalSupply,
+        BigInt(swapPoolLpTokenDecimals),
+        7n
+    )
+    swapPoolWithFeeHistory.apr24h = calculateApr(
+        totalLpFees24h,
+        poolTotalSupply,
+        BigInt(swapPoolLpTokenDecimals),
+        1n
+    )
+
+    const updatedSwapPool = (await getSwapPool(
+        ctx,
+        swapPoolWithFeeHistory.id,
+        true
+    ))!
 
     /*
      * Swap Pool fees history & APR
@@ -260,7 +310,7 @@ export async function updateAprAfterSwap(
     )
 
     const poolTotalSupply = updatedSwapPool.totalSupply
-    updatedSwapPool.apr = calculateApr(
+    updatedSwapPool.apr7d = calculateApr(
         totalLpFees,
         poolTotalSupply,
         BigInt(swapPoolLpTokenDecimals)
@@ -306,10 +356,15 @@ export async function updateAprAfterSwap(
 function calculateApr(
     totalFees: bigint,
     totalSupply: bigint,
-    poolTokenDecimals: bigint
+    poolTokenDecimals: bigint,
+    daysAverage: bigint
 ): bigint {
     if (totalSupply > 0n) {
-        return (totalFees * 365n * 10n ** poolTokenDecimals) / totalSupply / 7n
+        return (
+            (totalFees * 365n * 10n ** poolTokenDecimals) /
+            totalSupply /
+            daysAverage
+        )
     } else {
         return 0n
     }

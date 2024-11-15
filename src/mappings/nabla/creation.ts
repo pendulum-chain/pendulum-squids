@@ -117,6 +117,7 @@ export async function createBackstopPool(
         totalSupply: await contract.totalSupply(),
         paused: false,
         apr: 0n,
+        poolValue: await contract.getTotalPoolWorth(),
     })
     await ctx.store.save(backstop)
 }

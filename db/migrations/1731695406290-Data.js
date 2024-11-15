@@ -1,5 +1,5 @@
-module.exports = class Data1729604233998 {
-    name = 'Data1729604233998'
+module.exports = class Data1731695406290 {
+    name = 'Data1731695406290'
 
     async up(db) {
         await db.query(
@@ -303,7 +303,7 @@ module.exports = class Data1729604233998 {
             `CREATE INDEX "IDX_86080eda96a6de9c3c60be41d8" ON "nabla_swap_fee" ("backstop_pool_id") `
         )
         await db.query(
-            `CREATE TABLE "backstop_pool" ("id" character varying NOT NULL, "name" text NOT NULL, "symbol" text NOT NULL, "lp_token_decimals" integer NOT NULL, "reserves" numeric NOT NULL, "total_supply" numeric NOT NULL, "paused" boolean NOT NULL, "apr" numeric NOT NULL, "router_id" character varying, "token_id" character varying, CONSTRAINT "PK_bf2d01d9ce60ad9ee4b1b087d9d" PRIMARY KEY ("id"))`
+            `CREATE TABLE "backstop_pool" ("id" character varying NOT NULL, "name" text NOT NULL, "symbol" text NOT NULL, "lp_token_decimals" integer NOT NULL, "reserves" numeric NOT NULL, "total_supply" numeric NOT NULL, "paused" boolean NOT NULL, "apr" numeric NOT NULL, "pool_value" numeric NOT NULL, "router_id" character varying, "token_id" character varying, CONSTRAINT "PK_bf2d01d9ce60ad9ee4b1b087d9d" PRIMARY KEY ("id"))`
         )
         await db.query(
             `CREATE INDEX "IDX_13ef09b925620aedf12b3342ca" ON "backstop_pool" ("router_id") `

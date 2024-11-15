@@ -58,4 +58,7 @@ export class BackstopPool {
 
     @BigIntColumn_({ nullable: false })
     apr!: bigint
+
+    @BigIntColumn_({ nullable: false })
+    poolValue!: bigint
 }

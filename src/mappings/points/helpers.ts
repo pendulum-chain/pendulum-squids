@@ -21,7 +21,12 @@ const getRouterAndTokenCache = new Map<
     string,
     { router: Router; token: NablaToken }
 >()
-const coinInfosStorageCache = new Map<string, any>()
+
+const PRICE_REFRESH_INTERVAL = 10 // Refresh prices every 10 blocks
+const coinInfosStorageCache: any = {
+    coinInfos: undefined,
+    blockNumber: 0,
+}
 
 export async function getBackstopPoolLPPrice(
     ctx: Ctx,
@@ -175,10 +180,15 @@ async function getCoinInfos(
     ctxExtended: ContextExtended,
     blockHeader: BlockHeader_
 ): Promise<[key: any, value: any][]> {
-    if (coinInfosStorageCache.has(blockHeader.hash)) {
-        return coinInfosStorageCache.get(blockHeader.hash)
+    const currentBlockNumber = blockHeader.height
+    // Check if we can reuse the price of previous blocks
+    if (
+        coinInfosStorageCache.coinInfos &&
+        currentBlockNumber - coinInfosStorageCache.blockNumber <
+            PRICE_REFRESH_INTERVAL
+    ) {
+        return coinInfosStorageCache.coinInfos
     }
-    coinInfosStorageCache.clear()
 
     const coinInfosMapStorage = await getVersionedStorage(
         network,
@@ -187,7 +197,8 @@ async function getCoinInfos(
         'coinInfosMap'
     )
     const coinInfos = await coinInfosMapStorage.getPairs(ctxExtended.block)
-    coinInfosStorageCache.set(blockHeader.hash, coinInfos)
+    coinInfosStorageCache.coinInfos = coinInfos
+    coinInfosStorageCache.blockNumber = currentBlockNumber
     return coinInfos
 }
 

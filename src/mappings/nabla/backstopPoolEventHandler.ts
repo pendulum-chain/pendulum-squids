@@ -215,4 +215,5 @@ export async function updateBackstopCoverageAndSupply(
     backstopPool.reserves = await poolTokenContract.balanceOf(
         contractHexAddress
     )
+    backstopPool.poolValue = await contract.getTotalPoolWorth()
 }

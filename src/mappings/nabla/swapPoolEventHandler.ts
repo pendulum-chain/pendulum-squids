@@ -108,12 +108,17 @@ export async function handleBurn(
         swapPool
     )
 
-    if (hexToSs58(swapPool.router!.id) == ROUTER_ADDRESS_FOR_POINTS) {
-        removeSwapLP(
-            hexToSs58(event.sender),
-            swapPool.id,
-            event.poolSharesBurned
-        )
+    try {
+        if (hexToSs58(swapPool.router!.id) == ROUTER_ADDRESS_FOR_POINTS) {
+            removeSwapLP(
+                hexToSs58(event.sender),
+                swapPool.id,
+                event.poolSharesBurned
+            )
+        }
+    } catch (e) {
+        console.log(e)
+        console.log('pool id', swapPool.id)
     }
 
     await ctx.store.save(swapPool)
@@ -160,8 +165,17 @@ export async function handleMint(
         swapPool
     )
 
-    if (hexToSs58(swapPool.router!.id) == ROUTER_ADDRESS_FOR_POINTS) {
-        addSwapLP(hexToSs58(event.sender), swapPool.id, event.poolSharesMinted)
+    try {
+        if (hexToSs58(swapPool.router!.id) == ROUTER_ADDRESS_FOR_POINTS) {
+            addSwapLP(
+                hexToSs58(event.sender),
+                swapPool.id,
+                event.poolSharesMinted
+            )
+        }
+    } catch (e) {
+        console.log(e)
+        console.log('pool id', swapPool.id)
     }
 
     await ctx.store.save(swapPool)

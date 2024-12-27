@@ -95,12 +95,17 @@ export async function handleBurn(
     )
     await updateBackstopCoverageAndSupply(ctx, backstopPool)
 
-    if (hexToSs58(backstopPool.router!.id) == ROUTER_ADDRESS_FOR_POINTS) {
-        removeBackstopLP(
-            hexToSs58(event.sender),
-            backstopPool.id,
-            event.poolSharesBurned
-        )
+    try {
+        if (hexToSs58(backstopPool.router!.id) == ROUTER_ADDRESS_FOR_POINTS) {
+            removeBackstopLP(
+                hexToSs58(event.sender),
+                backstopPool.id,
+                event.poolSharesBurned
+            )
+        }
+    } catch (e) {
+        console.log(e)
+        console.log(' pooll id', backstopPool.id)
     }
 
     await ctx.store.save(backstopPool)
@@ -158,12 +163,17 @@ export async function handleMint(
         backstopPool
     )
 
-    if (hexToSs58(backstopPool.router!.id) == ROUTER_ADDRESS_FOR_POINTS) {
-        addBackstopLP(
-            hexToSs58(event.sender),
-            backstopPool.id,
-            event.poolSharesMinted
-        )
+    try {
+        if (hexToSs58(backstopPool.router!.id) == ROUTER_ADDRESS_FOR_POINTS) {
+            addBackstopLP(
+                hexToSs58(event.sender),
+                backstopPool.id,
+                event.poolSharesMinted
+            )
+        }
+    } catch (e) {
+        console.log(e)
+        console.log(' pooll id', backstopPool.id)
     }
 
     await ctx.store.save(backstopPool)

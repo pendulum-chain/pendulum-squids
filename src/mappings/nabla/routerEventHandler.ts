@@ -16,6 +16,12 @@ import {
 } from './creation'
 import { updateSwapPoolCoverageAndSupply } from './swapPoolEventHandler'
 import { hexToSs58, ss58ToHex } from './addresses'
+import {
+    addPointsFromSwap,
+    ROUTER_ADDRESS_FOR_POINTS,
+} from '../points/handlePoints'
+import { getSwapPoolTokenPrice } from '../points/helpers'
+import Big from 'big.js'
 
 export async function handleRouterEvent(
     ctx: EventHandlerContext,
@@ -76,11 +82,25 @@ export async function handleSwap(
         router.id,
         tokenIn.id
     )
+
     const swapPoolOut = await getSwapPoolsOfRouterForToken(
         ctx,
         router.id,
         tokenOut.id
     )
+
+    const priceUsdUnits = await getSwapPoolTokenPrice(
+        ctx,
+        ctx.block,
+        swapPoolIn!
+    )
+    const amountInUnits = new Big(event.amountIn.toString()).div(
+        new Big(10).pow(tokenIn.decimals)
+    )
+
+    if (hexToSs58(swapPoolIn!.router!.id) == ROUTER_ADDRESS_FOR_POINTS) {
+        addPointsFromSwap(hexToSs58(event.sender), amountInUnits, priceUsdUnits)
+    }
 
     if (swapPoolIn !== undefined) {
         await updateSwapPoolCoverageAndSupply(ctx, swapPoolIn)

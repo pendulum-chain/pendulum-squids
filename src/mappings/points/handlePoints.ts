@@ -12,7 +12,10 @@ type BackstopPoolId = string
 type SwapPoolId = string
 
 const OUTPUT_CSV_PATH = 'points.csv'
-const DUMP_BLOCK_HEIGHT = 3797700 // whenever the campaign finishes.
+const INITIAL_CAMPAIGN_BLOCK_HEIGHT = 4118040 // from which block to start counting points
+const DUMP_BLOCK_HEIGHT = 4326830 // whenever the campaign finishes.
+export const ROUTER_ADDRESS_FOR_POINTS =
+    '6fEJAs1ycfTNDZY7ZoAtkBhuhHnRVNscdALMBLdjDV12K4uE'
 
 // global vars to count points
 export const pointsCount = new Map<address, Big>()
@@ -87,8 +90,22 @@ export function removeBackstopLP(
     )
 }
 
+export function addPointsFromSwap(address: address, amount: Big, price: Big) {
+    console.log(
+        `Adding points from swap for address: ${address}, amount ${amount}, price ${price}`
+    )
+    // 1 point per 500 USD worth of swap (price at the time of swap)
+    const pointsThisSwap = amount.mul(price).div(500)
+
+    const totalPoints = pointsCount.get(address) || new Big(0)
+    pointsCount.set(address, totalPoints.add(pointsThisSwap))
+}
 // each block we accumulate the points based on price and LPs that the address has.
 export async function handlePointAccumulation(ctx: Ctx, block: BlockHeader_) {
+    if (block.height < INITIAL_CAMPAIGN_BLOCK_HEIGHT) {
+        return
+    }
+
     // Cache maps for swap pool prices and backstop pool prices
     // avoid calling the store on each iteration
     const swapPoolLPPrices = new Map<SwapPoolId, Big>()
@@ -188,10 +205,13 @@ async function maybeStorePointsOnEntity(
     newPoints: Big,
     blockHeader: BlockHeader_
 ) {
-    if (blockHeader.height % 100 !== 0) {
+    // store points every 100 blocks or on the final block DUMP_BLOCK_HEIGHT
+    if (
+        blockHeader.height % 100 != 0 &&
+        blockHeader.height != DUMP_BLOCK_HEIGHT
+    ) {
         return
     }
-
     let points = await ctx.store.get(Points, address)
     if (points === undefined) {
         points = new Points({
@@ -209,11 +229,12 @@ function calculateSwapPointsThisBlock(
     price: Big,
     swapPool: SwapPool
 ): Big {
-    const blocksPerDayScale = new Big(1).div(216000) // Blocks in 30 days
+    const blocksPerDayScale = new Big(1).div(7200) // Blocks in 1 day
     const lpDecimals = swapPool.lpTokenDecimals
     const amountBigRaw = new Big(amount.toString())
     const amountBigUnits = amountBigRaw.div(new Big(10).pow(lpDecimals))
 
+    // 1 point per 100 USD worth of LPs per day (worth of block)
     const pointsBig = amountBigUnits
         .times(blocksPerDayScale)
         .times(price)
@@ -226,11 +247,12 @@ function calculateBackstopPointsThisBlock(
     price: Big,
     backstopPool: BackstopPool
 ): Big {
-    const blocksPerDayScale = new Big(1).div(216000) // Blocks in 30 days
+    const blocksPerDayScale = new Big(1).div(7200) // Blocks in 1 day
     const lpDecimals = backstopPool.lpTokenDecimals
     const amountBigRaw = new Big(amount.toString())
     const amountBigUnits = amountBigRaw.div(new Big(10).pow(lpDecimals))
 
+    // 2 points per 100 USD worth of LPs per day (worth of block)
     const pointsBig = amountBigUnits
         .times(blocksPerDayScale)
         .times(price)

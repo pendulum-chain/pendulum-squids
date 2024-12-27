@@ -62,7 +62,7 @@ export async function getSwapPoolLPPrice(
     return totalLiabilitiesBig.times(priceUsdUnits).div(totalSupplyBig)
 }
 
-async function getSwapPoolTokenPrice(
+export async function getSwapPoolTokenPrice(
     ctx: Ctx,
     block: BlockHeader_,
     swapPool: SwapPool

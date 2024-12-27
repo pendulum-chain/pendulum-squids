@@ -19,7 +19,11 @@ import {
 import { Contract as BackstopPoolContract } from '../../abi/backstop'
 import { hexToSs58, ss58ToHex } from './addresses'
 import { updateBackstopCoverageAndSupply } from './backstopPoolEventHandler'
-import { addSwapLP, removeSwapLP } from '../points/handlePoints'
+import {
+    addSwapLP,
+    removeSwapLP,
+    ROUTER_ADDRESS_FOR_POINTS,
+} from '../points/handlePoints'
 
 const SWAP_FEE_PRUNE_INTERVAL_MILLI_SECONDS = 7 * 24 * 60 * 60 * 1000
 
@@ -104,7 +108,13 @@ export async function handleBurn(
         swapPool
     )
 
-    removeSwapLP(hexToSs58(event.sender), swapPool.id, event.poolSharesBurned)
+    if (hexToSs58(swapPool.router!.id) == ROUTER_ADDRESS_FOR_POINTS) {
+        removeSwapLP(
+            hexToSs58(event.sender),
+            swapPool.id,
+            event.poolSharesBurned
+        )
+    }
 
     await ctx.store.save(swapPool)
 }
@@ -149,7 +159,10 @@ export async function handleMint(
         event.amountPrincipleDeposited,
         swapPool
     )
-    addSwapLP(hexToSs58(event.sender), swapPool.id, event.poolSharesMinted)
+
+    if (hexToSs58(swapPool.router!.id) == ROUTER_ADDRESS_FOR_POINTS) {
+        addSwapLP(hexToSs58(event.sender), swapPool.id, event.poolSharesMinted)
+    }
 
     await ctx.store.save(swapPool)
 }

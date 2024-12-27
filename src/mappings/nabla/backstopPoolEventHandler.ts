@@ -18,7 +18,11 @@ import {
     getSwapPool,
 } from './creation'
 import { updateSwapPoolCoverageAndSupply } from './swapPoolEventHandler'
-import { addBackstopLP, removeBackstopLP } from '../points/handlePoints'
+import {
+    addBackstopLP,
+    removeBackstopLP,
+    ROUTER_ADDRESS_FOR_POINTS,
+} from '../points/handlePoints'
 
 export async function handleBackstopPoolEvent(
     ctx: EventHandlerContext,
@@ -91,11 +95,13 @@ export async function handleBurn(
     )
     await updateBackstopCoverageAndSupply(ctx, backstopPool)
 
-    removeBackstopLP(
-        hexToSs58(event.sender),
-        backstopPool.id,
-        event.poolSharesBurned
-    )
+    if (hexToSs58(backstopPool.router!.id) == ROUTER_ADDRESS_FOR_POINTS) {
+        removeBackstopLP(
+            hexToSs58(event.sender),
+            backstopPool.id,
+            event.poolSharesBurned
+        )
+    }
 
     await ctx.store.save(backstopPool)
 }
@@ -151,11 +157,14 @@ export async function handleMint(
         event.amountPrincipleDeposited,
         backstopPool
     )
-    addBackstopLP(
-        hexToSs58(event.sender),
-        backstopPool.id,
-        event.poolSharesMinted
-    )
+
+    if (hexToSs58(backstopPool.router!.id) == ROUTER_ADDRESS_FOR_POINTS) {
+        addBackstopLP(
+            hexToSs58(event.sender),
+            backstopPool.id,
+            event.poolSharesMinted
+        )
+    }
 
     await ctx.store.save(backstopPool)
 }

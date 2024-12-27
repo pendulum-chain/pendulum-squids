@@ -72,7 +72,7 @@ const processor = new SubstrateBatchProcessor()
     .setRpcDataIngestionSettings({
         newHeadTimeout: newHeadTimeoutMs,
     })
-    .setBlockRange({ from: 2954130 }) // 3780686 tested , 3794635 first mint event. 3748390 just before instantiating contracts
+    .setBlockRange({ from: 3780686 }) // 3780686 tested , 3794635 first mint event. 3748390 just before instantiating contracts
     .setFields({
         block: {
             timestamp: true,

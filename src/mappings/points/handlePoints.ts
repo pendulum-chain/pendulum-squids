@@ -90,7 +90,16 @@ export function removeBackstopLP(
     )
 }
 
-export function addPointsFromSwap(address: address, amount: Big, price: Big) {
+export function addPointsFromSwap(
+    block: BlockHeader_,
+    address: address,
+    amount: Big,
+    price: Big
+) {
+    if (block.height < INITIAL_CAMPAIGN_BLOCK_HEIGHT) {
+        return
+    }
+
     console.log(
         `Adding points from swap for address: ${address}, amount ${amount}, price ${price}`
     )

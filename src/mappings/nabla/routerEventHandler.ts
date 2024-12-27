@@ -98,8 +98,13 @@ export async function handleSwap(
         new Big(10).pow(tokenIn.decimals)
     )
 
-    if (hexToSs58(swapPoolIn!.router!.id) == ROUTER_ADDRESS_FOR_POINTS) {
-        addPointsFromSwap(hexToSs58(event.sender), amountInUnits, priceUsdUnits)
+    if (hexToSs58(router.id) == ROUTER_ADDRESS_FOR_POINTS) {
+        addPointsFromSwap(
+            ctx.block,
+            hexToSs58(event.sender),
+            amountInUnits,
+            priceUsdUnits
+        )
     }
 
     if (swapPoolIn !== undefined) {

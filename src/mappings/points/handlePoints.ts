@@ -14,11 +14,23 @@ type SwapPoolId = string
 const OUTPUT_CSV_PATH = 'points.csv'
 const INITIAL_CAMPAIGN_BLOCK_HEIGHT = 4118040 // from which block to start counting points
 const DUMP_BLOCK_HEIGHT = 4326830 // whenever the campaign finishes.
+
+// To filter for the proper nabla instances we want to count points from.
+export const ALLOWED_SWAP_POOLS = [
+    '6g2pcZdxWKQjF36Mb5ebEDAx2NRw2zSYv82Vwa93yz3mzbbR',
+    '6eQuZWTtRFkWsUKiuAXzUhXTSvTLtdASc2AcjeXHRZn3eQ8v',
+    '6eGjbvygBHx9HmXNVqyC4TXSToeQjJ43rZVfN6PzDs5CYAvp',
+    '6cjBrPgNvouVhC39cm7iLUyGn9hhDgE7fhGuydHEQ3JM1YXT',
+]
+export const ALLOWED_BACKSTOP_POOL =
+    '6d6DtzQS7ojS6zW1NPWtPLsrgbUWpU941gm85e76mYz1PGxJ'
 export const ROUTER_ADDRESS_FOR_POINTS =
     '6fEJAs1ycfTNDZY7ZoAtkBhuhHnRVNscdALMBLdjDV12K4uE'
 
 // global vars to count points
-export const pointsCount = new Map<address, Big>()
+export const swapPointsCount = new Map<address, Big>()
+export const lpSwapPointsCount = new Map<address, Big>()
+export const lpBackstopPointsCount = new Map<address, Big>()
 
 // keep track of user's LPs
 const perSwapPoolLPCount = new Map<address, Map<SwapPoolId, bigint>>()
@@ -96,7 +108,10 @@ export function addPointsFromSwap(
     amount: Big,
     price: Big
 ) {
-    if (block.height < INITIAL_CAMPAIGN_BLOCK_HEIGHT) {
+    if (
+        block.height < INITIAL_CAMPAIGN_BLOCK_HEIGHT ||
+        block.height > DUMP_BLOCK_HEIGHT
+    ) {
         return
     }
 
@@ -106,12 +121,15 @@ export function addPointsFromSwap(
     // 1 point per 500 USD worth of swap (price at the time of swap)
     const pointsThisSwap = amount.mul(price).div(500)
 
-    const totalPoints = pointsCount.get(address) || new Big(0)
-    pointsCount.set(address, totalPoints.add(pointsThisSwap))
+    const totalPoints = swapPointsCount.get(address) || new Big(0)
+    swapPointsCount.set(address, totalPoints.add(pointsThisSwap))
 }
 // each block we accumulate the points based on price and LPs that the address has.
 export async function handlePointAccumulation(ctx: Ctx, block: BlockHeader_) {
-    if (block.height < INITIAL_CAMPAIGN_BLOCK_HEIGHT) {
+    if (
+        block.height < INITIAL_CAMPAIGN_BLOCK_HEIGHT ||
+        block.height > DUMP_BLOCK_HEIGHT
+    ) {
         return
     }
 
@@ -131,7 +149,7 @@ export async function handlePointAccumulation(ctx: Ctx, block: BlockHeader_) {
 
     // Accumulate points from both swap LPs and backstop LPs
     for (const address of addresses) {
-        let totalPoints = pointsCount.get(address) || new Big(0)
+        let totalPointsLpSwap = lpSwapPointsCount.get(address) || new Big(0)
 
         const swapUserLPs = perSwapPoolLPCount.get(address)
         if (swapUserLPs) {
@@ -156,9 +174,14 @@ export async function handlePointAccumulation(ctx: Ctx, block: BlockHeader_) {
                     price,
                     swapPools.get(swapPoolId)!
                 )
-                totalPoints = totalPoints.add(points)
+                totalPointsLpSwap = totalPointsLpSwap.add(points)
             }
         }
+
+        lpSwapPointsCount.set(address, totalPointsLpSwap)
+
+        let totalPointsLpBackstop =
+            lpBackstopPointsCount.get(address) || new Big(0)
 
         const backstopUserLPs = perBackstopPoolLPCount.get(address)
         if (backstopUserLPs) {
@@ -189,29 +212,24 @@ export async function handlePointAccumulation(ctx: Ctx, block: BlockHeader_) {
                     price,
                     backstopPools.get(backstopPoolId)!
                 )
-                totalPoints = totalPoints.add(points)
+                totalPointsLpBackstop = totalPointsLpBackstop.add(points)
             }
         }
 
-        pointsCount.set(address, totalPoints)
-        await maybeStorePointsOnEntity(address, ctx, totalPoints, block)
-
-        console.log(
-            `total points: ${totalPoints.toFixed(10)} for address: ${address}`
-        )
+        lpBackstopPointsCount.set(address, totalPointsLpBackstop)
+        await maybeStorePointsOnEntity(address, ctx, block)
     }
 
     // Dump points to CSV at the specified block height
-    if (block.height === DUMP_BLOCK_HEIGHT) {
-        dumpPointsToCSV()
-        process.exit(0)
-    }
+    // if (block.height === DUMP_BLOCK_HEIGHT) {
+    //     dumpPointsToCSV()
+    //     process.exit(0)
+    // }
 }
 
 async function maybeStorePointsOnEntity(
     address: string,
     ctx: Ctx,
-    newPoints: Big,
     blockHeader: BlockHeader_
 ) {
     // store points every 100 blocks or on the final block DUMP_BLOCK_HEIGHT
@@ -221,15 +239,26 @@ async function maybeStorePointsOnEntity(
     ) {
         return
     }
+    console.log(`Storing points for address: ${address}`)
     let points = await ctx.store.get(Points, address)
     if (points === undefined) {
         points = new Points({
             id: address,
-            points: new Big(0).toFixed(10),
+            pointsSwap: new Big(0).toFixed(10),
+            pointsLpSwap: new Big(0).toFixed(10),
+            pointsLpBackstop: new Big(0).toFixed(10),
         })
     }
 
-    points.points = newPoints.toFixed(10)
+    points.pointsSwap = swapPointsCount.get(address)
+        ? swapPointsCount.get(address)!.toFixed(10)
+        : points.pointsSwap
+    points.pointsLpSwap = lpSwapPointsCount.get(address)
+        ? lpSwapPointsCount.get(address)!.toFixed(10)
+        : points.pointsLpSwap
+    points.pointsLpBackstop = lpBackstopPointsCount.get(address)
+        ? lpBackstopPointsCount.get(address)!.toFixed(10)
+        : points.pointsLpBackstop
     await ctx.store.save(points)
 }
 
@@ -274,7 +303,7 @@ function dumpPointsToCSV() {
     const headers = ['User', 'Points']
     const rows = [headers.join(',')]
 
-    for (const [user, points] of pointsCount.entries()) {
+    for (const [user, points] of swapPointsCount.entries()) {
         rows.push(`${user},${points.toFixed(10)}`)
     }
 

@@ -21,7 +21,7 @@ import { updateSwapPoolCoverageAndSupply } from './swapPoolEventHandler'
 import {
     addBackstopLP,
     removeBackstopLP,
-    ROUTER_ADDRESS_FOR_POINTS,
+    ALLOWED_BACKSTOP_POOL,
 } from '../points/handlePoints'
 
 export async function handleBackstopPoolEvent(
@@ -96,7 +96,7 @@ export async function handleBurn(
     await updateBackstopCoverageAndSupply(ctx, backstopPool)
 
     try {
-        if (hexToSs58(backstopPool.router!.id) == ROUTER_ADDRESS_FOR_POINTS) {
+        if (backstopPool.id == ALLOWED_BACKSTOP_POOL) {
             removeBackstopLP(
                 hexToSs58(event.sender),
                 backstopPool.id,
@@ -104,8 +104,8 @@ export async function handleBurn(
             )
         }
     } catch (e) {
+        console.log('Error removing LP for backstop pool: ', backstopPool.id)
         console.log(e)
-        console.log(' pooll id', backstopPool.id)
     }
 
     await ctx.store.save(backstopPool)
@@ -164,7 +164,7 @@ export async function handleMint(
     )
 
     try {
-        if (hexToSs58(backstopPool.router!.id) == ROUTER_ADDRESS_FOR_POINTS) {
+        if (backstopPool.id == ALLOWED_BACKSTOP_POOL) {
             addBackstopLP(
                 hexToSs58(event.sender),
                 backstopPool.id,
@@ -172,8 +172,8 @@ export async function handleMint(
             )
         }
     } catch (e) {
+        console.log('Error adding LP for backstop pool: ', backstopPool.id)
         console.log(e)
-        console.log(' pooll id', backstopPool.id)
     }
 
     await ctx.store.save(backstopPool)

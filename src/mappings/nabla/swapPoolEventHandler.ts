@@ -21,6 +21,7 @@ import { hexToSs58, ss58ToHex } from './addresses'
 import { updateBackstopCoverageAndSupply } from './backstopPoolEventHandler'
 import {
     addSwapLP,
+    ALLOWED_SWAP_POOLS,
     removeSwapLP,
     ROUTER_ADDRESS_FOR_POINTS,
 } from '../points/handlePoints'
@@ -109,7 +110,7 @@ export async function handleBurn(
     )
 
     try {
-        if (hexToSs58(swapPool.router!.id) == ROUTER_ADDRESS_FOR_POINTS) {
+        if (ALLOWED_SWAP_POOLS.includes(swapPool.id)) {
             removeSwapLP(
                 hexToSs58(event.sender),
                 swapPool.id,
@@ -117,8 +118,8 @@ export async function handleBurn(
             )
         }
     } catch (e) {
+        console.log('Error removing swap LP for pool: ', swapPool.id)
         console.log(e)
-        console.log('pool id', swapPool.id)
     }
 
     await ctx.store.save(swapPool)
@@ -166,7 +167,7 @@ export async function handleMint(
     )
 
     try {
-        if (hexToSs58(swapPool.router!.id) == ROUTER_ADDRESS_FOR_POINTS) {
+        if (ALLOWED_SWAP_POOLS.includes(swapPool.id)) {
             addSwapLP(
                 hexToSs58(event.sender),
                 swapPool.id,
@@ -174,8 +175,8 @@ export async function handleMint(
             )
         }
     } catch (e) {
+        console.log('Error adding swap LP for pool: ', swapPool.id)
         console.log(e)
-        console.log('pool id', swapPool.id)
     }
 
     await ctx.store.save(swapPool)

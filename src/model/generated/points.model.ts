@@ -15,5 +15,11 @@ export class Points {
     id!: string
 
     @StringColumn_({ nullable: false })
-    points!: string
+    pointsSwap!: string
+
+    @StringColumn_({ nullable: false })
+    pointsLpSwap!: string
+
+    @StringColumn_({ nullable: false })
+    pointsLpBackstop!: string
 }

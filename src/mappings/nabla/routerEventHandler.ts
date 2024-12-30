@@ -98,7 +98,7 @@ export async function handleSwap(
         new Big(10).pow(tokenIn.decimals)
     )
 
-    if (hexToSs58(router.id) == ROUTER_ADDRESS_FOR_POINTS) {
+    if (router.id == ROUTER_ADDRESS_FOR_POINTS) {
         addPointsFromSwap(
             ctx.block,
             hexToSs58(event.sender),

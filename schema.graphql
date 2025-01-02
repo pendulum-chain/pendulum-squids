@@ -865,7 +865,9 @@ type Vault @entity {
 
 type Points @entity {
     id: ID! # account
-    points: String!
+    pointsSwap: String
+    pointsLpSwap: String
+    pointsLpBackstop: String
 }
 
 enum IssueRequestStatus {

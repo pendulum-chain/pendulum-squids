@@ -103,7 +103,8 @@ export async function handleSwap(
             ctx.block,
             hexToSs58(event.sender),
             amountInUnits,
-            priceUsdUnits
+            priceUsdUnits,
+            ctx
         )
     }
 

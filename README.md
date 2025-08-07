@@ -132,9 +132,9 @@ To deploy the squid to the production environment you should run the following c
 
 ```shell
 # Replace {version} with the version you define in the `squid.yaml` file
-sqd prod pendulum-squid@{version}
-sqd prod amplitude-squid@{version}
-sqd prod foucoco-squid@{version}
+sqd tags add prod -o pendulum --slot v{version} --name pendulum-squid
+sqd tags add prod -o pendulum --slot v{version} --name amplitude-squid
+sqd tags add prod -o pendulum --slot v{version} --name foucoco-squid
 ```
 
 #### Versioning

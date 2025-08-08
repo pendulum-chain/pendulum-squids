@@ -39,6 +39,9 @@ export async function handleContractInstantiated(ctx: EventHandlerContext) {
         case swapPoolAbi.metadata.source.hash:
             await createSwapPool(ctx, contractHexAddress)
             break
+        case '0x90c0d03030a2ba21a18c33af3c9931fc0f0a988b31f081bcc2c86c7107c48ccd': // Hash of the new SwapPool for BRLA
+            await createSwapPool(ctx, contractHexAddress)
+            break
     }
 }
 

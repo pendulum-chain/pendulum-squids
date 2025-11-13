@@ -106,7 +106,6 @@ export async function saveCall(ctx: Ctx, call: Call_) {
     const parent = call.parentCall
         ? await ctx.store.get(model.Call, call.parentCall.id)
         : undefined
-
     if (
         block == null ||
         extrinsic == null ||
@@ -129,14 +128,23 @@ export async function saveCall(ctx: Ctx, call: Call_) {
         parent,
         success: call.success,
     })
-    await ctx.store.insert(entity)
 
-    block.callsCount += 1
-    await ctx.store.upsert(block)
+    try {
+        await ctx.store.insert(entity)
 
-    if (call.address.length == 0) {
-        extrinsic.call = entity
-        await ctx.store.upsert(extrinsic)
+        block.callsCount += 1
+        await ctx.store.upsert(block)
+
+        if (call.address.length == 0) {
+            extrinsic.call = entity
+            await ctx.store.upsert(extrinsic)
+        }
+    } catch (e) {
+        console.log(
+            `Error saving call ${call.name} with id ${call.id}, parentCallId: ${call.parentCall?.id}, found parent in DB: ${parent}`
+        )
+        console.log(`call data: `, call.args, call.address)
+        console.log('Error inserting call: ', e)
     }
 }
 

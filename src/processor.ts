@@ -443,6 +443,7 @@ processor.run(new TypeormDatabase(), async (ctx) => {
         // because for the system.remark call we need to have
         // processed the token transfers first
         for (const call of calls) {
+            console.log(`Processing call ${call} at block ${block.height}`)
             try {
                 switch (call.name) {
                     case 'Utility.batch':

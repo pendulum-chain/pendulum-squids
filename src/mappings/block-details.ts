@@ -78,81 +78,66 @@ export async function pruneOldestBlock(ctx: Ctx, blockToPruneHeight: number) {
             console.log('error removing calls while pruning: ', e)
         }
     }
+}
 
-    export async function saveExtrinsic(ctx: Ctx, extrinsic: Extrinsic_) {
-        const block = await ctx.store.get(model.Block, extrinsic.block.id)
+export async function saveExtrinsic(ctx: Ctx, extrinsic: Extrinsic_) {
+    const block = await ctx.store.get(model.Block, extrinsic.block.id)
 
-        if (block == null) {
-            throw new Error('Failed to save extrinsic')
-        }
-
-        const entity = new model.Extrinsic({
-            id: extrinsic.id,
-            block,
-            error: extrinsic.error,
-            fee: extrinsic.fee,
-            hash: decodeHex(extrinsic.hash),
-            index: extrinsic.index,
-            signature: new model.ExtrinsicSignature(extrinsic.signature),
-            success: extrinsic.success,
-            tip: extrinsic.tip,
-            version: extrinsic.version,
-        })
-        await ctx.store.insert(entity)
-
-        block.extrinsicsCount += 1
-        await ctx.store.upsert(block)
+    if (block == null) {
+        throw new Error('Failed to save extrinsic')
     }
 
-    export async function saveCall(ctx: Ctx, call: Call_) {
-        const block = await ctx.store.get(model.Block, call.block.id)
-        const extrinsic = await ctx.store.get(
-            model.Extrinsic,
-            call.getExtrinsic().id
-        )
-        const parent = call.parentCall
-            ? await ctx.store.get(model.Call, call.parentCall.id)
-            : undefined
-        if (
-            block == null ||
-            extrinsic == null ||
-            (call.parentCall && parent == null)
-        ) {
-            throw new Error('Failed to save call')
-        }
+    const entity = new model.Extrinsic({
+        id: extrinsic.id,
+        block,
+        error: extrinsic.error,
+        fee: extrinsic.fee,
+        hash: decodeHex(extrinsic.hash),
+        index: extrinsic.index,
+        signature: new model.ExtrinsicSignature(extrinsic.signature),
+        success: extrinsic.success,
+        tip: extrinsic.tip,
+        version: extrinsic.version,
+    })
+    await ctx.store.insert(entity)
 
-        const [pallet, name] = call.name.split('.')
+    block.extrinsicsCount += 1
+    await ctx.store.upsert(block)
+}
 
-        const entity = new model.Call({
-            id: call.id,
-            block,
-            address: call.address,
-            args: call.args,
-            error: call.error,
-            extrinsic,
-            name,
-            pallet,
-            parent,
-            success: call.success,
-        })
+export async function saveCall(ctx: Ctx, call: Call_) {
+    const block = await ctx.store.get(model.Block, call.block.id)
+    const extrinsic = await ctx.store.get(
+        model.Extrinsic,
+        call.getExtrinsic().id
+    )
 
-        try {
-            await ctx.store.insert(entity)
+    if (block == null || extrinsic == null) {
+        throw new Error('Failed to save call')
+    }
 
-            block.callsCount += 1
-            await ctx.store.upsert(block)
+    const [pallet, name] = call.name.split('.')
 
-            if (call.address.length == 0) {
-                extrinsic.call = entity
-                await ctx.store.upsert(extrinsic)
-            }
-        } catch (e) {
-            console.log(
-                `Error saving call ${call.name} with id ${call.id}, parentCallId: ${call.parentCall?.id}, found parent in DB: ${parent}`
-            )
-            console.log(`call data: `, call.args, call.address)
-            console.log('Error inserting call: ', e)
-        }
+    const entity = new model.Call({
+        id: call.id,
+        block,
+        address: call.address,
+        args: call.args,
+        error: call.error,
+        extrinsic,
+        name,
+        pallet,
+        success: call.success,
+    })
+
+    await ctx.store.insert(entity)
+
+    block.callsCount += 1
+    await ctx.store.upsert(block)
+
+    if (call.address.length == 0) {
+        extrinsic.call = entity
+        await ctx.store.upsert(extrinsic)
     }
 }
 

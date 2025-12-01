@@ -53,11 +53,8 @@ export async function pruneOldestBlock(ctx: Ctx, blockToPruneHeight: number) {
         for (const call of callsToUpdate) {
             call.extrinsic = null
         }
-        try {
-            await ctx.store.save(callsToUpdate)
-        } catch (e) {
-            console.log('error updating calls while pruning: ', e)
-        }
+
+        await ctx.store.save(callsToUpdate)
 
         // Delete associated extrinsics
         const extrinsicsToPrune = await ctx.store.findBy(model.Extrinsic, {
@@ -70,13 +67,9 @@ export async function pruneOldestBlock(ctx: Ctx, blockToPruneHeight: number) {
             block: { id: blockToPrune.id },
         })
 
-        try {
-            await ctx.store.remove(callsToPrune)
-            // Finally, delete the block itself
-            await ctx.store.remove(model.Block, blockToPrune.id)
-        } catch (e) {
-            console.log('error removing calls while pruning: ', e)
-        }
+        await ctx.store.remove(callsToPrune)
+        // Finally, delete the block itself
+        await ctx.store.remove(model.Block, blockToPrune.id)
     }
 }
 

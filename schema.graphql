@@ -962,7 +962,6 @@ type Call @entity @index(fields: ["id", "pallet", "name"]) {
 
     block: Block!
     extrinsic: Extrinsic
-    parent: Call
 
     address: [Int!]!
     success: Boolean! @index
@@ -974,7 +973,6 @@ type Call @entity @index(fields: ["id", "pallet", "name"]) {
     args: JSON
     argsStr: [String]
 
-    subcalls: [Call]! @derivedFrom(field: "parent")
     events: [Event]! @derivedFrom(field: "call")
 }
 

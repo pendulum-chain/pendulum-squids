@@ -53,6 +53,7 @@ export async function pruneOldestBlock(ctx: Ctx, blockToPruneHeight: number) {
         for (const call of callsToUpdate) {
             call.extrinsic = null
         }
+
         await ctx.store.save(callsToUpdate)
 
         // Delete associated extrinsics
@@ -65,8 +66,8 @@ export async function pruneOldestBlock(ctx: Ctx, blockToPruneHeight: number) {
         const callsToPrune = await ctx.store.findBy(model.Call, {
             block: { id: blockToPrune.id },
         })
-        await ctx.store.remove(callsToPrune)
 
+        await ctx.store.remove(callsToPrune)
         // Finally, delete the block itself
         await ctx.store.remove(model.Block, blockToPrune.id)
     }
@@ -103,15 +104,8 @@ export async function saveCall(ctx: Ctx, call: Call_) {
         model.Extrinsic,
         call.getExtrinsic().id
     )
-    const parent = call.parentCall
-        ? await ctx.store.get(model.Call, call.parentCall.id)
-        : undefined
 
-    if (
-        block == null ||
-        extrinsic == null ||
-        (call.parentCall && parent == null)
-    ) {
+    if (block == null || extrinsic == null) {
         throw new Error('Failed to save call')
     }
 
@@ -126,9 +120,9 @@ export async function saveCall(ctx: Ctx, call: Call_) {
         extrinsic,
         name,
         pallet,
-        parent,
         success: call.success,
     })
+
     await ctx.store.insert(entity)
 
     block.callsCount += 1

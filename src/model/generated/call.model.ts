@@ -32,10 +32,6 @@ export class Call {
     @ManyToOne_(() => Extrinsic, { nullable: true })
     extrinsic!: Extrinsic | undefined | null
 
-    @Index_()
-    @ManyToOne_(() => Call, { nullable: true })
-    parent!: Call | undefined | null
-
     @IntColumn_({ array: true, nullable: false })
     address!: number[]
 
@@ -59,9 +55,6 @@ export class Call {
 
     @StringColumn_({ array: true, nullable: true })
     argsStr!: (string | undefined | null)[] | undefined | null
-
-    @OneToMany_(() => Call, (e) => e.parent)
-    subcalls!: Call[]
 
     @OneToMany_(() => Event, (e) => e.call)
     events!: Event[]

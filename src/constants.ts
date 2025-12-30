@@ -72,6 +72,18 @@ export const TOKEN_METADATA_MAP: { [address: string]: TokenBase } = {
         blockchain: 'Polkadot',
         decimals: 10,
     },
+    '2094-2-258': {
+        name: 'Assethub USDC',
+        symbol: 'FIAT',
+        blockchain: 'USD-USD',
+        decimals: 6,
+    },
+    '2094-2-268': {
+        name: 'Axelar USDC',
+        symbol: 'FIAT',
+        blockchain: 'USD-USD',
+        decimals: 6,
+    },
     '2094-2-262': {
         name: 'Moonbeam',
         symbol: 'GLMR',

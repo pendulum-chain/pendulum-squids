@@ -48,7 +48,9 @@ export const WHITELIST: string[] = [
     '2124-2-515', // brl
     '2094-0-0', // wnative pendulum
     '2094-2-256', // dot
+    '2094-2-258', // Assethub USDC
     '2094-2-262', // glmr
+    '2094-2-268', // Axelar USDC
     '2094-2-512', // xlm
     '2094-2-513', // usdc
 ]
